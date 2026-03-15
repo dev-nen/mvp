@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MapPin, ChevronDown, Check } from 'lucide-react'
+import './LocationSelector.css'
 
 const LOCATIONS = ['Sitges']
 
@@ -13,40 +14,52 @@ export function LocationSelector({ location, onSelectLocation }) {
         setIsOpen(false)
       }
     }
+
     document.addEventListener('mousedown', handleClickOutside)
+
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleSelect = (loc) => {
-    onSelectLocation(loc)
+  const handleSelect = (nextLocation) => {
+    onSelectLocation(nextLocation)
     setIsOpen(false)
   }
 
   return (
-    <div className="relative inline-block" ref={dropdownRef}>
+    <div className="location-selector" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/60 hover:bg-secondary border border-border hover:border-primary/30 transition-all duration-200 group ${
-          isOpen ? 'border-primary/30 bg-secondary' : ''
+        className={`location-selector__trigger ${
+          isOpen ? 'location-selector__trigger--open' : ''
         }`}
       >
-        <MapPin className="h-4 w-4 text-primary" />
-        <span className="font-medium text-foreground">{location}</span>
-        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <MapPin className="location-selector__icon" />
+        <span className="location-selector__label">{location}</span>
+        <ChevronDown
+          className={`location-selector__chevron ${
+            isOpen ? 'location-selector__chevron--open' : ''
+          }`}
+        />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 min-w-[140px] bg-card border border-border rounded-lg shadow-lg py-1 z-50">
-          {LOCATIONS.map((loc) => (
+        <div className="location-selector__menu">
+          {LOCATIONS.map((option) => (
             <button
-              key={loc}
-              onClick={() => handleSelect(loc)}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm hover:bg-secondary transition-colors"
+              type="button"
+              key={option}
+              onClick={() => handleSelect(option)}
+              className="location-selector__option"
             >
-              <span className={location === loc ? 'font-medium text-foreground' : 'text-muted-foreground'}>
-                {loc}
+              <span
+                className={`location-selector__option-label ${
+                  location === option ? 'location-selector__option-label--selected' : ''
+                }`}
+              >
+                {option}
               </span>
-              {location === loc && <Check className="h-4 w-4 text-primary" />}
+              {location === option && <Check className="location-selector__option-check" />}
             </button>
           ))}
         </div>

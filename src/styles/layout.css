@@ -1,0 +1,10 @@
+.page-container {
+  width: min(var(--container-max), calc(100% - (var(--space-4) * 2)));
+  margin: 0 auto;
+}
+
+@media (min-width: 40rem) {
+  .page-container {
+    width: min(var(--container-max), calc(100% - (var(--space-6) * 2)));
+  }
+}

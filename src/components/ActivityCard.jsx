@@ -1,15 +1,15 @@
 import { Heart, MapPin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import './ActivityCard.css'
 
 const CATEGORY_ICONS = {
-  'Deportes': '⚽',
-  'Arte': '🎨',
-  'Apoyo escolar': '📚',
-  'Familia': '👨‍👩‍👧',
-  'Camps': '🏕️',
-  'Cultura': '🎭',
+  Deportes: '\u26bd',
+  Arte: '\u{1f3a8}',
+  'Apoyo escolar': '\u{1f4da}',
+  Familia: '\u{1f468}\u200d\u{1f469}\u200d\u{1f467}',
+  Camps: '\u{1f3d5}\ufe0f',
+  Cultura: '\u{1f3ad}',
 }
 
 export function ActivityCard({
@@ -24,54 +24,48 @@ export function ActivityCard({
   onViewActivity,
 }) {
   const categoryIcon = CATEGORY_ICONS[category] || ''
-  
+
   return (
-    <Card className="overflow-hidden bg-card border-border shadow-sm hover:shadow-lg transition-shadow duration-200">
-      <div className="relative">
-        <div className="aspect-[16/10] w-full overflow-hidden bg-muted">
-          <img
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover"
-          />
+    <Card className="activity-card">
+      <div className="activity-card__media">
+        <div className="activity-card__image-frame">
+          <img src={imageUrl} alt={title} className="activity-card__image" />
         </div>
         <button
+          type="button"
           onClick={() => onToggleFavorite?.(id)}
-          className={cn(
-            "absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200",
-            "bg-card/90 backdrop-blur-sm shadow-sm hover:scale-110",
-            isFavorite ? "text-destructive" : "text-muted-foreground hover:text-destructive"
-          )}
-          aria-label={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
+          className={`activity-card__favorite ${
+            isFavorite ? 'activity-card__favorite--active' : ''
+          }`}
+          aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
         >
-          <Heart className={cn("h-5 w-5", isFavorite && "fill-current")} />
+          <Heart
+            className={`activity-card__favorite-icon ${
+              isFavorite ? 'activity-card__favorite-icon--filled' : ''
+            }`}
+          />
         </button>
       </div>
-      
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-foreground text-lg leading-tight mb-3 text-balance">
-          {title}
-        </h3>
-        
-        <div className="flex flex-col gap-1.5 mb-4">
-          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
+
+      <CardContent className="activity-card__content">
+        <h3 className="activity-card__title">{title}</h3>
+
+        <div className="activity-card__meta">
+          <div className="activity-card__meta-item">
+            <MapPin className="activity-card__meta-icon" />
             <span>{location}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            <span className="text-base">👶</span>
+          <div className="activity-card__meta-item">
+            <span className="activity-card__meta-emoji">{'\u{1f476}'}</span>
             <span>{ageRange}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground text-sm">
-            {categoryIcon && <span className="text-base">{categoryIcon}</span>}
+          <div className="activity-card__meta-item">
+            {categoryIcon && <span className="activity-card__meta-emoji">{categoryIcon}</span>}
             <span>{category}</span>
           </div>
         </div>
-        
-        <Button
-          onClick={() => onViewActivity?.(id)}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
-        >
+
+        <Button onClick={() => onViewActivity?.(id)} className="activity-card__button">
           Ver actividad
         </Button>
       </CardContent>

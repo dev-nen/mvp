@@ -1,25 +1,22 @@
 import { SearchX } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import './EmptyState.css'
 
 export function EmptyState({ onClearFilters, onChangeLocation }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-      <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
-        <SearchX className="h-8 w-8 text-muted-foreground" />
+    <div className="empty-state">
+      <div className="empty-state__icon-wrap">
+        <SearchX className="empty-state__icon" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground mb-2">
-        No encontramos actividades para estos filtros
-      </h3>
-      <p className="text-muted-foreground text-sm mb-6 max-w-xs">
+      <h3 className="empty-state__title">No encontramos actividades para estos filtros</h3>
+      <p className="empty-state__description">
         Prueba a cambiar los filtros o buscar en otra zona cercana
       </p>
-      <div className="flex gap-3">
+      <div className="empty-state__actions">
         <Button variant="outline" onClick={onClearFilters}>
           Borrar filtros
         </Button>
-        <Button onClick={onChangeLocation}>
-          Cambiar zona
-        </Button>
+        <Button onClick={onChangeLocation}>Cambiar zona</Button>
       </div>
     </div>
   )
