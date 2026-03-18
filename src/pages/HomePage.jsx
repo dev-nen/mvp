@@ -6,6 +6,7 @@ import { FilterChips } from "@/components/FilterChips";
 import { Footer } from "@/components/Footer";
 import { LocationSelector } from "@/components/LocationSelector";
 import { Navbar } from "@/components/Navbar";
+import { MANUAL_CATALOG } from "@/data/manualCatalog";
 import "@/App.css";
 
 const FILTERS = [
@@ -15,57 +16,6 @@ const FILTERS = [
   "Familia",
   "Camps",
   "Cultura",
-];
-
-const ACTIVITIES = [
-  {
-    id: "1",
-    title: "Hockey Sitges",
-    location: "Sitges",
-    ageRange: "6-12 anos",
-    category: "Deportes",
-    imageUrl: "/images/hockey.jpg",
-  },
-  {
-    id: "2",
-    title: "Taller de pintura creativa",
-    location: "Sitges",
-    ageRange: "7-12 anos",
-    category: "Arte",
-    imageUrl: "/images/painting.jpg",
-  },
-  {
-    id: "3",
-    title: "Clases de natacion",
-    location: "Sitges",
-    ageRange: "4-10 anos",
-    category: "Deportes",
-    imageUrl: "/images/swimming.jpg",
-  },
-  {
-    id: "4",
-    title: "Apoyo escolar matematicas",
-    location: "Sitges",
-    ageRange: "8-14 anos",
-    category: "Apoyo escolar",
-    imageUrl: "/images/tutoring.jpg",
-  },
-  {
-    id: "5",
-    title: "Yoga en familia",
-    location: "Sitges",
-    ageRange: "Todas las edades",
-    category: "Familia",
-    imageUrl: "/images/yoga.jpg",
-  },
-  {
-    id: "6",
-    title: "Teatro infantil",
-    location: "Sitges",
-    ageRange: "6-12 anos",
-    category: "Cultura",
-    imageUrl: "/images/theater.jpg",
-  },
 ];
 
 function useScrollDirection() {
@@ -114,9 +64,9 @@ export function HomePage() {
   const showNavbar = scrollDirection === "up" || isAtTop;
 
   const filteredActivities = useMemo(() => {
-    if (selectedFilters.length === 0) return ACTIVITIES;
+    if (selectedFilters.length === 0) return MANUAL_CATALOG;
 
-    return ACTIVITIES.filter((activity) =>
+    return MANUAL_CATALOG.filter((activity) =>
       selectedFilters.includes(activity.category),
     );
   }, [selectedFilters]);
