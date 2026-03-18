@@ -1,0 +1,214 @@
+.profile-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at top, rgba(79, 167, 163, 0.16), transparent 34rem),
+    linear-gradient(180deg, #f8fbfb 0%, #f3f7f8 100%);
+}
+
+.profile-page__main {
+  flex: 1;
+  padding: var(--space-6) 0 var(--space-8);
+}
+
+.profile-page__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.profile-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page__back-button {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+.profile-page__intro {
+  max-width: 42rem;
+}
+
+.profile-page__eyebrow {
+  margin-bottom: var(--space-2);
+  color: var(--color-primary-strong);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.profile-page__title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1;
+}
+
+.profile-page__description {
+  margin-top: var(--space-3);
+  color: var(--color-text-muted);
+  max-width: 36rem;
+}
+
+.profile-page__grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.profile-page__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.profile-page__logout-section {
+  padding: var(--space-5);
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-page__logout-title {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.profile-page__logout-description {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.profile-page__logout-button {
+  margin-top: var(--space-4);
+}
+
+.profile-page__saving-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(243, 248, 248, 0.74);
+  backdrop-filter: blur(8px);
+}
+
+.profile-page__saving-panel {
+  width: min(20rem, 100%);
+  padding: var(--space-5);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.profile-page__saving-panel p {
+  margin-top: var(--space-3);
+  font-weight: 600;
+}
+
+.profile-page__skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-page__skeleton-card--avatar {
+  align-items: center;
+}
+
+.profile-page__skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: rgba(219, 230, 230, 0.86);
+}
+
+.profile-page__skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.52),
+    rgba(255, 255, 255, 0)
+  );
+  transform: translateX(-100%);
+  animation: profile-page-skeleton 1.4s ease-in-out infinite;
+}
+
+.profile-page__skeleton--avatar {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}
+
+.profile-page__skeleton--title {
+  width: 8rem;
+  height: 1.125rem;
+}
+
+.profile-page__skeleton--line {
+  width: 100%;
+  max-width: 12rem;
+  height: 0.875rem;
+}
+
+.profile-page__skeleton--button {
+  width: 8.5rem;
+  height: 2.5rem;
+}
+
+.profile-page__skeleton--heading {
+  width: 10rem;
+  height: 1.125rem;
+}
+
+.profile-page__skeleton--field {
+  width: 100%;
+  height: 4.25rem;
+}
+
+.profile-page__skeleton--button-wide {
+  width: 100%;
+  height: 2.75rem;
+}
+
+.profile-page__skeleton--row {
+  width: 100%;
+  height: 4rem;
+}
+
+.profile-page__skeleton--saving {
+  width: 100%;
+  height: 0.875rem;
+}
+
+@keyframes profile-page-skeleton {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (min-width: 64rem) {
+  .profile-page__grid {
+    grid-template-columns: minmax(16rem, 18rem) minmax(0, 1fr);
+    align-items: start;
+  }
+}

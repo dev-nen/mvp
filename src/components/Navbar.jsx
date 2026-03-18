@@ -1,41 +1,64 @@
-import { useState } from 'react'
-import { Search, Heart, User, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import './Navbar.css'
+import { useState } from "react";
+import { Heart, Search, User, X } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import "./Navbar.css";
 
-export function Navbar() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
+export function Navbar({ enableSearch = false }) {
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const getNavLinkClassName = ({ isActive }) =>
+    [
+      "button",
+      "button--ghost",
+      "button--size-icon",
+      "navbar__icon-link",
+      isActive ? "navbar__icon-link--active" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
 
   return (
     <header className="navbar">
       <div className="page-container navbar__bar">
-        <div className="navbar__brand">
+        <Link to="/" className="navbar__brand" aria-label="Ir a la Home">
           <div className="navbar__brand-mark">
             <span>IK</span>
           </div>
           <span className="navbar__brand-name">InfoKids</span>
-        </div>
+        </Link>
 
         <div className="navbar__actions">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            aria-label="Buscar"
+          {enableSearch ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              aria-label={isSearchOpen ? "Cerrar búsqueda" : "Buscar"}
+            >
+              {isSearchOpen ? <X /> : <Search />}
+            </Button>
+          ) : null}
+
+          <NavLink
+            to="/favoritos"
+            className={getNavLinkClassName}
+            aria-label="Favoritos"
           >
-            {isSearchOpen ? <X /> : <Search />}
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Favoritos">
             <Heart />
-          </Button>
-          <Button variant="ghost" size="icon" aria-label="Perfil">
+          </NavLink>
+          <NavLink
+            to="/perfil"
+            className={getNavLinkClassName}
+            aria-label="Perfil"
+          >
             <User />
-          </Button>
+          </NavLink>
         </div>
       </div>
 
-      {isSearchOpen && (
+      {enableSearch && isSearchOpen ? (
         <div className="page-container navbar__search-panel">
           <Input
             type="search"
@@ -44,7 +67,7 @@ export function Navbar() {
             autoFocus
           />
         </div>
-      )}
+      ) : null}
     </header>
-  )
+  );
 }
