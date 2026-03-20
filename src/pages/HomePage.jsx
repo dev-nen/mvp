@@ -1,159 +1,137 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityCard } from "@/components/ActivityCard";
-import { AppDescription } from "@/components/AppDescription";
-import { EmptyState } from "@/components/EmptyState";
-import { FilterChips } from "@/components/FilterChips";
+import { useMemo, useState } from "react";
+import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { LocationSelector } from "@/components/LocationSelector";
+import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
+import { CatalogHero } from "@/components/catalog/CatalogHero";
+import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { Navbar } from "@/components/Navbar";
-import { MANUAL_CATALOG } from "@/data/manualCatalog";
-import "@/App.css";
-
-const FILTERS = [
-  "Deportes",
-  "Arte",
-  "Apoyo escolar",
-  "Familia",
-  "Camps",
-  "Cultura",
-];
-
-function useScrollDirection() {
-  const [scrollDirection, setScrollDirection] = useState("up");
-  const [isAtTop, setIsAtTop] = useState(true);
-  const lastScrollY = useRef(0);
-  const ticking = useRef(false);
-
-  useEffect(() => {
-    const updateScrollDirection = () => {
-      const scrollY = window.scrollY;
-      const direction = scrollY > lastScrollY.current ? "down" : "up";
-
-      if (
-        direction !== scrollDirection &&
-        Math.abs(scrollY - lastScrollY.current) > 10
-      ) {
-        setScrollDirection(direction);
-      }
-
-      setIsAtTop(scrollY < 10);
-      lastScrollY.current = scrollY > 0 ? scrollY : 0;
-      ticking.current = false;
-    };
-
-    const onScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(updateScrollDirection);
-        ticking.current = true;
-      }
-    };
-
-    window.addEventListener("scroll", onScroll);
-
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [scrollDirection]);
-
-  return { scrollDirection, isAtTop };
-}
+import { CatalogState } from "@/components/states/CatalogState";
+import {
+  filterActivities,
+  getCategoryLabelOptions,
+  getCityOptions,
+} from "@/helpers/catalogFilters";
+import { searchActivities } from "@/helpers/catalogSearch";
+import { useCatalog } from "@/hooks/useCatalog";
+import { useFavorites } from "@/hooks/useFavorites";
+import "./HomePage.css";
 
 export function HomePage() {
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [favorites, setFavorites] = useState([]);
-  const [location, setLocation] = useState("Sitges");
-  const { scrollDirection, isAtTop } = useScrollDirection();
-  const showNavbar = scrollDirection === "up" || isAtTop;
+  const { activities, isLoading, error, reload } = useCatalog();
+  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
+  const [selectedCitySlug, setSelectedCitySlug] = useState("");
 
-  const filteredActivities = useMemo(() => {
-    if (selectedFilters.length === 0) return MANUAL_CATALOG;
+  const categoryLabelOptions = useMemo(
+    () => getCategoryLabelOptions(activities),
+    [activities],
+  );
+  const cityOptions = useMemo(() => getCityOptions(activities), [activities]);
 
-    return MANUAL_CATALOG.filter((activity) =>
-      selectedFilters.includes(activity.category),
-    );
-  }, [selectedFilters]);
+  const visibleActivities = useMemo(() => {
+    const searchedActivities = searchActivities(activities, searchQuery);
 
-  const handleToggleFilter = (filter) => {
-    setSelectedFilters((prev) =>
-      prev.includes(filter)
-        ? prev.filter((item) => item !== filter)
-        : [...prev, filter],
-    );
-  };
+    return filterActivities(searchedActivities, {
+      selectedCategoryLabels,
+      selectedCitySlug,
+    });
+  }, [activities, searchQuery, selectedCategoryLabels, selectedCitySlug]);
 
-  const handleToggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+  const handleToggleCategoryLabel = (categoryLabel) => {
+    setSelectedCategoryLabels((currentCategoryLabels) =>
+      currentCategoryLabels.includes(categoryLabel)
+        ? currentCategoryLabels.filter((label) => label !== categoryLabel)
+        : [...currentCategoryLabels, categoryLabel],
     );
   };
 
   const handleClearFilters = () => {
-    setSelectedFilters([]);
-  };
-
-  const handleSelectLocation = (nextLocation) => {
-    setLocation(nextLocation);
-  };
-
-  const handleViewActivity = (id) => {
-    console.log("View activity:", id);
+    setSearchQuery("");
+    setSelectedCategoryLabels([]);
+    setSelectedCitySlug("");
   };
 
   return (
-    <div className="app-shell">
-      <div
-        className={`app-header ${showNavbar ? "app-header--visible" : "app-header--hidden"}`}
-      >
-        <Navbar enableSearch />
-      </div>
+    <div className="home-page">
+      <Navbar />
 
-      <div
-        className={`app-filter-bar ${
-          showNavbar ? "app-filter-bar--with-navbar" : "app-filter-bar--compact"
-        }`}
-      >
-        <div className="page-container">
-          <FilterChips
-            filters={FILTERS}
-            selectedFilters={selectedFilters}
-            onToggleFilter={handleToggleFilter}
+      <main className="home-page__main">
+        <div className="page-container home-page__container">
+          <CatalogHero
+            activityCount={activities.length}
+            categoryCount={categoryLabelOptions.length}
+            cityCount={cityOptions.length}
+            searchQuery={searchQuery}
           />
-        </div>
-      </div>
 
-      <div className="app-shell__header-spacer" />
+          <CatalogToolbar
+            searchQuery={searchQuery}
+            onSearchQueryChange={setSearchQuery}
+            cityOptions={cityOptions}
+            selectedCitySlug={selectedCitySlug}
+            onSelectedCitySlugChange={setSelectedCitySlug}
+            categoryLabelOptions={categoryLabelOptions}
+            selectedCategoryLabels={selectedCategoryLabels}
+            onToggleCategoryLabel={handleToggleCategoryLabel}
+            onClearFilters={handleClearFilters}
+          />
 
-      <main className="app-main">
-        <section className="app-intro">
-          <div className="page-container app-intro__stack">
-            <AppDescription />
-            <LocationSelector
-              location={location}
-              onSelectLocation={handleSelectLocation}
-            />
-          </div>
-        </section>
+          <section className="home-page__results" aria-live="polite">
+            <div className="home-page__results-header">
+              <div className="home-page__results-copy">
+                <h2 className="home-page__results-title">Resultados</h2>
+                <p className="home-page__results-description">
+                  Catalogo desacoplado con fallback temporal y estructura lista
+                  para la futura query real.
+                </p>
+              </div>
 
-        <section className="app-results">
-          <div className="page-container">
-            {filteredActivities.length > 0 ? (
-              <div className="app-results__grid">
-                {filteredActivities.map((activity) => (
-                  <ActivityCard
+              <p className="home-page__results-count">
+                {visibleActivities.length} resultados | {favoriteIds.length}{" "}
+                favoritos
+              </p>
+            </div>
+
+            {isLoading ? (
+              <CatalogState
+                icon={LoaderCircle}
+                eyebrow="Cargando"
+                title="Preparando el catalogo"
+                description="Estamos preparando el catalogo desde la capa de datos temporal desacoplada."
+              />
+            ) : error ? (
+              <CatalogState
+                icon={AlertTriangle}
+                eyebrow="Error"
+                title="No pudimos cargar el catalogo"
+                description={error}
+                actionLabel="Reintentar"
+                onAction={reload}
+              />
+            ) : visibleActivities.length === 0 ? (
+              <CatalogState
+                icon={SearchX}
+                eyebrow="Sin resultados"
+                title="No encontramos actividades para estos filtros"
+                description="Prueba a limpiar la busqueda o ajustar la ciudad y las categorias."
+                actionLabel="Limpiar filtros"
+                onAction={handleClearFilters}
+              />
+            ) : (
+              <div className="home-page__grid">
+                {visibleActivities.map((activity) => (
+                  <CatalogActivityCard
                     key={activity.id}
-                    {...activity}
-                    isFavorite={favorites.includes(activity.id)}
-                    onToggleFavorite={handleToggleFavorite}
-                    onViewActivity={handleViewActivity}
+                    activity={activity}
+                    isFavorite={isFavorite(activity.id)}
+                    onToggleFavorite={toggleFavorite}
                   />
                 ))}
               </div>
-            ) : (
-              <EmptyState
-                onClearFilters={handleClearFilters}
-                onChangeLocation={() => {}}
-              />
             )}
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
 
       <Footer />
