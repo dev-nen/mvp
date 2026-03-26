@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
-import { CatalogHero } from "@/components/catalog/CatalogHero";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
+import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
+import { LandingFamilyFocus } from "@/components/landing/LandingFamilyFocus";
+import { LandingHero } from "@/components/landing/LandingHero";
+import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
@@ -22,6 +25,7 @@ export function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCitySlug, setSelectedCitySlug] = useState("");
+  const catalogSectionRef = useRef(null);
 
   const categoryLabelOptions = useMemo(
     () => getCategoryLabelOptions(activities),
@@ -52,33 +56,37 @@ export function HomePage() {
     setSelectedCitySlug("");
   };
 
+  const handleExploreActivities = () => {
+    catalogSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <div className="home-page">
       <Navbar />
 
       <main className="home-page__main">
         <div className="page-container home-page__container">
-          <CatalogHero searchQuery={searchQuery} />
+          <LandingHero onExploreActivities={handleExploreActivities} />
+          <LandingValueProps />
+          <LandingFamilyFocus />
+          <LandingBridgeCTA onExploreActivities={handleExploreActivities} />
 
-          <CatalogToolbar
-            searchQuery={searchQuery}
-            onSearchQueryChange={setSearchQuery}
-            cityOptions={cityOptions}
-            selectedCitySlug={selectedCitySlug}
-            onSelectedCitySlugChange={setSelectedCitySlug}
-            categoryLabelOptions={categoryLabelOptions}
-            selectedCategoryLabels={selectedCategoryLabels}
-            onToggleCategoryLabel={handleToggleCategoryLabel}
-            onClearFilters={handleClearFilters}
-          />
-
-          <section className="home-page__results" aria-live="polite">
-            <div className="home-page__results-header">
+          <section
+            id="explorar-actividades"
+            ref={catalogSectionRef}
+            className="home-page__catalog"
+            aria-live="polite"
+          >
+            <div className="home-page__catalog-header">
               <div className="home-page__results-copy">
-                <h2 className="home-page__results-title">Resultados</h2>
+                <p className="home-page__catalog-eyebrow">TU BUSQUEDA EMPIEZA AQUI</p>
+                <h2 className="home-page__results-title">Catalogo de actividades</h2>
                 <p className="home-page__results-description">
-                  Catalogo desacoplado con fallback temporal y estructura lista
-                  para la futura query real.
+                  Usa los filtros para acotar por ciudad o categoria y encontrar
+                  una opcion que encaje con tu familia.
                 </p>
               </div>
 
@@ -87,6 +95,18 @@ export function HomePage() {
                 favoritos
               </p>
             </div>
+
+            <CatalogToolbar
+              searchQuery={searchQuery}
+              onSearchQueryChange={setSearchQuery}
+              cityOptions={cityOptions}
+              selectedCitySlug={selectedCitySlug}
+              onSelectedCitySlugChange={setSelectedCitySlug}
+              categoryLabelOptions={categoryLabelOptions}
+              selectedCategoryLabels={selectedCategoryLabels}
+              onToggleCategoryLabel={handleToggleCategoryLabel}
+              onClearFilters={handleClearFilters}
+            />
 
             {isLoading ? (
               <CatalogState
