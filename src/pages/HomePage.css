@@ -310,11 +310,12 @@
 
 .catalog-card {
   overflow: hidden;
+  height: 100%;
 }
 
 .catalog-card__media {
   position: relative;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   background: var(--color-surface-muted);
 }
 
@@ -324,7 +325,7 @@
   object-fit: cover;
 }
 
-.catalog-card__meta-icon,
+.catalog-card__fact-icon,
 .catalog-state__icon {
   width: 1rem;
   height: 1rem;
@@ -332,8 +333,8 @@
 
 .catalog-card__favorite {
   position: absolute;
-  top: var(--space-3);
-  right: var(--space-3);
+  top: var(--space-2);
+  right: var(--space-2);
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(10px);
 }
@@ -349,68 +350,121 @@
 .catalog-card__content {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-2);
 }
 
 .catalog-card__header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: 0.25rem;
 }
 
 .catalog-card__category {
   color: var(--color-primary-strong);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .catalog-card__title {
   font-size: 1.125rem;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.catalog-card__description {
-  color: var(--color-text-muted);
-  line-height: 1.6;
-}
-
-.catalog-card__meta {
+.catalog-card__facts {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
-.catalog-card__meta-item {
+.catalog-card__facts-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.catalog-card__fact {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
+  color: var(--color-text);
+  font-size: 0.875rem;
+}
+
+.catalog-card__fact-inline {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
   color: var(--color-text-muted);
   font-size: 0.875rem;
 }
 
-.catalog-card__meta-icon {
+.catalog-card__fact-inline:first-child {
+  flex: 1;
+}
+
+.catalog-card__fact-inline--age {
+  flex-shrink: 0;
+}
+
+.catalog-card__fact-inline-text {
+  min-width: 0;
+}
+
+.catalog-card__fact-inline-text--location {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalog-card__fact--boxed {
+  padding: 0.625rem;
+  background: rgba(246, 251, 251, 0.92);
+  border: 1px solid rgba(219, 230, 230, 0.95);
+  border-radius: var(--radius-md);
+}
+
+.catalog-card__fact--price {
+  background: rgba(76, 167, 162, 0.12);
+  border-color: rgba(76, 167, 162, 0.25);
+}
+
+.catalog-card__fact--center {
+  align-items: center;
+  padding: 0;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.catalog-card__fact-icon {
   margin-top: 0.125rem;
   flex-shrink: 0;
   color: var(--color-primary);
 }
 
-.catalog-card__details {
-  display: grid;
-  gap: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid rgba(219, 230, 230, 0.95);
-}
-
-.catalog-card__detail-block {
+.catalog-card__fact-body {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 0.1875rem;
 }
 
-.catalog-card__detail-label {
+.catalog-card__fact-text,
+.catalog-card__fact-value {
+  min-width: 0;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.catalog-card__fact-label {
   color: var(--color-text-muted);
   font-size: 0.75rem;
   font-weight: 700;
@@ -418,9 +472,34 @@
   text-transform: uppercase;
 }
 
-.catalog-card__detail-value {
+.catalog-card__fact-value {
   font-size: 0.9375rem;
   font-weight: 600;
+}
+
+.catalog-card__fact--center .catalog-card__fact-icon {
+  color: var(--color-text-muted);
+}
+
+.catalog-card__fact--center .catalog-card__fact-text {
+  color: var(--color-text-muted);
+}
+
+.catalog-card__fact--price .catalog-card__fact-value {
+  color: var(--color-text);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.catalog-card__cta {
+  width: 100%;
+  margin-top: auto;
+}
+
+.catalog-card__cta:disabled {
+  opacity: 1;
+  cursor: default;
+  box-shadow: var(--shadow-sm);
 }
 
 .catalog-state {
