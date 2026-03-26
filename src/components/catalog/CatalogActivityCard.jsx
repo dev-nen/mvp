@@ -1,4 +1,4 @@
-import { Building2, Heart, MapPin, Sparkles, Users } from "lucide-react";
+import { Building2, Heart, MapPin, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -35,13 +35,6 @@ export function CatalogActivityCard({
           alt={activity.title}
           className="catalog-card__image"
         />
-
-        {activity.is_featured ? (
-          <div className="catalog-card__featured-badge">
-            <Sparkles />
-            Destacada
-          </div>
-        ) : null}
 
         <Button
           type="button"

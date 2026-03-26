@@ -1,11 +1,11 @@
 ````md
-# InfoKids MVP
+# Nendo MVP
 
 Frontend MVP for a local discovery platform focused on children's activities, filters, favorites, and quick contact.
 
 ## Overview
 
-InfoKids is a web app concept designed to help families discover nearby activities for children and quickly connect with organizers.
+Nendo is a web app concept designed to help families discover nearby activities for children and quickly connect with organizers.
 
 At its current stage, this repository contains the **frontend MVP**:
 

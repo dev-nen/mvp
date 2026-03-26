@@ -24,9 +24,9 @@ export function Navbar({ enableSearch = false }) {
       <div className="page-container navbar__bar">
         <Link to="/" className="navbar__brand" aria-label="Ir a la Home">
           <div className="navbar__brand-mark">
-            <span>IK</span>
+            <span>N</span>
           </div>
-          <span className="navbar__brand-name">InfoKids</span>
+          <span className="navbar__brand-name">Nendo</span>
         </Link>
 
         <div className="navbar__actions">

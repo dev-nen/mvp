@@ -78,35 +78,6 @@
   max-width: 42rem;
 }
 
-.catalog-hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.catalog-hero__stat {
-  min-width: 9rem;
-  padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.catalog-hero__stat-value {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.1;
-}
-
-.catalog-hero__stat-label {
-  display: block;
-  margin-top: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-}
-
 .catalog-hero__search-feedback {
   color: var(--color-text-muted);
   font-size: 0.9375rem;
@@ -247,27 +218,6 @@
   object-fit: cover;
 }
 
-.catalog-card__featured-badge {
-  position: absolute;
-  top: var(--space-3);
-  left: var(--space-3);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 0.5rem 0.75rem;
-  color: var(--color-primary-contrast);
-  background: linear-gradient(
-    135deg,
-    var(--color-primary),
-    var(--color-primary-strong)
-  );
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-sm);
-  font-size: 0.8125rem;
-  font-weight: 700;
-}
-
-.catalog-card__featured-badge svg,
 .catalog-card__meta-icon,
 .catalog-state__icon {
   width: 1rem;

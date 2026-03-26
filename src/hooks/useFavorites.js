@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const FAVORITES_STORAGE_KEY = "infokids.favorite_activity_ids";
+const FAVORITES_STORAGE_KEY = "nendo.favorite_activity_ids";
 
 function loadFavoriteIds() {
   if (typeof window === "undefined") {

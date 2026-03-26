@@ -1,10 +1,6 @@
 import { activities, centers, cities } from "@/data/catalogFallback";
 
 function sortActivities(leftActivity, rightActivity) {
-  if (leftActivity.is_featured !== rightActivity.is_featured) {
-    return Number(rightActivity.is_featured) - Number(leftActivity.is_featured);
-  }
-
   return (
     new Date(rightActivity.created_at).getTime() -
     new Date(leftActivity.created_at).getTime()

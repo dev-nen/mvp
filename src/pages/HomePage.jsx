@@ -58,12 +58,7 @@ export function HomePage() {
 
       <main className="home-page__main">
         <div className="page-container home-page__container">
-          <CatalogHero
-            activityCount={activities.length}
-            categoryCount={categoryLabelOptions.length}
-            cityCount={cityOptions.length}
-            searchQuery={searchQuery}
-          />
+          <CatalogHero searchQuery={searchQuery} />
 
           <CatalogToolbar
             searchQuery={searchQuery}

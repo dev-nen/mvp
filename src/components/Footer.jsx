@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="footer">
       <div className="page-container footer__inner">
-        <p className="footer__title">InfoKids MVP</p>
+        <p className="footer__title">Nendo MVP</p>
         <p className="footer__text">
           Este sitio es un prototipo.
           <br />

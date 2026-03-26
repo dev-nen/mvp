@@ -14,7 +14,7 @@ const CITY_OPTIONS = ["Sitges", "Sant Pere de Ribes", "Roquetes"];
 const MOCK_PROFILE = {
   firstName: "Maria Jesus",
   lastName: "de los Santos Amores",
-  email: "maria.amores@infokids.app",
+  email: "maria.amores@nendo.app",
   city: "Sitges",
 };
 
