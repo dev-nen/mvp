@@ -7,6 +7,11 @@ import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
+import {
+  CATALOG_MODAL_SOURCE,
+  trackActivityFavoriteAdd,
+  trackActivityFavoriteRemove,
+} from "@/services/activityEventsService";
 import "./FavoritesPage.css";
 
 export function FavoritesPage() {
@@ -16,7 +21,7 @@ export function FavoritesPage() {
 
   const favoriteActivities = useMemo(() => {
     const activitiesById = new Map(
-      activities.map((activity) => [activity.id, activity]),
+      activities.map((activity) => [String(activity.id), activity]),
     );
 
     return favoriteIds
@@ -27,6 +32,19 @@ export function FavoritesPage() {
   const hasNoSavedFavorites = favoriteIds.length === 0;
   const hasUnresolvableFavorites =
     !hasNoSavedFavorites && favoriteActivities.length === 0;
+
+  const handleToggleFavorite = (activity) => {
+    const nextIsFavorite = !isFavorite(activity.id);
+
+    toggleFavorite(activity.id);
+
+    if (nextIsFavorite) {
+      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
+      return;
+    }
+
+    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
+  };
 
   return (
     <div className="favorites-page">
@@ -93,7 +111,7 @@ export function FavoritesPage() {
                     key={activity.id}
                     activity={activity}
                     isFavorite={isFavorite(activity.id)}
-                    onToggleFavorite={toggleFavorite}
+                    onToggleFavorite={handleToggleFavorite}
                     onViewMore={() => navigate(`/favoritos/${activity.id}`)}
                     viewMoreLabel="Ver ficha completa"
                   />

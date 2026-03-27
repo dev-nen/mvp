@@ -1,31 +1,30 @@
 export const cities = [
   {
-    id: "city-sitges",
+    id: 1,
     name: "Sitges",
     slug: "sitges",
     is_active: true,
     created_at: "2026-03-01T09:00:00.000Z",
   },
   {
-    id: "city-sant-pere-de-ribes",
+    id: 2,
     name: "Sant Pere de Ribes",
     slug: "sant-pere-de-ribes",
     is_active: true,
     created_at: "2026-03-01T09:05:00.000Z",
   },
   {
-    id: "city-vilanova-i-la-geltru",
+    id: 3,
     name: "Vilanova i la Geltru",
     slug: "vilanova-i-la-geltru",
     is_active: true,
     created_at: "2026-03-01T09:10:00.000Z",
   },
 ];
-
 export const centers = [
   {
-    id: "center-sitges-club-patins",
-    city_id: "city-sitges",
+    id: 1,
+    city_id: 1,
     name: "Club Patins Sitges",
     website_url: "https://example.com/club-patins-sitges",
     contact_email: "hola@clubpatinssitges.example",
@@ -34,8 +33,8 @@ export const centers = [
     created_at: "2026-03-02T09:00:00.000Z",
   },
   {
-    id: "center-espai-creatiu-ribes",
-    city_id: "city-sant-pere-de-ribes",
+    id: 2,
+    city_id: 2,
     name: "Espai Creatiu Ribes",
     website_url: "https://example.com/espai-creatiu-ribes",
     contact_email: "hola@espaicreatiu.example",
@@ -44,8 +43,8 @@ export const centers = [
     created_at: "2026-03-02T09:05:00.000Z",
   },
   {
-    id: "center-aula-mar-vilanova",
-    city_id: "city-vilanova-i-la-geltru",
+    id: 3,
+    city_id: 3,
     name: "Aula del Mar Vilanova",
     website_url: "https://example.com/aula-del-mar",
     contact_email: "info@auladelmar.example",
@@ -54,12 +53,11 @@ export const centers = [
     created_at: "2026-03-02T09:10:00.000Z",
   },
 ];
-
 export const activities = [
   {
-    id: "activity-hockey-sitges",
-    center_id: "center-sitges-club-patins",
-    city_id: "city-sitges",
+    id: 1,
+    center_id: 1,
+    city_id: 1,
     title: "Hockey base entre semana",
     category_label: "Deportes",
     short_description:
@@ -78,9 +76,9 @@ export const activities = [
     created_at: "2026-03-14T16:30:00.000Z",
   },
   {
-    id: "activity-pintura-ribes",
-    center_id: "center-espai-creatiu-ribes",
-    city_id: "city-sant-pere-de-ribes",
+    id: 2,
+    center_id: 2,
+    city_id: 2,
     title: "Taller de pintura creativa",
     category_label: "Arte",
     short_description:
@@ -99,13 +97,15 @@ export const activities = [
     created_at: "2026-03-12T10:15:00.000Z",
   },
   {
-    id: "activity-natacion-sitges",
-    center_id: "center-sitges-club-patins",
-    city_id: "city-sitges",
+    id: 3,
+    center_id: 1,
+    city_id: 1,
     title: "Iniciacion a la natacion",
     category_label: "Deportes",
     short_description:
       "Grupos reducidos para mejorar autonomia en el agua con enfoque ludico y progresivo.",
+    description:
+      "Actividad de iniciacion al medio acuatico con grupos reducidos, objetivos progresivos y enfoque ludico. Busca mejorar autonomia, confianza y relacion positiva con el agua sin perder el componente de juego.",
     image_url: "/images/swimming.jpg",
     price_label: "Desde 36 EUR al mes",
     schedule_label: "Martes y jueves, 18:00 a 19:00",
@@ -118,13 +118,15 @@ export const activities = [
     created_at: "2026-03-11T11:00:00.000Z",
   },
   {
-    id: "activity-refuerzo-vilanova",
-    center_id: "center-aula-mar-vilanova",
-    city_id: "city-vilanova-i-la-geltru",
+    id: 4,
+    center_id: 3,
+    city_id: 3,
     title: "Refuerzo de matematicas y ciencias",
     category_label: "Apoyo escolar",
     short_description:
       "Acompanamiento practico para consolidar habitos de estudio y ganar confianza durante el curso.",
+    description:
+      "Actividad de apoyo en matematicas y lectura para primaria, con acompanamiento cercano para consolidar habitos, resolver dudas concretas y ganar confianza durante el curso.",
     image_url: "/images/tutoring.jpg",
     price_label: "25 EUR por clase",
     schedule_label: "Lunes a jueves, 17:00 a 18:00",
@@ -137,9 +139,9 @@ export const activities = [
     created_at: "2026-03-09T09:30:00.000Z",
   },
   {
-    id: "activity-yoga-ribes",
-    center_id: "center-espai-creatiu-ribes",
-    city_id: "city-sant-pere-de-ribes",
+    id: 5,
+    center_id: 2,
+    city_id: 2,
     title: "Yoga en familia",
     category_label: "Familia",
     short_description:
@@ -158,9 +160,9 @@ export const activities = [
     created_at: "2026-03-08T08:00:00.000Z",
   },
   {
-    id: "activity-teatro-vilanova",
-    center_id: "center-aula-mar-vilanova",
-    city_id: "city-vilanova-i-la-geltru",
+    id: 6,
+    center_id: 3,
+    city_id: 3,
     title: "Laboratorio de teatro infantil",
     category_label: "Cultura",
     short_description:
@@ -179,13 +181,15 @@ export const activities = [
     created_at: "2026-03-07T13:45:00.000Z",
   },
   {
-    id: "activity-campus-mar-vilanova",
-    center_id: "center-aula-mar-vilanova",
-    city_id: "city-vilanova-i-la-geltru",
+    id: 7,
+    center_id: 3,
+    city_id: 3,
     title: "Campus de mar y ciencia",
     category_label: "Camps",
     short_description:
       "Programa vacacional con exploracion de costa, experimentos y actividades al aire libre.",
+    description:
+      "Programa vacacional con actividades de costa, observacion, pequenos experimentos y propuestas al aire libre para peques con curiosidad por el mar y la ciencia.",
     image_url: "/images/swimming.jpg",
     price_label: "135 EUR por semana",
     schedule_label: "Lunes a viernes, 9:00 a 14:00",

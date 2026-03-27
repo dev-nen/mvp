@@ -2,6 +2,14 @@ import { useEffect, useState } from "react";
 
 const FAVORITES_STORAGE_KEY = "nendo.favorite_activity_ids";
 
+function normalizeFavoriteId(activityId) {
+  if (activityId === null || activityId === undefined) {
+    return null;
+  }
+
+  return String(activityId);
+}
+
 function loadFavoriteIds() {
   if (typeof window === "undefined") {
     return [];
@@ -17,7 +25,9 @@ function loadFavoriteIds() {
     const parsedValue = JSON.parse(storedValue);
 
     return Array.isArray(parsedValue)
-      ? parsedValue.filter((value) => typeof value === "string")
+      ? parsedValue
+          .map((value) => normalizeFavoriteId(value))
+          .filter(Boolean)
       : [];
   } catch {
     return [];
@@ -39,20 +49,42 @@ export function useFavorites() {
   }, [favoriteIds]);
 
   const toggleFavorite = (activityId) => {
+    const normalizedActivityId = normalizeFavoriteId(activityId);
+
+    if (!normalizedActivityId) {
+      return;
+    }
+
     setFavoriteIds((currentFavoriteIds) =>
-      currentFavoriteIds.includes(activityId)
-        ? currentFavoriteIds.filter((favoriteId) => favoriteId !== activityId)
-        : [...currentFavoriteIds, activityId],
+      currentFavoriteIds.includes(normalizedActivityId)
+        ? currentFavoriteIds.filter(
+            (favoriteId) => favoriteId !== normalizedActivityId,
+          )
+        : [...currentFavoriteIds, normalizedActivityId],
     );
   };
 
   const removeFavorite = (activityId) => {
+    const normalizedActivityId = normalizeFavoriteId(activityId);
+
+    if (!normalizedActivityId) {
+      return;
+    }
+
     setFavoriteIds((currentFavoriteIds) =>
-      currentFavoriteIds.filter((favoriteId) => favoriteId !== activityId),
+      currentFavoriteIds.filter(
+        (favoriteId) => favoriteId !== normalizedActivityId,
+      ),
     );
   };
 
-  const isFavorite = (activityId) => favoriteIds.includes(activityId);
+  const isFavorite = (activityId) => {
+    const normalizedActivityId = normalizeFavoriteId(activityId);
+
+    return normalizedActivityId
+      ? favoriteIds.includes(normalizedActivityId)
+      : false;
+  };
 
   return {
     favoriteIds,

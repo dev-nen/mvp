@@ -1,5 +1,6 @@
+import { useEffect } from "react";
 import { AlertTriangle, ArrowLeft, Heart, LoaderCircle, SearchX } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { ActivityFacts } from "@/components/catalog/ActivityFacts";
@@ -10,15 +11,25 @@ import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage
 import { getActivityDescription } from "@/helpers/activityPresentation";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
+import {
+  FAVORITES_DETAIL_SOURCE,
+  trackActivityContactClick,
+  trackActivityFavoriteRemove,
+  trackActivityViewMore,
+} from "@/services/activityEventsService";
 import "./FavoriteActivityDetailPage.css";
 
+const trackedFavoriteDetailViews = new Set();
+
 export function FavoriteActivityDetailPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { activityId = "" } = useParams();
   const { activities, isLoading, error, reload } = useCatalog();
   const { favoriteIds, removeFavorite } = useFavorites();
 
-  const activity = activities.find((item) => item.id === activityId) ?? null;
+  const activity =
+    activities.find((item) => String(item.id) === activityId) ?? null;
   const isSavedFavorite = favoriteIds.includes(activityId);
 
   const handleGoBack = () => {
@@ -26,6 +37,10 @@ export function FavoriteActivityDetailPage() {
   };
 
   const handleRemoveFavorite = () => {
+    if (activity) {
+      void trackActivityFavoriteRemove(activity, FAVORITES_DETAIL_SOURCE);
+    }
+
     removeFavorite(activityId);
     navigate("/favoritos");
   };
@@ -35,8 +50,24 @@ export function FavoriteActivityDetailPage() {
       return;
     }
 
+    void trackActivityContactClick(activity, FAVORITES_DETAIL_SOURCE);
     window.open(buildWhatsappActivityUrl(activity), "_blank", "noopener,noreferrer");
   };
+
+  useEffect(() => {
+    if (!activity || !isSavedFavorite) {
+      return;
+    }
+
+    const trackingKey = `${location.key || location.pathname}:${String(activity.id)}`;
+
+    if (trackedFavoriteDetailViews.has(trackingKey)) {
+      return;
+    }
+
+    trackedFavoriteDetailViews.add(trackingKey);
+    void trackActivityViewMore(activity, FAVORITES_DETAIL_SOURCE);
+  }, [activity, isSavedFavorite, location.key, location.pathname]);
 
   let content = null;
 

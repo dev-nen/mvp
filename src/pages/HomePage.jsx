@@ -18,6 +18,13 @@ import {
 import { searchActivities } from "@/helpers/catalogSearch";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
+import {
+  CATALOG_MODAL_SOURCE,
+  trackActivityContactClick,
+  trackActivityFavoriteAdd,
+  trackActivityFavoriteRemove,
+  trackActivityViewMore,
+} from "@/services/activityEventsService";
 import "./HomePage.css";
 
 export function HomePage() {
@@ -63,6 +70,28 @@ export function HomePage() {
       behavior: "smooth",
       block: "start",
     });
+  };
+
+  const handleOpenActivityDetail = (activity) => {
+    setSelectedActivity(activity);
+    void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
+  };
+
+  const handleToggleFavorite = (activity) => {
+    const nextIsFavorite = !isFavorite(activity.id);
+
+    toggleFavorite(activity.id);
+
+    if (nextIsFavorite) {
+      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
+      return;
+    }
+
+    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
+  };
+
+  const handleCatalogModalContactClick = (activity) => {
+    void trackActivityContactClick(activity, CATALOG_MODAL_SOURCE);
   };
 
   return (
@@ -142,8 +171,8 @@ export function HomePage() {
                     key={activity.id}
                     activity={activity}
                     isFavorite={isFavorite(activity.id)}
-                    onToggleFavorite={toggleFavorite}
-                    onViewMore={setSelectedActivity}
+                    onToggleFavorite={handleToggleFavorite}
+                    onViewMore={handleOpenActivityDetail}
                   />
                 ))}
               </div>
@@ -158,6 +187,7 @@ export function HomePage() {
         activity={selectedActivity}
         open={Boolean(selectedActivity)}
         onClose={() => setSelectedActivity(null)}
+        onContactClick={handleCatalogModalContactClick}
       />
     </div>
   );

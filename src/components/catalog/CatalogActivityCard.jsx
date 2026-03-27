@@ -30,7 +30,7 @@ export function CatalogActivityCard({
           className={`catalog-card__favorite ${
             isFavorite ? "catalog-card__favorite--active" : ""
           }`}
-          onClick={() => onToggleFavorite?.(activity.id)}
+          onClick={() => onToggleFavorite?.(activity)}
           aria-label={
             isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
           }

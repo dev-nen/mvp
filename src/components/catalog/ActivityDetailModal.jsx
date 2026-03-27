@@ -6,7 +6,12 @@ import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage
 import { getActivityDescription } from "@/helpers/activityPresentation";
 import "./ActivityDetailModal.css";
 
-export function ActivityDetailModal({ activity, open, onClose }) {
+export function ActivityDetailModal({
+  activity,
+  open,
+  onClose,
+  onContactClick,
+}) {
   useEffect(() => {
     if (!open) {
       return undefined;
@@ -35,6 +40,7 @@ export function ActivityDetailModal({ activity, open, onClose }) {
   }
 
   const handleOpenWhatsapp = () => {
+    onContactClick?.(activity);
     window.open(buildWhatsappActivityUrl(activity), "_blank", "noopener,noreferrer");
   };
 
