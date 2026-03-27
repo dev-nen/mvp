@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { FavoriteActivityDetailPage } from "@/pages/FavoriteActivityDetailPage";
+import { FavoritesPage } from "@/pages/FavoritesPage";
 import { HomePage } from "@/pages/HomePage";
 import { PlaceholderPage } from "@/pages/PlaceholderPage";
 import { ProfilePage } from "@/pages/ProfilePage";
@@ -8,14 +10,10 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/perfil" element={<ProfilePage />} />
+      <Route path="/favoritos" element={<FavoritesPage />} />
       <Route
-        path="/favoritos"
-        element={
-          <PlaceholderPage
-            title="Favoritos"
-            description="Estamos preparando esta pantalla para que puedas volver rápido a las actividades que más te interesan."
-          />
-        }
+        path="/favoritos/:activityId"
+        element={<FavoriteActivityDetailPage />}
       />
       <Route
         path="/soporte"

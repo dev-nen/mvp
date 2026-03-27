@@ -1,47 +1,18 @@
-import {
-  ArrowRight,
-  Building2,
-  Clock3,
-  Heart,
-  MapPin,
-  Users,
-  Wallet,
-} from "lucide-react";
+import { ArrowRight, Building2, Clock3, Heart, MapPin, Users, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-function formatAgeLabel({ age_rule_type, age_min, age_max }) {
-  if (age_rule_type === "open") {
-    return "Todas las edades";
-  }
-
-  if (typeof age_min === "number" && typeof age_max === "number") {
-    return `${age_min}-${age_max} anos`;
-  }
-
-  if (typeof age_min === "number") {
-    return `Desde ${age_min} anos`;
-  }
-
-  if (typeof age_max === "number") {
-    return `Hasta ${age_max} anos`;
-  }
-
-  return "Consulta la edad";
-}
-
-function formatLocationLabel({ city_name, venue_name }) {
-  if (city_name && venue_name) {
-    return `${city_name} - ${venue_name}`;
-  }
-
-  return city_name || venue_name || "Consulta la ubicacion";
-}
+import {
+  formatActivityAgeLabel,
+  formatActivityLocationLabel,
+} from "@/helpers/activityPresentation";
+import "./CatalogActivityCard.css";
 
 export function CatalogActivityCard({
   activity,
   isFavorite = false,
   onToggleFavorite,
+  onViewMore,
+  viewMoreLabel = "Ver mas",
 }) {
   return (
     <Card className="catalog-card">
@@ -83,14 +54,14 @@ export function CatalogActivityCard({
             <div className="catalog-card__fact-inline">
               <MapPin className="catalog-card__fact-icon" />
               <span className="catalog-card__fact-inline-text catalog-card__fact-inline-text--location">
-                {formatLocationLabel(activity)}
+                {formatActivityLocationLabel(activity)}
               </span>
             </div>
 
             <div className="catalog-card__fact-inline catalog-card__fact-inline--age">
               <Users className="catalog-card__fact-icon" />
               <span className="catalog-card__fact-inline-text">
-                {formatAgeLabel(activity)}
+                {formatActivityAgeLabel(activity)}
               </span>
             </div>
           </div>
@@ -126,9 +97,10 @@ export function CatalogActivityCard({
           type="button"
           variant="outline"
           className="catalog-card__cta"
-          disabled
+          onClick={() => onViewMore?.(activity)}
+          disabled={!onViewMore}
         >
-          Ver mas
+          {viewMoreLabel}
           <ArrowRight />
         </Button>
       </CardContent>

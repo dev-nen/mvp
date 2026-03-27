@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
+import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
 import { LandingFamilyFocus } from "@/components/landing/LandingFamilyFocus";
@@ -25,6 +26,7 @@ export function HomePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCitySlug, setSelectedCitySlug] = useState("");
+  const [selectedActivity, setSelectedActivity] = useState(null);
   const catalogSectionRef = useRef(null);
 
   const categoryLabelOptions = useMemo(
@@ -141,6 +143,7 @@ export function HomePage() {
                     activity={activity}
                     isFavorite={isFavorite(activity.id)}
                     onToggleFavorite={toggleFavorite}
+                    onViewMore={setSelectedActivity}
                   />
                 ))}
               </div>
@@ -150,6 +153,12 @@ export function HomePage() {
       </main>
 
       <Footer />
+
+      <ActivityDetailModal
+        activity={selectedActivity}
+        open={Boolean(selectedActivity)}
+        onClose={() => setSelectedActivity(null)}
+      />
     </div>
   );
 }

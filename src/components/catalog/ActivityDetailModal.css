@@ -1,0 +1,112 @@
+.activity-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.activity-detail-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(34, 49, 58, 0.32);
+  backdrop-filter: blur(8px);
+}
+
+.activity-detail-modal__panel {
+  position: relative;
+  width: min(42rem, 100%);
+  max-height: min(90vh, 52rem);
+  overflow: auto;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.activity-detail-modal__close {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 1;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+}
+
+.activity-detail-modal__close svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.activity-detail-modal__media {
+  aspect-ratio: 16 / 9;
+  background: var(--color-surface-muted);
+}
+
+.activity-detail-modal__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.activity-detail-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.activity-detail-modal__category {
+  color: var(--color-primary-strong);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.activity-detail-modal__title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.15;
+}
+
+.activity-detail-modal__description {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.activity-detail-modal__contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.activity-detail-modal__contact-copy {
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 40rem) {
+  .activity-detail-modal {
+    align-items: flex-end;
+    padding: var(--space-2);
+  }
+
+  .activity-detail-modal__panel {
+    width: 100%;
+    max-height: calc(100vh - var(--space-2));
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .activity-detail-modal__body {
+    padding: var(--space-4);
+  }
+}

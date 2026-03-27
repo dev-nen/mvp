@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import "./CatalogState.css";
 
 export function CatalogState({
   icon: Icon,

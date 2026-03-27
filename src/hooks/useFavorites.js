@@ -46,11 +46,18 @@ export function useFavorites() {
     );
   };
 
+  const removeFavorite = (activityId) => {
+    setFavoriteIds((currentFavoriteIds) =>
+      currentFavoriteIds.filter((favoriteId) => favoriteId !== activityId),
+    );
+  };
+
   const isFavorite = (activityId) => favoriteIds.includes(activityId);
 
   return {
     favoriteIds,
     isFavorite,
     toggleFavorite,
+    removeFavorite,
   };
 }

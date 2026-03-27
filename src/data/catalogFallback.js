@@ -64,6 +64,8 @@ export const activities = [
     category_label: "Deportes",
     short_description:
       "Entrenamientos de iniciacion para peques que quieren empezar a patinar y jugar en equipo.",
+    description:
+      "Programa pensado para peques que quieren empezar a patinar, ganar seguridad sobre ruedas y descubrir el trabajo en equipo en un entorno acompanado. Las sesiones combinan tecnica basica, juego y dinamicas grupales para avanzar con ritmo progresivo.",
     image_url: "/images/hockey.jpg",
     price_label: "Desde 42 EUR al mes",
     schedule_label: "Lunes y miercoles, 17:30 a 19:00",
@@ -83,6 +85,8 @@ export const activities = [
     category_label: "Arte",
     short_description:
       "Sesion semanal para experimentar con color, collage y tecnicas de ilustracion infantil.",
+    description:
+      "Taller creativo para experimentar con pintura, collage y composicion visual sin necesidad de experiencia previa. Cada sesion propone una actividad guiada para desarrollar expresion personal, curiosidad y confianza con distintos materiales.",
     image_url: "/images/painting.jpg",
     price_label: "18 EUR por sesion",
     schedule_label: "Viernes, 17:00 a 18:30",
@@ -140,6 +144,8 @@ export const activities = [
     category_label: "Familia",
     short_description:
       "Encuentro suave para compartir movimiento, respiracion y juego entre peques y adultos.",
+    description:
+      "Espacio tranquilo para compartir movimiento, respiracion y juego entre peques y adultos en un formato amable y accesible. La propuesta busca crear un rato de conexion en familia con ejercicios suaves y dinamicas faciles de seguir.",
     image_url: "/images/yoga.jpg",
     price_label: "12 EUR por familia",
     schedule_label: "Sabados, 10:30 a 11:30",
@@ -159,6 +165,8 @@ export const activities = [
     category_label: "Cultura",
     short_description:
       "Improvisacion, voz y expresion corporal para desarrollar seguridad escenica jugando.",
+    description:
+      "Laboratorio practico para explorar voz, expresion corporal e improvisacion a traves del juego. Las sesiones ayudan a ganar soltura escenica, escuchar al grupo y disfrutar del proceso creativo sin enfocarse en la perfeccion.",
     image_url: "/images/theater.jpg",
     price_label: "20 EUR por sesion",
     schedule_label: "Miercoles, 18:15 a 19:30",
