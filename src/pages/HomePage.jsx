@@ -5,7 +5,6 @@ import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
-import { LandingFamilyFocus } from "@/components/landing/LandingFamilyFocus";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { Navbar } from "@/components/Navbar";
@@ -26,6 +25,37 @@ import {
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./HomePage.css";
+
+const HOME_QUICK_ACCESS_ITEMS = [
+  {
+    id: "extraescolares",
+    title: "Extraescolares",
+    description:
+      "Opciones semanales para deporte, arte y apoyo escolar con un solo acceso rapido.",
+    targetCategoryLabels: ["Apoyo escolar", "Arte", "Deportes"],
+  },
+  {
+    id: "talleres-puntuales",
+    title: "Talleres y actividades puntuales",
+    description:
+      "Planes para probar algo nuevo entre semana, fines de semana o vacaciones.",
+    targetCategoryLabels: ["Arte", "Cultura", "Familia", "Camps"],
+  },
+  {
+    id: "deportes-movimiento",
+    title: "Deportes y movimiento",
+    description:
+      "Escuelas y actividades para moverse, jugar y gastar energia.",
+    targetCategoryLabels: ["Deportes"],
+  },
+  {
+    id: "cultura-familia",
+    title: "Cultura y planes en familia",
+    description:
+      "Teatro, museos y propuestas culturales para disfrutar juntos.",
+    targetCategoryLabels: ["Cultura", "Familia"],
+  },
+];
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
@@ -72,6 +102,14 @@ export function HomePage() {
     });
   };
 
+  const handleLandingQuickAccessSelect = (targetCategoryLabels) => {
+    setSelectedCategoryLabels([...targetCategoryLabels]);
+    catalogSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   const handleOpenActivityDetail = (activity) => {
     setSelectedActivity(activity);
     void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
@@ -101,8 +139,11 @@ export function HomePage() {
       <main className="home-page__main">
         <div className="page-container home-page__container">
           <LandingHero onExploreActivities={handleExploreActivities} />
-          <LandingValueProps />
-          <LandingFamilyFocus />
+          <LandingValueProps
+            quickAccessItems={HOME_QUICK_ACCESS_ITEMS}
+            selectedCategoryLabels={selectedCategoryLabels}
+            onQuickAccessSelect={handleLandingQuickAccessSelect}
+          />
           <LandingBridgeCTA onExploreActivities={handleExploreActivities} />
 
           <section

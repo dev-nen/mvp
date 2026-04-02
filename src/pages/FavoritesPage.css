@@ -3,8 +3,12 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at top, rgba(79, 167, 163, 0.16), transparent 34rem),
-    linear-gradient(180deg, #f8fbfb 0%, #f3f7f8 100%);
+    radial-gradient(circle at top, var(--color-page-glow), transparent 34rem),
+    linear-gradient(
+      180deg,
+      var(--color-page-gradient-start) 0%,
+      var(--color-page-gradient-end) 100%
+    );
 }
 
 .favorites-page__main {

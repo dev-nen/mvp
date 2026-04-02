@@ -116,14 +116,14 @@
 
 .catalog-card__fact--boxed {
   padding: 0.625rem;
-  background: rgba(246, 251, 251, 0.92);
-  border: 1px solid rgba(219, 230, 230, 0.95);
+  background: rgba(252, 245, 239, 0.96);
+  border: 1px solid rgba(229, 214, 204, 0.96);
   border-radius: var(--radius-md);
 }
 
 .catalog-card__fact--price {
-  background: rgba(76, 167, 162, 0.12);
-  border-color: rgba(76, 167, 162, 0.25);
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft-strong);
 }
 
 .catalog-card__fact--center {
@@ -136,7 +136,7 @@
 .catalog-card__fact-icon {
   margin-top: 0.125rem;
   flex-shrink: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
 }
 
 .catalog-card__fact-body {

@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { X } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { ArrowLeft, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ActivityFacts } from "@/components/catalog/ActivityFacts";
 import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage";
@@ -12,14 +12,18 @@ export function ActivityDetailModal({
   onClose,
   onContactClick,
 }) {
+  const scrollContainerRef = useRef(null);
+
   useEffect(() => {
     if (!open) {
       return undefined;
     }
 
-    const previousOverflow = document.body.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
 
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -30,10 +34,21 @@ export function ActivityDetailModal({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = previousOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [open, activity?.id]);
 
   if (!open || !activity) {
     return null;
@@ -54,46 +69,64 @@ export function ActivityDetailModal({
         aria-modal="true"
         aria-labelledby="activity-detail-modal-title"
       >
-        <button
-          type="button"
-          className="activity-detail-modal__close"
-          onClick={onClose}
-          aria-label="Cerrar detalle"
+        <div
+          ref={scrollContainerRef}
+          className="activity-detail-modal__scroll"
         >
-          <X />
-        </button>
+          <div className="activity-detail-modal__topbar">
+            <button
+              type="button"
+              className="activity-detail-modal__back"
+              onClick={onClose}
+            >
+              <ArrowLeft />
+              <span>Volver</span>
+            </button>
 
-        <div className="activity-detail-modal__media">
-          <img
-            src={activity.image_url || "/placeholder.jpg"}
-            alt={activity.title}
-            className="activity-detail-modal__image"
-          />
-        </div>
+            <button
+              type="button"
+              className="activity-detail-modal__close"
+              onClick={onClose}
+              aria-label="Cerrar detalle"
+            >
+              <X />
+            </button>
+          </div>
 
-        <div className="activity-detail-modal__body">
-          <p className="activity-detail-modal__category">
-            {activity.category_label}
-          </p>
-          <h2
-            id="activity-detail-modal-title"
-            className="activity-detail-modal__title"
-          >
-            {activity.title}
-          </h2>
+          <div className="activity-detail-modal__media">
+            <img
+              src={activity.image_url || "/placeholder.jpg"}
+              alt={activity.title}
+              className="activity-detail-modal__image"
+            />
+          </div>
 
-          <ActivityFacts activity={activity} />
-
-          <p className="activity-detail-modal__description">
-            {getActivityDescription(activity)}
-          </p>
-
-          <div className="activity-detail-modal__contact">
-            <p className="activity-detail-modal__contact-copy">
-              Tienes dudas o quieres saber si esta actividad encaja con tu
-              familia? Escribenos directamente.
+          <div className="activity-detail-modal__body">
+            <p className="activity-detail-modal__category">
+              {activity.category_label}
             </p>
-            <Button onClick={handleOpenWhatsapp}>Consultar por WhatsApp</Button>
+            <h2
+              id="activity-detail-modal-title"
+              className="activity-detail-modal__title"
+            >
+              {activity.title}
+            </h2>
+
+            <ActivityFacts activity={activity} />
+
+            <p className="activity-detail-modal__description">
+              {getActivityDescription(activity)}
+            </p>
+
+            <div className="activity-detail-modal__contact">
+              <p className="activity-detail-modal__contact-copy">
+                Tienes dudas o quieres saber si esta actividad encaja con tu
+                familia? Escribenos directamente.
+              </p>
+              <Button onClick={handleOpenWhatsapp}>
+                Consultar por WhatsApp
+              </Button>
+            </div>
           </div>
         </div>
       </div>

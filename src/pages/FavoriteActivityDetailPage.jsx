@@ -55,6 +55,10 @@ export function FavoriteActivityDetailPage() {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activityId]);
+
+  useEffect(() => {
     if (!activity || !isSavedFavorite) {
       return;
     }

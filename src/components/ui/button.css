@@ -32,6 +32,11 @@
   box-shadow: none;
 }
 
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--color-focus), var(--shadow-md);
+}
+
 .button svg {
   width: 1rem;
   height: 1rem;
@@ -62,7 +67,7 @@
 }
 
 .button--default:hover {
-  background: linear-gradient(135deg, var(--color-primary-strong), #377f7a);
+  background: linear-gradient(135deg, var(--color-primary-strong), #9c4f40);
 }
 
 .button--ghost {
@@ -84,5 +89,5 @@
 
 .button--outline:hover {
   background: var(--color-surface-subtle);
-  border-color: rgba(76, 167, 162, 0.28);
+  border-color: var(--color-primary-soft-strong);
 }
