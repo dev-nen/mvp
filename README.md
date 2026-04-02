@@ -1,103 +1,81 @@
-````md
-# Nendo MVP
+# NensGo MVP
 
-Frontend MVP for a local discovery platform focused on children's activities, filters, favorites, and quick contact.
+Frontend MVP para descubrir actividades infantiles y planes en familia,
+filtrarlos rapido y contactar directamente con cada centro organizador.
 
-## Overview
+## Resumen
 
-Nendo is a web app concept designed to help families discover nearby activities for children and quickly connect with organizers.
+NensGo es una aplicacion web enfocada en familias que quieren encontrar
+opciones cerca de ellas sin perder tiempo saltando entre webs, redes y
+mensajes.
 
-At its current stage, this repository contains the **frontend MVP**:
+El estado actual del repo cubre:
 
-- activity feed
-- category filters
-- location selector
-- favorites UI
-- responsive layout
-- deployable Vite app
+- catalogo de actividades activas
+- busqueda y filtros por ciudad y categoria
+- quick-access editorial en Home
+- favoritos persistidos en `localStorage`
+- detalle modal desde Home
+- detalle completo desde Favoritos
+- CTA de contacto por WhatsApp
+- panel interno `/pvi` para revisar interacciones cuando Supabase esta configurado
 
-This is still an early product foundation.  
-The project is evolving from a frontend mock/prototype into a more complete fullstack MVP.
+## Current Scope
 
-## Current Status
-
-Current scope:
-
-- React + Vite frontend
-- Pure CSS styling
-- Responsive home screen MVP
-- Mocked local data
-- Initial Vercel deployment
-
-Not implemented yet:
-
-- real backend integration
-- persistent favorites
-- real search
-- activity detail flow
-- authentication
-- database
-- organizer-side management
+- frontend con React + Vite
+- estilos en CSS plano
+- catalogo servido desde la capa local actual del proyecto
+- tracking de eventos hacia Supabase cuando las credenciales estan disponibles
+- fallback seguro cuando Supabase no esta configurado
 
 ## Tech Stack
 
-- React
+- React 18
 - Vite
-- JavaScript
-- Pure CSS
+- React Router
+- CSS
+- Supabase JS para eventos de interaccion
 
-## Goals
+## Local Setup
 
-Short term goals:
-
-- stabilize the frontend structure
-- improve search and filters behavior
-- persist favorites
-- add activity detail flow
-- connect the app to a backend
-
-Long term goal:
-
-- turn the current frontend MVP into a functional fullstack product.
-
-## Getting Started
-
-Install dependencies:
+Instalar dependencias:
 
 ```bash
 npm install
 ```
-````
 
-Run locally:
+Levantar entorno local:
 
 ```bash
 npm run dev
 ```
 
-Build for production:
+Build de produccion:
 
 ```bash
 npm run build
 ```
 
+## Env Vars
+
+El proyecto lee estas variables de entorno:
+
+```bash
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
+```
+
+Si no estan configuradas, la aplicacion sigue funcionando como frontend MVP y
+simplemente omite el tracking remoto de eventos.
+
 ## Notes
 
-- This repository currently focuses on the MVP frontend.
-- The UI is still evolving.
-- Some content shown in the app is placeholder/mock data for design and development purposes.
+- Los favoritos se guardan localmente en el navegador.
+- El detalle desde Home abre en modal y el detalle desde Favoritos usa ruta dedicada.
+- El CTA de WhatsApp abre contacto directo con el centro usando la informacion de la actividad.
+- El panel `/pvi` depende de `activity_events` en Supabase para mostrar datos reales.
 
 ## Disclaimer
 
-This project is a prototype.
-The activities currently displayed in the UI are mock examples and do not represent real listings.
-
-## License
-
-No license has been added yet.
-
-```
-
----
-
-```
+NensGo es un prototipo MVP. Algunas actividades mostradas en la interfaz son
+ejemplos de prueba usados para diseno, validacion y desarrollo.

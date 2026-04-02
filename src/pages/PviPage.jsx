@@ -129,7 +129,7 @@ export function PviPage() {
               PVI - Panel de Visionado de Interacciones
             </h1>
             <p className="pvi-page__description">
-              Vista interna rapida del interes y contacto generado por Nendo.
+              Vista interna rapida del interes y contacto generado por NensGo.
             </p>
           </header>
 

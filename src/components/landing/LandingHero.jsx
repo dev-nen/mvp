@@ -4,14 +4,16 @@ export function LandingHero({ onExploreActivities }) {
   return (
     <section className="landing-section landing-hero">
       <div className="landing-hero__panel">
-        <p className="landing-section__eyebrow">ACTIVIDADES PARA FAMILIAS</p>
+        <p className="landing-section__eyebrow">
+          ACTIVIDADES PARA PEQUES Y FAMILIAS
+        </p>
         <h1 className="landing-hero__title">
-          Encuentra actividades para peques y familias en un solo lugar
+          Descubre actividades para peques y familias en un solo lugar
         </h1>
         <p className="landing-hero__description">
-          Nendo reune propuestas culturales, deportivas, extraescolares y
-          familiares para ayudarte a descubrir que hacer cerca tuyo sin perder
-          tiempo buscando en mil sitios.
+          NensGo reune actividades culturales, deportivas, extraescolares y
+          planes en familia para ayudarte a encontrar opciones cerca de ti sin
+          perder tiempo saltando entre webs, redes y mensajes.
         </p>
 
         <div className="landing-hero__actions">

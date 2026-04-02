@@ -26,7 +26,7 @@ export function Navbar({ enableSearch = false }) {
           <div className="navbar__brand-mark">
             <span>N</span>
           </div>
-          <span className="navbar__brand-name">Nendo</span>
+          <span className="navbar__brand-name">NensGo</span>
         </Link>
 
         <div className="navbar__actions">

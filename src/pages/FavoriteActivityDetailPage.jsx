@@ -149,8 +149,8 @@ export function FavoriteActivityDetailPage() {
                 {activity.title}
               </h1>
               <p className="favorite-activity-detail__support">
-                Si esta actividad te interesa, puedes escribirnos directamente
-                para recibir mas informacion.
+                Si esta actividad te interesa, puedes contactar directamente con
+                el centro para pedir mas informacion.
               </p>
 
               <ActivityFacts activity={activity} />

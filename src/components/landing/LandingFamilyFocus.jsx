@@ -3,20 +3,19 @@ import { Card, CardContent } from "@/components/ui/card";
 const FAMILY_POINTS = [
   "Descubre actividades sin revisar veinte webs distintas",
   "Compara opciones por ciudad y categoria",
-  "Encuentra propuestas que encajen con tu momento familiar",
+  "Encuentra propuestas que encajan con tu momento familiar",
 ];
 
 export function LandingFamilyFocus() {
   return (
     <section className="landing-section landing-family-focus">
       <div className="landing-family-focus__copy">
-        <p className="landing-section__eyebrow">POR QUE NENDO</p>
+        <p className="landing-section__eyebrow">POR QUE NENSGO</p>
         <h2 className="landing-section__title">Pensado para familias</h2>
         <p className="landing-section__description">
-          Cuando llegas a una zona nueva, quieres comparar opciones o
-          simplemente no sabes por donde empezar, Nendo te ayuda a reunir
-          propuestas en un mismo lugar para decidir con mas calma y menos
-          vueltas.
+          Cuando llegas a una zona nueva o simplemente no sabes por donde
+          empezar, NensGo te ayuda a reunir opciones en un mismo lugar para
+          comparar con mas calma y decidir mejor.
         </p>
       </div>
 

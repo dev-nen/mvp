@@ -1,10 +1,10 @@
-import './AppDescription.css'
+import "./AppDescription.css";
 
 export function AppDescription() {
   return (
     <p className="app-description">
-      Actividdades para que los niños aprendan, jueguen y descubran cosas nuevas. Encuentra
-      actividades cerca de ti en segundos.
+      Actividades para que los peques aprendan, jueguen y descubran cosas
+      nuevas. Encuentra opciones cerca de ti en segundos.
     </p>
-  )
+  );
 }

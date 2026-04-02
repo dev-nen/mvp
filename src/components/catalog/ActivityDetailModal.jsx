@@ -121,7 +121,7 @@ export function ActivityDetailModal({
             <div className="activity-detail-modal__contact">
               <p className="activity-detail-modal__contact-copy">
                 Tienes dudas o quieres saber si esta actividad encaja con tu
-                familia? Escribenos directamente.
+                familia? Contacta directamente con el centro por WhatsApp.
               </p>
               <Button onClick={handleOpenWhatsapp}>
                 Consultar por WhatsApp

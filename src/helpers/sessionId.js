@@ -1,4 +1,6 @@
-const SESSION_STORAGE_KEY = "nendo_session_id";
+const SESSION_STORAGE_KEY = "nensgo_session_id";
+const LEGACY_STORAGE_PREFIX = ["nen", "do"].join("");
+const LEGACY_SESSION_STORAGE_KEY = `${LEGACY_STORAGE_PREFIX}_session_id`;
 
 function generateSessionId() {
   if (
@@ -8,7 +10,7 @@ function generateSessionId() {
     return crypto.randomUUID();
   }
 
-  return `nendo-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return `nensgo-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function getOrCreateSessionId() {
@@ -21,6 +23,16 @@ export function getOrCreateSessionId() {
 
     if (existingSessionId) {
       return existingSessionId;
+    }
+
+    const legacySessionId = window.localStorage.getItem(
+      LEGACY_SESSION_STORAGE_KEY,
+    );
+
+    if (legacySessionId) {
+      window.localStorage.setItem(SESSION_STORAGE_KEY, legacySessionId);
+      window.localStorage.removeItem(LEGACY_SESSION_STORAGE_KEY);
+      return legacySessionId;
     }
 
     const nextSessionId = generateSessionId();
