@@ -1,0 +1,14 @@
+{
+  "name": "NensGo",
+  "short_name": "NensGo",
+  "display": "standalone",
+  "background_color": "#FFFDF9",
+  "theme_color": "#4B8FE7",
+  "icons": [
+    {
+      "src": "/android-chrome-512x462.png",
+      "sizes": "512x462",
+      "type": "image/png"
+    }
+  ]
+}

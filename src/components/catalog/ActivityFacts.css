@@ -8,14 +8,14 @@
   flex-direction: column;
   gap: 0.25rem;
   padding: 0.75rem;
-  background: rgba(252, 245, 239, 0.96);
-  border: 1px solid rgba(229, 214, 204, 0.96);
+  background: rgba(249, 246, 241, 0.92);
+  border: 1px solid rgba(237, 239, 245, 0.98);
   border-radius: var(--radius-md);
 }
 
 .activity-facts__item--price {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary-soft-strong);
+  background: rgba(245, 201, 74, 0.14);
+  border-color: rgba(248, 177, 61, 0.28);
 }
 
 .activity-facts__label {
@@ -41,6 +41,10 @@
   margin-top: 0.125rem;
   flex-shrink: 0;
   color: var(--color-primary-strong);
+}
+
+.activity-facts__item--price .activity-facts__icon {
+  color: var(--color-accent-orange);
 }
 
 .activity-facts__item--price .activity-facts__value {

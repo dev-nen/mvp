@@ -156,7 +156,7 @@ export function FavoriteActivityDetailPage() {
               <ActivityFacts activity={activity} />
 
               <div className="favorite-activity-detail__actions">
-                <Button onClick={handleOpenWhatsapp}>
+                <Button onClick={handleOpenWhatsapp} className="button--whatsapp">
                   Consultar por WhatsApp
                 </Button>
                 <Button variant="outline" onClick={handleRemoveFavorite}>

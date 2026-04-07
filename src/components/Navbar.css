@@ -1,6 +1,7 @@
 .navbar {
   background: var(--color-overlay);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 10px 24px rgba(47, 61, 115, 0.06);
   backdrop-filter: blur(12px);
 }
 
@@ -15,29 +16,9 @@
 .navbar__brand {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  min-width: 0;
   color: inherit;
   text-decoration: none;
-}
-
-.navbar__brand-mark {
-  width: 2rem;
-  height: 2rem;
-  display: grid;
-  place-items: center;
-  color: var(--color-primary-contrast);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-strong));
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  font-size: 0.875rem;
-  font-weight: 700;
-}
-
-.navbar__brand-name {
-  color: var(--color-text);
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: 0.01em;
 }
 
 .navbar__actions {
@@ -46,13 +27,17 @@
   gap: var(--space-1);
 }
 
+.navbar__actions .button--ghost {
+  color: var(--text-primary);
+}
+
 .navbar__icon-link {
   text-decoration: none;
 }
 
 .navbar__icon-link--active {
   color: var(--color-primary-strong);
-  background: var(--color-primary-soft);
+  background: rgba(75, 143, 231, 0.12);
 }
 
 .navbar__search-panel {
@@ -73,5 +58,11 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 22rem) {
+  .navbar__bar {
+    gap: var(--space-2);
   }
 }

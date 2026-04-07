@@ -3,8 +3,9 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at top, rgba(79, 167, 163, 0.16), transparent 34rem),
-    linear-gradient(180deg, #f8fbfb 0%, #f3f7f8 100%);
+    radial-gradient(circle at top left, var(--color-glow-blue), transparent 24rem),
+    radial-gradient(circle at top right, var(--color-glow-purple), transparent 22rem),
+    linear-gradient(180deg, #fffdf9 0%, #f9f6f1 100%);
 }
 
 .pvi-page__main {
@@ -27,7 +28,7 @@
 .pvi-page__eyebrow,
 .pvi-page__panel-eyebrow,
 .pvi-page__metric-label {
-  color: var(--color-primary-strong);
+  color: var(--color-secondary);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -35,6 +36,7 @@
 }
 
 .pvi-page__title {
+  color: var(--color-text);
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1;
 }
@@ -62,8 +64,9 @@
   height: 2.75rem;
   display: grid;
   place-items: center;
-  color: var(--color-primary);
-  background: rgba(76, 167, 162, 0.12);
+  color: var(--color-primary-strong);
+  background:
+    linear-gradient(180deg, rgba(99, 190, 235, 0.16), rgba(122, 73, 232, 0.08));
   border-radius: var(--radius-md);
 }
 
@@ -73,6 +76,7 @@
 }
 
 .pvi-page__metric-value {
+  color: var(--color-text);
   font-size: clamp(1.8rem, 5vw, 2.4rem);
   font-weight: 700;
   line-height: 1;
@@ -93,6 +97,7 @@
 
 .pvi-page__panel-title {
   margin-top: var(--space-1);
+  color: var(--color-text);
   font-size: 1.25rem;
   font-weight: 700;
 }
@@ -110,7 +115,7 @@
 .pvi-page__table td {
   padding: 0.875rem 0;
   text-align: left;
-  border-bottom: 1px solid rgba(219, 230, 230, 0.95);
+  border-bottom: 1px solid rgba(237, 239, 245, 0.98);
 }
 
 .pvi-page__table th {
@@ -120,6 +125,7 @@
 }
 
 .pvi-page__table td {
+  color: var(--color-text);
   font-size: 0.9375rem;
 }
 
@@ -135,13 +141,14 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: rgba(246, 251, 251, 0.92);
-  border: 1px solid rgba(219, 230, 230, 0.95);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
 .pvi-page__source-name,
 .pvi-page__source-rate {
+  color: var(--color-text);
   font-weight: 700;
 }
 

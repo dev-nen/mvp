@@ -5,9 +5,9 @@
   gap: 0.5rem;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 10px 24px rgba(47, 61, 115, 0.08);
   font-size: 0.9375rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1;
   cursor: pointer;
   transition:
@@ -19,7 +19,7 @@
 }
 
 .button:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 16px 30px rgba(47, 61, 115, 0.12);
 }
 
 .button:active {
@@ -34,7 +34,7 @@
 
 .button:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px var(--color-focus), var(--shadow-md);
+  box-shadow: 0 0 0 4px var(--color-focus), 0 16px 30px rgba(47, 61, 115, 0.12);
 }
 
 .button svg {
@@ -63,11 +63,13 @@
 
 .button--default {
   color: var(--color-primary-contrast);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-strong));
+  background: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .button--default:hover {
-  background: linear-gradient(135deg, var(--color-primary-strong), #9c4f40);
+  background: var(--color-primary-strong);
+  border-color: var(--color-primary-strong);
 }
 
 .button--ghost {
@@ -77,17 +79,32 @@
 }
 
 .button--ghost:hover {
-  background: var(--color-surface-subtle);
+  color: var(--color-primary-strong);
+  background: rgba(75, 143, 231, 0.1);
   box-shadow: none;
 }
 
 .button--outline {
   color: var(--color-text);
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.92);
   border-color: var(--color-border);
+  box-shadow: none;
 }
 
 .button--outline:hover {
   background: var(--color-surface-subtle);
-  border-color: var(--color-primary-soft-strong);
+  border-color: rgba(75, 143, 231, 0.24);
+}
+
+.button--whatsapp {
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  color: #ffffff;
+  background: #25d366;
+  border-color: #25d366;
+}
+
+.button--whatsapp:hover {
+  background: #1fb85a;
+  border-color: #1fb85a;
 }

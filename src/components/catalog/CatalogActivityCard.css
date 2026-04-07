@@ -1,6 +1,16 @@
 .catalog-card {
   height: 100%;
   overflow: hidden;
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.catalog-card:hover {
+  transform: translateY(-0.125rem);
+  border-color: rgba(75, 143, 231, 0.22);
+  box-shadow: 0 18px 36px rgba(47, 61, 115, 0.12);
 }
 
 .catalog-card__media {
@@ -24,7 +34,8 @@
   position: absolute;
   top: var(--space-2);
   right: var(--space-2);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(75, 143, 231, 0.12);
   backdrop-filter: blur(10px);
 }
 
@@ -49,7 +60,7 @@
 }
 
 .catalog-card__category {
-  color: var(--color-primary-strong);
+  color: var(--color-secondary);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -57,6 +68,7 @@
 }
 
 .catalog-card__title {
+  color: var(--color-text);
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.25;
@@ -116,14 +128,14 @@
 
 .catalog-card__fact--boxed {
   padding: 0.625rem;
-  background: rgba(252, 245, 239, 0.96);
-  border: 1px solid rgba(229, 214, 204, 0.96);
+  background: rgba(249, 246, 241, 0.92);
+  border: 1px solid rgba(237, 239, 245, 0.98);
   border-radius: var(--radius-md);
 }
 
 .catalog-card__fact--price {
-  background: var(--color-primary-soft);
-  border-color: var(--color-primary-soft-strong);
+  background: rgba(245, 201, 74, 0.14);
+  border-color: rgba(248, 177, 61, 0.28);
 }
 
 .catalog-card__fact--center {
@@ -137,6 +149,10 @@
   margin-top: 0.125rem;
   flex-shrink: 0;
   color: var(--color-primary-strong);
+}
+
+.catalog-card__fact--price .catalog-card__fact-icon {
+  color: var(--color-accent-orange);
 }
 
 .catalog-card__fact-body {

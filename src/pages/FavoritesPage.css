@@ -3,7 +3,8 @@
   display: flex;
   flex-direction: column;
   background:
-    radial-gradient(circle at top, var(--color-page-glow), transparent 34rem),
+    radial-gradient(circle at top left, var(--color-glow-blue), transparent 24rem),
+    radial-gradient(circle at top right, var(--color-glow-purple), transparent 22rem),
     linear-gradient(
       180deg,
       var(--color-page-gradient-start) 0%,
@@ -35,7 +36,7 @@
 }
 
 .favorites-page__eyebrow {
-  color: var(--color-primary-strong);
+  color: var(--color-secondary);
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -43,6 +44,7 @@
 }
 
 .favorites-page__title {
+  color: var(--color-text);
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1;
 }
@@ -53,7 +55,7 @@
 }
 
 .favorites-page__count {
-  color: var(--color-primary-strong);
+  color: var(--color-secondary);
   font-size: 0.9375rem;
   font-weight: 700;
 }

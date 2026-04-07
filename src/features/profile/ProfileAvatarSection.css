@@ -20,18 +20,18 @@
 
 .profile-avatar-section__image {
   object-fit: cover;
-  border: 3px solid rgba(76, 167, 162, 0.18);
+  border: 3px solid rgba(75, 143, 231, 0.18);
   box-shadow: var(--shadow-sm);
 }
 
 .profile-avatar-section__placeholder {
   display: grid;
   place-items: center;
-  color: var(--color-primary);
+  color: var(--color-primary-strong);
   background:
-    radial-gradient(circle at top, rgba(76, 167, 162, 0.18), transparent 65%),
-    rgba(76, 167, 162, 0.08);
-  border: 1px solid rgba(76, 167, 162, 0.18);
+    radial-gradient(circle at top, rgba(99, 190, 235, 0.2), transparent 65%),
+    rgba(75, 143, 231, 0.08);
+  border: 1px solid rgba(75, 143, 231, 0.18);
 }
 
 .profile-avatar-section__placeholder-icon {
@@ -46,6 +46,7 @@
 }
 
 .profile-avatar-section__title {
+  color: var(--color-text);
   font-size: 1rem;
   font-weight: 700;
 }

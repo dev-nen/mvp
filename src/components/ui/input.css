@@ -4,10 +4,10 @@
   min-height: 2.5rem;
   padding: 0.625rem 0.875rem;
   color: var(--color-text);
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.96);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  box-shadow: inset 0 1px 2px rgba(34, 49, 58, 0.04);
+  box-shadow: inset 0 1px 2px rgba(47, 61, 115, 0.03);
   transition:
     border-color var(--transition-fast),
     box-shadow var(--transition-fast),
@@ -19,13 +19,13 @@
 }
 
 .input:hover {
-  border-color: var(--color-primary-soft-strong);
+  border-color: rgba(75, 143, 231, 0.24);
 }
 
 .input:focus {
   border-color: var(--color-primary);
   box-shadow:
-    inset 0 1px 2px rgba(34, 49, 58, 0.04),
+    inset 0 1px 2px rgba(47, 61, 115, 0.03),
     0 0 0 4px var(--color-focus);
   outline: none;
 }

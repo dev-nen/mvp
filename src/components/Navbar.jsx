@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Heart, Search, User, X } from "lucide-react";
+import { BrandLockup } from "@/components/branding/BrandLockup";
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,10 +24,7 @@ export function Navbar({ enableSearch = false }) {
     <header className="navbar">
       <div className="page-container navbar__bar">
         <Link to="/" className="navbar__brand" aria-label="Ir a la Home">
-          <div className="navbar__brand-mark">
-            <span>N</span>
-          </div>
-          <span className="navbar__brand-name">NensGo</span>
+          <BrandLockup variant="navbar" />
         </Link>
 
         <div className="navbar__actions">
@@ -35,7 +33,7 @@ export function Navbar({ enableSearch = false }) {
               variant="ghost"
               size="icon"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              aria-label={isSearchOpen ? "Cerrar búsqueda" : "Buscar"}
+              aria-label={isSearchOpen ? "Cerrar busqueda" : "Buscar"}
             >
               {isSearchOpen ? <X /> : <Search />}
             </Button>

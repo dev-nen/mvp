@@ -123,7 +123,7 @@ export function ActivityDetailModal({
                 Tienes dudas o quieres saber si esta actividad encaja con tu
                 familia? Contacta directamente con el centro por WhatsApp.
               </p>
-              <Button onClick={handleOpenWhatsapp}>
+              <Button onClick={handleOpenWhatsapp} className="button--whatsapp">
                 Consultar por WhatsApp
               </Button>
             </div>
