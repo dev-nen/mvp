@@ -20,8 +20,6 @@ import { useFavorites } from "@/hooks/useFavorites";
 import {
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
-  trackActivityFavoriteAdd,
-  trackActivityFavoriteRemove,
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./HomePage.css";
@@ -59,7 +57,7 @@ const HOME_QUICK_ACCESS_ITEMS = [
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
-  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const { favoriteIds } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCitySlug, setSelectedCitySlug] = useState("");
@@ -113,19 +111,6 @@ export function HomePage() {
   const handleOpenActivityDetail = (activity) => {
     setSelectedActivity(activity);
     void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
-  };
-
-  const handleToggleFavorite = (activity) => {
-    const nextIsFavorite = !isFavorite(activity.id);
-
-    toggleFavorite(activity.id);
-
-    if (nextIsFavorite) {
-      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
-      return;
-    }
-
-    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
   };
 
   const handleCatalogModalContactClick = (activity) => {
@@ -211,9 +196,8 @@ export function HomePage() {
                   <CatalogActivityCard
                     key={activity.id}
                     activity={activity}
-                    isFavorite={isFavorite(activity.id)}
-                    onToggleFavorite={handleToggleFavorite}
                     onViewMore={handleOpenActivityDetail}
+                    variant="public"
                   />
                 ))}
               </div>

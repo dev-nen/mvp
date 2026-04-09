@@ -7,13 +7,101 @@ import {
 } from "@/helpers/activityPresentation";
 import "./CatalogActivityCard.css";
 
+function isValidAgeNumber(value) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+
+function formatPublicActivityAgeLabel({ age_rule_type, age_min, age_max }) {
+  if (age_rule_type === "range") {
+    return isValidAgeNumber(age_min) && isValidAgeNumber(age_max)
+      ? `${age_min} a ${age_max} años`
+      : "";
+  }
+
+  if (age_rule_type === "from") {
+    return isValidAgeNumber(age_min) ? `Desde ${age_min} años` : "";
+  }
+
+  if (age_rule_type === "until") {
+    return isValidAgeNumber(age_max) ? `Hasta ${age_max} años` : "";
+  }
+
+  if (age_rule_type === "all") {
+    return "Para todas las edades";
+  }
+
+  return "";
+}
+
 export function CatalogActivityCard({
   activity,
   isFavorite = false,
   onToggleFavorite,
   onViewMore,
-  viewMoreLabel = "Ver mas",
+  viewMoreLabel = "Ver más",
+  variant = "default",
 }) {
+  if (variant === "public") {
+    const ageLabel = formatPublicActivityAgeLabel(activity);
+    const categoryLabel = activity.category_label;
+    const centerLabel = activity.center_name;
+    const cityLabel = activity.city_name;
+
+    return (
+      <Card className="catalog-card catalog-card--public">
+        <div className="catalog-card__media catalog-card__media--public">
+          <img
+            src={activity.image_url || "/placeholder.jpg"}
+            alt={activity.title}
+            className="catalog-card__image"
+          />
+
+          {activity.is_free === true ? (
+            <span className="catalog-card__free-badge">Gratis</span>
+          ) : null}
+        </div>
+
+        <CardContent className="catalog-card__content catalog-card__content--public">
+          <div className="catalog-card__header">
+            {categoryLabel ? (
+              <p className="catalog-card__category">{categoryLabel}</p>
+            ) : null}
+            <h3 className="catalog-card__title catalog-card__title--public">
+              {activity.title}
+            </h3>
+          </div>
+
+          <div className="catalog-card__public-summary">
+            {ageLabel ? (
+              <p className="catalog-card__public-line catalog-card__public-line--age">
+                {ageLabel}
+              </p>
+            ) : null}
+            {centerLabel ? (
+              <p className="catalog-card__public-line">{centerLabel}</p>
+            ) : null}
+            {cityLabel ? (
+              <p className="catalog-card__public-line catalog-card__public-line--city">
+                {cityLabel}
+              </p>
+            ) : null}
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="catalog-card__cta catalog-card__cta--public"
+            onClick={() => onViewMore?.(activity)}
+            disabled={!onViewMore}
+          >
+            Ver más
+            <ArrowRight />
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="catalog-card">
       <div className="catalog-card__media">
