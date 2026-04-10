@@ -7,6 +7,13 @@ import {
 } from "@/helpers/activityPresentation";
 import "./CatalogActivityCard.css";
 
+const PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC =
+  "/placeholders/activity-card-placeholder.svg";
+
+function getTrimmedText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function isValidAgeNumber(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
@@ -14,16 +21,16 @@ function isValidAgeNumber(value) {
 function formatPublicActivityAgeLabel({ age_rule_type, age_min, age_max }) {
   if (age_rule_type === "range") {
     return isValidAgeNumber(age_min) && isValidAgeNumber(age_max)
-      ? `${age_min} a ${age_max} años`
+      ? `${age_min} a ${age_max} a\u00f1os`
       : "";
   }
 
   if (age_rule_type === "from") {
-    return isValidAgeNumber(age_min) ? `Desde ${age_min} años` : "";
+    return isValidAgeNumber(age_min) ? `Desde ${age_min} a\u00f1os` : "";
   }
 
   if (age_rule_type === "until") {
-    return isValidAgeNumber(age_max) ? `Hasta ${age_max} años` : "";
+    return isValidAgeNumber(age_max) ? `Hasta ${age_max} a\u00f1os` : "";
   }
 
   if (age_rule_type === "all") {
@@ -31,6 +38,50 @@ function formatPublicActivityAgeLabel({ age_rule_type, age_min, age_max }) {
   }
 
   return "";
+}
+
+function handlePublicCardImageError(event) {
+  const imageElement = event.currentTarget;
+
+  if (imageElement.dataset.placeholderApplied === "true") {
+    return;
+  }
+
+  imageElement.dataset.placeholderApplied = "true";
+  imageElement.src = PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
+}
+
+export function buildPublicCatalogCardViewModel(activity = {}) {
+  const title = getTrimmedText(activity.title);
+  const imageUrl = getTrimmedText(activity.image_url);
+  const categoryLabel = getTrimmedText(activity.category_label);
+  const centerLabel = getTrimmedText(activity.center_name);
+  const cityLabel = getTrimmedText(activity.city_name);
+  const ageLabel = formatPublicActivityAgeLabel(activity);
+
+  return {
+    ageLabel,
+    categoryLabel,
+    centerLabel,
+    cityLabel,
+    imageSrc: imageUrl || PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC,
+    showFreeBadge: activity.is_free === true,
+    title,
+  };
+}
+
+export function isPublicCatalogActivityValid(activity) {
+  const viewModel = buildPublicCatalogCardViewModel(activity);
+  const hasUsefulSignal = Boolean(
+    viewModel.ageLabel || viewModel.categoryLabel || viewModel.centerLabel,
+  );
+
+  return Boolean(
+    viewModel.title &&
+      viewModel.cityLabel &&
+      viewModel.imageSrc &&
+      hasUsefulSignal,
+  );
 }
 
 export function CatalogActivityCard({
@@ -42,47 +93,48 @@ export function CatalogActivityCard({
   variant = "default",
 }) {
   if (variant === "public") {
-    const ageLabel = formatPublicActivityAgeLabel(activity);
-    const categoryLabel = activity.category_label;
-    const centerLabel = activity.center_name;
-    const cityLabel = activity.city_name;
+    const viewModel = buildPublicCatalogCardViewModel(activity);
+    const isPlaceholderImage =
+      viewModel.imageSrc === PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
 
     return (
       <Card className="catalog-card catalog-card--public">
         <div className="catalog-card__media catalog-card__media--public">
           <img
-            src={activity.image_url || "/placeholder.jpg"}
-            alt={activity.title}
+            src={viewModel.imageSrc}
+            alt={viewModel.title}
             className="catalog-card__image"
+            data-placeholder-applied={isPlaceholderImage ? "true" : "false"}
+            onError={handlePublicCardImageError}
           />
 
-          {activity.is_free === true ? (
+          {viewModel.showFreeBadge ? (
             <span className="catalog-card__free-badge">Gratis</span>
           ) : null}
         </div>
 
         <CardContent className="catalog-card__content catalog-card__content--public">
           <div className="catalog-card__header">
-            {categoryLabel ? (
-              <p className="catalog-card__category">{categoryLabel}</p>
+            {viewModel.categoryLabel ? (
+              <p className="catalog-card__category">{viewModel.categoryLabel}</p>
             ) : null}
             <h3 className="catalog-card__title catalog-card__title--public">
-              {activity.title}
+              {viewModel.title}
             </h3>
           </div>
 
           <div className="catalog-card__public-summary">
-            {ageLabel ? (
+            {viewModel.ageLabel ? (
               <p className="catalog-card__public-line catalog-card__public-line--age">
-                {ageLabel}
+                {viewModel.ageLabel}
               </p>
             ) : null}
-            {centerLabel ? (
-              <p className="catalog-card__public-line">{centerLabel}</p>
+            {viewModel.centerLabel ? (
+              <p className="catalog-card__public-line">{viewModel.centerLabel}</p>
             ) : null}
-            {cityLabel ? (
+            {viewModel.cityLabel ? (
               <p className="catalog-card__public-line catalog-card__public-line--city">
-                {cityLabel}
+                {viewModel.cityLabel}
               </p>
             ) : null}
           </div>

@@ -1,7 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
+import {
+  CatalogActivityCard,
+  isPublicCatalogActivityValid,
+} from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
@@ -64,20 +67,36 @@ export function HomePage() {
   const [selectedActivity, setSelectedActivity] = useState(null);
   const catalogSectionRef = useRef(null);
 
-  const categoryLabelOptions = useMemo(
-    () => getCategoryLabelOptions(activities),
+  const publicCatalogActivities = useMemo(
+    () => activities.filter(isPublicCatalogActivityValid),
     [activities],
   );
-  const cityOptions = useMemo(() => getCityOptions(activities), [activities]);
+
+  const categoryLabelOptions = useMemo(
+    () => getCategoryLabelOptions(publicCatalogActivities),
+    [publicCatalogActivities],
+  );
+  const cityOptions = useMemo(
+    () => getCityOptions(publicCatalogActivities),
+    [publicCatalogActivities],
+  );
 
   const visibleActivities = useMemo(() => {
-    const searchedActivities = searchActivities(activities, searchQuery);
+    const searchedActivities = searchActivities(
+      publicCatalogActivities,
+      searchQuery,
+    );
 
     return filterActivities(searchedActivities, {
       selectedCategoryLabels,
       selectedCitySlug,
     });
-  }, [activities, searchQuery, selectedCategoryLabels, selectedCitySlug]);
+  }, [
+    publicCatalogActivities,
+    searchQuery,
+    selectedCategoryLabels,
+    selectedCitySlug,
+  ]);
 
   const handleToggleCategoryLabel = (categoryLabel) => {
     setSelectedCategoryLabels((currentCategoryLabels) =>
