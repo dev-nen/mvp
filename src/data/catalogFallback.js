@@ -151,7 +151,7 @@ export const activities = [
     image_url: "/images/yoga.jpg",
     price_label: "12 EUR por familia",
     schedule_label: "Sabados, 10:30 a 11:30",
-    age_rule_type: "open",
+    age_rule_type: "all",
     age_min: null,
     age_max: null,
     venue_name: "Casal Familiar Ribes",

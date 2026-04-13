@@ -117,14 +117,35 @@
 .activity-detail-modal__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
   padding:
     var(--space-5)
     var(--space-5)
     calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
 }
 
-.activity-detail-modal__category {
+.activity-detail-modal__identity-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.activity-detail-modal__identity-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.activity-detail-modal__identity-action-slot {
+  flex-shrink: 0;
+  width: clamp(3rem, 18vw, 7rem);
+  min-height: 2.5rem;
+}
+
+.activity-detail-modal__category,
+.activity-detail-modal__section-eyebrow {
   color: var(--color-secondary);
   font-size: 0.8125rem;
   font-weight: 700;
@@ -138,15 +159,87 @@
   line-height: 1.15;
 }
 
-.activity-detail-modal__description {
-  color: var(--color-text-muted);
-  line-height: 1.7;
-}
-
+.activity-detail-modal__section,
 .activity-detail-modal__contact {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.activity-detail-modal__section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.activity-detail-modal__section-title {
+  color: var(--color-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.activity-detail-modal__description,
+.activity-detail-modal__contact-copy {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.activity-detail-modal__facts-grid {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.activity-detail-modal__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(249, 246, 241, 0.92);
+  border: 1px solid rgba(237, 239, 245, 0.98);
+  border-radius: var(--radius-md);
+}
+
+.activity-detail-modal__fact--price {
+  background: rgba(245, 201, 74, 0.14);
+  border-color: rgba(248, 177, 61, 0.28);
+}
+
+.activity-detail-modal__fact-label {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.activity-detail-modal__fact-value {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.activity-detail-modal__fact-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  color: var(--color-primary-strong);
+}
+
+.activity-detail-modal__fact--price .activity-detail-modal__fact-icon {
+  color: var(--color-accent-orange);
+}
+
+.activity-detail-modal__fact--price .activity-detail-modal__fact-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.activity-detail-modal__contact {
   padding: var(--space-4);
   background:
     linear-gradient(180deg, rgba(249, 246, 241, 0.94), rgba(255, 255, 255, 0.96));
@@ -154,9 +247,19 @@
   border-radius: var(--radius-lg);
 }
 
-.activity-detail-modal__contact-copy {
-  color: var(--color-text-muted);
-  line-height: 1.6;
+.activity-detail-modal__contact .button {
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .activity-detail-modal__facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .activity-detail-modal__contact .button {
+    width: auto;
+    align-self: flex-start;
+  }
 }
 
 @media (max-width: 40rem) {

@@ -1,7 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
+import {
+  CatalogActivityCard,
+  isPublicCatalogActivityValid,
+} from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
@@ -20,8 +23,6 @@ import { useFavorites } from "@/hooks/useFavorites";
 import {
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
-  trackActivityFavoriteAdd,
-  trackActivityFavoriteRemove,
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./HomePage.css";
@@ -59,27 +60,43 @@ const HOME_QUICK_ACCESS_ITEMS = [
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
-  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const { favoriteIds } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCitySlug, setSelectedCitySlug] = useState("");
   const [selectedActivity, setSelectedActivity] = useState(null);
   const catalogSectionRef = useRef(null);
 
-  const categoryLabelOptions = useMemo(
-    () => getCategoryLabelOptions(activities),
+  const publicCatalogActivities = useMemo(
+    () => activities.filter(isPublicCatalogActivityValid),
     [activities],
   );
-  const cityOptions = useMemo(() => getCityOptions(activities), [activities]);
+
+  const categoryLabelOptions = useMemo(
+    () => getCategoryLabelOptions(publicCatalogActivities),
+    [publicCatalogActivities],
+  );
+  const cityOptions = useMemo(
+    () => getCityOptions(publicCatalogActivities),
+    [publicCatalogActivities],
+  );
 
   const visibleActivities = useMemo(() => {
-    const searchedActivities = searchActivities(activities, searchQuery);
+    const searchedActivities = searchActivities(
+      publicCatalogActivities,
+      searchQuery,
+    );
 
     return filterActivities(searchedActivities, {
       selectedCategoryLabels,
       selectedCitySlug,
     });
-  }, [activities, searchQuery, selectedCategoryLabels, selectedCitySlug]);
+  }, [
+    publicCatalogActivities,
+    searchQuery,
+    selectedCategoryLabels,
+    selectedCitySlug,
+  ]);
 
   const handleToggleCategoryLabel = (categoryLabel) => {
     setSelectedCategoryLabels((currentCategoryLabels) =>
@@ -113,19 +130,6 @@ export function HomePage() {
   const handleOpenActivityDetail = (activity) => {
     setSelectedActivity(activity);
     void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
-  };
-
-  const handleToggleFavorite = (activity) => {
-    const nextIsFavorite = !isFavorite(activity.id);
-
-    toggleFavorite(activity.id);
-
-    if (nextIsFavorite) {
-      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
-      return;
-    }
-
-    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
   };
 
   const handleCatalogModalContactClick = (activity) => {
@@ -211,9 +215,8 @@ export function HomePage() {
                   <CatalogActivityCard
                     key={activity.id}
                     activity={activity}
-                    isFavorite={isFavorite(activity.id)}
-                    onToggleFavorite={handleToggleFavorite}
                     onViewMore={handleOpenActivityDetail}
+                    variant="public"
                   />
                 ))}
               </div>
