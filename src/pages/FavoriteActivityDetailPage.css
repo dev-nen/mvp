@@ -43,14 +43,10 @@
   padding-left: var(--space-2);
 }
 
-.favorite-activity-detail__hero {
+.favorite-activity-detail__detail-card {
   overflow: hidden;
   border-color: rgba(75, 143, 231, 0.12);
   box-shadow: var(--shadow-md);
-}
-
-.favorite-activity-detail__hero-grid {
-  display: grid;
 }
 
 .favorite-activity-detail__media {
@@ -64,14 +60,36 @@
   object-fit: cover;
 }
 
-.favorite-activity-detail__hero-content {
+.favorite-activity-detail__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
+}
+
+.favorite-activity-detail__identity-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.favorite-activity-detail__identity-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.favorite-activity-detail__identity-action {
+  flex-shrink: 0;
+}
+
+.favorite-activity-detail__identity-action .button {
+  white-space: nowrap;
 }
 
 .favorite-activity-detail__category,
-.favorite-activity-detail__description-eyebrow {
+.favorite-activity-detail__section-eyebrow {
   color: var(--color-secondary);
   font-size: 0.8125rem;
   font-weight: 700;
@@ -85,51 +103,104 @@
   line-height: 1.05;
 }
 
-.favorite-activity-detail__support,
-.favorite-activity-detail__description {
-  color: var(--color-text-muted);
-  line-height: 1.7;
-}
-
-.favorite-activity-detail__actions {
+.favorite-activity-detail__section,
+.favorite-activity-detail__contact {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.favorite-activity-detail__description-card {
+.favorite-activity-detail__section-head {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0.375rem;
 }
 
-.favorite-activity-detail__description-title {
+.favorite-activity-detail__section-title {
   color: var(--color-text);
   font-size: 1.25rem;
   font-weight: 700;
 }
 
-.favorite-activity-detail__description {
-  line-height: 1.8;
+.favorite-activity-detail__description,
+.favorite-activity-detail__contact-copy {
+  color: var(--color-text-muted);
+  line-height: 1.7;
 }
 
-@media (min-width: 64rem) {
-  .favorite-activity-detail__hero-grid {
-    grid-template-columns: minmax(22rem, 0.95fr) minmax(0, 1.05fr);
-    align-items: stretch;
+.favorite-activity-detail__facts-grid {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.favorite-activity-detail__fact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(249, 246, 241, 0.92);
+  border: 1px solid rgba(237, 239, 245, 0.98);
+  border-radius: var(--radius-md);
+}
+
+.favorite-activity-detail__fact--price {
+  background: rgba(245, 201, 74, 0.14);
+  border-color: rgba(248, 177, 61, 0.28);
+}
+
+.favorite-activity-detail__fact-label {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.favorite-activity-detail__fact-value {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.favorite-activity-detail__fact-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+  color: var(--color-primary-strong);
+}
+
+.favorite-activity-detail__fact--price .favorite-activity-detail__fact-icon {
+  color: var(--color-accent-orange);
+}
+
+.favorite-activity-detail__fact--price .favorite-activity-detail__fact-value {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.favorite-activity-detail__contact {
+  padding: var(--space-4);
+  background:
+    linear-gradient(180deg, rgba(249, 246, 241, 0.94), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(237, 239, 245, 0.98);
+  border-radius: var(--radius-lg);
+}
+
+.favorite-activity-detail__contact .button {
+  width: 100%;
+}
+
+@media (min-width: 40rem) {
+  .favorite-activity-detail__facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .favorite-activity-detail__media {
-    aspect-ratio: auto;
-    min-height: 100%;
-  }
-
-  .favorite-activity-detail__actions {
-    flex-direction: row;
-  }
-
-  .favorite-activity-detail__actions .button {
-    flex: 1;
-    justify-content: center;
+  .favorite-activity-detail__contact .button {
+    width: auto;
+    align-self: flex-start;
   }
 }
