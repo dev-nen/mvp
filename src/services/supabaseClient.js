@@ -24,7 +24,9 @@ if (!supabaseConfigError) {
   try {
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
       },
     });
   } catch (error) {

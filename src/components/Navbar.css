@@ -27,8 +27,72 @@
   gap: var(--space-1);
 }
 
+.navbar__auth-slot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 7rem;
+}
+
 .navbar__actions .button--ghost {
   color: var(--text-primary);
+}
+
+.navbar__auth-button,
+.navbar__auth-chip {
+  min-height: 2.25rem;
+  border-radius: var(--radius-pill);
+}
+
+.navbar__auth-button {
+  white-space: nowrap;
+}
+
+.navbar__auth-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 12rem;
+  padding: 0.5rem 0.875rem;
+  color: var(--color-text);
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(75, 143, 231, 0.18);
+  box-shadow: 0 10px 24px rgba(47, 61, 115, 0.08);
+}
+
+.navbar__auth-chip:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(75, 143, 231, 0.28);
+}
+
+.navbar__auth-chip-label {
+  overflow: hidden;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.navbar__auth-status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #38b673;
+  box-shadow: 0 0 0 4px rgba(56, 182, 115, 0.16);
+}
+
+.navbar__auth-placeholder {
+  width: 8rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  background: rgba(207, 216, 244, 0.72);
+  animation: navbar-auth-pulse 1.2s ease-in-out infinite alternate;
+}
+
+.navbar__auth-label--compact {
+  display: none;
 }
 
 .navbar__icon-link {
@@ -61,8 +125,48 @@
   }
 }
 
+@keyframes navbar-auth-pulse {
+  from {
+    opacity: 0.62;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 48rem) {
+  .navbar__auth-slot {
+    min-width: 0;
+  }
+
+  .navbar__auth-button {
+    padding-inline: 0.875rem;
+  }
+
+  .navbar__auth-label--full {
+    display: none;
+  }
+
+  .navbar__auth-label--compact {
+    display: inline;
+  }
+
+  .navbar__auth-chip {
+    max-width: 7rem;
+  }
+}
+
 @media (max-width: 22rem) {
   .navbar__bar {
     gap: var(--space-2);
+  }
+
+  .navbar__auth-chip-label {
+    display: none;
+  }
+
+  .navbar__auth-chip {
+    padding-inline: 0.75rem;
   }
 }
