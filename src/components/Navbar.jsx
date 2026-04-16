@@ -9,8 +9,12 @@ import "./Navbar.css";
 
 export function Navbar({ enableSearch = false }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
-  const { isAuthenticated, isAuthLoading, signInWithGoogle, user } = useAuth();
+  const {
+    accessState,
+    isAuthLoading,
+    openAccessGate,
+    user,
+  } = useAuth();
 
   const getNavLinkClassName = ({ isActive }) =>
     [
@@ -28,16 +32,11 @@ export function Navbar({ enableSearch = false }) {
     user?.user_metadata?.name?.trim() ||
     user?.email?.split("@")[0] ||
     "Cuenta activa";
-
-  const handleGoogleSignIn = async () => {
-    setIsStartingGoogleSignIn(true);
-
-    const { error } = await signInWithGoogle();
-
-    if (error) {
-      setIsStartingGoogleSignIn(false);
-    }
-  };
+  const isReadyAccess = accessState === "ready";
+  const isResolvingAccess =
+    isAuthLoading || accessState === "loading_user";
+  const accessButtonLabel =
+    accessState === "missing_city" ? "Completa tu ciudad" : "Continue with Google";
 
   return (
     <header className="navbar">
@@ -59,9 +58,9 @@ export function Navbar({ enableSearch = false }) {
           ) : null}
 
           <div className="navbar__auth-slot">
-            {isAuthLoading ? (
+            {isResolvingAccess ? (
               <div className="navbar__auth-placeholder" aria-hidden="true" />
-            ) : isAuthenticated ? (
+            ) : isReadyAccess ? (
               <Link
                 to="/perfil"
                 className="navbar__auth-chip"
@@ -76,15 +75,14 @@ export function Navbar({ enableSearch = false }) {
               <Button
                 variant="outline"
                 className="navbar__auth-button"
-                onClick={handleGoogleSignIn}
-                disabled={isStartingGoogleSignIn}
+                onClick={() => openAccessGate()}
               >
                 <LogIn />
                 <span className="navbar__auth-label navbar__auth-label--full">
-                  Continue with Google
+                  {accessButtonLabel}
                 </span>
                 <span className="navbar__auth-label navbar__auth-label--compact">
-                  Google
+                  {accessState === "missing_city" ? "Ciudad" : "Google"}
                 </span>
               </Button>
             )}

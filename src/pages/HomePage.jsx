@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import {
@@ -19,6 +19,7 @@ import {
 } from "@/helpers/catalogFilters";
 import { searchActivities } from "@/helpers/catalogSearch";
 import { useCatalog } from "@/hooks/useCatalog";
+import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
   CATALOG_MODAL_SOURCE,
@@ -60,6 +61,7 @@ const HOME_QUICK_ACCESS_ITEMS = [
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
+  const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
   const { favoriteIds } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
@@ -127,9 +129,36 @@ export function HomePage() {
     });
   };
 
+  useEffect(() => {
+    if (isLoading || resolvedIntent?.type !== "view_more") {
+      return;
+    }
+
+    const nextSelectedActivity =
+      publicCatalogActivities.find(
+        (activity) => String(activity.id) === resolvedIntent.activityId,
+      ) ?? null;
+
+    if (!nextSelectedActivity) {
+      consumeResolvedIntent();
+      return;
+    }
+
+    setSelectedActivity(nextSelectedActivity);
+    void trackActivityViewMore(nextSelectedActivity, CATALOG_MODAL_SOURCE);
+    consumeResolvedIntent();
+  }, [
+    consumeResolvedIntent,
+    isLoading,
+    publicCatalogActivities,
+    resolvedIntent,
+  ]);
+
   const handleOpenActivityDetail = (activity) => {
-    setSelectedActivity(activity);
-    void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
+    void startProtectedAction({
+      type: "view_more",
+      activityId: activity.id,
+    });
   };
 
   const handleCatalogModalContactClick = (activity) => {

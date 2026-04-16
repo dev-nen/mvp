@@ -36,30 +36,40 @@ function getTrimmedText(value) {
 }
 
 function getDetailEvaluationItems(activity) {
-  return [
-    {
+  const evaluationItems = [];
+  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity));
+  const scheduleLabel = getTrimmedText(activity.schedule_label);
+  const priceLabel = getTrimmedText(activity.price_label);
+
+  if (ageLabel && ageLabel !== "Consulta la edad") {
+    evaluationItems.push({
       key: "age",
       label: "Edad",
-      value: formatActivityAgeLabel(activity),
+      value: ageLabel,
       icon: Users,
-    },
-    {
+    });
+  }
+
+  if (scheduleLabel) {
+    evaluationItems.push({
       key: "schedule",
       label: "Horario",
-      value: getTrimmedText(activity.schedule_label) || "Consulta el horario",
+      value: scheduleLabel,
       icon: Clock3,
-    },
-    {
+    });
+  }
+
+  if (activity.is_free === true || priceLabel) {
+    evaluationItems.push({
       key: "price",
       label: "Precio",
-      value:
-        activity.is_free === true
-          ? "Gratis"
-          : getTrimmedText(activity.price_label) || "Consulta el precio",
+      value: activity.is_free === true ? "Gratis" : priceLabel,
       icon: Wallet,
       tone: "price",
-    },
-  ];
+    });
+  }
+
+  return evaluationItems;
 }
 
 function getDetailLocationItems(activity) {
@@ -81,7 +91,7 @@ function getDetailLocationItems(activity) {
   if (address) {
     locationItems.push({
       key: "address",
-      label: "Dirección",
+      label: "Direccion",
       value: address,
       icon: MapPin,
     });
@@ -241,9 +251,7 @@ export function FavoriteActivityDetailPage() {
                     {categoryLabel}
                   </p>
                 ) : null}
-                <h1 className="favorite-activity-detail__title">
-                  {title}
-                </h1>
+                <h1 className="favorite-activity-detail__title">{title}</h1>
               </div>
 
               <div className="favorite-activity-detail__identity-action">
@@ -257,7 +265,7 @@ export function FavoriteActivityDetailPage() {
           {shortDescription ? (
             <section className="favorite-activity-detail__section">
               <p className="favorite-activity-detail__section-eyebrow">
-                Descripción
+                Descripcion
               </p>
               <p className="favorite-activity-detail__description">
                 {shortDescription}
@@ -265,45 +273,47 @@ export function FavoriteActivityDetailPage() {
             </section>
           ) : null}
 
-          <section className="favorite-activity-detail__section">
-            <div className="favorite-activity-detail__section-head">
-              <p className="favorite-activity-detail__section-eyebrow">
-                Información clave
-              </p>
-              <h2 className="favorite-activity-detail__section-title">
-                Evalúa si encaja
-              </h2>
-            </div>
+          {evaluationItems.length > 0 ? (
+            <section className="favorite-activity-detail__section">
+              <div className="favorite-activity-detail__section-head">
+                <p className="favorite-activity-detail__section-eyebrow">
+                  Informacion clave
+                </p>
+                <h2 className="favorite-activity-detail__section-title">
+                  Evalua si encaja
+                </h2>
+              </div>
 
-            <dl className="favorite-activity-detail__facts-grid">
-              {evaluationItems.map(({ key, label, value, icon: Icon, tone }) => (
-                <div
-                  key={key}
-                  className={`favorite-activity-detail__fact ${
-                    tone ? `favorite-activity-detail__fact--${tone}` : ""
-                  }`}
-                >
-                  <dt className="favorite-activity-detail__fact-label">{label}</dt>
-                  <dd className="favorite-activity-detail__fact-value">
-                    <Icon
-                      className="favorite-activity-detail__fact-icon"
-                      aria-hidden="true"
-                    />
-                    <span>{value}</span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </section>
+              <dl className="favorite-activity-detail__facts-grid">
+                {evaluationItems.map(({ key, label, value, icon: Icon, tone }) => (
+                  <div
+                    key={key}
+                    className={`favorite-activity-detail__fact ${
+                      tone ? `favorite-activity-detail__fact--${tone}` : ""
+                    }`}
+                  >
+                    <dt className="favorite-activity-detail__fact-label">{label}</dt>
+                    <dd className="favorite-activity-detail__fact-value">
+                      <Icon
+                        className="favorite-activity-detail__fact-icon"
+                        aria-hidden="true"
+                      />
+                      <span>{value}</span>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ) : null}
 
           {locationItems.length > 0 ? (
             <section className="favorite-activity-detail__section">
               <div className="favorite-activity-detail__section-head">
                 <p className="favorite-activity-detail__section-eyebrow">
-                  Ubicación
+                  Ubicacion
                 </p>
                 <h2 className="favorite-activity-detail__section-title">
-                  Referencia práctica
+                  Referencia practica
                 </h2>
               </div>
 
@@ -327,7 +337,7 @@ export function FavoriteActivityDetailPage() {
           <section className="favorite-activity-detail__contact">
             <div className="favorite-activity-detail__section-head">
               <p className="favorite-activity-detail__section-eyebrow">
-                Acción principal
+                Accion principal
               </p>
               <h2 className="favorite-activity-detail__section-title">
                 Contactar

@@ -50,6 +50,7 @@ export function ProfilePage() {
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const {
+    appUser,
     authError,
     isAuthenticated,
     isAuthLoading,
@@ -126,9 +127,8 @@ export function ProfilePage() {
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
-                      La app ya reconoce una identidad real desde Supabase Auth.
-                      El perfil editable y la persistencia propia quedan fuera de
-                      esta fase.
+                      La app ya reconoce tu identidad social y los datos minimos
+                      asociados a tu cuenta autenticada.
                     </p>
                   </div>
 
@@ -156,6 +156,14 @@ export function ProfilePage() {
                       </dt>
                       <dd>{sessionStateLabel}</dd>
                     </div>
+
+                    <div className="profile-page__detail-item">
+                      <dt>
+                        <BadgeCheck />
+                        Ciudad
+                      </dt>
+                      <dd>{appUser?.cityName || "Sin ciudad asociada"}</dd>
+                    </div>
                   </dl>
                 </CardContent>
               </Card>
@@ -177,8 +185,12 @@ export function ProfilePage() {
                       <dd>{providerName}</dd>
                     </div>
                     <div className="profile-page__detail-item">
-                      <dt>Usuario</dt>
+                      <dt>Usuario Auth</dt>
                       <dd>{user?.id ?? "No disponible"}</dd>
+                    </div>
+                    <div className="profile-page__detail-item">
+                      <dt>Usuario app</dt>
+                      <dd>{appUser?.id ?? "No disponible"}</dd>
                     </div>
                   </dl>
 

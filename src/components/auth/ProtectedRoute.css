@@ -1,0 +1,15 @@
+.protected-route {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.protected-route__main {
+  flex: 1;
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.protected-route__container {
+  display: flex;
+  flex-direction: column;
+}
