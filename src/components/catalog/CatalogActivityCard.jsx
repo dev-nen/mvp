@@ -108,6 +108,26 @@ export function CatalogActivityCard({
             onError={handlePublicCardImageError}
           />
 
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className={`catalog-card__favorite catalog-card__favorite--public ${
+              isFavorite ? "catalog-card__favorite--active" : ""
+            }`}
+            onClick={() => onToggleFavorite?.(activity)}
+            disabled={!onToggleFavorite}
+            aria-label={
+              isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
+            }
+          >
+            <Heart
+              className={`catalog-card__favorite-icon ${
+                isFavorite ? "catalog-card__favorite-icon--filled" : ""
+              }`}
+            />
+          </Button>
+
           {viewModel.showFreeBadge ? (
             <span className="catalog-card__free-badge">Gratis</span>
           ) : null}

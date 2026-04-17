@@ -111,6 +111,7 @@ Current protected behaviors:
 - `/favoritos`
 - `/favoritos/:activityId`
 - Home "view more" detail action
+- Home public-card favorite heart action
 
 This flow is implemented in code, but real operation remains externally configuration-dependent on Supabase project settings, Google OAuth settings, redirect URLs, and provider enablement.
 

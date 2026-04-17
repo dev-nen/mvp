@@ -22,6 +22,7 @@ import { useCatalog } from "@/hooks/useCatalog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
+  CATALOG_CARD_SOURCE,
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
   trackActivityFavoriteAdd,
@@ -132,7 +133,7 @@ export function HomePage() {
   };
 
   useEffect(() => {
-    if (isLoading || resolvedIntent?.type !== "view_more") {
+    if (isLoading || !resolvedIntent) {
       return;
     }
 
@@ -146,6 +147,26 @@ export function HomePage() {
       return;
     }
 
+    if (resolvedIntent.type === "toggle_favorite") {
+      const nextIsFavorite = !isFavorite(nextSelectedActivity.id);
+
+      toggleFavorite(nextSelectedActivity.id);
+
+      if (nextIsFavorite) {
+        void trackActivityFavoriteAdd(nextSelectedActivity, CATALOG_CARD_SOURCE);
+      } else {
+        void trackActivityFavoriteRemove(nextSelectedActivity, CATALOG_CARD_SOURCE);
+      }
+
+      consumeResolvedIntent();
+      return;
+    }
+
+    if (resolvedIntent.type !== "view_more") {
+      consumeResolvedIntent();
+      return;
+    }
+
     setSelectedActivity(nextSelectedActivity);
     void trackActivityViewMore(nextSelectedActivity, CATALOG_MODAL_SOURCE);
     consumeResolvedIntent();
@@ -154,6 +175,8 @@ export function HomePage() {
     isLoading,
     publicCatalogActivities,
     resolvedIntent,
+    isFavorite,
+    toggleFavorite,
   ]);
 
   const handleOpenActivityDetail = (activity) => {
@@ -178,6 +201,13 @@ export function HomePage() {
     }
 
     void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
+  };
+
+  const handleCatalogCardToggleFavorite = (activity) => {
+    void startProtectedAction({
+      type: "toggle_favorite",
+      activityId: activity.id,
+    });
   };
 
   return (
@@ -259,6 +289,8 @@ export function HomePage() {
                   <CatalogActivityCard
                     key={activity.id}
                     activity={activity}
+                    isFavorite={isFavorite(activity.id)}
+                    onToggleFavorite={handleCatalogCardToggleFavorite}
                     onViewMore={handleOpenActivityDetail}
                     variant="public"
                   />

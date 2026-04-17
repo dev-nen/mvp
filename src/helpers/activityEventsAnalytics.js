@@ -3,11 +3,16 @@ import {
   ACTIVITY_FAVORITE_ADD_EVENT,
   ACTIVITY_FAVORITE_REMOVE_EVENT,
   ACTIVITY_VIEW_MORE_EVENT,
+  CATALOG_CARD_SOURCE,
   CATALOG_MODAL_SOURCE,
   FAVORITES_DETAIL_SOURCE,
 } from "@/services/activityEventsService";
 
-const SOURCE_ORDER = [CATALOG_MODAL_SOURCE, FAVORITES_DETAIL_SOURCE];
+const SOURCE_ORDER = [
+  CATALOG_CARD_SOURCE,
+  CATALOG_MODAL_SOURCE,
+  FAVORITES_DETAIL_SOURCE,
+];
 
 function buildConversionRate(numeratorCount, denominatorCount) {
   if (denominatorCount === 0) {

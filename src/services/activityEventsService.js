@@ -10,6 +10,7 @@ export const ACTIVITY_CONTACT_CLICK_EVENT = "activity_contact_click";
 export const ACTIVITY_FAVORITE_ADD_EVENT = "activity_favorite_add";
 export const ACTIVITY_FAVORITE_REMOVE_EVENT = "activity_favorite_remove";
 
+export const CATALOG_CARD_SOURCE = "catalog_card";
 export const CATALOG_MODAL_SOURCE = "catalog_modal";
 export const FAVORITES_DETAIL_SOURCE = "favorites_detail";
 

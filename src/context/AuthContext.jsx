@@ -176,6 +176,15 @@ export function AuthProvider({ children }) {
         return;
       }
 
+      if (normalizedIntent.type === "toggle_favorite") {
+        if (location.pathname !== "/") {
+          navigate("/");
+        }
+
+        setResolvedIntent(normalizedIntent);
+        return;
+      }
+
       setResolvedIntent(null);
 
       if (

@@ -1,7 +1,7 @@
 # Card Public v2 Fallback Rules
 
 This document defines the public catalog card MVP 2.0 behavior implemented in
-the frontend runtime without backend, service, hook, or data-file changes.
+the frontend runtime.
 
 ## Activity validity for catalog render
 
@@ -28,6 +28,10 @@ An activity does not render when:
 - Otherwise use `/placeholders/activity-card-placeholder.svg`
 - If the runtime image fails to load, swap once to the SVG placeholder
 - If the placeholder is already applied, do not reassign again
+- Keep the teaser media box on a fixed public-card ratio and crop with
+  `object-fit: cover`
+- Do not let portrait, landscape, or oversized source images change the card
+  box height
 - Do not render broken media and do not inject text inside the visual block
 
 ## Title fallback
@@ -72,14 +76,21 @@ An activity does not render when:
 
 - Show `Gratis` only when `activity.is_free === true`
 - If `is_free` is `false`, missing, or not trustworthy, show nothing
-- Do not show "de pago" and do not show textual price on the public card
+- Do not show `de pago` and do not show textual price on the public card
+
+## Favorite heart fallback
+
+- Render the heart action in the public teaser card action area
+- If access is ready, the heart toggles favorite state directly
+- If the user is anonymous or still missing city, clicking the heart starts the
+  protected access flow
+- After access is completed, resume the pending favorite action on the same
+  activity
 
 ## Current runtime gaps
 
-- `is_free` is still absent in the current runtime-enriched shape, so the badge
-  normally remains hidden
+- `is_free` is still absent in most of the current runtime-enriched shape, so
+  the badge normally remains hidden unless the activity explicitly provides it
 - `center_name`, `city_name`, and `city_slug` are runtime aliases added later
   and are not base fallback truth
-- The public catalog previously relied on `/placeholder.jpg`, but that asset
-  does not exist in the app
-- Public validity filtering now happens in `HomePage.jsx` before catalog render
+- Public validity filtering happens in `HomePage.jsx` before catalog render

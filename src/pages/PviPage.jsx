@@ -24,6 +24,7 @@ const eventNameLabelMap = {
 };
 
 const sourceLabelMap = {
+  catalog_card: "Catalogo card",
   catalog_modal: "Catalogo modal",
   favorites_detail: "Detalle favoritos",
 };

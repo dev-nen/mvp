@@ -1,4 +1,6 @@
 .catalog-card {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   overflow: hidden;
   transition:
@@ -15,6 +17,7 @@
 
 .catalog-card__media {
   position: relative;
+  overflow: hidden;
   aspect-ratio: 16 / 9;
   background: var(--color-surface-muted);
 }
@@ -24,9 +27,11 @@
 }
 
 .catalog-card__image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .catalog-card__fact-icon {
@@ -38,9 +43,14 @@
   position: absolute;
   top: var(--space-2);
   right: var(--space-2);
+  z-index: 2;
   background: rgba(255, 255, 255, 0.94);
   border-color: rgba(75, 143, 231, 0.12);
   backdrop-filter: blur(10px);
+}
+
+.catalog-card__favorite--public {
+  box-shadow: 0 10px 24px rgba(47, 61, 115, 0.12);
 }
 
 .catalog-card__favorite--active {
@@ -55,6 +65,7 @@
   position: absolute;
   top: var(--space-2);
   left: var(--space-2);
+  z-index: 1;
   padding: 0.25rem 0.5rem;
   color: var(--color-primary-contrast);
   background: var(--color-success);
@@ -65,12 +76,14 @@
 }
 
 .catalog-card__content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
 }
 
 .catalog-card__content--public {
+  min-height: 12rem;
   gap: 0.625rem;
   padding: var(--space-3);
 }
@@ -79,6 +92,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  min-height: 4.125rem;
 }
 
 .catalog-card__category {
@@ -105,6 +119,7 @@
 }
 
 .catalog-card__public-summary {
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
