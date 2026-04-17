@@ -4,6 +4,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { FavoriteActivityDetailPage } from "@/pages/FavoriteActivityDetailPage";
 import { FavoritesPage } from "@/pages/FavoritesPage";
 import { HomePage } from "@/pages/HomePage";
+import { ParaCentrosPage } from "@/pages/ParaCentrosPage";
 import { PlaceholderPage } from "@/pages/PlaceholderPage";
 import { PviPage } from "@/pages/PviPage";
 import { ProfilePage } from "@/pages/ProfilePage";
@@ -16,6 +17,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/para-centros" element={<ParaCentrosPage />} />
         <Route path="/pvi" element={<PviPage />} />
         <Route
           path="/perfil"
