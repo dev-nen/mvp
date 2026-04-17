@@ -2,14 +2,9 @@ import { useEffect } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
-  Building2,
-  Clock3,
   Heart,
   LoaderCircle,
-  MapPin,
   SearchX,
-  Users,
-  Wallet,
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -18,7 +13,11 @@ import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage";
-import { formatActivityAgeLabel } from "@/helpers/activityPresentation";
+import {
+  ACTIVITY_DETAIL_PLACEHOLDER_SRC,
+  buildActivityDetailViewModel,
+  handleActivityDetailImageError,
+} from "@/helpers/activityDetailViewModel";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
@@ -30,93 +29,6 @@ import {
 import "./FavoriteActivityDetailPage.css";
 
 const trackedFavoriteDetailViews = new Set();
-
-function getTrimmedText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function getDetailEvaluationItems(activity) {
-  const evaluationItems = [];
-  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity));
-  const scheduleLabel = getTrimmedText(activity.schedule_label);
-  const priceLabel = getTrimmedText(activity.price_label);
-
-  if (ageLabel && ageLabel !== "Consulta la edad") {
-    evaluationItems.push({
-      key: "age",
-      label: "Edad",
-      value: ageLabel,
-      icon: Users,
-    });
-  }
-
-  if (scheduleLabel) {
-    evaluationItems.push({
-      key: "schedule",
-      label: "Horario",
-      value: scheduleLabel,
-      icon: Clock3,
-    });
-  }
-
-  if (activity.is_free === true || priceLabel) {
-    evaluationItems.push({
-      key: "price",
-      label: "Precio",
-      value: activity.is_free === true ? "Gratis" : priceLabel,
-      icon: Wallet,
-      tone: "price",
-    });
-  }
-
-  return evaluationItems;
-}
-
-function getDetailLocationItems(activity) {
-  const venueName = getTrimmedText(activity.venue_name);
-  const address = getTrimmedText(activity.venue_address_1);
-  const centerName = getTrimmedText(activity.center_name);
-  const cityName = getTrimmedText(activity.city_name);
-  const locationItems = [];
-
-  if (venueName && venueName !== centerName) {
-    locationItems.push({
-      key: "venue",
-      label: "Lugar",
-      value: venueName,
-      icon: MapPin,
-    });
-  }
-
-  if (address) {
-    locationItems.push({
-      key: "address",
-      label: "Direccion",
-      value: address,
-      icon: MapPin,
-    });
-  }
-
-  if (centerName) {
-    locationItems.push({
-      key: "center",
-      label: "Centro",
-      value: centerName,
-      icon: Building2,
-    });
-  }
-
-  if (cityName) {
-    locationItems.push({
-      key: "city",
-      label: "Ciudad",
-      value: cityName,
-      icon: MapPin,
-    });
-  }
-
-  return locationItems;
-}
 
 export function FavoriteActivityDetailPage() {
   const location = useLocation();
@@ -226,19 +138,21 @@ export function FavoriteActivityDetailPage() {
       />
     );
   } else {
-    const shortDescription = getTrimmedText(activity.short_description);
-    const categoryLabel = getTrimmedText(activity.category_label);
-    const title = getTrimmedText(activity.title);
-    const evaluationItems = getDetailEvaluationItems(activity);
-    const locationItems = getDetailLocationItems(activity);
+    const viewModel = buildActivityDetailViewModel(activity);
 
     content = (
       <Card className="favorite-activity-detail__detail-card">
         <div className="favorite-activity-detail__media">
           <img
-            src={activity.image_url || "/placeholder.jpg"}
+            src={viewModel.imageSrc}
             alt={activity.title}
             className="favorite-activity-detail__image"
+            data-placeholder-applied={
+              viewModel.imageSrc === ACTIVITY_DETAIL_PLACEHOLDER_SRC
+                ? "true"
+                : "false"
+            }
+            onError={handleActivityDetailImageError}
           />
         </div>
 
@@ -246,34 +160,52 @@ export function FavoriteActivityDetailPage() {
           <section className="favorite-activity-detail__identity">
             <div className="favorite-activity-detail__identity-head">
               <div className="favorite-activity-detail__identity-copy">
-                {categoryLabel ? (
-                  <p className="favorite-activity-detail__category">
-                    {categoryLabel}
-                  </p>
+                {viewModel.categoryLabel || viewModel.showFreeBadge ? (
+                  <div className="favorite-activity-detail__identity-meta">
+                    {viewModel.categoryLabel ? (
+                      <p className="favorite-activity-detail__category">
+                        {viewModel.categoryLabel}
+                      </p>
+                    ) : null}
+                    {viewModel.showFreeBadge ? (
+                      <span className="favorite-activity-detail__free-badge">
+                        Gratis
+                      </span>
+                    ) : null}
+                  </div>
                 ) : null}
-                <h1 className="favorite-activity-detail__title">{title}</h1>
+                <h1 className="favorite-activity-detail__title">
+                  {viewModel.title}
+                </h1>
               </div>
 
               <div className="favorite-activity-detail__identity-action">
-                <Button variant="outline" onClick={handleRemoveFavorite}>
-                  Quitar de favoritos
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="favorite-activity-detail__favorite favorite-activity-detail__favorite--active"
+                  onClick={handleRemoveFavorite}
+                  aria-label="Quitar de favoritos"
+                >
+                  <Heart className="favorite-activity-detail__favorite-icon favorite-activity-detail__favorite-icon--filled" />
                 </Button>
               </div>
             </div>
           </section>
 
-          {shortDescription ? (
+          {viewModel.description ? (
             <section className="favorite-activity-detail__section">
               <p className="favorite-activity-detail__section-eyebrow">
                 Descripcion
               </p>
               <p className="favorite-activity-detail__description">
-                {shortDescription}
+                {viewModel.description}
               </p>
             </section>
           ) : null}
 
-          {evaluationItems.length > 0 ? (
+          {viewModel.evaluationItems.length > 0 ? (
             <section className="favorite-activity-detail__section">
               <div className="favorite-activity-detail__section-head">
                 <p className="favorite-activity-detail__section-eyebrow">
@@ -285,28 +217,30 @@ export function FavoriteActivityDetailPage() {
               </div>
 
               <dl className="favorite-activity-detail__facts-grid">
-                {evaluationItems.map(({ key, label, value, icon: Icon, tone }) => (
-                  <div
-                    key={key}
-                    className={`favorite-activity-detail__fact ${
-                      tone ? `favorite-activity-detail__fact--${tone}` : ""
-                    }`}
-                  >
-                    <dt className="favorite-activity-detail__fact-label">{label}</dt>
-                    <dd className="favorite-activity-detail__fact-value">
-                      <Icon
-                        className="favorite-activity-detail__fact-icon"
-                        aria-hidden="true"
-                      />
-                      <span>{value}</span>
-                    </dd>
-                  </div>
-                ))}
+                {viewModel.evaluationItems.map(
+                  ({ key, label, value, icon: Icon, tone }) => (
+                    <div
+                      key={key}
+                      className={`favorite-activity-detail__fact ${
+                        tone ? `favorite-activity-detail__fact--${tone}` : ""
+                      }`}
+                    >
+                      <dt className="favorite-activity-detail__fact-label">{label}</dt>
+                      <dd className="favorite-activity-detail__fact-value">
+                        <Icon
+                          className="favorite-activity-detail__fact-icon"
+                          aria-hidden="true"
+                        />
+                        <span>{value}</span>
+                      </dd>
+                    </div>
+                  ),
+                )}
               </dl>
             </section>
           ) : null}
 
-          {locationItems.length > 0 ? (
+          {viewModel.locationItems.length > 0 ? (
             <section className="favorite-activity-detail__section">
               <div className="favorite-activity-detail__section-head">
                 <p className="favorite-activity-detail__section-eyebrow">
@@ -318,7 +252,7 @@ export function FavoriteActivityDetailPage() {
               </div>
 
               <dl className="favorite-activity-detail__facts-grid favorite-activity-detail__facts-grid--location">
-                {locationItems.map(({ key, label, value, icon: Icon }) => (
+                {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
                   <div key={key} className="favorite-activity-detail__fact">
                     <dt className="favorite-activity-detail__fact-label">{label}</dt>
                     <dd className="favorite-activity-detail__fact-value">
