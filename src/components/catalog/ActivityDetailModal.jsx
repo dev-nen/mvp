@@ -1,97 +1,22 @@
 import { useEffect, useRef } from "react";
 import {
   ArrowLeft,
-  Building2,
-  Clock3,
-  MapPin,
-  Users,
-  Wallet,
+  Heart,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage";
-import { formatActivityAgeLabel } from "@/helpers/activityPresentation";
+import {
+  ACTIVITY_DETAIL_PLACEHOLDER_SRC,
+  buildActivityDetailViewModel,
+  handleActivityDetailImageError,
+} from "@/helpers/activityDetailViewModel";
 import "./ActivityDetailModal.css";
-
-function getTrimmedText(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function getDetailEvaluationItems(activity) {
-  return [
-    {
-      key: "age",
-      label: "Edad",
-      value: formatActivityAgeLabel(activity),
-      icon: Users,
-    },
-    {
-      key: "schedule",
-      label: "Horario",
-      value: getTrimmedText(activity.schedule_label) || "Consulta el horario",
-      icon: Clock3,
-    },
-    {
-      key: "price",
-      label: "Precio",
-      value:
-        activity.is_free === true
-          ? "Gratis"
-          : getTrimmedText(activity.price_label) || "Consulta el precio",
-      icon: Wallet,
-      tone: "price",
-    },
-  ];
-}
-
-function getDetailLocationItems(activity) {
-  const venueName = getTrimmedText(activity.venue_name);
-  const address = getTrimmedText(activity.venue_address_1);
-  const centerName = getTrimmedText(activity.center_name);
-  const cityName = getTrimmedText(activity.city_name);
-  const locationItems = [];
-
-  if (venueName && venueName !== centerName) {
-    locationItems.push({
-      key: "venue",
-      label: "Lugar",
-      value: venueName,
-      icon: MapPin,
-    });
-  }
-
-  if (address) {
-    locationItems.push({
-      key: "address",
-      label: "Dirección",
-      value: address,
-      icon: MapPin,
-    });
-  }
-
-  if (centerName) {
-    locationItems.push({
-      key: "center",
-      label: "Centro",
-      value: centerName,
-      icon: Building2,
-    });
-  }
-
-  if (cityName) {
-    locationItems.push({
-      key: "city",
-      label: "Ciudad",
-      value: cityName,
-      icon: MapPin,
-    });
-  }
-
-  return locationItems;
-}
 
 export function ActivityDetailModal({
   activity,
+  isFavorite = false,
+  onToggleFavorite,
   open,
   onClose,
   onContactClick,
@@ -138,15 +63,15 @@ export function ActivityDetailModal({
     return null;
   }
 
-  const shortDescription = getTrimmedText(activity.short_description);
-  const categoryLabel = getTrimmedText(activity.category_label);
-  const title = getTrimmedText(activity.title);
-  const evaluationItems = getDetailEvaluationItems(activity);
-  const locationItems = getDetailLocationItems(activity);
+  const viewModel = buildActivityDetailViewModel(activity);
 
   const handleOpenWhatsapp = () => {
     onContactClick?.(activity);
     window.open(buildWhatsappActivityUrl(activity), "_blank", "noopener,noreferrer");
+  };
+
+  const handleToggleFavorite = () => {
+    onToggleFavorite?.(activity);
   };
 
   return (
@@ -185,9 +110,15 @@ export function ActivityDetailModal({
 
           <div className="activity-detail-modal__media">
             <img
-              src={activity.image_url || "/placeholder.jpg"}
+              src={viewModel.imageSrc}
               alt={activity.title}
               className="activity-detail-modal__image"
+              data-placeholder-applied={
+                viewModel.imageSrc === ACTIVITY_DETAIL_PLACEHOLDER_SRC
+                  ? "true"
+                  : "false"
+              }
+              onError={handleActivityDetailImageError}
             />
           </div>
 
@@ -195,81 +126,111 @@ export function ActivityDetailModal({
             <section className="activity-detail-modal__identity">
               <div className="activity-detail-modal__identity-head">
                 <div className="activity-detail-modal__identity-copy">
-                  {categoryLabel ? (
-                    <p className="activity-detail-modal__category">
-                      {categoryLabel}
-                    </p>
+                  {viewModel.categoryLabel || viewModel.showFreeBadge ? (
+                    <div className="activity-detail-modal__identity-meta">
+                      {viewModel.categoryLabel ? (
+                        <p className="activity-detail-modal__category">
+                          {viewModel.categoryLabel}
+                        </p>
+                      ) : null}
+                      {viewModel.showFreeBadge ? (
+                        <span className="activity-detail-modal__free-badge">
+                          Gratis
+                        </span>
+                      ) : null}
+                    </div>
                   ) : null}
                   <h2
                     id="activity-detail-modal-title"
                     className="activity-detail-modal__title"
                   >
-                    {title}
+                    {viewModel.title}
                   </h2>
                 </div>
 
-                <div
-                  className="activity-detail-modal__identity-action-slot"
-                  aria-hidden="true"
-                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className={`activity-detail-modal__favorite ${
+                    isFavorite ? "activity-detail-modal__favorite--active" : ""
+                  }`}
+                  onClick={handleToggleFavorite}
+                  disabled={!onToggleFavorite}
+                  aria-label={
+                    isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
+                  }
+                >
+                  <Heart
+                    className={`activity-detail-modal__favorite-icon ${
+                      isFavorite
+                        ? "activity-detail-modal__favorite-icon--filled"
+                        : ""
+                    }`}
+                  />
+                </Button>
               </div>
             </section>
 
-            {shortDescription ? (
+            {viewModel.description ? (
               <section className="activity-detail-modal__section">
                 <p className="activity-detail-modal__section-eyebrow">
-                  Descripción
+                  Descripcion
                 </p>
                 <p className="activity-detail-modal__description">
-                  {shortDescription}
+                  {viewModel.description}
                 </p>
               </section>
             ) : null}
 
-            <section className="activity-detail-modal__section">
-              <div className="activity-detail-modal__section-head">
-                <p className="activity-detail-modal__section-eyebrow">
-                  Información clave
-                </p>
-                <h3 className="activity-detail-modal__section-title">
-                  Evalúa si encaja
-                </h3>
-              </div>
-
-              <dl className="activity-detail-modal__facts-grid">
-                {evaluationItems.map(({ key, label, value, icon: Icon, tone }) => (
-                  <div
-                    key={key}
-                    className={`activity-detail-modal__fact ${
-                      tone ? `activity-detail-modal__fact--${tone}` : ""
-                    }`}
-                  >
-                    <dt className="activity-detail-modal__fact-label">{label}</dt>
-                    <dd className="activity-detail-modal__fact-value">
-                      <Icon
-                        className="activity-detail-modal__fact-icon"
-                        aria-hidden="true"
-                      />
-                      <span>{value}</span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-
-            {locationItems.length > 0 ? (
+            {viewModel.evaluationItems.length > 0 ? (
               <section className="activity-detail-modal__section">
                 <div className="activity-detail-modal__section-head">
                   <p className="activity-detail-modal__section-eyebrow">
-                    Ubicación
+                    Informacion clave
                   </p>
                   <h3 className="activity-detail-modal__section-title">
-                    Referencia práctica
+                    Evalua si encaja
+                  </h3>
+                </div>
+
+                <dl className="activity-detail-modal__facts-grid">
+                  {viewModel.evaluationItems.map(
+                    ({ key, label, value, icon: Icon, tone }) => (
+                      <div
+                        key={key}
+                        className={`activity-detail-modal__fact ${
+                          tone ? `activity-detail-modal__fact--${tone}` : ""
+                        }`}
+                      >
+                        <dt className="activity-detail-modal__fact-label">{label}</dt>
+                        <dd className="activity-detail-modal__fact-value">
+                          <Icon
+                            className="activity-detail-modal__fact-icon"
+                            aria-hidden="true"
+                          />
+                          <span>{value}</span>
+                        </dd>
+                      </div>
+                    ),
+                  )}
+                </dl>
+              </section>
+            ) : null}
+
+            {viewModel.locationItems.length > 0 ? (
+              <section className="activity-detail-modal__section">
+                <div className="activity-detail-modal__section-head">
+                  <p className="activity-detail-modal__section-eyebrow">
+                    Ubicacion
+                  </p>
+                  <h3 className="activity-detail-modal__section-title">
+                    Referencia practica
                   </h3>
                 </div>
 
                 <dl className="activity-detail-modal__facts-grid activity-detail-modal__facts-grid--location">
-                  {locationItems.map(({ key, label, value, icon: Icon }) => (
+                  {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
                     <div key={key} className="activity-detail-modal__fact">
                       <dt className="activity-detail-modal__fact-label">{label}</dt>
                       <dd className="activity-detail-modal__fact-value">
@@ -287,7 +248,9 @@ export function ActivityDetailModal({
 
             <section className="activity-detail-modal__contact">
               <div className="activity-detail-modal__section-head">
-                <p className="activity-detail-modal__section-eyebrow">Acción principal</p>
+                <p className="activity-detail-modal__section-eyebrow">
+                  Accion principal
+                </p>
                 <h3 className="activity-detail-modal__section-title">
                   Contactar
                 </h3>

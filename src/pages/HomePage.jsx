@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import {
@@ -19,10 +19,13 @@ import {
 } from "@/helpers/catalogFilters";
 import { searchActivities } from "@/helpers/catalogSearch";
 import { useCatalog } from "@/hooks/useCatalog";
+import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
+  trackActivityFavoriteAdd,
+  trackActivityFavoriteRemove,
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./HomePage.css";
@@ -60,7 +63,8 @@ const HOME_QUICK_ACCESS_ITEMS = [
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
-  const { favoriteIds } = useFavorites();
+  const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
+  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCitySlug, setSelectedCitySlug] = useState("");
@@ -127,13 +131,53 @@ export function HomePage() {
     });
   };
 
+  useEffect(() => {
+    if (isLoading || resolvedIntent?.type !== "view_more") {
+      return;
+    }
+
+    const nextSelectedActivity =
+      publicCatalogActivities.find(
+        (activity) => String(activity.id) === resolvedIntent.activityId,
+      ) ?? null;
+
+    if (!nextSelectedActivity) {
+      consumeResolvedIntent();
+      return;
+    }
+
+    setSelectedActivity(nextSelectedActivity);
+    void trackActivityViewMore(nextSelectedActivity, CATALOG_MODAL_SOURCE);
+    consumeResolvedIntent();
+  }, [
+    consumeResolvedIntent,
+    isLoading,
+    publicCatalogActivities,
+    resolvedIntent,
+  ]);
+
   const handleOpenActivityDetail = (activity) => {
-    setSelectedActivity(activity);
-    void trackActivityViewMore(activity, CATALOG_MODAL_SOURCE);
+    void startProtectedAction({
+      type: "view_more",
+      activityId: activity.id,
+    });
   };
 
   const handleCatalogModalContactClick = (activity) => {
     void trackActivityContactClick(activity, CATALOG_MODAL_SOURCE);
+  };
+
+  const handleCatalogModalToggleFavorite = (activity) => {
+    const nextIsFavorite = !isFavorite(activity.id);
+
+    toggleFavorite(activity.id);
+
+    if (nextIsFavorite) {
+      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
+      return;
+    }
+
+    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
   };
 
   return (
@@ -229,9 +273,11 @@ export function HomePage() {
 
       <ActivityDetailModal
         activity={selectedActivity}
+        isFavorite={selectedActivity ? isFavorite(selectedActivity.id) : false}
         open={Boolean(selectedActivity)}
         onClose={() => setSelectedActivity(null)}
         onContactClick={handleCatalogModalContactClick}
+        onToggleFavorite={handleCatalogModalToggleFavorite}
       />
     </div>
   );
