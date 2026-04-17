@@ -178,7 +178,7 @@ export function CatalogActivityCard({
     <Card className="catalog-card">
       <div className="catalog-card__media">
         <img
-          src={activity.image_url || "/placeholder.jpg"}
+          src={activity.image_url || PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC}
           alt={activity.title}
           className="catalog-card__image"
         />

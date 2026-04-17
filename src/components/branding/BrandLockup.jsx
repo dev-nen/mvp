@@ -11,7 +11,7 @@ export function BrandLockup({ variant = "navbar" }) {
       aria-label="NensGo"
     >
       <img
-        src="/branding/nensgo-navbar-mark.png"
+        src="/nensgo-navbar-mark.png"
         alt=""
         className="brand-lockup__mark"
       />
