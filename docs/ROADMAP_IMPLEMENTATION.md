@@ -27,6 +27,7 @@ These are merged capabilities. They should not be rediscovered from chat memory 
 - Profile exists, but only as a minimal auth-facing surface
 - Favorites work, but remain browser-local rather than user-linked
 - PVI exists, but depends on Supabase configuration and `activity_events`, and the route is still public today
+- PVI currently degrades gracefully when unreadable, but remains intentionally remote-only until Supabase readiness is solved
 - Catalog uses a local fallback baseline rather than a real backend catalog source
 
 ## Next Real Phase
@@ -46,6 +47,7 @@ This order keeps the current architecture honest: user-linked detail and favorit
 - Richer profile editing and persistence
 - Clearer access rules beyond the current base gate
 - Stronger PVI/internal access boundaries
+- Reopen PVI completion only after `activity_events` exists, matches the frontend event shape, and can be read by the intended client
 - Cleaner backend contracts that replace current frontend aliases
 - Broader business logic and beta-oriented hardening
 
@@ -57,6 +59,7 @@ This order keeps the current architecture honest: user-linked detail and favorit
 - Full auth roadmap beyond the current base integration
 - Treating current detail work as fully complete
 - Treating PVI as a hardened internal admin tool
+- Adding a browser-local analytics fallback to make `/pvi` appear operational before Supabase is ready
 
 ## Practical Reading Of The Roadmap
 

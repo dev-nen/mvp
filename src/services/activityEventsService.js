@@ -14,6 +14,16 @@ export const CATALOG_CARD_SOURCE = "catalog_card";
 export const CATALOG_MODAL_SOURCE = "catalog_modal";
 export const FAVORITES_DETAIL_SOURCE = "favorites_detail";
 
+export const ACTIVITY_EVENTS_AVAILABILITY_READY = "ready";
+export const ACTIVITY_EVENTS_AVAILABILITY_UNAVAILABLE = "unavailable";
+
+export const ACTIVITY_EVENTS_REASON_SUPABASE_NOT_CONFIGURED =
+  "supabase_not_configured";
+export const ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_MISSING =
+  "activity_events_missing";
+export const ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_FORBIDDEN =
+  "activity_events_forbidden";
+
 function warnInDev(message, error) {
   if (!import.meta.env.DEV) {
     return;
@@ -28,6 +38,58 @@ function errorInDev(message, context) {
   }
 
   console.error(message, context);
+}
+
+function buildUnavailableActivityEventsResult(reason, message, error) {
+  warnInDev("[activity-events] Lectura de PVI no disponible.", {
+    reason,
+    message,
+    error,
+  });
+
+  return {
+    availability: ACTIVITY_EVENTS_AVAILABILITY_UNAVAILABLE,
+    reason,
+    message,
+    events: [],
+  };
+}
+
+function buildActivityEventsReadErrorText(error) {
+  return [error?.code, error?.message, error?.details, error?.hint]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+function isActivityEventsMissingError(error) {
+  const errorText = buildActivityEventsReadErrorText(error);
+
+  if (error?.code === "PGRST205" || error?.code === "42P01") {
+    return true;
+  }
+
+  return (
+    errorText.includes("activity_events") &&
+    (errorText.includes("could not find the table") ||
+      errorText.includes("schema cache") ||
+      errorText.includes("does not exist"))
+  );
+}
+
+function isActivityEventsForbiddenError(error) {
+  const errorText = buildActivityEventsReadErrorText(error);
+
+  if (error?.code === "42501") {
+    return true;
+  }
+
+  return (
+    errorText.includes("permission denied") ||
+    errorText.includes("forbidden") ||
+    errorText.includes("not allowed") ||
+    errorText.includes("row-level security")
+  );
 }
 
 function normalizeActivityEventActivityId(activityId) {
@@ -85,7 +147,9 @@ export async function listActivityEvents() {
   const supabaseClient = getSupabaseClient();
 
   if (!supabaseClient) {
-    throw new Error(
+    return buildUnavailableActivityEventsResult(
+      ACTIVITY_EVENTS_REASON_SUPABASE_NOT_CONFIGURED,
+      "Supabase no esta configurado en este entorno para leer activity_events.",
       getSupabaseClientError() ||
         "Supabase no esta disponible para cargar las interacciones.",
     );
@@ -105,12 +169,34 @@ export async function listActivityEvents() {
     .order("created_at", { ascending: false });
 
   if (error) {
+    if (isActivityEventsMissingError(error)) {
+      return buildUnavailableActivityEventsResult(
+        ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_MISSING,
+        "activity_events no existe o todavia no esta disponible en este entorno.",
+        error,
+      );
+    }
+
+    if (isActivityEventsForbiddenError(error)) {
+      return buildUnavailableActivityEventsResult(
+        ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_FORBIDDEN,
+        "Las credenciales actuales no pueden leer activity_events en este entorno.",
+        error,
+      );
+    }
+
+    errorInDev("[activity-events] Error inesperado al leer activity_events.", {
+      error,
+    });
     throw new Error(
       "No pudimos cargar las interacciones desde activity_events.",
     );
   }
 
-  return data ?? [];
+  return {
+    availability: ACTIVITY_EVENTS_AVAILABILITY_READY,
+    events: data ?? [],
+  };
 }
 
 async function insertActivityEvent(payload) {

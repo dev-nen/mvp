@@ -6,6 +6,9 @@ export function useActivityEventsDashboard() {
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [availability, setAvailability] = useState("ready");
+  const [availabilityReason, setAvailabilityReason] = useState("");
+  const [availabilityMessage, setAvailabilityMessage] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
@@ -14,20 +17,32 @@ export function useActivityEventsDashboard() {
     const loadActivityEvents = async () => {
       setIsLoading(true);
       setError("");
+      setAvailability("ready");
+      setAvailabilityReason("");
+      setAvailabilityMessage("");
 
       try {
-        const nextEvents = await listActivityEvents();
+        const result = await listActivityEvents();
 
         if (!isMounted) {
           return;
         }
 
-        setEvents(nextEvents);
+        if (result.availability === "unavailable") {
+          setEvents([]);
+          setAvailability("unavailable");
+          setAvailabilityReason(result.reason || "");
+          setAvailabilityMessage(result.message || "");
+          return;
+        }
+
+        setEvents(result.events ?? []);
       } catch (loadError) {
         if (!isMounted) {
           return;
         }
 
+        setEvents([]);
         setError(
           loadError instanceof Error
             ? loadError.message
@@ -61,6 +76,9 @@ export function useActivityEventsDashboard() {
     dashboard,
     isLoading,
     error,
+    availability,
+    availabilityReason,
+    availabilityMessage,
     reload,
   };
 }

@@ -26,7 +26,7 @@ El estado actual del repo cubre:
 - estilos en CSS plano
 - catalogo servido desde la capa local actual del proyecto
 - tracking de eventos hacia Supabase cuando las credenciales estan disponibles
-- fallback seguro cuando Supabase no esta configurado
+- degradacion segura para `/pvi` cuando Supabase o `activity_events` no estan listos
 
 ## Tech Stack
 
@@ -66,7 +66,8 @@ VITE_SUPABASE_ANON_KEY=
 ```
 
 Si no estan configuradas, la aplicacion sigue funcionando como frontend MVP y
-simplemente omite el tracking remoto de eventos.
+simplemente omite el tracking remoto de eventos. En ese caso `/pvi` no rompe la
+ruta: muestra un estado de no disponibilidad en lugar de un error generico.
 
 ## Notes
 
@@ -74,6 +75,11 @@ simplemente omite el tracking remoto de eventos.
 - El detalle desde Home abre en modal y el detalle desde Favoritos usa ruta dedicada.
 - El CTA de WhatsApp abre contacto directo con el centro usando la informacion de la actividad.
 - El panel `/pvi` depende de `activity_events` en Supabase para mostrar datos reales.
+- PVI es intencionalmente remoto; no existe fallback local de analytics en el navegador.
+- Si `activity_events` no existe o no se puede leer con las credenciales del entorno,
+  `/pvi` degrada a un estado informativo de no disponibilidad.
+- En el entorno actual, Supabase esta devolviendo `PGRST205` porque `public.activity_events`
+  no esta presente en el schema cache.
 
 ## Disclaimer
 

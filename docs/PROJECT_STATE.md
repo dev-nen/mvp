@@ -42,6 +42,7 @@ The current merged baseline is best described as:
 - Favorites can open a dedicated detail page on `/favoritos/:activityId`.
 - Profile route exists and shows the current auth/session state.
 - PVI route exists and can read activity-event metrics from Supabase when the environment and table are ready.
+- When Supabase config, table availability, or read access is missing, `/pvi` now degrades to an unavailable state instead of a generic load failure.
 
 ## Partial Or Configuration-Dependent Areas
 
@@ -51,6 +52,8 @@ The current merged baseline is best described as:
 - Profile is a minimal auth-facing surface, not a complete persisted app profile.
 - Favorites work today, but remain browser-local rather than user-linked.
 - PVI exists, but depends on `activity_events` plus valid Supabase configuration and is still a partial internal surface.
+- PVI no longer hard-fails the route for expected dependency gaps, but it still depends on external Supabase readiness to show real data.
+- PVI has no browser-local fallback source; in the current environment the observed blocker is `PGRST205` because `public.activity_events` is missing from Supabase schema cache.
 - Catalog data still comes from local fallback files, not from a real backend catalog.
 
 ## Difference Between Present State, MVP 2.0 Direction, And Beta Direction

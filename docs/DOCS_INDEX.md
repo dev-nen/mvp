@@ -47,6 +47,7 @@ The master docs describe the documented baseline of the branch context they were
 | [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md) | Detail mapping to the current runtime shape. |
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
+| [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Current PVI blocker, deferred local-fallback decision, and reopen conditions. |
 
 ## Suggested Reading By Topic
 
@@ -70,6 +71,13 @@ The master docs describe the documented baseline of the branch context they were
   - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
   - [TECH_DEBT.md](./TECH_DEBT.md)
   - [auth-base-mvp2.md](./auth-base-mvp2.md)
+- PVI and analytics readiness:
+  - [PROJECT_STATE.md](./PROJECT_STATE.md)
+  - [ARCHITECTURE.md](./ARCHITECTURE.md)
+  - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+  - [TECH_DEBT.md](./TECH_DEBT.md)
+  - [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
+  - [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md)
 - Long implementation work:
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
   - [../PLANS.md](../PLANS.md)

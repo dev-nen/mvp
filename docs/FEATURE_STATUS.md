@@ -25,7 +25,7 @@ Statuses below describe the current baseline, not older branch intent.
 | Detail MVP 2.0 | Partial | Detail is structurally aligned in two current surfaces: Home modal and Favorites detail page | Detail MVP 2.0 remains partially implemented and split between modal and favorites page; later detail/auth phases remain open |
 | Favorites | Partial | Users can save activities locally and revisit them on protected favorites routes | Persistence is still browser-local and not linked to a user account |
 | Profile | Partial | `/perfil` shows current auth/session state and current city metadata when available | There is no fuller persisted profile model yet |
-| PVI | Partial | `/pvi` can read interaction metrics from `activity_events` when Supabase is ready | Depends on external configuration and is still a partial internal surface |
+| PVI | Partial | `/pvi` already has the current graceful unavailable-state UI and can read interaction metrics from `activity_events` when Supabase is ready | No browser-local fallback exists; backend readiness is pending and the current environment is blocked by missing `activity_events` |
 | Auth base | Partial | Supabase Auth plus Google is implemented in `main`, including protected routes/actions and city completion | Externally configuration-dependent; not yet the full auth roadmap |
 | Roadmap toward fuller MVP 2.0 and beta | In progress | Several supporting lines are already merged, but user-linked data and backend phases remain open | Current `main` mixes implemented work, partial work, and planned phases |
 | Backend catalog real | Planned | No real backend catalog fetch is active in the current runtime | Current catalog still comes from local fallback data |

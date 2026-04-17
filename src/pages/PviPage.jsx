@@ -14,6 +14,11 @@ import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useActivityEventsDashboard } from "@/hooks/useActivityEventsDashboard";
+import {
+  ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_FORBIDDEN,
+  ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_MISSING,
+  ACTIVITY_EVENTS_REASON_SUPABASE_NOT_CONFIGURED,
+} from "@/services/activityEventsService";
 import "./PviPage.css";
 
 const eventNameLabelMap = {
@@ -52,6 +57,46 @@ function formatEventDateTime(createdAt) {
   return dateTimeFormatter.format(date);
 }
 
+function getUnavailableStateCopy(reason, message) {
+  if (reason === ACTIVITY_EVENTS_REASON_SUPABASE_NOT_CONFIGURED) {
+    return {
+      eyebrow: "Configuracion requerida",
+      title: "PVI no disponible en este entorno",
+      description:
+        message ||
+        "Este panel necesita Supabase configurado para leer activity_events.",
+    };
+  }
+
+  if (reason === ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_MISSING) {
+    return {
+      eyebrow: "Dependencia ausente",
+      title: "PVI sin fuente de datos",
+      description:
+        message ||
+        "activity_events no existe o todavia no esta disponible en este entorno.",
+    };
+  }
+
+  if (reason === ACTIVITY_EVENTS_REASON_ACTIVITY_EVENTS_FORBIDDEN) {
+    return {
+      eyebrow: "Lectura no disponible",
+      title: "PVI sin acceso a interacciones",
+      description:
+        message ||
+        "Las credenciales actuales no pueden leer activity_events en este entorno.",
+    };
+  }
+
+  return {
+    eyebrow: "No disponible",
+    title: "PVI no disponible en este entorno",
+    description:
+      message ||
+      "Este panel necesita una fuente activity_events disponible para mostrar datos.",
+  };
+}
+
 function PviMetricCard({ icon: Icon, label, value, description }) {
   return (
     <Card>
@@ -68,7 +113,20 @@ function PviMetricCard({ icon: Icon, label, value, description }) {
 }
 
 export function PviPage() {
-  const { dashboard, isLoading, error, reload } = useActivityEventsDashboard();
+  const {
+    dashboard,
+    isLoading,
+    error,
+    availability,
+    availabilityReason,
+    availabilityMessage,
+    reload,
+  } = useActivityEventsDashboard();
+  const unavailableState = useMemo(
+    () =>
+      getUnavailableStateCopy(availabilityReason, availabilityMessage),
+    [availabilityMessage, availabilityReason],
+  );
 
   const metricCards = useMemo(
     () => [
@@ -140,6 +198,15 @@ export function PviPage() {
               eyebrow="PVI"
               title="Cargando interacciones..."
               description="Estamos leyendo activity_events para preparar el panel interno."
+            />
+          ) : availability === "unavailable" ? (
+            <CatalogState
+              icon={BarChart3}
+              eyebrow={unavailableState.eyebrow}
+              title={unavailableState.title}
+              description={unavailableState.description}
+              actionLabel="Reintentar"
+              onAction={reload}
             />
           ) : error ? (
             <CatalogState

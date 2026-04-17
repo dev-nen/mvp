@@ -24,7 +24,7 @@ The current app is a single frontend runtime with prepared seams for future evol
 | `/favoritos` | Favorites list | Protected route. Reads current favorites from local browser state. |
 | `/favoritos/:activityId` | Favorites detail page | Protected route. Current routed detail surface. |
 | `/perfil` | Minimal profile/auth surface | Protected route. Reflects current auth and session state. |
-| `/pvi` | Interaction dashboard | Public route today, although product copy treats it as internal. |
+| `/pvi` | Interaction dashboard | Public route today, although product copy treats it as internal. Degrades to an unavailable state when `activity_events` cannot be read, but remains Supabase-backed only. |
 | `/soporte` | Placeholder surface | Not implemented as a real support workflow yet. |
 
 ## Current Frontend Composition
@@ -58,6 +58,9 @@ The current app is a single frontend runtime with prepared seams for future evol
 
 - `src/pages/PviPage.jsx` reads dashboard data through `useActivityEventsDashboard()`.
 - PVI depends on `activity_events` data coming from Supabase.
+- The read path is availability-aware: missing Supabase config, missing `activity_events`, or denied read access show an unavailable state instead of hard-failing the route.
+- PVI does not maintain a browser-local analytics mirror; if Supabase is not ready, the route stays graceful but the dashboard remains without real data.
+- In the current checked environment, Supabase is responding with `PGRST205` because `public.activity_events` is missing from the schema cache.
 
 ## Current Catalog Data Flow
 
@@ -124,6 +127,8 @@ Supabase is currently used for specific roles, not as the full backend of the pr
 - User metadata update for required city
 - Reading and writing `activity_events`
 - Feeding the PVI dashboard when data exists
+- Signaling PVI unavailability when the current environment cannot read `activity_events`
+- Not providing a local fallback data source for PVI before Supabase readiness is solved
 
 Supabase is not currently the live catalog backend in `main`.
 
