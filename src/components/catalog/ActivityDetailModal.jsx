@@ -126,6 +126,12 @@ export function ActivityDetailModal({
             <section className="activity-detail-modal__identity">
               <div className="activity-detail-modal__identity-head">
                 <div className="activity-detail-modal__identity-copy">
+                  <h2
+                    id="activity-detail-modal-title"
+                    className="activity-detail-modal__title"
+                  >
+                    {viewModel.title}
+                  </h2>
                   {viewModel.categoryLabel || viewModel.showFreeBadge ? (
                     <div className="activity-detail-modal__identity-meta">
                       {viewModel.categoryLabel ? (
@@ -140,12 +146,6 @@ export function ActivityDetailModal({
                       ) : null}
                     </div>
                   ) : null}
-                  <h2
-                    id="activity-detail-modal-title"
-                    className="activity-detail-modal__title"
-                  >
-                    {viewModel.title}
-                  </h2>
                 </div>
 
                 <Button

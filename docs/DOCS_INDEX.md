@@ -46,6 +46,7 @@ The master docs describe the documented baseline of the branch context they were
 | [detail-view-mvp2-structure.md](./detail-view-mvp2-structure.md) | Current detail structure across the two active surfaces. |
 | [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md) | Detail mapping to the current runtime shape. |
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
+| [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
 
 ## Suggested Reading By Topic
 
@@ -62,6 +63,7 @@ The master docs describe the documented baseline of the branch context they were
   - [detail-view-mvp2-structure.md](./detail-view-mvp2-structure.md)
   - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
   - [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md)
+  - [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md)
 - Auth, profile, and protected flows:
   - [PROJECT_STATE.md](./PROJECT_STATE.md)
   - [ARCHITECTURE.md](./ARCHITECTURE.md)

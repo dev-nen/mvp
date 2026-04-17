@@ -35,10 +35,16 @@ Both surfaces follow the same functional sequence:
 
 ### 2. Main identity
 
+- main title
 - category when available
 - visible `Gratis` badge when `is_free === true`
-- main title
 - top-right clickable favorite heart
+
+The accepted identity order inside this block is:
+
+1. title
+2. category and optional `Gratis` badge
+3. favorite heart aligned in the top-right area
 
 ### 3. Main descriptive content
 

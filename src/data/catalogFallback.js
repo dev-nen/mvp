@@ -201,4 +201,26 @@ export const activities = [
     is_active: false,
     created_at: "2026-03-05T09:00:00.000Z",
   },
+  {
+    id: 8,
+    center_id: 2,
+    city_id: 2,
+    title: "Taller creativo gratuito en familia",
+    category_label: "Familia",
+    short_description:
+      "Encuentro abierto para crear en familia con pintura, collage y materiales sencillos en un ambiente cercano.",
+    description:
+      "Propuesta gratuita para familias que quieren compartir un rato creativo sin compromiso previo. La sesion combina pintura, collage y dinamicas faciles de seguir para que peques y adultos exploren materiales, jueguen y se lleven ideas para repetir en casa.",
+    image_url: "/images/free-family-workshop.jpg",
+    price_label: "0 EUR",
+    schedule_label: "Sabado, 11:00 a 12:30",
+    age_rule_type: "range",
+    age_min: 4,
+    age_max: 10,
+    venue_name: "Pati Civic de Ribes",
+    venue_address_1: "Carrer Major, 18",
+    is_free: true,
+    is_active: true,
+    created_at: "2026-04-17T10:00:00.000Z",
+  },
 ];
