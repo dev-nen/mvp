@@ -2,8 +2,8 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current merged state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against `main` at HEAD `bff3c62`.
+This documentation reflects the current checked-out working state of `main` at the time of writing.
+Baseline checked on April 17, 2026 against the active `main` working tree.
 Where implementation is partial, branch history or feature-level docs may provide additional context, but the current repository state takes precedence over historical intent.
 
 ## What NensGo Is Today
@@ -11,6 +11,7 @@ Where implementation is partial, branch history or feature-level docs may provid
 NensGo is currently a frontend-first MVP for discovering activities for children and families. The repo already contains:
 
 - A public landing and catalog experience on `/`
+- A separate public B2B landing on `/para-centros` for centers and projects that want to join
 - Real client-side routing
 - A fallback-driven activity catalog served from local frontend data
 - A public teaser card contract for the catalog
@@ -27,6 +28,7 @@ This is not yet a full backend-backed product. The current runtime still mixes i
 The current merged baseline is best described as:
 
 - A usable frontend MVP with real navigation and current user-facing surfaces
+- A preparatory B2B acquisition surface for centers that lives separately from Home
 - A public catalog backed by local fallback data plus runtime enrichment
 - Base auth integrated in code, but still dependent on external configuration
 - Several MVP 2.0 lines started, but not all closed as full product phases
@@ -35,6 +37,7 @@ The current merged baseline is best described as:
 
 - Branding baseline is NensGo across active surfaces and assets.
 - Home acts as landing plus public catalog entry point.
+- `/para-centros` exists as a separate public B2B landing with direct-URL access, internal anchor navigation, preview modal, and external join CTA.
 - Public catalog supports search, filters, quick-access category entry points, and teaser cards.
 - Public catalog cards apply current validity filtering and standard placeholder fallback behavior.
 - Users can save favorites locally and revisit them on `/favoritos`.
@@ -55,6 +58,7 @@ The current merged baseline is best described as:
 - PVI no longer hard-fails the route for expected dependency gaps, but it still depends on external Supabase readiness to show real data.
 - PVI has no browser-local fallback source; in the current environment the observed blocker is `PGRST205` because `public.activity_events` is missing from Supabase schema cache.
 - Catalog data still comes from local fallback files, not from a real backend catalog.
+- `/para-centros` is intentionally isolated from the current Home traffic flow: it is not linked from `/`, it does not replace the root route, and domain-level distribution is still deferred.
 
 ## Difference Between Present State, MVP 2.0 Direction, And Beta Direction
 
@@ -62,6 +66,7 @@ The current merged baseline is best described as:
 
 - Frontend runtime is real.
 - Public catalog is real.
+- A separate public B2B route now exists for center-facing acquisition without changing `/`.
 - Fallback data is the current source of catalog truth.
 - Base auth flow is integrated.
 - Protected routes and protected actions are implemented.
@@ -82,4 +87,4 @@ The current merged baseline is best described as:
 
 ## Current State Summary
 
-NensGo today is a real merged frontend baseline, not a blank prototype. It is also not a finished product. The repo already contains meaningful product structure, but several important lines remain partial: backend catalog, user-linked favorites, richer profile persistence, and the later auth/detail phases beyond the current base integration.
+NensGo today is a real frontend baseline, not a blank prototype. It is also not a finished product. The repo already contains meaningful product structure across family-facing and preparatory center-facing surfaces, but several important lines remain partial: backend catalog, user-linked favorites, richer profile persistence, route-level SEO distribution, and the later auth/detail phases beyond the current base integration.

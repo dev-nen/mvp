@@ -2,8 +2,8 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current merged state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against `main` at HEAD `bff3c62`.
+This documentation reflects the current checked-out working state of `main` at the time of writing.
+Baseline checked on April 17, 2026 against the active `main` working tree.
 This file documents the architecture currently running in the repo, not the ideal future architecture.
 
 ## Stack And Runtime Boundary
@@ -21,6 +21,7 @@ The current app is a single frontend runtime with prepared seams for future evol
 | Route | Current role | Notes |
 | --- | --- | --- |
 | `/` | Landing + public catalog | Public route. Shows teaser catalog cards and opens detail through the current protected-action flow. |
+| `/para-centros` | B2B landing for centers | Public route. Uses its own page composition, internal anchor navigation, preview modal, external join CTA, and route-local noindex handling while traffic remains deferred. |
 | `/favoritos` | Favorites list | Protected route. Reads current favorites from local browser state. |
 | `/favoritos/:activityId` | Favorites detail page | Protected route. Current routed detail surface. |
 | `/perfil` | Minimal profile/auth surface | Protected route. Reflects current auth and session state. |
@@ -34,6 +35,7 @@ The current app is a single frontend runtime with prepared seams for future evol
 - `src/App.jsx` defines the route map.
 - `AuthProvider` wraps the full route tree.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
+- `/para-centros` is public and does not depend on auth, catalog, or Supabase state.
 
 ### Public Home and catalog
 
@@ -41,6 +43,14 @@ The current app is a single frontend runtime with prepared seams for future evol
 - `useCatalog()` loads activities through `catalogService`.
 - `CatalogActivityCard` has a public teaser variant used by Home.
 - `ActivityDetailModal` is the current Home detail surface, triggered through the protected-action flow.
+
+### B2B centers landing
+
+- `src/pages/ParaCentrosPage.jsx` is a separate public route for center-facing acquisition.
+- The page keeps its own local header, footer, button styling, and section layout instead of reusing the family-facing shared navigation surfaces.
+- The route uses dedicated static assets under `public/para-centros/`.
+- The page mutates `document.title` and `meta[name="robots"]` locally while mounted because the app still has no shared route-metadata layer.
+- The route is intentionally isolated from Home: no internal traffic link was added from `/` in this phase.
 
 ### Favorites
 
@@ -138,6 +148,7 @@ Supabase is not currently the live catalog backend in `main`.
 - Activity-event session id: `localStorage`
 - Pending protected intent: `sessionStorage`
 - Auth session: Supabase-managed session persistence in the browser
+- `/para-centros` preview modal open state: component-local React state only
 
 This means the current runtime already mixes remote auth state with local browser persistence for favorites and analytics identity.
 
@@ -163,4 +174,4 @@ Important current seams:
 
 ## Architectural Summary
 
-The current architecture is a real frontend application with routing, local catalog data, partial protected flows, and targeted Supabase integration. It already has seams prepared for a fuller backend-backed product, but those seams should not be mistaken for completed backend architecture.
+The current architecture is a real frontend application with routing, local catalog data, partial protected flows, a separate public B2B route, and targeted Supabase integration. It already has seams prepared for a fuller backend-backed product, but those seams should not be mistaken for completed backend architecture.

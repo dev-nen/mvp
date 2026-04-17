@@ -14,6 +14,7 @@ This file lists current, relevant debt and known gaps. It is not a backlog of ev
 | Profile model | Profile currently reflects auth/session state only | There is no fuller app-profile persistence, edit flow, or backend-backed profile model |
 | Favorites model | Favorites remain browser-local | Current favorites do not follow the authenticated user across devices or sessions |
 | PVI availability | PVI depends on `activity_events` and valid Supabase config, while the route is public today and intentionally has no browser-local fallback | Internal-style analytics remain partial and not fully hardened; in the current environment Supabase is returning `PGRST205` because `public.activity_events` is missing |
+| Route metadata | `/para-centros` currently sets `document.title` and `meta[name="robots"]` locally in the page because the app has no shared route-metadata layer | This is enough for the current no-traffic phase, but future public distribution will need a clearer SEO/head strategy across routes |
 | Presentation rules | Age and presentation rules are distributed across generic helpers and surface-specific logic | The runtime still carries more than one presentation contract boundary |
 | Tooling | `package.json` currently exposes no test or lint scripts | Verification is mostly manual and regressions are easier to miss |
 

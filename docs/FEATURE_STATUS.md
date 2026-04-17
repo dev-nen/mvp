@@ -2,8 +2,8 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current merged state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against `main` at HEAD `bff3c62`.
+This documentation reflects the current checked-out working state of `main` at the time of writing.
+Baseline checked on April 17, 2026 against the active `main` working tree.
 Statuses below describe the current baseline, not older branch intent.
 
 ## Status Legend
@@ -20,6 +20,7 @@ Statuses below describe the current baseline, not older branch intent.
 | --- | --- | --- | --- |
 | Branding | Done | NensGo branding is active across current app surfaces and assets | Brand evolution can continue later, but the current rebrand baseline is already merged |
 | Public catalog | Done | Home exposes the current landing plus searchable/filterable public catalog | Current source is frontend fallback data, not backend catalog |
+| B2B centers landing route | Partial | `/para-centros` exists as a public preparatory landing with isolated layout, anchor navigation, preview modal, and external join CTA | It is intentionally not linked from `/` yet, does not move the root route, and still relies on route-local noindex metadata handling |
 | Public catalog card | Done | Home uses the teaser public card contract with current approved content blocks | This is the current public-card baseline, not a richer logged-in card |
 | Card fallback rules | Done | Public catalog applies current validity rules and SVG placeholder fallback | Non-public card placeholder coverage still has debt outside the public flow |
 | Detail MVP 2.0 | Partial | Detail is structurally aligned in two current surfaces: Home modal and Favorites detail page | Detail MVP 2.0 remains partially implemented and split between modal and favorites page; later detail/auth phases remain open |
