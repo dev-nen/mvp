@@ -48,6 +48,9 @@ The master docs describe the documented baseline of the branch context they were
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Current PVI blocker, deferred local-fallback decision, and reopen conditions. |
+| [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
+| [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md) | SDD for moving from local fallback truth to real Supabase-backed catalog/user flows and expanding auth to Google plus classic sign-up. |
+| [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md) | Review sheet of unresolved product and technical decisions for the real DB and auth migration. |
 
 ## Suggested Reading By Topic
 
@@ -78,6 +81,18 @@ The master docs describe the documented baseline of the branch context they were
   - [TECH_DEBT.md](./TECH_DEBT.md)
   - [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
   - [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md)
+- Real DB migration and auth expansion:
+  - [PROJECT_STATE.md](./PROJECT_STATE.md)
+  - [ARCHITECTURE.md](./ARCHITECTURE.md)
+  - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+  - [TECH_DEBT.md](./TECH_DEBT.md)
+  - [auth-base-mvp2.md](./auth-base-mvp2.md)
+  - [catalog-fallback-public-contract-audit.md](./catalog-fallback-public-contract-audit.md)
+  - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
+  - [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md)
+  - [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md)
+  - [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md)
+  - [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md)
 - Long implementation work:
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
   - [../PLANS.md](../PLANS.md)
