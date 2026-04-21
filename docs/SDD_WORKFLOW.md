@@ -182,6 +182,31 @@ Validation should be explicit and scoped to the task:
 - list what was not validated if something could not be run
 - call out remaining debt or follow-up work
 
+## Generated Artifact Rule
+
+Generated build outputs are validation artifacts unless the user explicitly asks
+to version them.
+
+- Do not commit generated frontend build outputs such as `dist/` by default.
+- If build validation changes tracked generated files, restore or remove those
+  artifact changes before commit.
+- If build validation creates new generated files, remove them after validation
+  unless the user explicitly asked to keep them.
+- Keep the working tree clean of generated artifact noise once validation is
+  finished.
+
+## Commit Cadence Rule
+
+Commits should be small, reviewable checkpoints rather than large mixed dumps.
+
+- Prefer one commit per coherent slice such as a component, a contract boundary,
+  a data-layer change, or a docs update.
+- Commit once that slice is locally stable or otherwise meaningfully validated.
+- If a task spans multiple layers, split the work into multiple commits by
+  responsibility instead of waiting for one large final dump.
+- Do not hold thousands of insertions in one commit when smaller checkpoints
+  already stand on their own.
+
 ## Documentation Update Rule
 
 After non-trivial work, update the docs that changed materially:
