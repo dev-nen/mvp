@@ -1,44 +1,51 @@
 begin;
 
-create sequence if not exists public.activity_view_events_id_seq;
-create sequence if not exists public.activity_contact_events_id_seq;
-create sequence if not exists public.user_favorite_activities_id_seq;
+do $$
+declare
+  target_table text;
+  current_sequence text;
+  next_value bigint;
+begin
+  foreach target_table in array array[
+    'activity_view_events',
+    'activity_contact_events',
+    'user_favorite_activities'
+  ]
+  loop
+    select pg_get_serial_sequence(format('public.%I', target_table), 'id')
+    into current_sequence;
 
-select setval(
-  'public.activity_view_events_id_seq',
-  greatest(
-    coalesce((select max(id) from public.activity_view_events), 0) + 1,
-    1
-  ),
-  false
-);
+    if current_sequence is null then
+      current_sequence := format('public.%I_id_seq', target_table);
 
-select setval(
-  'public.activity_contact_events_id_seq',
-  greatest(
-    coalesce((select max(id) from public.activity_contact_events), 0) + 1,
-    1
-  ),
-  false
-);
+      execute format(
+        'create sequence if not exists %s',
+        current_sequence
+      );
 
-select setval(
-  'public.user_favorite_activities_id_seq',
-  greatest(
-    coalesce((select max(id) from public.user_favorite_activities), 0) + 1,
-    1
-  ),
-  false
-);
+      execute format(
+        'alter sequence %s owned by public.%I.id',
+        current_sequence,
+        target_table
+      );
 
-alter table public.activity_view_events
-  alter column id set default nextval('public.activity_view_events_id_seq');
+      execute format(
+        'alter table public.%I alter column id set default nextval(%L)',
+        target_table,
+        current_sequence
+      );
+    end if;
 
-alter table public.activity_contact_events
-  alter column id set default nextval('public.activity_contact_events_id_seq');
+    execute format(
+      'select greatest(coalesce(max(id), 0) + 1, 1) from public.%I',
+      target_table
+    )
+    into next_value;
 
-alter table public.user_favorite_activities
-  alter column id set default nextval('public.user_favorite_activities_id_seq');
+    perform setval(current_sequence::regclass, next_value, false);
+  end loop;
+end;
+$$;
 
 create unique index if not exists user_profiles_email_unique_idx
   on public.user_profiles (lower(email));
