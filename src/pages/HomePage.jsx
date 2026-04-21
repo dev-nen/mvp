@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, LoaderCircle, SearchX } from "lucide-react";
+import { AlertTriangle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import {
   CatalogActivityCard,
+  CatalogActivityCardPlaceholder,
   isPublicCatalogActivityValid,
 } from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
@@ -58,6 +59,7 @@ const HOME_QUICK_ACCESS_ITEMS = [
     targetCategoryLabels: ["Cultura", "Familia"],
   },
 ];
+const HOME_CATALOG_PLACEHOLDER_COUNT = 2;
 
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
@@ -237,12 +239,16 @@ export function HomePage() {
             />
 
             {isLoading ? (
-              <CatalogState
-                icon={LoaderCircle}
-                eyebrow="Cargando"
-                title="Preparando el catalogo"
-                description="Estamos cargando el catalogo real desde la base de datos."
-              />
+              <div className="home-page__grid" aria-hidden="true">
+                {Array.from({ length: HOME_CATALOG_PLACEHOLDER_COUNT }).map(
+                  (_, index) => (
+                    <CatalogActivityCardPlaceholder
+                      key={`home-placeholder-${index}`}
+                      variant="public"
+                    />
+                  ),
+                )}
+              </div>
             ) : error ? (
               <CatalogState
                 icon={AlertTriangle}

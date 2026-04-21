@@ -15,6 +15,12 @@
   box-shadow: 0 18px 36px rgba(47, 61, 115, 0.12);
 }
 
+.catalog-card--placeholder:hover {
+  transform: none;
+  border-color: rgba(237, 239, 245, 0.98);
+  box-shadow: none;
+}
+
 .catalog-card__media {
   position: relative;
   overflow: hidden;
@@ -32,6 +38,66 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.catalog-card__placeholder-media {
+  display: grid;
+  place-items: stretch;
+}
+
+.catalog-card__placeholder-block,
+.catalog-card__placeholder-line,
+.catalog-card__placeholder-cta {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(230, 235, 246, 0.9) 0%,
+      rgba(245, 247, 252, 1) 45%,
+      rgba(230, 235, 246, 0.9) 100%
+    );
+  background-size: 220% 100%;
+  animation: catalog-card-placeholder-shimmer 1.8s ease-in-out infinite;
+}
+
+.catalog-card__placeholder-block--image {
+  width: 100%;
+  height: 100%;
+}
+
+.catalog-card__placeholder-line {
+  border-radius: var(--radius-sm);
+}
+
+.catalog-card__placeholder-line--eyebrow {
+  width: 5.5rem;
+  height: 0.75rem;
+}
+
+.catalog-card__placeholder-line--title {
+  width: 90%;
+  height: 1.125rem;
+}
+
+.catalog-card__placeholder-line--title-short {
+  width: 62%;
+  height: 1.125rem;
+}
+
+.catalog-card__placeholder-line--body {
+  width: 80%;
+  height: 0.875rem;
+}
+
+.catalog-card__placeholder-line--body-short {
+  width: 56%;
+  height: 0.875rem;
+}
+
+.catalog-card__placeholder-cta {
+  width: 100%;
+  min-height: 2.5rem;
+  margin-top: auto;
+  border-radius: var(--radius-pill);
 }
 
 .catalog-card__fact-icon {
@@ -270,6 +336,16 @@
   min-height: 2.25rem;
   padding: 0.5rem 0.625rem;
   font-size: 0.875rem;
+}
+
+@keyframes catalog-card-placeholder-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 @media (max-width: 40rem) {

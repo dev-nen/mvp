@@ -1,9 +1,12 @@
 import { useMemo } from "react";
-import { AlertTriangle, Heart, LoaderCircle, SearchX } from "lucide-react";
+import { AlertTriangle, Heart, SearchX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
-import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
+import {
+  CatalogActivityCard,
+  CatalogActivityCardPlaceholder,
+} from "@/components/catalog/CatalogActivityCard";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -35,6 +38,7 @@ export function FavoritesPage() {
     !hasNoSavedFavorites && favoriteActivities.length === 0;
   const isPageLoading = isLoading || isFavoritesLoading;
   const resolvedError = error || favoritesError;
+  const placeholderCount = favoriteIds.length > 0 ? favoriteIds.length : 2;
 
   const handleToggleFavorite = (activity) => {
     void toggleFavorite(activity.id);
@@ -64,12 +68,15 @@ export function FavoritesPage() {
           </header>
 
           {isPageLoading ? (
-            <CatalogState
-              icon={LoaderCircle}
-              eyebrow="Favoritos"
-              title="Cargando tus favoritas"
-              description="Estamos recuperando las actividades que guardaste para que puedas revisarlas con calma."
-            />
+            <section className="favorites-page__section" aria-hidden="true">
+              <div className="favorites-page__grid">
+                {Array.from({ length: placeholderCount }).map((_, index) => (
+                  <CatalogActivityCardPlaceholder
+                    key={`favorites-placeholder-${index}`}
+                  />
+                ))}
+              </div>
+            </section>
           ) : resolvedError ? (
             <CatalogState
               icon={AlertTriangle}

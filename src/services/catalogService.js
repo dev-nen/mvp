@@ -11,6 +11,25 @@ function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function normalizeCatalogImageUrl(value) {
+  const imageUrl = getTrimmedText(value);
+
+  if (!imageUrl) {
+    return "";
+  }
+
+  if (
+    imageUrl.startsWith("/") ||
+    imageUrl.startsWith("data:") ||
+    imageUrl.startsWith("blob:") ||
+    /^https?:\/\//i.test(imageUrl)
+  ) {
+    return imageUrl;
+  }
+
+  return `/${imageUrl.replace(/^\/+/, "")}`;
+}
+
 function normalizeCatalogActivity(activity) {
   const cityName = getTrimmedText(activity.city_name);
   const description = getTrimmedText(activity.description);
@@ -24,6 +43,7 @@ function normalizeCatalogActivity(activity) {
     city_name: cityName,
     city_slug: slugifyText(cityName),
     description,
+    image_url: normalizeCatalogImageUrl(activity.image_url),
     short_description: shortDescription,
   };
 }

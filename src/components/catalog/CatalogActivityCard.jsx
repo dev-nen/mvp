@@ -174,13 +174,20 @@ export function CatalogActivityCard({
     );
   }
 
+  const resolvedImageSrc =
+    getTrimmedText(activity.image_url) || PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
+  const isPlaceholderImage =
+    resolvedImageSrc === PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
+
   return (
     <Card className="catalog-card">
       <div className="catalog-card__media">
         <img
-          src={activity.image_url || PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC}
+          src={resolvedImageSrc}
           alt={activity.title}
           className="catalog-card__image"
+          data-placeholder-applied={isPlaceholderImage ? "true" : "false"}
+          onError={handlePublicCardImageError}
         />
 
         <Button
@@ -263,6 +270,55 @@ export function CatalogActivityCard({
           {viewMoreLabel}
           <ArrowRight />
         </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+export function CatalogActivityCardPlaceholder({ variant = "default" }) {
+  const isPublic = variant === "public";
+
+  return (
+    <Card
+      className={`catalog-card catalog-card--placeholder ${
+        isPublic ? "catalog-card--placeholder-public" : ""
+      }`}
+      aria-hidden="true"
+    >
+      <div
+        className={`catalog-card__media catalog-card__placeholder-media ${
+          isPublic ? "catalog-card__media--public" : ""
+        }`}
+      >
+        <div className="catalog-card__placeholder-block catalog-card__placeholder-block--image" />
+      </div>
+
+      <CardContent
+        className={`catalog-card__content ${
+          isPublic ? "catalog-card__content--public" : ""
+        }`}
+      >
+        <div className="catalog-card__header">
+          <div className="catalog-card__placeholder-line catalog-card__placeholder-line--eyebrow" />
+          <div className="catalog-card__placeholder-line catalog-card__placeholder-line--title" />
+          <div className="catalog-card__placeholder-line catalog-card__placeholder-line--title-short" />
+        </div>
+
+        {isPublic ? (
+          <div className="catalog-card__public-summary">
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body" />
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body-short" />
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body-short" />
+          </div>
+        ) : (
+          <div className="catalog-card__facts">
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body" />
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body-short" />
+            <div className="catalog-card__placeholder-line catalog-card__placeholder-line--body-short" />
+          </div>
+        )}
+
+        <div className="catalog-card__placeholder-cta" />
       </CardContent>
     </Card>
   );
