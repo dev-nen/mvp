@@ -58,7 +58,10 @@ Recommended next implementation order from the current branch:
    - remote favorites
    - view/contact analytics writes
    - private `/api/internal/pvi`
-5. Clean up any remaining dead code or docs drift after external validation.
+5. Once private internal metrics are validated, remove the public `/pvi` route
+   instead of growing a placeholder frontend surface with no lasting product
+   purpose.
+6. Clean up any remaining dead code or docs drift after external validation.
 
 ## Later Phase
 
