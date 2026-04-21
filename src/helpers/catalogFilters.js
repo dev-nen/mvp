@@ -1,6 +1,6 @@
 export function filterActivities(
   activities,
-  { selectedCategoryLabels = [], selectedCitySlug = "" } = {},
+  { selectedCategoryLabels = [], selectedCityId = "" } = {},
 ) {
   return activities.filter((activity) => {
     const matchesCategory =
@@ -8,7 +8,7 @@ export function filterActivities(
       selectedCategoryLabels.includes(activity.category_label);
 
     const matchesCity =
-      !selectedCitySlug || activity.city_slug === selectedCitySlug;
+      !selectedCityId || String(activity.city_id) === String(selectedCityId);
 
     return matchesCategory && matchesCity;
   });
@@ -24,11 +24,12 @@ export function getCityOptions(activities) {
   const cityOptions = new Map();
 
   activities.forEach((activity) => {
-    if (!activity.city_slug || !activity.city_name) {
+    if (!activity.city_name || activity.city_id === null || activity.city_id === undefined) {
       return;
     }
 
-    cityOptions.set(activity.city_slug, {
+    cityOptions.set(activity.city_id, {
+      city_id: activity.city_id,
       city_slug: activity.city_slug,
       city_name: activity.city_name,
     });

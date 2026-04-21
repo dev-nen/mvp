@@ -7,8 +7,8 @@ export function CatalogToolbar({
   searchQuery,
   onSearchQueryChange,
   cityOptions,
-  selectedCitySlug,
-  onSelectedCitySlugChange,
+  selectedCityId,
+  onSelectedCityIdChange,
   categoryLabelOptions,
   selectedCategoryLabels,
   onToggleCategoryLabel,
@@ -16,7 +16,7 @@ export function CatalogToolbar({
 }) {
   const hasActiveFilters =
     searchQuery.trim().length > 0 ||
-    selectedCitySlug.length > 0 ||
+    String(selectedCityId).length > 0 ||
     selectedCategoryLabels.length > 0;
 
   return (
@@ -54,14 +54,15 @@ export function CatalogToolbar({
             <span className="catalog-toolbar__control-label">Ciudad</span>
             <select
               className="catalog-toolbar__select"
-              value={selectedCitySlug}
-              onChange={(event) =>
-                onSelectedCitySlugChange(event.target.value)
-              }
+              value={selectedCityId}
+              onChange={(event) => onSelectedCityIdChange(event.target.value)}
             >
               <option value="">Todas las ciudades</option>
               {cityOptions.map((cityOption) => (
-                <option key={cityOption.city_slug} value={cityOption.city_slug}>
+                <option
+                  key={cityOption.city_id}
+                  value={String(cityOption.city_id)}
+                >
                   {cityOption.city_name}
                 </option>
               ))}

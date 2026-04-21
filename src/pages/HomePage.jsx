@@ -22,11 +22,8 @@ import { useCatalog } from "@/hooks/useCatalog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
-  CATALOG_CARD_SOURCE,
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
-  trackActivityFavoriteAdd,
-  trackActivityFavoriteRemove,
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./HomePage.css";
@@ -68,7 +65,7 @@ export function HomePage() {
   const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
-  const [selectedCitySlug, setSelectedCitySlug] = useState("");
+  const [selectedCityId, setSelectedCityId] = useState("");
   const [selectedActivity, setSelectedActivity] = useState(null);
   const catalogSectionRef = useRef(null);
 
@@ -94,13 +91,13 @@ export function HomePage() {
 
     return filterActivities(searchedActivities, {
       selectedCategoryLabels,
-      selectedCitySlug,
+      selectedCityId,
     });
   }, [
     publicCatalogActivities,
     searchQuery,
     selectedCategoryLabels,
-    selectedCitySlug,
+    selectedCityId,
   ]);
 
   const handleToggleCategoryLabel = (categoryLabel) => {
@@ -114,7 +111,7 @@ export function HomePage() {
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategoryLabels([]);
-    setSelectedCitySlug("");
+    setSelectedCityId("");
   };
 
   const handleExploreActivities = () => {
@@ -148,16 +145,7 @@ export function HomePage() {
     }
 
     if (resolvedIntent.type === "toggle_favorite") {
-      const nextIsFavorite = !isFavorite(nextSelectedActivity.id);
-
-      toggleFavorite(nextSelectedActivity.id);
-
-      if (nextIsFavorite) {
-        void trackActivityFavoriteAdd(nextSelectedActivity, CATALOG_CARD_SOURCE);
-      } else {
-        void trackActivityFavoriteRemove(nextSelectedActivity, CATALOG_CARD_SOURCE);
-      }
-
+      void toggleFavorite(nextSelectedActivity.id);
       consumeResolvedIntent();
       return;
     }
@@ -175,7 +163,6 @@ export function HomePage() {
     isLoading,
     publicCatalogActivities,
     resolvedIntent,
-    isFavorite,
     toggleFavorite,
   ]);
 
@@ -186,21 +173,12 @@ export function HomePage() {
     });
   };
 
-  const handleCatalogModalContactClick = (activity) => {
-    void trackActivityContactClick(activity, CATALOG_MODAL_SOURCE);
+  const handleCatalogModalContactClick = (activity, contactOption) => {
+    void trackActivityContactClick(activity, CATALOG_MODAL_SOURCE, contactOption);
   };
 
   const handleCatalogModalToggleFavorite = (activity) => {
-    const nextIsFavorite = !isFavorite(activity.id);
-
-    toggleFavorite(activity.id);
-
-    if (nextIsFavorite) {
-      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
-      return;
-    }
-
-    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
+    void toggleFavorite(activity.id);
   };
 
   const handleCatalogCardToggleFavorite = (activity) => {
@@ -250,8 +228,8 @@ export function HomePage() {
               searchQuery={searchQuery}
               onSearchQueryChange={setSearchQuery}
               cityOptions={cityOptions}
-              selectedCitySlug={selectedCitySlug}
-              onSelectedCitySlugChange={setSelectedCitySlug}
+              selectedCityId={selectedCityId}
+              onSelectedCityIdChange={setSelectedCityId}
               categoryLabelOptions={categoryLabelOptions}
               selectedCategoryLabels={selectedCategoryLabels}
               onToggleCategoryLabel={handleToggleCategoryLabel}
@@ -263,7 +241,7 @@ export function HomePage() {
                 icon={LoaderCircle}
                 eyebrow="Cargando"
                 title="Preparando el catalogo"
-                description="Estamos preparando el catalogo desde la capa de datos temporal desacoplada."
+                description="Estamos cargando el catalogo real desde la base de datos."
               />
             ) : error ? (
               <CatalogState

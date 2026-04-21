@@ -1,16 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   Heart,
+  LoaderCircle,
   X,
 } from "lucide-react";
+import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { Button } from "@/components/ui/button";
-import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage";
 import {
   ACTIVITY_DETAIL_PLACEHOLDER_SRC,
   buildActivityDetailViewModel,
   handleActivityDetailImageError,
 } from "@/helpers/activityDetailViewModel";
+import { openActivityContactAction } from "@/helpers/buildActivityContactAction";
+import { useActivityContactOptions } from "@/hooks/useActivityContactOptions";
 import "./ActivityDetailModal.css";
 
 export function ActivityDetailModal({
@@ -22,6 +25,13 @@ export function ActivityDetailModal({
   onContactClick,
 }) {
   const scrollContainerRef = useRef(null);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const {
+    contactOptions,
+    isLoading: isContactOptionsLoading,
+    error: contactOptionsError,
+    reload: reloadContactOptions,
+  } = useActivityContactOptions(activity?.id, open);
 
   useEffect(() => {
     if (!open) {
@@ -64,10 +74,27 @@ export function ActivityDetailModal({
   }
 
   const viewModel = buildActivityDetailViewModel(activity);
+  const hasSingleContactOption = contactOptions.length === 1;
+  const hasMultipleContactOptions = contactOptions.length > 1;
+  const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
 
-  const handleOpenWhatsapp = () => {
-    onContactClick?.(activity);
-    window.open(buildWhatsappActivityUrl(activity), "_blank", "noopener,noreferrer");
+  const handleSelectContactOption = (contactOption) => {
+    onContactClick?.(activity, contactOption);
+    openActivityContactAction(activity, contactOption);
+    setIsContactDialogOpen(false);
+  };
+
+  const handleContactAction = () => {
+    if (!hasContactOptions || isContactOptionsLoading) {
+      return;
+    }
+
+    if (hasSingleContactOption) {
+      handleSelectContactOption(contactOptions[0]);
+      return;
+    }
+
+    setIsContactDialogOpen(true);
   };
 
   const handleToggleFavorite = () => {
@@ -256,16 +283,49 @@ export function ActivityDetailModal({
                 </h3>
               </div>
               <p className="activity-detail-modal__contact-copy">
-                Puedes escribir directamente al centro si quieres confirmar si
-                esta actividad encaja con tu familia.
+                {isContactOptionsLoading
+                  ? "Estamos cargando las opciones de contacto publicadas para esta actividad."
+                  : contactOptionsError
+                    ? "No pudimos cargar las opciones de contacto ahora mismo."
+                    : hasMultipleContactOptions
+                      ? "Esta actividad tiene varios canales de contacto. Elige el que mejor te encaje."
+                      : hasSingleContactOption
+                        ? "Puedes usar el canal de contacto publicado para pedir mas informacion."
+                        : "Esta actividad no tiene una via de contacto publicada en este momento."}
               </p>
-              <Button onClick={handleOpenWhatsapp} className="button--whatsapp">
-                Contactar
-              </Button>
+              {contactOptionsError ? (
+                <Button type="button" variant="outline" onClick={reloadContactOptions}>
+                  Reintentar contactos
+                </Button>
+              ) : hasContactOptions ? (
+                <Button
+                  type="button"
+                  onClick={handleContactAction}
+                  disabled={isContactOptionsLoading}
+                >
+                  {isContactOptionsLoading ? (
+                    <>
+                      <LoaderCircle className="animate-spin" />
+                      Cargando contacto
+                    </>
+                  ) : hasMultipleContactOptions ? (
+                    "Elegir contacto"
+                  ) : (
+                    "Contactar"
+                  )}
+                </Button>
+              ) : null}
             </section>
           </div>
         </div>
       </div>
+      <ActivityContactOptionsDialog
+        activity={activity}
+        contactOptions={contactOptions}
+        open={isContactDialogOpen}
+        onClose={() => setIsContactDialogOpen(false)}
+        onSelectOption={handleSelectContactOption}
+      />
     </div>
   );
 }

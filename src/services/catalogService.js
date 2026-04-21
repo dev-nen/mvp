@@ -1,29 +1,53 @@
-import { activities, centers, cities } from "@/data/catalogFallback";
+import {
+  getSupabaseClient,
+  getSupabaseClientError,
+} from "@/services/supabaseClient";
+import { slugifyText } from "@/helpers/textSlug";
 
-function sortActivities(leftActivity, rightActivity) {
-  return (
-    new Date(rightActivity.created_at).getTime() -
-    new Date(leftActivity.created_at).getTime()
-  );
+const CATALOG_SELECT =
+  "id, title, center_id, center_name, city_id, city_name, category_id, category_label, type_id, type_label, description, short_description, image_url, age_rule_type, age_min, age_max, price_label, is_free, schedule_label, venue_name, venue_address_1, venue_postal_code, is_featured, created_at";
+
+function getTrimmedText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizeCatalogActivity(activity) {
+  const cityName = getTrimmedText(activity.city_name);
+  const description = getTrimmedText(activity.description);
+  const shortDescription =
+    getTrimmedText(activity.short_description) || description;
+
+  return {
+    ...activity,
+    category_label: getTrimmedText(activity.category_label),
+    center_name: getTrimmedText(activity.center_name),
+    city_name: cityName,
+    city_slug: slugifyText(cityName),
+    description,
+    short_description: shortDescription,
+  };
 }
 
 export async function listActivities() {
-  const centersById = new Map(centers.map((center) => [center.id, center]));
-  const citiesById = new Map(cities.map((city) => [city.id, city]));
+  const supabase = getSupabaseClient();
 
-  return activities
-    .filter((activity) => activity.is_active)
-    .map((activity) => {
-      const center = centersById.get(activity.center_id);
-      const city =
-        citiesById.get(activity.city_id) ?? citiesById.get(center?.city_id);
+  if (!supabase) {
+    throw new Error(
+      getSupabaseClientError() ||
+        "No pudimos conectar con Supabase para cargar el catalogo.",
+    );
+  }
 
-      return {
-        ...activity,
-        center_name: center?.name ?? "",
-        city_name: city?.name ?? "",
-        city_slug: city?.slug ?? "",
-      };
-    })
-    .sort(sortActivities);
+  const { data, error } = await supabase
+    .from("catalog_activities_read")
+    .select(CATALOG_SELECT)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(
+      error.message || "No pudimos cargar el catalogo desde la base de datos.",
+    );
+  }
+
+  return (data ?? []).map(normalizeCatalogActivity);
 }

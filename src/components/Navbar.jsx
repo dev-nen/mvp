@@ -11,6 +11,7 @@ export function Navbar({ enableSearch = false }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const {
     accessState,
+    appUser,
     isAuthLoading,
     openAccessGate,
     user,
@@ -28,15 +29,19 @@ export function Navbar({ enableSearch = false }) {
       .join(" ");
 
   const userDisplayName =
+    appUser?.fullName ||
     user?.user_metadata?.full_name?.trim() ||
     user?.user_metadata?.name?.trim() ||
     user?.email?.split("@")[0] ||
     "Cuenta activa";
   const isReadyAccess = accessState === "ready";
-  const isResolvingAccess =
-    isAuthLoading || accessState === "loading_user";
+  const isResolvingAccess = isAuthLoading || accessState === "loading_user";
   const accessButtonLabel =
-    accessState === "missing_city" ? "Completa tu ciudad" : "Continue with Google";
+    accessState === "onboarding_required"
+      ? "Completa tu perfil"
+      : accessState === "verification_pending"
+        ? "Verifica tu email"
+        : "Acceder";
 
   return (
     <header className="navbar">
@@ -82,7 +87,11 @@ export function Navbar({ enableSearch = false }) {
                   {accessButtonLabel}
                 </span>
                 <span className="navbar__auth-label navbar__auth-label--compact">
-                  {accessState === "missing_city" ? "Ciudad" : "Google"}
+                  {accessState === "onboarding_required"
+                    ? "Perfil"
+                    : accessState === "verification_pending"
+                      ? "Email"
+                      : "Entrar"}
                 </span>
               </Button>
             )}

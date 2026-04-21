@@ -1,5 +1,11 @@
 import { useEffect, useMemo } from "react";
-import { AlertTriangle, LoaderCircle, MapPin, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  LoaderCircle,
+  MailCheck,
+  MapPin,
+  ShieldCheck,
+} from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
@@ -17,18 +23,29 @@ function getBlockedRouteState(accessState, appUserError) {
     };
   }
 
-  if (accessState === "missing_city") {
+  if (accessState === "verification_pending") {
     return {
-      actionLabel: "Completar ciudad",
+      actionLabel: "Revisar verificacion",
       description:
-        "Tu cuenta ya existe, pero necesitamos asociar una ciudad antes de continuar.",
-      eyebrow: "Alta minima",
-      icon: MapPin,
-      title: "Falta un dato obligatorio",
+        "Esta ruta necesita una cuenta verificada antes de continuar con el onboarding de perfil.",
+      eyebrow: "Verificacion",
+      icon: MailCheck,
+      title: "Falta verificar el email",
     };
   }
 
-  if (accessState === "unauthorized") {
+  if (accessState === "onboarding_required") {
+    return {
+      actionLabel: "Completar perfil",
+      description:
+        "Tu cuenta ya existe, pero todavia falta completar el perfil minimo obligatorio.",
+      eyebrow: "Onboarding",
+      icon: MapPin,
+      title: "Falta completar tu perfil",
+    };
+  }
+
+  if (accessState === "error") {
     return {
       actionLabel: appUserError ? "Reintentar" : "Continuar acceso",
       description:
@@ -36,14 +53,14 @@ function getBlockedRouteState(accessState, appUserError) {
         "No hemos podido dejar tu acceso listo con la configuracion actual.",
       eyebrow: "Acceso",
       icon: AlertTriangle,
-      title: "No pudimos validar tu cuenta",
+      title: "No pudimos cargar tu perfil",
     };
   }
 
   return {
-    actionLabel: "Acceder con Google",
+    actionLabel: "Acceder",
     description:
-      "Esta pantalla necesita una cuenta identificada y una ciudad asociada para quedar disponible.",
+      "Esta pantalla necesita una cuenta identificada y un perfil de app listo para quedar disponible.",
     eyebrow: "Acceso",
     icon: ShieldCheck,
     title: "Necesitas acceder para continuar",

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-
-const FAVORITES_STORAGE_KEY = "nensgo.favorite_activity_ids";
-const LEGACY_STORAGE_PREFIX = ["nen", "do"].join("");
-const LEGACY_FAVORITES_STORAGE_KEY =
-  `${LEGACY_STORAGE_PREFIX}.favorite_activity_ids`;
+import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  getSupabaseClient,
+  getSupabaseClientError,
+} from "@/services/supabaseClient";
 
 function normalizeFavoriteId(activityId) {
   if (activityId === null || activityId === undefined) {
@@ -13,117 +13,181 @@ function normalizeFavoriteId(activityId) {
   return String(activityId);
 }
 
-function parseStoredFavoriteIds(storedValue) {
-  if (!storedValue) {
-    return [];
-  }
-
-  const parsedValue = JSON.parse(storedValue);
-
-  return Array.isArray(parsedValue)
-    ? parsedValue
-        .map((value) => normalizeFavoriteId(value))
-        .filter(Boolean)
-    : [];
-}
-
-function loadFavoriteIds() {
-  if (typeof window === "undefined") {
-    return [];
-  }
-
-  try {
-    const storedValue = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
-
-    if (storedValue) {
-      return parseStoredFavoriteIds(storedValue);
-    }
-
-    const legacyStoredValue = window.localStorage.getItem(
-      LEGACY_FAVORITES_STORAGE_KEY,
-    );
-
-    return parseStoredFavoriteIds(legacyStoredValue);
-  } catch {
-    return [];
-  }
-}
-
 export function useFavorites() {
-  const [favoriteIds, setFavoriteIds] = useState(loadFavoriteIds);
+  const { user } = useAuth();
+  const [favoriteIds, setFavoriteIds] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
+    if (!user?.id) {
+      setFavoriteIds([]);
+      setError("");
+      setIsLoading(false);
+      return undefined;
     }
 
-    try {
-      const currentStoredValue = window.localStorage.getItem(FAVORITES_STORAGE_KEY);
+    let isMounted = true;
 
-      if (currentStoredValue) {
+    const loadFavorites = async () => {
+      const supabase = getSupabaseClient();
+
+      if (!supabase) {
+        if (!isMounted) {
+          return;
+        }
+
+        setFavoriteIds([]);
+        setError(
+          getSupabaseClientError() ||
+            "No pudimos conectar con Supabase para cargar favoritos.",
+        );
+        setIsLoading(false);
         return;
       }
 
-      const legacyStoredValue = window.localStorage.getItem(
-        LEGACY_FAVORITES_STORAGE_KEY,
-      );
+      setIsLoading(true);
+      setError("");
 
-      if (!legacyStoredValue) {
+      const { data, error: loadError } = await supabase
+        .from("user_favorite_activities")
+        .select("activity_id")
+        .eq("user_profile_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (!isMounted) {
         return;
       }
 
-      const migratedFavoriteIds = parseStoredFavoriteIds(legacyStoredValue);
+      if (loadError) {
+        setFavoriteIds([]);
+        setError(
+          loadError.message || "No pudimos cargar tus favoritos remotos.",
+        );
+        setIsLoading(false);
+        return;
+      }
 
-      window.localStorage.setItem(
-        FAVORITES_STORAGE_KEY,
-        JSON.stringify(migratedFavoriteIds),
+      setFavoriteIds(
+        (data ?? [])
+          .map((favoriteRow) => normalizeFavoriteId(favoriteRow.activity_id))
+          .filter(Boolean),
       );
-      window.localStorage.removeItem(LEGACY_FAVORITES_STORAGE_KEY);
-    } catch {
-      // Ignore localStorage migration errors and keep the in-memory state.
-    }
-  }, []);
+      setIsLoading(false);
+    };
 
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    void loadFavorites();
 
-    window.localStorage.setItem(
-      FAVORITES_STORAGE_KEY,
-      JSON.stringify(favoriteIds),
-    );
-  }, [favoriteIds]);
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]);
 
-  const toggleFavorite = (activityId) => {
-    const normalizedActivityId = normalizeFavoriteId(activityId);
+  const addFavorite = useCallback(
+    async (activityId) => {
+      const normalizedActivityId = normalizeFavoriteId(activityId);
 
-    if (!normalizedActivityId) {
-      return;
-    }
+      if (!user?.id || !normalizedActivityId) {
+        return { error: new Error("Necesitamos una cuenta activa para guardar favoritos.") };
+      }
 
-    setFavoriteIds((currentFavoriteIds) =>
-      currentFavoriteIds.includes(normalizedActivityId)
-        ? currentFavoriteIds.filter(
+      const supabase = getSupabaseClient();
+
+      if (!supabase) {
+        const resolvedError = new Error(
+          getSupabaseClientError() ||
+            "No pudimos conectar con Supabase para guardar favoritos.",
+        );
+
+        setError(resolvedError.message);
+        return { error: resolvedError };
+      }
+
+      setError("");
+      setFavoriteIds((currentFavoriteIds) =>
+        currentFavoriteIds.includes(normalizedActivityId)
+          ? currentFavoriteIds
+          : [normalizedActivityId, ...currentFavoriteIds],
+      );
+
+      const { error: insertError } = await supabase
+        .from("user_favorite_activities")
+        .insert({
+          user_profile_id: user.id,
+          activity_id: Number(normalizedActivityId),
+        });
+
+      if (insertError) {
+        setFavoriteIds((currentFavoriteIds) =>
+          currentFavoriteIds.filter(
             (favoriteId) => favoriteId !== normalizedActivityId,
-          )
-        : [...currentFavoriteIds, normalizedActivityId],
-    );
-  };
+          ),
+        );
+        setError(insertError.message || "No pudimos guardar este favorito.");
+        return { error: insertError };
+      }
 
-  const removeFavorite = (activityId) => {
-    const normalizedActivityId = normalizeFavoriteId(activityId);
+      return { error: null };
+    },
+    [user?.id],
+  );
 
-    if (!normalizedActivityId) {
-      return;
-    }
+  const removeFavorite = useCallback(
+    async (activityId) => {
+      const normalizedActivityId = normalizeFavoriteId(activityId);
 
-    setFavoriteIds((currentFavoriteIds) =>
-      currentFavoriteIds.filter(
-        (favoriteId) => favoriteId !== normalizedActivityId,
-      ),
-    );
-  };
+      if (!user?.id || !normalizedActivityId) {
+        return { error: new Error("Necesitamos una cuenta activa para quitar favoritos.") };
+      }
+
+      const supabase = getSupabaseClient();
+
+      if (!supabase) {
+        const resolvedError = new Error(
+          getSupabaseClientError() ||
+            "No pudimos conectar con Supabase para quitar favoritos.",
+        );
+
+        setError(resolvedError.message);
+        return { error: resolvedError };
+      }
+
+      setError("");
+      const previousFavoriteIds = favoriteIds;
+
+      setFavoriteIds((currentFavoriteIds) =>
+        currentFavoriteIds.filter(
+          (favoriteId) => favoriteId !== normalizedActivityId,
+        ),
+      );
+
+      const { error: deleteError } = await supabase
+        .from("user_favorite_activities")
+        .delete()
+        .eq("user_profile_id", user.id)
+        .eq("activity_id", Number(normalizedActivityId));
+
+      if (deleteError) {
+        setFavoriteIds(previousFavoriteIds);
+        setError(deleteError.message || "No pudimos quitar este favorito.");
+        return { error: deleteError };
+      }
+
+      return { error: null };
+    },
+    [favoriteIds, user?.id],
+  );
+
+  const toggleFavorite = useCallback(
+    async (activityId) => {
+      if (favoriteIds.includes(normalizeFavoriteId(activityId))) {
+        return removeFavorite(activityId);
+      }
+
+      return addFavorite(activityId);
+    },
+    [addFavorite, favoriteIds, removeFavorite],
+  );
 
   const isFavorite = (activityId) => {
     const normalizedActivityId = normalizeFavoriteId(activityId);
@@ -134,9 +198,12 @@ export function useFavorites() {
   };
 
   return {
+    error,
     favoriteIds,
+    isLoading,
     isFavorite,
     toggleFavorite,
     removeFavorite,
+    addFavorite,
   };
 }

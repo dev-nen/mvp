@@ -5,6 +5,7 @@ import {
   LoaderCircle,
   LogOut,
   Mail,
+  MapPin,
   ShieldCheck,
   UserRound,
 } from "lucide-react";
@@ -52,8 +53,10 @@ export function ProfilePage() {
   const {
     appUser,
     authError,
+    isEmailVerified,
     isAuthenticated,
     isAuthLoading,
+    openAccessGate,
     session,
     signInWithGoogle,
     signOut,
@@ -84,8 +87,9 @@ export function ProfilePage() {
   const providerName =
     session?.user?.app_metadata?.provider === "google"
       ? "Google"
-      : (session?.user?.app_metadata?.provider ?? "Google");
+      : (session?.user?.app_metadata?.provider ?? "Email/password");
   const sessionStateLabel = isAuthenticated ? "Activa" : "Anonima";
+  const appProfileState = appUser?.cityId ? "Completo" : "Pendiente";
 
   return (
     <div className="profile-page">
@@ -127,8 +131,8 @@ export function ProfilePage() {
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
-                      La app ya reconoce tu identidad social y los datos minimos
-                      asociados a tu cuenta autenticada.
+                      Esta pantalla refleja el estado real de autenticacion y el
+                      perfil de app respaldado por `user_profiles`.
                     </p>
                   </div>
 
@@ -152,17 +156,25 @@ export function ProfilePage() {
                     <div className="profile-page__detail-item">
                       <dt>
                         <ShieldCheck />
-                        Estado
+                        Email verificado
                       </dt>
-                      <dd>{sessionStateLabel}</dd>
+                      <dd>{isEmailVerified ? "Si" : "No"}</dd>
+                    </div>
+
+                    <div className="profile-page__detail-item">
+                      <dt>
+                        <MapPin />
+                        Ciudad
+                      </dt>
+                      <dd>{appUser?.cityName || "Sin ciudad asociada"}</dd>
                     </div>
 
                     <div className="profile-page__detail-item">
                       <dt>
                         <BadgeCheck />
-                        Ciudad
+                        Perfil app
                       </dt>
-                      <dd>{appUser?.cityName || "Sin ciudad asociada"}</dd>
+                      <dd>{appProfileState}</dd>
                     </div>
                   </dl>
                 </CardContent>
@@ -172,11 +184,11 @@ export function ProfilePage() {
                 <CardContent className="profile-page__card-content">
                   <p className="profile-page__eyebrow">Sesion</p>
                   <h2 className="profile-page__section-title">
-                    Google conectado a Supabase Auth
+                    Cuenta autenticada en Supabase Auth
                   </h2>
                   <p className="profile-page__section-description">
-                    Tu sesion se restaura al recargar mientras siga siendo
-                    valida y queda disponible para el resto del frontend.
+                    El email se muestra solo como referencia. No existe flujo de
+                    cambio de email en esta fase.
                   </p>
 
                   <dl className="profile-page__details-list profile-page__details-list--compact">
@@ -191,6 +203,10 @@ export function ProfilePage() {
                     <div className="profile-page__detail-item">
                       <dt>Usuario app</dt>
                       <dd>{appUser?.id ?? "No disponible"}</dd>
+                    </div>
+                    <div className="profile-page__detail-item">
+                      <dt>Estado de sesion</dt>
+                      <dd>{sessionStateLabel}</dd>
                     </div>
                   </dl>
 
@@ -224,8 +240,8 @@ export function ProfilePage() {
                   Todavia estas en modo anonimo
                 </h2>
                 <p className="profile-page__section-description">
-                  Conecta Google para que NensGo reconozca una identidad real y
-                  mantenga la sesion entre recargas.
+                  Accede con Google o con email y password para que NensGo
+                  reconozca una identidad real y mantenga la sesion entre recargas.
                 </p>
 
                 <dl className="profile-page__details-list profile-page__details-list--compact">
@@ -235,7 +251,7 @@ export function ProfilePage() {
                   </div>
                   <div className="profile-page__detail-item">
                     <dt>Metodo</dt>
-                    <dd>Google con Supabase Auth</dd>
+                    <dd>Google o email/password</dd>
                   </div>
                 </dl>
 
@@ -256,7 +272,16 @@ export function ProfilePage() {
                 >
                   {isStartingGoogleSignIn
                     ? "Conectando con Google..."
-                    : "Continue with Google"}
+                    : "Continuar con Google"}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="profile-page__action-button"
+                  onClick={() => openAccessGate()}
+                >
+                  Abrir acceso con email
                 </Button>
 
                 <p className="profile-page__hint">

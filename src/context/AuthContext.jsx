@@ -2,9 +2,11 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom";
 import { ProtectedAccessGate } from "@/components/auth/ProtectedAccessGate";
 import {
-  hasRequiredAppUserCity,
-  syncAppUserFromAuth,
-  updateAppUserRequiredCity,
+  ensureAppUserProfile,
+  getDefaultOnboardingForm,
+  hasRequiredAppUserProfile,
+  isAuthUserEmailVerified,
+  readAppUser,
 } from "@/services/appUsersService";
 import {
   getSupabaseClient,
@@ -20,6 +22,14 @@ function getDefaultAuthError() {
     getSupabaseClientError() ||
     "No pudimos conectar la autenticacion con la configuracion actual."
   );
+}
+
+function getAuthRedirectUrl() {
+  if (typeof window === "undefined") {
+    return undefined;
+  }
+
+  return window.location.href;
 }
 
 function normalizeProtectedIntent(intent) {
@@ -79,24 +89,42 @@ function writeStoredProtectedIntent(intent) {
   );
 }
 
-function buildAccessState({ appUser, isAuthLoading, isAuthorizedForApp, session }) {
+function isVerificationError(error) {
+  const errorText = [error?.message, error?.code].filter(Boolean).join(" ").toLowerCase();
+
+  return errorText.includes("email not confirmed") || errorText.includes("email_not_confirmed");
+}
+
+function buildAccessState({
+  session,
+  user,
+  isAuthLoading,
+  isAppUserLoading,
+  appUser,
+  appUserError,
+  pendingVerificationEmail,
+}) {
   if (isAuthLoading) {
     return "loading_user";
   }
 
   if (!session?.user) {
-    return "anonymous";
+    return pendingVerificationEmail ? "verification_pending" : "anonymous";
   }
 
-  if (!isAuthorizedForApp) {
-    return "unauthorized";
+  if (!isAuthUserEmailVerified(user)) {
+    return "verification_pending";
   }
 
-  if (!appUser) {
+  if (isAppUserLoading) {
     return "loading_user";
   }
 
-  return hasRequiredAppUserCity(appUser) ? "ready" : "missing_city";
+  if (appUserError) {
+    return "error";
+  }
+
+  return hasRequiredAppUserProfile(appUser) ? "ready" : "onboarding_required";
 }
 
 export function AuthProvider({ children }) {
@@ -104,31 +132,62 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
+  const [appUser, setAppUser] = useState(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [isAuthorizedForApp] = useState(true);
+  const [isAppUserLoading, setIsAppUserLoading] = useState(false);
   const [authError, setAuthError] = useState("");
   const [appUserError, setAppUserError] = useState("");
   const [pendingIntent, setPendingIntent] = useState(readStoredProtectedIntent);
   const [resolvedIntent, setResolvedIntent] = useState(null);
   const [isAccessGateOpen, setIsAccessGateOpen] = useState(false);
-  const [isCompletingCity, setIsCompletingCity] = useState(false);
+  const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState("");
+  const [verificationMessage, setVerificationMessage] = useState("");
 
-  const appUser = useMemo(() => syncAppUserFromAuth(user), [user]);
   const accessState = useMemo(
     () =>
       buildAccessState({
-        appUser,
-        isAuthLoading,
-        isAuthorizedForApp,
         session,
+        user,
+        isAuthLoading,
+        isAppUserLoading,
+        appUser,
+        appUserError,
+        pendingVerificationEmail,
       }),
-    [appUser, isAuthLoading, isAuthorizedForApp, session],
+    [
+      appUser,
+      appUserError,
+      isAppUserLoading,
+      isAuthLoading,
+      pendingVerificationEmail,
+      session,
+      user,
+    ],
+  );
+  const defaultOnboardingForm = useMemo(
+    () => getDefaultOnboardingForm(user, appUser),
+    [appUser, user],
   );
   const isAuthenticated = Boolean(session?.user);
 
   const applySession = useCallback((nextSession) => {
     setSession(nextSession ?? null);
     setUser(nextSession?.user ?? null);
+
+    if (!nextSession?.user) {
+      setAppUser(null);
+      setAppUserError("");
+      setIsAppUserLoading(false);
+      return;
+    }
+
+    if (isAuthUserEmailVerified(nextSession.user)) {
+      setPendingVerificationEmail("");
+      setVerificationMessage("");
+    } else if (nextSession.user.email) {
+      setPendingVerificationEmail(nextSession.user.email);
+    }
   }, []);
 
   const persistPendingIntent = useCallback((nextIntent) => {
@@ -148,6 +207,13 @@ export function AuthProvider({ children }) {
   const consumeResolvedIntent = useCallback(() => {
     setResolvedIntent(null);
   }, []);
+
+  const dismissVerificationPending = useCallback(() => {
+    if (!session?.user) {
+      setPendingVerificationEmail("");
+      setVerificationMessage("");
+    }
+  }, [session?.user]);
 
   const closeAccessGate = useCallback(() => {
     setIsAccessGateOpen(false);
@@ -257,22 +323,74 @@ export function AuthProvider({ children }) {
   }, [applySession]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    if (!user?.id || !isAuthUserEmailVerified(user)) {
+      setAppUser(null);
+      setAppUserError("");
+      setIsAppUserLoading(false);
+      return undefined;
+    }
+
+    const loadAppUser = async () => {
+      setIsAppUserLoading(true);
+      setAppUserError("");
+
+      try {
+        const nextAppUser = await readAppUser(user);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setAppUser(nextAppUser);
+      } catch (error) {
+        if (!isMounted) {
+          return;
+        }
+
+        setAppUser(null);
+        setAppUserError(
+          error instanceof Error
+            ? error.message
+            : "No pudimos cargar el perfil del usuario.",
+        );
+      } finally {
+        if (isMounted) {
+          setIsAppUserLoading(false);
+        }
+      }
+    };
+
+    void loadAppUser();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  useEffect(() => {
     if (pendingIntent && accessState === "ready") {
       executeProtectedIntent(pendingIntent);
       return;
     }
 
-    if (accessState === "missing_city") {
+    if (
+      pendingIntent &&
+      ["anonymous", "verification_pending", "onboarding_required", "error"].includes(
+        accessState,
+      )
+    ) {
       setIsAccessGateOpen(true);
       return;
     }
 
-    if (accessState === "unauthorized") {
-      setIsAccessGateOpen(true);
-      return;
-    }
-
-    if (pendingIntent && accessState === "anonymous") {
+    if (
+      ["verification_pending", "onboarding_required", "error"].includes(
+        accessState,
+      ) &&
+      isAuthenticated
+    ) {
       setIsAccessGateOpen(true);
       return;
     }
@@ -280,7 +398,7 @@ export function AuthProvider({ children }) {
     if (!pendingIntent && accessState === "ready") {
       setIsAccessGateOpen(false);
     }
-  }, [accessState, executeProtectedIntent, pendingIntent]);
+  }, [accessState, executeProtectedIntent, isAuthenticated, pendingIntent]);
 
   const signInWithGoogle = useCallback(async () => {
     const supabase = getSupabaseClient();
@@ -292,11 +410,12 @@ export function AuthProvider({ children }) {
     }
 
     setAuthError("");
+    setVerificationMessage("");
 
     const response = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: window.location.href,
+        redirectTo: getAuthRedirectUrl(),
       },
     });
 
@@ -306,6 +425,108 @@ export function AuthProvider({ children }) {
           "No pudimos iniciar el acceso con Google en este momento.",
       );
     }
+
+    return response;
+  }, []);
+
+  const signInWithPassword = useCallback(async ({ email, password }) => {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      const error = new Error(getDefaultAuthError());
+      setAuthError(error.message);
+      return { data: null, error };
+    }
+
+    setAuthError("");
+    setVerificationMessage("");
+
+    const response = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (response.error) {
+      if (isVerificationError(response.error)) {
+        setPendingVerificationEmail(email);
+      }
+
+      setAuthError(
+        response.error.message ||
+          "No pudimos iniciar sesion con email y password.",
+      );
+    }
+
+    return response;
+  }, []);
+
+  const signUpWithPassword = useCallback(async ({ email, password }) => {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      const error = new Error(getDefaultAuthError());
+      setAuthError(error.message);
+      return { data: null, error };
+    }
+
+    setAuthError("");
+    setVerificationMessage("");
+
+    const response = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: getAuthRedirectUrl(),
+      },
+    });
+
+    if (response.error) {
+      setAuthError(
+        response.error.message ||
+          "No pudimos crear la cuenta con email y password.",
+      );
+      return response;
+    }
+
+    setPendingVerificationEmail(email);
+    setVerificationMessage(
+      "Te enviamos un email de verificacion. Confirma tu cuenta antes de continuar.",
+    );
+
+    return response;
+  }, []);
+
+  const resendVerificationEmail = useCallback(async (email) => {
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      const error = new Error(getDefaultAuthError());
+      setAuthError(error.message);
+      return { data: null, error };
+    }
+
+    setAuthError("");
+    setVerificationMessage("");
+
+    const response = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: {
+        emailRedirectTo: getAuthRedirectUrl(),
+      },
+    });
+
+    if (response.error) {
+      setAuthError(
+        response.error.message ||
+          "No pudimos reenviar el email de verificacion.",
+      );
+      return response;
+    }
+
+    setVerificationMessage(
+      "Te reenviamos el email de verificacion. Revisa tu bandeja de entrada.",
+    );
 
     return response;
   }, []);
@@ -333,9 +554,12 @@ export function AuthProvider({ children }) {
 
     setSession(null);
     setUser(null);
+    setAppUser(null);
     setAppUserError("");
     setResolvedIntent(null);
     setIsAccessGateOpen(false);
+    setPendingVerificationEmail("");
+    setVerificationMessage("");
     clearPendingIntent();
 
     return response;
@@ -363,19 +587,39 @@ export function AuthProvider({ children }) {
       return { data: null, error: resolvedError };
     }
 
-    if (data.user) {
-      setUser(data.user);
-      setSession((currentSession) =>
-        currentSession
-          ? {
-              ...currentSession,
-              user: data.user,
-            }
-          : currentSession,
-      );
+    if (!data.user) {
+      const resolvedError = new Error("No hay una sesion autenticada activa.");
+      setAppUserError(resolvedError.message);
+      return { data: null, error: resolvedError };
     }
 
-    return { data: data.user, error: null };
+    setUser(data.user);
+    setSession((currentSession) =>
+      currentSession
+        ? {
+            ...currentSession,
+            user: data.user,
+          }
+        : currentSession,
+    );
+
+    try {
+      setIsAppUserLoading(true);
+      const nextAppUser = await readAppUser(data.user);
+      setAppUser(nextAppUser);
+      setAppUserError("");
+      return { data: nextAppUser, error: null };
+    } catch (readError) {
+      const resolvedError =
+        readError instanceof Error
+          ? readError
+          : new Error("No pudimos refrescar el perfil del usuario.");
+      setAppUser(null);
+      setAppUserError(resolvedError.message);
+      return { data: null, error: resolvedError };
+    } finally {
+      setIsAppUserLoading(false);
+    }
   }, []);
 
   const openAccessGate = useCallback(
@@ -397,11 +641,6 @@ export function AuthProvider({ children }) {
         return { error: new Error("La accion protegida no es valida.") };
       }
 
-      if (!isAuthenticated) {
-        setIsAccessGateOpen(true);
-        return { data: null, error: null };
-      }
-
       if (accessState === "ready") {
         executeProtectedIntent(normalizedIntent);
         return { data: normalizedIntent, error: null };
@@ -410,54 +649,31 @@ export function AuthProvider({ children }) {
       setIsAccessGateOpen(true);
       return { data: null, error: null };
     },
-    [accessState, executeProtectedIntent, isAuthenticated, persistPendingIntent],
+    [accessState, executeProtectedIntent, persistPendingIntent],
   );
 
-  const completeRequiredCity = useCallback(
-    async (cityChoice) => {
-      if (!user?.id) {
-        const error = new Error(
-          "Necesitamos una sesion activa para completar la ciudad.",
-        );
+  const completeOnboarding = useCallback(async (profileInput) => {
+    setIsCompletingOnboarding(true);
+    setAppUserError("");
 
-        setAppUserError(error.message);
-        return { data: null, error };
-      }
+    try {
+      const nextAppUser = await ensureAppUserProfile(profileInput);
+      setAppUser(nextAppUser);
+      setIsAccessGateOpen(false);
 
-      setIsCompletingCity(true);
-      setAppUserError("");
+      return { data: nextAppUser, error: null };
+    } catch (error) {
+      const resolvedError =
+        error instanceof Error
+          ? error
+          : new Error("No pudimos completar el perfil del usuario.");
 
-      try {
-        const { appUser: nextAppUser, user: nextUser } =
-          await updateAppUserRequiredCity(user, cityChoice);
-
-        setUser(nextUser);
-        setSession((currentSession) =>
-          currentSession
-            ? {
-                ...currentSession,
-                user: nextUser,
-              }
-            : currentSession,
-        );
-        setIsAccessGateOpen(false);
-
-        return { data: nextAppUser, error: null };
-      } catch (error) {
-        const resolvedError =
-          error instanceof Error
-            ? error
-            : new Error("No pudimos guardar la ciudad del usuario.");
-
-        setAppUserError(resolvedError.message);
-
-        return { data: null, error: resolvedError };
-      } finally {
-        setIsCompletingCity(false);
-      }
-    },
-    [user],
-  );
+      setAppUserError(resolvedError.message);
+      return { data: null, error: resolvedError };
+    } finally {
+      setIsCompletingOnboarding(false);
+    }
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -467,22 +683,29 @@ export function AuthProvider({ children }) {
         appUserError,
         authError,
         closeAccessGate,
-        completeRequiredCity,
+        completeOnboarding,
         consumeResolvedIntent,
+        defaultOnboardingForm,
+        dismissVerificationPending,
         isAccessGateOpen,
         isAuthenticated,
         isAuthLoading,
-        isAuthorizedForApp,
-        isCompletingCity,
+        isCompletingOnboarding,
+        isEmailVerified: isAuthUserEmailVerified(user),
         openAccessGate,
         pendingIntent,
+        pendingVerificationEmail,
         refreshAppUser,
+        resendVerificationEmail,
         resolvedIntent,
         session,
         signInWithGoogle,
+        signInWithPassword,
         signOut,
+        signUpWithPassword,
         startProtectedAction,
         user,
+        verificationMessage,
       }}
     >
       {children}

@@ -7,17 +7,18 @@ import { CatalogActivityCard } from "@/components/catalog/CatalogActivityCard";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
-import {
-  CATALOG_MODAL_SOURCE,
-  trackActivityFavoriteAdd,
-  trackActivityFavoriteRemove,
-} from "@/services/activityEventsService";
 import "./FavoritesPage.css";
 
 export function FavoritesPage() {
   const navigate = useNavigate();
   const { activities, isLoading, error, reload } = useCatalog();
-  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const {
+    favoriteIds,
+    isFavorite,
+    toggleFavorite,
+    isLoading: isFavoritesLoading,
+    error: favoritesError,
+  } = useFavorites();
 
   const favoriteActivities = useMemo(() => {
     const activitiesById = new Map(
@@ -32,18 +33,11 @@ export function FavoritesPage() {
   const hasNoSavedFavorites = favoriteIds.length === 0;
   const hasUnresolvableFavorites =
     !hasNoSavedFavorites && favoriteActivities.length === 0;
+  const isPageLoading = isLoading || isFavoritesLoading;
+  const resolvedError = error || favoritesError;
 
   const handleToggleFavorite = (activity) => {
-    const nextIsFavorite = !isFavorite(activity.id);
-
-    toggleFavorite(activity.id);
-
-    if (nextIsFavorite) {
-      void trackActivityFavoriteAdd(activity, CATALOG_MODAL_SOURCE);
-      return;
-    }
-
-    void trackActivityFavoriteRemove(activity, CATALOG_MODAL_SOURCE);
+    void toggleFavorite(activity.id);
   };
 
   return (
@@ -62,26 +56,26 @@ export function FavoritesPage() {
               </p>
             </div>
 
-            {!isLoading && !error && !hasNoSavedFavorites && !hasUnresolvableFavorites ? (
+            {!isPageLoading && !resolvedError && !hasNoSavedFavorites && !hasUnresolvableFavorites ? (
               <p className="favorites-page__count">
                 {favoriteActivities.length} guardadas
               </p>
             ) : null}
           </header>
 
-          {isLoading ? (
+          {isPageLoading ? (
             <CatalogState
               icon={LoaderCircle}
               eyebrow="Favoritos"
               title="Cargando tus favoritas"
               description="Estamos recuperando las actividades que guardaste para que puedas revisarlas con calma."
             />
-          ) : error ? (
+          ) : resolvedError ? (
             <CatalogState
               icon={AlertTriangle}
               eyebrow="Error"
               title="No pudimos cargar tus favoritas"
-              description={error}
+              description={resolvedError}
               actionLabel="Reintentar"
               onAction={reload}
             />

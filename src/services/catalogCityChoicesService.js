@@ -10,14 +10,15 @@ export async function listCatalogCityChoices() {
 
   activities.forEach((activity) => {
     const cityName = getTrimmedText(activity.city_name);
+    const cityId = activity.city_id ?? null;
     const citySlug = getTrimmedText(activity.city_slug);
 
-    if (!cityName || !citySlug || cityChoices.has(citySlug)) {
+    if (!cityName || !citySlug || cityId === null || cityChoices.has(cityId)) {
       return;
     }
 
-    cityChoices.set(citySlug, {
-      id: activity.city_id ?? null,
+    cityChoices.set(cityId, {
+      id: cityId,
       name: cityName,
       slug: citySlug,
     });

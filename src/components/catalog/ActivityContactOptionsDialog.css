@@ -1,0 +1,116 @@
+.activity-contact-options-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+}
+
+.activity-contact-options-dialog__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(47, 61, 115, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.activity-contact-options-dialog__panel {
+  position: relative;
+  z-index: 1;
+  width: min(28rem, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.activity-contact-options-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.activity-contact-options-dialog__eyebrow {
+  color: var(--color-secondary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.activity-contact-options-dialog__title {
+  margin-top: var(--space-2);
+  color: var(--color-text);
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+.activity-contact-options-dialog__close {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  border-radius: 50%;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.activity-contact-options-dialog__close:hover {
+  color: var(--color-text);
+  background: rgba(75, 143, 231, 0.1);
+}
+
+.activity-contact-options-dialog__close svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.activity-contact-options-dialog__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.activity-contact-options-dialog__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  padding: var(--space-3);
+  text-align: left;
+  background: rgba(249, 246, 241, 0.92);
+  border: 1px solid rgba(237, 239, 245, 0.98);
+  border-radius: var(--radius-md);
+  transition:
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.activity-contact-options-dialog__item:hover {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(75, 143, 231, 0.24);
+  transform: translateY(-1px);
+}
+
+.activity-contact-options-dialog__item-label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.activity-contact-options-dialog__item-value {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  overflow-wrap: anywhere;
+}
+
+.activity-contact-options-dialog__dismiss {
+  width: 100%;
+}

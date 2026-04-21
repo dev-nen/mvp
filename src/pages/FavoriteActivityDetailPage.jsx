@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -9,21 +9,22 @@ import {
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
+import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { buildWhatsappActivityUrl } from "@/helpers/buildWhatsappActivityMessage";
 import {
   ACTIVITY_DETAIL_PLACEHOLDER_SRC,
   buildActivityDetailViewModel,
   handleActivityDetailImageError,
 } from "@/helpers/activityDetailViewModel";
+import { openActivityContactAction } from "@/helpers/buildActivityContactAction";
 import { useCatalog } from "@/hooks/useCatalog";
+import { useActivityContactOptions } from "@/hooks/useActivityContactOptions";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
   FAVORITES_DETAIL_SOURCE,
   trackActivityContactClick,
-  trackActivityFavoriteRemove,
   trackActivityViewMore,
 } from "@/services/activityEventsService";
 import "./FavoriteActivityDetailPage.css";
@@ -36,31 +37,51 @@ export function FavoriteActivityDetailPage() {
   const { activityId = "" } = useParams();
   const { activities, isLoading, error, reload } = useCatalog();
   const { favoriteIds, removeFavorite } = useFavorites();
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
 
   const activity =
     activities.find((item) => String(item.id) === activityId) ?? null;
   const isSavedFavorite = favoriteIds.includes(activityId);
+  const {
+    contactOptions,
+    isLoading: isContactOptionsLoading,
+    error: contactOptionsError,
+    reload: reloadContactOptions,
+  } = useActivityContactOptions(activity?.id, Boolean(activity && isSavedFavorite));
+  const hasSingleContactOption = contactOptions.length === 1;
+  const hasMultipleContactOptions = contactOptions.length > 1;
+  const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
 
   const handleGoBack = () => {
     navigate("/favoritos");
   };
 
   const handleRemoveFavorite = () => {
-    if (activity) {
-      void trackActivityFavoriteRemove(activity, FAVORITES_DETAIL_SOURCE);
-    }
-
-    removeFavorite(activityId);
+    void removeFavorite(activityId);
     navigate("/favoritos");
   };
 
-  const handleOpenWhatsapp = () => {
+  const handleSelectContactOption = (contactOption) => {
     if (!activity) {
       return;
     }
 
-    void trackActivityContactClick(activity, FAVORITES_DETAIL_SOURCE);
-    window.open(buildWhatsappActivityUrl(activity), "_blank", "noopener,noreferrer");
+    void trackActivityContactClick(activity, FAVORITES_DETAIL_SOURCE, contactOption);
+    openActivityContactAction(activity, contactOption);
+    setIsContactDialogOpen(false);
+  };
+
+  const handleContactAction = () => {
+    if (!hasContactOptions || isContactOptionsLoading) {
+      return;
+    }
+
+    if (hasSingleContactOption) {
+      handleSelectContactOption(contactOptions[0]);
+      return;
+    }
+
+    setIsContactDialogOpen(true);
   };
 
   useEffect(() => {
@@ -278,12 +299,38 @@ export function FavoriteActivityDetailPage() {
               </h2>
             </div>
             <p className="favorite-activity-detail__contact-copy">
-              Puedes escribir directamente al centro si quieres confirmar si
-              esta actividad encaja con tu familia.
+              {isContactOptionsLoading
+                ? "Estamos cargando las opciones de contacto publicadas para esta actividad."
+                : contactOptionsError
+                  ? "No pudimos cargar las opciones de contacto ahora mismo."
+                  : hasMultipleContactOptions
+                    ? "Esta actividad tiene varios canales de contacto. Elige el que mejor te encaje."
+                    : hasSingleContactOption
+                      ? "Puedes usar el canal de contacto publicado para pedir mas informacion."
+                      : "Esta actividad no tiene una via de contacto publicada en este momento."}
             </p>
-            <Button onClick={handleOpenWhatsapp} className="button--whatsapp">
-              Contactar
-            </Button>
+            {contactOptionsError ? (
+              <Button type="button" variant="outline" onClick={reloadContactOptions}>
+                Reintentar contactos
+              </Button>
+            ) : hasContactOptions ? (
+              <Button
+                type="button"
+                onClick={handleContactAction}
+                disabled={isContactOptionsLoading}
+              >
+                {isContactOptionsLoading ? (
+                  <>
+                    <LoaderCircle className="animate-spin" />
+                    Cargando contacto
+                  </>
+                ) : hasMultipleContactOptions ? (
+                  "Elegir contacto"
+                ) : (
+                  "Contactar"
+                )}
+              </Button>
+            ) : null}
           </section>
         </CardContent>
       </Card>
@@ -312,6 +359,14 @@ export function FavoriteActivityDetailPage() {
       </main>
 
       <Footer />
+
+      <ActivityContactOptionsDialog
+        activity={activity}
+        contactOptions={contactOptions}
+        open={isContactDialogOpen}
+        onClose={() => setIsContactDialogOpen(false)}
+        onSelectOption={handleSelectContactOption}
+      />
     </div>
   );
 }
