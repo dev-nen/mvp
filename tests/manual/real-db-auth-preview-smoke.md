@@ -1,214 +1,285 @@
-# Preview Smoke Test - Real DB And Auth Migration
+# Checklist De Smoke Test - Preview Real DB + Auth
 
-## Scope
+## Contexto
 
-- Branch context: `feat/real-db-auth-migration`
-- Environment: Vercel preview for the active branch
-- Purpose: validate the current real-DB and auth migration path without relying
-  on chat memory
+- Branch: `feat/real-db-auth-migration`
+- Entorno: preview de Vercel del branch activo
+- Objetivo: validar el flujo actual de catalogo real, auth y favoritos sin
+  depender de memoria o chat
 
-## Preconditions
+## Precondiciones
 
-Before running this smoke test, confirm:
+Marca cuando este listo:
 
-- Supabase SQL migration `2026-04-21_real_db_auth_phase.sql` was applied
-- Supabase auth is configured for:
-  - Google sign-in
-  - email and password sign-up
-  - confirm email enabled
-- Supabase redirect allow list includes the active preview host or a valid
-  preview wildcard
-- Vercel env vars exist for:
-  - `VITE_SUPABASE_URL`
-  - `VITE_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY`
-  - `INTERNAL_PVI_API_TOKEN`
+- [ ] SQL `2026-04-21_real_db_auth_phase.sql` aplicado en Supabase
+- [ ] Auth de Supabase configurado
+- [ ] Redirect URLs de preview configuradas
+- [ ] Variables de entorno de Vercel configuradas
 
-## Known Limitation
+## Limitacion Conocida
 
-`activity_contact_options` currently has no rows in Supabase.
+- `activity_contact_options` sigue sin filas reales en Supabase
 
-That means this smoke test can validate the "no contact options" state, but it
-cannot yet fully validate:
+Consecuencia:
 
-- single contact option behavior
-- multiple contact options behavior
+- se puede validar el estado "sin contacto publicado"
+- no se puede cerrar todavia el caso de una sola opcion
+- no se puede cerrar todavia el caso de multiples opciones
 
-Those should be tested once contact-option data exists.
+## Resultado General
 
-## Smoke Steps
+- [ ] Smoke completo `Pass`
+- [ ] Smoke completo `Fail`
 
-### 1. Anonymous catalog loads from real DB
+Comentarios generales:
 
-Open the active branch preview URL.
+```txt
 
-Expected:
+```
 
-- the catalog loads successfully
-- cards come from the real Supabase read model
-- the current known DB state shows 2 real activities, not the old mock set
+## 1. Catalogo anonimo carga desde DB real
 
-Record:
+Que hacer:
 
-- pass or fail
-- actual URL used
+1. Abre la preview del branch.
+2. Espera a que cargue la Home.
+3. Comprueba que ves las actividades reales de Supabase.
 
-### 2. Protected action opens the auth gate
+Esperado:
 
-From the anonymous catalog, trigger a protected action such as favorites.
+- se renderizan las cards reales
+- no aparece el catalogo viejo de mocks
+- el host sigue siendo la preview correcta
 
-Expected:
+Checklist:
 
-- the auth modal opens
-- the modal offers:
-  - Google sign-in
-  - email and password sign-in
-  - email and password sign-up
+- [ ] `Pass`
+- [ ] `Fail`
 
-Record:
+Comentarios:
 
-- pass or fail
+```txt
 
-### 3. Google login returns to the same preview host
+```
 
-Start Google sign-in from the preview URL.
+## 2. Accion protegida abre la compuerta de acceso
 
-Expected:
+Que hacer:
 
-- auth succeeds
-- the browser returns to the same preview host, not `main` and not the stable
-  production host
+1. Desde anonimo, intenta guardar una actividad en favoritos.
 
-Record:
+Esperado:
 
-- pass or fail
-- final browser URL after auth
+- se abre el modal de acceso
+- ofrece Google
+- ofrece email/password
+- permite entrar o crear cuenta
 
-### 4. Incomplete profiles are forced through onboarding
+Checklist:
 
-Use a user that does not yet have a complete `user_profiles` row.
+- [ ] `Pass`
+- [ ] `Fail`
 
-Expected:
+Comentarios:
 
-- the app detects that onboarding is still required
-- the user is not allowed into the normal authenticated flow until onboarding is
-  completed
+```txt
 
-Record:
+```
 
-- pass or fail
+## 3. Google vuelve al mismo host de preview
 
-### 5. Complete onboarding with a real city
+Que hacer:
 
-Finish the onboarding form.
+1. Inicia login con Google desde la preview.
+2. Completa el login.
 
-Expected:
+Esperado:
 
-- onboarding submits successfully
-- the user is returned to the normal app flow
-- the app now treats the session as ready
+- el login funciona
+- vuelves al mismo host de preview
+- no caes en `main`
+- no caes en el host estable por error
 
-Record:
+Checklist:
 
-- pass or fail
-- post-onboarding URL
+- [ ] `Pass`
+- [ ] `Fail`
 
-### 6. Authenticated catalog still shows real DB data
+Comentarios:
 
-After onboarding, inspect the catalog again.
+```txt
 
-Expected:
+```
 
-- the catalog still shows the real activities from Supabase
-- the app does not fall back to the old mock catalog
+## 4. Usuario sin perfil completo cae en onboarding
 
-Record:
+Que hacer:
 
-- pass or fail
+1. Usa un usuario sin `user_profiles` completo.
+2. Observa el estado despues del login.
 
-### 7. Favorites persist remotely
+Esperado:
 
-Add one activity to favorites.
+- la app detecta onboarding obligatorio
+- no deja pasar al flujo normal sin completar perfil
 
-Expected:
+Checklist:
 
-- the action succeeds
-- the favorite appears in favorites UI
+- [ ] `Pass`
+- [ ] `Fail`
 
-Then reload the page.
+Comentarios:
 
-Expected:
+```txt
 
-- the favorite is still present after reload
+```
 
-Then remove it.
+## 5. Completar onboarding con ciudad real
 
-Expected:
+Que hacer:
 
-- removal succeeds
-- the favorite disappears after reload
+1. Completa nombre y ciudad.
+2. Envialo.
 
-Record:
+Esperado:
 
-- add pass or fail
-- persistence pass or fail
-- remove pass or fail
+- el onboarding se guarda bien
+- vuelves al flujo normal de la app
+- la sesion queda en estado `ready`
 
-### 8. Detail view handles the current no-contact state cleanly
+Checklist:
 
-Open an activity detail surface.
+- [ ] `Pass`
+- [ ] `Fail`
 
-Expected with current DB state:
+Comentarios:
 
-- the page or modal loads
-- the UI does not crash
-- there is no fake WhatsApp fallback
-- if no contact options exist, the detail surface handles that state cleanly
+```txt
 
-Record:
+```
 
-- pass or fail
+## 6. Catalogo autenticado sigue mostrando DB real
 
-### 9. Public PVI route is non-operational
+Que hacer:
 
-Open `/pvi` on the same preview host.
+1. Ya autenticado y con onboarding completo, vuelve a revisar la Home.
 
-Expected:
+Esperado:
 
-- the route is a public placeholder only
-- it does not expose browser-side analytics data
-- it does not behave like the old public dashboard
+- siguen viendose las actividades reales
+- no hay fallback silencioso a mocks
 
-Record:
+Checklist:
 
-- pass or fail
+- [ ] `Pass`
+- [ ] `Fail`
 
-## Suggested Evidence To Capture
+Comentarios:
 
-- final URL after Google auth
-- screenshot of catalog after login
-- screenshot of onboarding if triggered
-- screenshot of favorites persistence if relevant
-- screenshot of `/pvi`
+```txt
 
-## Result Template
+```
 
-Use this template when reporting a run:
+## 7. Favoritos remotos persisten
+
+Que hacer:
+
+1. Anade una actividad a favoritos.
+2. Ve a favoritos o verifica el estado visual.
+3. Recarga la pagina.
+4. Comprueba que sigue.
+5. Quita el favorito.
+6. Recarga otra vez.
+
+Esperado:
+
+- anadir funciona
+- persiste tras recarga
+- quitar funciona
+- desaparece tras recarga
+
+Checklist:
+
+- [ ] `Pass`
+- [ ] `Fail`
+
+Comentarios:
+
+```txt
+
+```
+
+## 8. Detalle maneja correctamente el estado actual sin contacto
+
+Que hacer:
+
+1. Abre el detalle de una actividad ya autenticado.
+
+Esperado hoy:
+
+- el detalle carga
+- no crashea
+- no aparece fallback falso de WhatsApp
+- si no hay contactos publicados, la UI lo comunica con claridad
+
+Checklist:
+
+- [ ] `Pass`
+- [ ] `Fail`
+
+Comentarios:
+
+```txt
+
+```
+
+## 9. `/pvi` es solo placeholder publico
+
+Que hacer:
+
+1. Abre `/pvi` en la misma preview.
+
+Esperado:
+
+- la ruta carga
+- no muestra metricas reales en browser
+- deja claro que el path real es interno
+
+Checklist:
+
+- [ ] `Pass`
+- [ ] `Fail`
+
+Comentarios:
+
+```txt
+
+```
+
+## Evidencia Recomendada
+
+- URL final tras login Google
+- captura del catalogo autenticado
+- captura del onboarding si aparece
+- captura del estado de favoritos
+- captura de `/pvi`
+
+## Resumen Rapido
 
 ```md
-Date:
-Environment:
+Fecha:
+Entorno:
 Preview URL:
 
-1. Anonymous catalog from real DB: Pass/Fail
-2. Auth gate opens: Pass/Fail
-3. Google returns to same preview host: Pass/Fail
-4. Onboarding gate for incomplete profile: Pass/Fail
-5. Onboarding completion: Pass/Fail
-6. Authenticated catalog still real DB: Pass/Fail
-7. Favorites add/persist/remove: Pass/Fail
-8. Detail no-contact state: Pass/Fail
-9. PVI placeholder only: Pass/Fail
+1. Catalogo anonimo real: Pass / Fail
+2. Gate de acceso: Pass / Fail
+3. Redirect al mismo host: Pass / Fail
+4. Onboarding obligatorio: Pass / Fail
+5. Completar onboarding: Pass / Fail
+6. Catalogo autenticado real: Pass / Fail
+7. Favoritos persisten: Pass / Fail
+8. Detalle sin contacto: Pass / Fail
+9. PVI placeholder: Pass / Fail
 
-Notes:
+Comentarios:
 ```
