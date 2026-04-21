@@ -561,9 +561,10 @@ export function AuthProvider({ children }) {
     setPendingVerificationEmail("");
     setVerificationMessage("");
     clearPendingIntent();
+    navigate("/", { replace: true });
 
     return response;
-  }, [clearPendingIntent]);
+  }, [clearPendingIntent, navigate]);
 
   const refreshAppUser = useCallback(async () => {
     const supabase = getSupabaseClient();

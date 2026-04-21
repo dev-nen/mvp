@@ -60,6 +60,10 @@
   gap: var(--space-4);
 }
 
+.profile-page__grid--single {
+  max-width: 46rem;
+}
+
 .profile-page__card {
   overflow: hidden;
   border-color: rgba(75, 143, 231, 0.14);
@@ -193,5 +197,9 @@
   .profile-page__grid {
     grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
     align-items: start;
+  }
+
+  .profile-page__grid--single {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

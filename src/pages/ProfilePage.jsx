@@ -57,7 +57,6 @@ export function ProfilePage() {
     isAuthenticated,
     isAuthLoading,
     openAccessGate,
-    session,
     signInWithGoogle,
     signOut,
     user,
@@ -84,11 +83,6 @@ export function ProfilePage() {
   };
 
   const userDisplayName = formatUserDisplayName(user);
-  const providerName =
-    session?.user?.app_metadata?.provider === "google"
-      ? "Google"
-      : (session?.user?.app_metadata?.provider ?? "Email/password");
-  const sessionStateLabel = isAuthenticated ? "Activa" : "Anonima";
   const appProfileState = appUser?.cityId ? "Completo" : "Pendiente";
 
   return (
@@ -111,8 +105,8 @@ export function ProfilePage() {
               <p className="profile-page__eyebrow">Perfil</p>
               <h1 className="profile-page__title">Tu cuenta</h1>
               <p className="profile-page__description">
-                Esta pantalla solo refleja el estado real de autenticacion base
-                para MVP 2.0.
+                Revisa los datos basicos de tu cuenta y cierra sesion cuando lo
+                necesites.
               </p>
             </div>
           </header>
@@ -120,7 +114,7 @@ export function ProfilePage() {
           {isAuthLoading ? (
             <ProfileLoadingState />
           ) : isAuthenticated ? (
-            <div className="profile-page__grid">
+            <div className="profile-page__grid profile-page__grid--single">
               <Card className="profile-page__card profile-page__card--highlight">
                 <CardContent className="profile-page__card-content">
                   <div className="profile-page__status-pill">
@@ -131,8 +125,8 @@ export function ProfilePage() {
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
-                      Esta pantalla refleja el estado real de autenticacion y el
-                      perfil de app respaldado por `user_profiles`.
+                      Aqui puedes revisar los datos principales asociados a tu
+                      cuenta dentro de NensGo.
                     </p>
                   </div>
 
@@ -172,41 +166,9 @@ export function ProfilePage() {
                     <div className="profile-page__detail-item">
                       <dt>
                         <BadgeCheck />
-                        Perfil app
+                        Perfil
                       </dt>
                       <dd>{appProfileState}</dd>
-                    </div>
-                  </dl>
-                </CardContent>
-              </Card>
-
-              <Card className="profile-page__card">
-                <CardContent className="profile-page__card-content">
-                  <p className="profile-page__eyebrow">Sesion</p>
-                  <h2 className="profile-page__section-title">
-                    Cuenta autenticada en Supabase Auth
-                  </h2>
-                  <p className="profile-page__section-description">
-                    El email se muestra solo como referencia. No existe flujo de
-                    cambio de email en esta fase.
-                  </p>
-
-                  <dl className="profile-page__details-list profile-page__details-list--compact">
-                    <div className="profile-page__detail-item">
-                      <dt>Proveedor</dt>
-                      <dd>{providerName}</dd>
-                    </div>
-                    <div className="profile-page__detail-item">
-                      <dt>Usuario Auth</dt>
-                      <dd>{user?.id ?? "No disponible"}</dd>
-                    </div>
-                    <div className="profile-page__detail-item">
-                      <dt>Usuario app</dt>
-                      <dd>{appUser?.id ?? "No disponible"}</dd>
-                    </div>
-                    <div className="profile-page__detail-item">
-                      <dt>Estado de sesion</dt>
-                      <dd>{sessionStateLabel}</dd>
                     </div>
                   </dl>
 
@@ -243,17 +205,6 @@ export function ProfilePage() {
                   Accede con Google o con email y password para que NensGo
                   reconozca una identidad real y mantenga la sesion entre recargas.
                 </p>
-
-                <dl className="profile-page__details-list profile-page__details-list--compact">
-                  <div className="profile-page__detail-item">
-                    <dt>Estado</dt>
-                    <dd>{sessionStateLabel}</dd>
-                  </div>
-                  <div className="profile-page__detail-item">
-                    <dt>Metodo</dt>
-                    <dd>Google o email/password</dd>
-                  </div>
-                </dl>
 
                 {authError ? (
                   <p
