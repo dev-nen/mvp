@@ -2,31 +2,38 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against the active `main` working tree.
-This file documents the architecture currently running in the repo, not the ideal future architecture.
+This documentation reflects the current checked-out working state of
+`feat/real-db-auth-migration`.
+Baseline checked on April 21, 2026 against the active branch working tree.
+This file documents the architecture currently implemented in the branch, not
+the ideal future architecture.
 
 ## Stack And Runtime Boundary
 
 - Frontend app: React 18 + Vite
 - Routing: `react-router-dom`
-- Styling: plain CSS modules by feature/component file
-- External service client: `@supabase/supabase-js`
-- No current backend catalog integration inside the repo
+- Styling: plain CSS by feature/component file
+- Browser data/auth client: `@supabase/supabase-js`
+- Private internal metrics path: Vercel serverless function under `api/`
 
-The current app is a single frontend runtime with prepared seams for future evolution. Some pieces are already integrated, but they are not all fully closed as end-state product systems.
+The branch now uses a mixed runtime:
+
+- public app logic in the browser
+- product data and auth in Supabase
+- internal metrics reads through a private server-side Vercel path
 
 ## Current Route And Surface Map
 
 | Route | Current role | Notes |
 | --- | --- | --- |
-| `/` | Landing + public catalog | Public route. Shows teaser catalog cards and opens detail through the current protected-action flow. |
-| `/para-centros` | B2B landing for centers | Public route. Uses its own page composition, internal anchor navigation, preview modal, external join CTA, and route-local noindex handling while traffic remains deferred. |
-| `/favoritos` | Favorites list | Protected route. Reads current favorites from local browser state. |
-| `/favoritos/:activityId` | Favorites detail page | Protected route. Current routed detail surface. |
-| `/perfil` | Minimal profile/auth surface | Protected route. Reflects current auth and session state. |
-| `/pvi` | Interaction dashboard | Public route today, although product copy treats it as internal. Degrades to an unavailable state when `activity_events` cannot be read, but remains Supabase-backed only. |
+| `/` | Landing + public catalog | Public route. Reads catalog from Supabase and opens detail through protected intent handling. |
+| `/para-centros` | B2B landing for centers | Public route. Independent acquisition surface. |
+| `/favoritos` | Favorites list | Protected route. Reads favorites from `user_favorite_activities`. |
+| `/favoritos/:activityId` | Favorites detail page | Protected route. Routed detail surface. |
+| `/perfil` | App profile surface | Protected route. Reflects auth state plus `user_profiles` readiness. |
+| `/pvi` | Internal placeholder | Publicly routable, but intentionally non-operational in the browser. |
 | `/soporte` | Placeholder surface | Not implemented as a real support workflow yet. |
+| `/api/internal/pvi` | Private metrics API | Server-side reporting path for PO and DEV only. |
 
 ## Current Frontend Composition
 
@@ -35,143 +42,160 @@ The current app is a single frontend runtime with prepared seams for future evol
 - `src/App.jsx` defines the route map.
 - `AuthProvider` wraps the full route tree.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
-- `/para-centros` is public and does not depend on auth, catalog, or Supabase state.
 
 ### Public Home and catalog
 
-- `src/pages/HomePage.jsx` is the current landing plus public catalog surface.
+- `src/pages/HomePage.jsx` is the landing plus public catalog surface.
 - `useCatalog()` loads activities through `catalogService`.
-- `CatalogActivityCard` has a public teaser variant used by Home.
-- `ActivityDetailModal` is the current Home detail surface, triggered through the protected-action flow.
-
-### B2B centers landing
-
-- `src/pages/ParaCentrosPage.jsx` is a separate public route for center-facing acquisition.
-- The page keeps its own local header, footer, button styling, and section layout instead of reusing the family-facing shared navigation surfaces.
-- The route uses dedicated static assets under `public/para-centros/`.
-- The page mutates `document.title` and `meta[name="robots"]` locally while mounted because the app still has no shared route-metadata layer.
-- The route is intentionally isolated from Home: no internal traffic link was added from `/` in this phase.
+- `CatalogActivityCard` renders the public teaser grid.
+- `ActivityDetailModal` is the Home detail surface and now resolves contact via
+  `activity_contact_options`.
 
 ### Favorites
 
-- `src/pages/FavoritesPage.jsx` lists locally stored favorites.
-- `src/pages/FavoriteActivityDetailPage.jsx` is the current routed detail page for favorites.
-- `useFavorites()` is the source of truth for favorite ids in the browser.
+- `src/pages/FavoritesPage.jsx` lists user-linked remote favorites.
+- `src/pages/FavoriteActivityDetailPage.jsx` is the routed favorites detail
+  surface.
+- `useFavorites()` is now backed by Supabase instead of `localStorage`.
 
-### Auth and profile
+### Auth and app user
 
-- `src/context/AuthContext.jsx` owns current auth state, session bootstrap, pending intents, and access gating.
-- `ProtectedAccessGate` handles sign-in prompts and required city completion.
-- `src/pages/ProfilePage.jsx` renders the current minimal account surface.
+- `src/context/AuthContext.jsx` owns session bootstrap, access-state resolution,
+  pending protected intents, and onboarding completion.
+- `ProtectedAccessGate` supports:
+  - Google sign-in
+  - email/password sign-in
+  - email/password sign-up
+  - verification messaging
+  - onboarding-required completion
+- `src/services/appUsersService.js` reads `public.user_profiles` and calls the
+  profile-provisioning RPC.
 
 ### PVI
 
-- `src/pages/PviPage.jsx` reads dashboard data through `useActivityEventsDashboard()`.
-- PVI depends on `activity_events` data coming from Supabase.
-- The read path is availability-aware: missing Supabase config, missing `activity_events`, or denied read access show an unavailable state instead of hard-failing the route.
-- PVI does not maintain a browser-local analytics mirror; if Supabase is not ready, the route stays graceful but the dashboard remains without real data.
-- In the current checked environment, Supabase is responding with `PGRST205` because `public.activity_events` is missing from the schema cache.
+- `src/pages/PviPage.jsx` is now only a public placeholder.
+- `api/internal/pvi.js` is the intended real read path for internal reporting.
 
 ## Current Catalog Data Flow
 
-The catalog path is currently frontend-local:
+The catalog path is now Supabase-backed:
 
-1. `src/data/catalogFallback.js` stores raw `activities`, `centers`, and `cities`.
-2. `src/services/catalogService.js` filters active activities and enriches them with runtime aliases:
-   - `center_name`
-   - `city_name`
-   - `city_slug`
-3. `src/hooks/useCatalog.js` exposes `activities`, `isLoading`, `error`, and `reload`.
-4. Home, Favorites, and city-choice flows consume that hook or services built on top of it.
+1. Supabase exposes `public.catalog_activities_read`
+2. `src/services/catalogService.js` reads that view
+3. `catalogService` still derives UI-facing aliases such as `city_slug`
+4. `src/hooks/useCatalog.js` exposes `activities`, `isLoading`, `error`, and
+   `reload`
+5. Home and Favorites consume that hook
 
-This is the current source of truth for the catalog in `main`. There is no real backend catalog fetch in the current architecture.
+There is no active runtime path from `src/data/catalogFallback.js` in this
+branch.
 
-## Current Detail Flow
+## Current Detail And Contact Flow
 
-The detail experience is partially implemented in two surfaces:
+The detail experience is still split across two surfaces:
 
-- Home uses the gated modal surface in `ActivityDetailModal`
-- Favorites uses the routed page in `FavoriteActivityDetailPage`
+- Home modal in `ActivityDetailModal`
+- Favorites routed page in `FavoriteActivityDetailPage`
 
-Both surfaces now consume the shared detail view model in `src/helpers/activityDetailViewModel.js`, which centralizes:
+Both surfaces use the shared detail view model and lazy-load
+`activity_contact_options` for the selected activity only.
 
-- image fallback
-- title/category/free-badge visibility
-- evaluation items
-- location items
+Contact rules in the current branch:
 
-This reduces divergence, but it does not mean the broader detail roadmap is complete. The runtime still keeps two surfaces and later detail/auth phases remain open.
+- no fallback to center-level contact
+- no hardcoded WhatsApp number
+- one active option opens directly
+- multiple active options open a chooser dialog
+- zero options means no operational CTA
 
 ## Current Auth And Access Flow
 
-The current auth line is base auth integrated in `main`, not the full auth roadmap.
+The auth line in this branch is no longer Google-only metadata gating.
 
 Current flow:
 
-1. `src/services/supabaseClient.js` creates the Supabase client from:
+1. `src/services/supabaseClient.js` creates the browser client from:
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
-2. `AuthContext` bootstraps the session with `supabase.auth.getSession()`
+2. `AuthContext` bootstraps the Supabase session
 3. `AuthContext` listens to `onAuthStateChange()`
-4. Sign-in uses `signInWithOAuth({ provider: "google" })`
-5. Pending protected intents are stored in `sessionStorage`
-6. Protected routes and protected actions are released only when the current access state is ready
-7. If the user lacks required city metadata, `ProtectedAccessGate` asks for city completion before continuing
+4. Access state is resolved from:
+   - anonymous session state
+   - email verification state
+   - `public.user_profiles` readiness
+5. `ProtectedAccessGate` blocks normal flows until the user is both verified and
+   provisioned enough for app use
+6. Onboarding completion uses the Supabase RPC instead of direct frontend
+   inserts into `public.user_profiles`
 
-Current protected behaviors:
+Current access-state model:
 
-- `/perfil`
-- `/favoritos`
-- `/favoritos/:activityId`
-- Home "view more" detail action
-- Home public-card favorite heart action
-
-This flow is implemented in code, but real operation remains externally configuration-dependent on Supabase project settings, Google OAuth settings, redirect URLs, and provider enablement.
+- `anonymous`
+- `loading_user`
+- `verification_pending`
+- `onboarding_required`
+- `ready`
+- `error`
 
 ## Current Role Of Supabase
 
-Supabase is currently used for specific roles, not as the full backend of the product:
+Supabase now owns the product-side browser data contracts for this branch:
 
 - Auth session bootstrap and session changes
-- Google sign-in through Supabase Auth
-- User metadata update for required city
-- Reading and writing `activity_events`
-- Feeding the PVI dashboard when data exists
-- Signaling PVI unavailability when the current environment cannot read `activity_events`
-- Not providing a local fallback data source for PVI before Supabase readiness is solved
+- Google sign-in
+- Email/password sign-in and sign-up
+- App-profile reads from `public.user_profiles`
+- Profile provisioning through `ensure_my_profile(...)`
+- Public catalog read model
+- Per-activity contact options
+- Remote favorites persistence
+- Write-side analytics for views and contact clicks
 
-Supabase is not currently the live catalog backend in `main`.
+Supabase is no longer limited to auth plus a partial analytics table in this
+branch.
+
+## Current Role Of Vercel
+
+Vercel is currently used for:
+
+- building and serving the public frontend
+- exposing the private `api/internal/pvi` read path
+- keeping `SUPABASE_SERVICE_ROLE_KEY` and `INTERNAL_PVI_API_TOKEN` on the
+  server side
+
+Vercel is not the product backend for catalog/auth/favorites. It only hosts the
+private reporting seam in this phase.
 
 ## Current Persistence Layers
 
-- Favorites: `localStorage`
-- Activity-event session id: `localStorage`
+- Favorites: Supabase `user_favorite_activities`
 - Pending protected intent: `sessionStorage`
-- Auth session: Supabase-managed session persistence in the browser
-- `/para-centros` preview modal open state: component-local React state only
+- Auth session: Supabase-managed browser session persistence
+- Internal metrics read path: server-side API only
 
-This means the current runtime already mixes remote auth state with local browser persistence for favorites and analytics identity.
+This branch now mixes remote product persistence with minimal browser-side UI
+state, but not with local catalog or local favorites truth.
 
 ## Current Contract Boundaries And Seams
 
-### Base fallback truth
+- `catalog_activities_read` is the read contract the frontend depends on
+- `activity_contact_options` is the only contact source
+- `user_profiles` is the app-user truth
+- `auth.users` remains the identity authority for email
+- `user_profiles.email` is treated as a synchronized read-side copy, not a
+  user-editable field
+- `/api/internal/pvi` is the intended internal reporting boundary
 
-`catalogFallback.js` is the current raw data baseline for catalog entities.
+Important current seams still visible:
 
-### Runtime-enriched frontend shape
-
-`catalogService` adds aliases such as `center_name`, `city_name`, and `city_slug` to support the current UI.
-
-### Future backend truth
-
-Feature-level docs already describe the intended distinction between current runtime aliases and backend-oriented source fields. That future backend truth is not yet the active architecture in `main`.
-
-Important current seams:
-
-- `category_label` is still the active visible taxonomy field in the frontend.
-- `is_free` is not present in the normal fallback runtime shape, so free-state UI exists but usually stays hidden.
-- City and center display values are frontend runtime aliases, not raw fallback truth.
+- `city_slug` is still derived in frontend for UI/routing purposes
+- detail remains split across modal and routed page
+- runtime readiness still depends on external Supabase and Vercel configuration
 
 ## Architectural Summary
 
-The current architecture is a real frontend application with routing, local catalog data, partial protected flows, a separate public B2B route, and targeted Supabase integration. It already has seams prepared for a fuller backend-backed product, but those seams should not be mistaken for completed backend architecture.
+The current branch architecture is a mixed Supabase + Vercel product runtime:
+catalog, auth, profile, favorites, and analytics writes now live on Supabase
+contracts, while private analytics reads are pushed behind a server-side Vercel
+API. The code is aligned to that architecture, but external readiness and final
+validation are still pending.

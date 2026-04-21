@@ -2,69 +2,87 @@
 
 ## Baseline
 
-This roadmap is an internal implementation roadmap, not a product pitch. It is grounded in the current merged state of `main` and separates what is already merged from what is only partial or still pending.
+This roadmap is an internal implementation roadmap, not a product pitch. It is
+grounded in the current checked-out state of `feat/real-db-auth-migration` and
+separates what is already implemented in the branch from what is still pending
+external readiness or later product work.
 
-## Already Merged In `main`
+## Already Implemented In The Active Branch
 
-- NensGo branding baseline across active app surfaces
-- Real route structure for Home, Favorites, Favorites detail, Profile, PVI, and Support placeholder
-- Public catalog served from local fallback data through `catalogService`
+- Real route structure for Home, Favorites, Favorites detail, Profile, PVI, and
+  Support placeholder
+- Public catalog UI wired to a Supabase read model instead of local fallback
 - Public teaser card contract for Home catalog
-- Public card validity filtering and standard SVG placeholder fallback
-- Local favorites persistence in the browser
-- Activity-event tracking and dashboard plumbing for PVI
-- Base auth integration with Supabase Auth and Google
-- Protected routes plus protected-action gating with required city completion
-- Minimal profile/auth surface
+- Remote favorites persistence through `user_favorite_activities`
+- Expanded auth UI for Google plus email/password
+- App-user truth moved to `public.user_profiles`
+- Onboarding completion via Supabase RPC instead of direct frontend profile
+  inserts
+- Contact CTA driven only by `activity_contact_options`
+- Analytics writes aligned to `activity_view_events` and
+  `activity_contact_events`
+- Public `/pvi` reduced to a non-operational placeholder
+- Private `api/internal/pvi` path added for PO and DEV reporting
+- Repo-tracked SQL and runbook artifacts for the migration
 
-These are merged capabilities. They should not be rediscovered from chat memory as if they were still only planned.
+These are active branch capabilities. They should not be rediscovered as if the
+branch were still on mock-backed runtime behavior.
 
-## Partially Implemented In `main`
+## Partial Or Still Gated By External Readiness
 
-- Detail MVP 2.0 remains partially implemented and split between modal and favorites page
-- Detail structure, mapping, and fallback rules are documented, but the broader detail line is not a fully closed product phase
-- Auth base is integrated, but remains externally configuration-dependent and does not close the wider auth roadmap
-- Profile exists, but only as a minimal auth-facing surface
-- Favorites work, but remain browser-local rather than user-linked
-- PVI exists, but depends on Supabase configuration and `activity_events`, and the route is still public today
-- PVI currently degrades gracefully when unreadable, but remains intentionally remote-only until Supabase readiness is solved
-- Catalog uses a local fallback baseline rather than a real backend catalog source
+- Supabase SQL still needs human application and live validation
+- Expanded auth still needs provider configuration, redirects, and email
+  verification setup
+- Remote favorites still need end-to-end validation against the real database
+- Private internal metrics still need Vercel server-secret setup and live
+  verification
+- Detail remains split across Home modal and Favorites routed detail page
 
 ## Next Real Phase
 
-Recommended next implementation order:
+Recommended next implementation order from the current branch:
 
-1. Stabilize auth environments and verify the current base auth flow across actual Supabase and Google OAuth setup.
-2. Add a more durable app-user layer beyond the current metadata-only minimum, starting with profile and user-linked persistence boundaries.
-3. Move favorites from browser-local storage toward user-linked persistence.
-4. Continue the detail line on top of the auth/user model, rather than treating the current two-surface alignment as the end of the story.
-5. Replace the fallback-only catalog runtime with a real backend-backed catalog path.
-
-This order keeps the current architecture honest: user-linked detail and favorites should not be treated as fully ready before the auth and user model are stable.
+1. Apply the repo-tracked SQL in Supabase and validate the read model, RPC,
+   constraints, and write-table ids.
+2. Configure and validate Supabase Auth for:
+   - Google
+   - email/password
+   - redirect URLs
+   - email verification
+3. Configure and validate Vercel secrets for the private metrics path.
+4. Run end-to-end verification across:
+   - anonymous catalog
+   - Google login
+   - classic sign-up and verification
+   - onboarding completion
+   - remote favorites
+   - view/contact analytics writes
+   - private `/api/internal/pvi`
+5. Clean up any remaining dead code or docs drift after external validation.
 
 ## Later Phase
 
-- Richer profile editing and persistence
-- Clearer access rules beyond the current base gate
-- Stronger PVI/internal access boundaries
-- Reopen PVI completion only after `activity_events` exists, matches the frontend event shape, and can be read by the intended client
-- Cleaner backend contracts that replace current frontend aliases
-- Broader business logic and beta-oriented hardening
+- Richer profile editing and account management
+- Role expansion beyond the current family-user baseline
+- Public or role-based metrics visibility
+- More complete company/internal account lines
+- Further UX consolidation of the split detail system
 
-## Deferred Or Out Of Scope For The Current Baseline
+## Deferred Or Out Of Scope For This Migration Phase
 
-- Full backend catalog inside the current repo runtime
-- User-linked favorites already operating in production reality
-- Complete profile model and avatar persistence
-- Full auth roadmap beyond the current base integration
-- Treating current detail work as fully complete
-- Treating PVI as a hardened internal admin tool
-- Adding a browser-local analytics fallback to make `/pvi` appear operational before Supabase is ready
+- Change-email flow
+- Account linking between providers
+- Magic link auth
+- Local-favorites migration
+- Favorite analytics events
+- Public dashboard for metrics
 
 ## Practical Reading Of The Roadmap
 
-- "Merged in `main`" means the code is already present in the current baseline.
-- "Partial" means real work exists in the repo, but the line is not complete and should not be documented as done.
-- "Next" means the most defensible sequence from current architecture.
+- "Already implemented" means the branch code is already aligned to that
+  behavior.
+- "Partial" means real work exists in the branch, but the line is still gated by
+  external readiness, validation, or remaining architectural debt.
+- "Next" means the most defensible sequence from the current branch state.
 - "Later" means desirable, but not the immediate next implementation pass.
-- "Deferred" means consciously outside the current baseline and should not be silently pulled into scope.
+- "Deferred" means consciously outside the current migration phase.

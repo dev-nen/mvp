@@ -60,6 +60,90 @@ A useful spec for this repo should state:
 
 If a task arrives through a disket or Disket Standard v2 brief, that brief should become the implementation contract only after it is checked against the current repo.
 
+## Artifact Types
+
+This repo can use multiple artifact types during a non-trivial task. Their
+purposes should stay explicit:
+
+- `External Snapshot`
+  - captures evidence about a system outside the repo
+  - useful for schema, RLS, grants, OAuth config, env setup, or external APIs
+  - does not decide product behavior by itself
+- `Spec / SDD`
+  - translates the task into the working contract for the phase
+  - grounded in the active branch and any confirmed external evidence
+  - should separate current state, goal, scope, risks, and validation
+- `Open Decisions`
+  - lists unresolved product or technical choices that still affect the work
+  - should present options clearly and may include a recommendation
+- `Closed Decisions`
+  - records the resolved choices that the next planning phase can rely on
+  - should point back to the decisions it closes
+- `Implementation Plan`
+  - defines the concrete execution sequence once spec and key decisions are
+    ready
+  - should state touched files, risks, out-of-scope items, and validation
+- `Closure Note`
+  - closes an implemented phase
+  - should leave clear what changed, what did not change, what remains pending,
+    and what was validated
+
+One artifact should not try to do multiple jobs at once if that makes its role
+ambiguous.
+
+## Dependency Readiness Gate
+
+Before planning implementation for work that depends on external systems, check
+whether those dependencies are actually ready enough for the phase.
+
+This matters especially for:
+
+- Supabase schema
+- RLS and grants
+- auth provider setup
+- Vercel environment configuration
+- external contracts or APIs
+
+The readiness check should make visible:
+
+- which external dependency matters
+- what evidence exists
+- what is still unconfirmed
+- whether the dependency is `Ready`, `Partial`, or `Blocked`
+
+If a critical dependency is still `Blocked`, do not present implementation as
+fully ready to start. In that case, the correct output is usually one of:
+
+- an external snapshot
+- a spec / SDD
+- an open-decisions artifact
+- a conditional or partial plan
+
+Do not treat product intent alone as proof that an external dependency is
+resolved.
+
+## Decision Promotion Rule
+
+When a decision moves from open to closed, the repo should reflect that
+promotion explicitly.
+
+At minimum, promoting a decision should do all of the following:
+
+- record the closure in a `Closed Decisions` artifact or equivalent
+- update the affected `Spec / SDD`
+- update `DECISIONS_LOG.md` if the decision is now stable for future work
+- leave clear traceability from the open-decisions artifact to the document that
+  resolves it
+
+Do not treat a decision as promoted only because it was stated in chat.
+
+Master docs must not be updated just because a decision was closed; they should
+only be updated when the active branch actually reflects that new product or
+architecture state.
+
+Closing a decision does not close a feature. A decision can be closed while the
+implementation still remains `Planned` or `In progress`.
+
 ## Plan Mode Expectations
 
 Use explicit planning first when the task:

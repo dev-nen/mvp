@@ -2,89 +2,110 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against the active `main` working tree.
-Where implementation is partial, branch history or feature-level docs may provide additional context, but the current repository state takes precedence over historical intent.
+This documentation reflects the current checked-out working state of
+`feat/real-db-auth-migration`.
+Baseline checked on April 21, 2026 against the active branch working tree.
+Where implementation is partial or externally blocked, the active branch state
+takes precedence over older `main` docs and chat history.
 
-## What NensGo Is Today
+## What NensGo Is Today In This Branch
 
-NensGo is currently a frontend-first MVP for discovering activities for children and families. The repo already contains:
+NensGo is currently a frontend MVP that has moved into a real DB and auth
+migration checkpoint. The branch already contains:
 
 - A public landing and catalog experience on `/`
-- A separate public B2B landing on `/para-centros` for centers and projects that want to join
-- Real client-side routing
-- A fallback-driven activity catalog served from local frontend data
-- A public teaser card contract for the catalog
-- Favorites stored locally in the browser
-- A split detail experience across Home modal and Favorites detail page
-- Base auth integration with Supabase Auth and Google
-- A minimal profile surface tied to current auth state
-- An internal-style PVI dashboard that reads interaction events when Supabase is configured
+- A separate public B2B landing on `/para-centros`
+- Protected routes for `/perfil`, `/favoritos`, and `/favoritos/:activityId`
+- A Supabase-backed catalog read path through `catalog_activities_read`
+- A Supabase-backed favorite model through `user_favorite_activities`
+- An app-profile flow based on `public.user_profiles`
+- Expanded auth UI for Google plus classic `email/password`
+- Onboarding completion through a Supabase RPC instead of direct profile inserts
+- Contact actions driven by `activity_contact_options`
+- Analytics writes aligned to `activity_view_events` and `activity_contact_events`
+- A public `/pvi` placeholder that no longer reads analytics in the browser
+- A private `/api/internal/pvi` path intended for PO and DEV reporting
 
-This is not yet a full backend-backed product. The current runtime still mixes implemented frontend behavior, local fallback data, external-service seams, and future roadmap direction.
+This branch is no longer using local catalog mocks as runtime truth for primary
+paths.
 
 ## Current Stage
 
-The current merged baseline is best described as:
+The current branch is best described as:
 
-- A usable frontend MVP with real navigation and current user-facing surfaces
-- A preparatory B2B acquisition surface for centers that lives separately from Home
-- A public catalog backed by local fallback data plus runtime enrichment
-- Base auth integrated in code, but still dependent on external configuration
-- Several MVP 2.0 lines started, but not all closed as full product phases
+- A compiled implementation checkpoint of the real DB and auth migration
+- Runtime code aligned to the new Supabase contracts
+- Still partially blocked on external readiness and end-to-end validation
 
-## Currently Operational In Main
+The branch compiles locally, but full readiness still depends on:
 
-- Branding baseline is NensGo across active surfaces and assets.
+- applying the repo-tracked SQL in Supabase
+- configuring Supabase Auth providers and email verification
+- configuring Vercel server secrets
+- validating real preview/production flows
+
+## Currently Operational In The Active Branch
+
 - Home acts as landing plus public catalog entry point.
-- `/para-centros` exists as a separate public B2B landing with direct-URL access, internal anchor navigation, preview modal, and external join CTA.
-- Public catalog supports search, filters, quick-access category entry points, and teaser cards.
-- Public catalog cards apply current validity filtering and standard placeholder fallback behavior.
-- Users can save favorites locally and revisit them on `/favoritos`.
-- Home can open a detail modal after passing the current protected-action flow.
-- Favorites can open a dedicated detail page on `/favoritos/:activityId`.
-- Profile route exists and shows the current auth/session state.
-- PVI route exists and can read activity-event metrics from Supabase when the environment and table are ready.
-- When Supabase config, table availability, or read access is missing, `/pvi` now degrades to an unavailable state instead of a generic load failure.
+- `/para-centros` still exists as a separate public B2B landing.
+- Public catalog reads from Supabase through a dedicated read model instead of
+  local fallback files.
+- Catalog filters now treat `city_id` as persisted truth and derive slug only
+  for UI-facing needs.
+- Home detail modal and Favorites detail page both use
+  `activity_contact_options` as the only contact source.
+- Favorites are remote and user-linked instead of browser-local.
+- Protected auth surfaces support Google sign-in, email/password sign-in,
+  email/password sign-up, email verification messaging, and onboarding-required
+  states.
+- App-user truth now comes from `public.user_profiles`, not auth metadata.
+- Email is treated as non-editable in this phase.
+- `/pvi` remains routable in the public app only as a non-operational internal
+  placeholder.
+- `api/internal/pvi` exists as the intended private reporting path for PO and
+  DEV.
 
 ## Partial Or Configuration-Dependent Areas
 
-- Detail MVP 2.0 remains partially implemented and split between modal and favorites page.
-- Detail is structurally aligned in two current surfaces, but the broader detail roadmap still has open subtasks and later auth-linked phases.
-- Auth base is implemented in `main`, but real operation still depends on external Supabase and Google OAuth configuration.
-- Profile is a minimal auth-facing surface, not a complete persisted app profile.
-- Favorites work today, but remain browser-local rather than user-linked.
-- PVI exists, but depends on `activity_events` plus valid Supabase configuration and is still a partial internal surface.
-- PVI no longer hard-fails the route for expected dependency gaps, but it still depends on external Supabase readiness to show real data.
-- PVI has no browser-local fallback source; in the current environment the observed blocker is `PGRST205` because `public.activity_events` is missing from Supabase schema cache.
-- Catalog data still comes from local fallback files, not from a real backend catalog.
-- `/para-centros` is intentionally isolated from the current Home traffic flow: it is not linked from `/`, it does not replace the root route, and domain-level distribution is still deferred.
+- The branch has not yet been validated against a live Supabase project with the
+  new SQL applied.
+- The expanded auth flow depends on external Supabase provider setup, redirect
+  URLs, and email verification configuration.
+- `ensure_my_profile(...)` is versioned in repo, but still requires human
+  application and validation in Supabase.
+- The internal metrics API requires Vercel secrets that are not validated from
+  inside the repo alone.
+- Detail is still intentionally split across Home modal and Favorites routed
+  detail page.
+- `/pvi` is intentionally not an operational dashboard in the public app during
+  this phase.
 
-## Difference Between Present State, MVP 2.0 Direction, And Beta Direction
+## Difference Between Present Branch State, External Readiness, And Later Product Work
 
-### Present state in `main`
+### Present state in `feat/real-db-auth-migration`
 
-- Frontend runtime is real.
-- Public catalog is real.
-- A separate public B2B route now exists for center-facing acquisition without changing `/`.
-- Fallback data is the current source of catalog truth.
-- Base auth flow is integrated.
-- Protected routes and protected actions are implemented.
-- Several user/account/data phases are still unfinished.
+- Runtime contracts have moved to Supabase-backed data and auth boundaries.
+- Local catalog fallback is no longer the primary product truth.
+- Favorites are modeled as remote user data.
+- Browser-side analytics dashboard reads have been retired.
 
-### MVP 2.0 direction
+### External readiness still pending
 
-- Keep the current public catalog usable while moving deeper actions behind identified access.
-- Continue the auth/profile/favorites/detail line from base auth toward more complete user-linked behavior.
-- Replace frontend-only seams with clearer data and contract boundaries.
-- Reduce reliance on temporary aliases and local-only persistence.
+- Supabase SQL application
+- Auth provider configuration
+- Vercel env and secret configuration
+- Human-driven end-to-end verification
 
-### Later beta direction
+### Later product work
 
-- Move catalog truth away from local fallback data and into a real backend flow.
-- Add more complete profile and user data handling.
-- Tighten access rules, analytics, and business logic beyond the current MVP baseline.
+- Richer profile editing
+- Account-linking or email-change flows
+- Public or role-based metrics visibility
+- Further role expansion beyond the current family-user baseline
 
 ## Current State Summary
 
-NensGo today is a real frontend baseline, not a blank prototype. It is also not a finished product. The repo already contains meaningful product structure across family-facing and preparatory center-facing surfaces, but several important lines remain partial: backend catalog, user-linked favorites, richer profile persistence, route-level SEO distribution, and the later auth/detail phases beyond the current base integration.
+This branch is not a mock-backed MVP anymore. It is a real DB and auth migration
+checkpoint with compiled runtime changes already in place. It is also not yet
+fully closed: external Supabase and Vercel readiness still gate the move from
+implemented code to validated product behavior.

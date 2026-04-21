@@ -2,9 +2,10 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of `main` at the time of writing.
-Baseline checked on April 17, 2026 against the active `main` working tree.
-Statuses below describe the current baseline, not older branch intent.
+This documentation reflects the current checked-out working state of
+`feat/real-db-auth-migration`.
+Baseline checked on April 21, 2026 against the active branch working tree.
+Statuses below describe the current branch baseline, not older `main` intent.
 
 ## Status Legend
 
@@ -16,19 +17,19 @@ Statuses below describe the current baseline, not older branch intent.
 
 ## Current Feature Table
 
-| Feature | Status | Current scope in `main` | Notes and gaps |
+| Feature | Status | Current scope in `feat/real-db-auth-migration` | Notes and gaps |
 | --- | --- | --- | --- |
-| Branding | Done | NensGo branding is active across current app surfaces and assets | Brand evolution can continue later, but the current rebrand baseline is already merged |
-| Public catalog | Done | Home exposes the current landing plus searchable/filterable public catalog | Current source is frontend fallback data, not backend catalog |
-| B2B centers landing route | Partial | `/para-centros` exists as a public preparatory landing with isolated layout, anchor navigation, preview modal, and external join CTA | It is intentionally not linked from `/` yet, does not move the root route, and still relies on route-local noindex metadata handling |
-| Public catalog card | Done | Home uses the teaser public card contract with current approved content blocks | This is the current public-card baseline, not a richer logged-in card |
-| Card fallback rules | Done | Public catalog applies current validity rules and SVG placeholder fallback | Non-public card placeholder coverage still has debt outside the public flow |
-| Detail MVP 2.0 | Partial | Detail is structurally aligned in two current surfaces: Home modal and Favorites detail page | Detail MVP 2.0 remains partially implemented and split between modal and favorites page; later detail/auth phases remain open |
-| Favorites | Partial | Users can save activities locally and revisit them on protected favorites routes | Persistence is still browser-local and not linked to a user account |
-| Profile | Partial | `/perfil` shows current auth/session state and current city metadata when available | There is no fuller persisted profile model yet |
-| PVI | Partial | `/pvi` already has the current graceful unavailable-state UI and can read interaction metrics from `activity_events` when Supabase is ready | No browser-local fallback exists; backend readiness is pending and the current environment is blocked by missing `activity_events` |
-| Auth base | Partial | Supabase Auth plus Google is implemented in `main`, including protected routes/actions and city completion | Externally configuration-dependent; not yet the full auth roadmap |
-| Roadmap toward fuller MVP 2.0 and beta | In progress | Several supporting lines are already merged, but user-linked data and backend phases remain open | Current `main` mixes implemented work, partial work, and planned phases |
-| Backend catalog real | Planned | No real backend catalog fetch is active in the current runtime | Current catalog still comes from local fallback data |
-| Favorites by user | Planned | No per-user favorites persistence exists yet | Depends on later user/profile/backend work |
-| Full detail line beyond the current split surfaces | Planned | Current detail behavior exists, but broader later detail phases remain open | Should build on top of stable auth and user persistence rather than skipping ahead |
+| Branding | Done | NensGo branding remains active across the current app surfaces and assets | Brand evolution can continue later, but the current baseline is already merged |
+| Public catalog UI | Done | Home exposes the current landing plus searchable/filterable public catalog UI | UI path is active and compiled against the Supabase read model |
+| Backend catalog real path | Partial | Runtime catalog reads now target `catalog_activities_read` instead of local fallback data | Still externally blocked until the SQL is applied and validated in Supabase |
+| B2B centers landing route | Partial | `/para-centros` still exists as a public preparatory landing with isolated layout and external join CTA | It remains intentionally separate from `/` and broader distribution is still deferred |
+| Public catalog card | Done | Home uses the current public teaser card contract | The active card no longer depends on fallback catalog truth |
+| Detail MVP 2.0 | Partial | Detail remains structurally aligned across Home modal and Favorites detail page | The split-surface detail model remains intentional debt in this phase |
+| Contact CTA real path | Partial | Contact now comes only from `activity_contact_options` with direct/single and chooser/multi behavior | Full validation still depends on live data quality in Supabase |
+| Favorites by user | Partial | Favorites are now modeled as remote user-linked data in `user_favorite_activities` | Still pending live SQL readiness and end-to-end validation |
+| Profile | Partial | `/perfil` reflects auth state plus app-profile readiness from `user_profiles` | Richer profile editing is still out of scope |
+| Auth expansion | Partial | Google plus email/password flows are implemented in code, including verification-pending and onboarding-required states | Still depends on Supabase provider setup, redirects, and verification config |
+| PVI public route | Done | `/pvi` is intentionally reduced to a non-operational internal placeholder in the public app | Browser-side analytics reads are removed from the route |
+| Private internal metrics path | Partial | `api/internal/pvi` exists for PO/DEV reporting with bearer-token protection | Requires Vercel server secrets and live validation |
+| Roadmap toward fuller MVP 2.0 and beta | In progress | The branch closes a large migration checkpoint, but external readiness and later product phases remain open | This is not production-ready closure yet |
+

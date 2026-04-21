@@ -51,6 +51,8 @@ The master docs describe the documented baseline of the branch context they were
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
 | [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md) | SDD for moving from local fallback truth to real Supabase-backed catalog/user flows and expanding auth to Google plus classic sign-up. |
 | [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md) | Review sheet of unresolved product and technical decisions for the real DB and auth migration. |
+| [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md) | Closed product and architecture decisions that answer the migration decision sheet and unblock implementation planning. |
+| [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md) | Ops runbook for applying Supabase SQL, configuring auth, setting Vercel env vars, and validating the migration. |
 
 ## Suggested Reading By Topic
 
@@ -93,6 +95,8 @@ The master docs describe the documented baseline of the branch context they were
   - [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md)
   - [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md)
   - [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md)
+  - [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md)
+  - [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md)
 - Long implementation work:
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
   - [../PLANS.md](../PLANS.md)
