@@ -20,6 +20,7 @@ The master docs describe the documented baseline of the branch context they were
 7. [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
 8. [../PLANS.md](../PLANS.md)
 9. [../AGENTS.md](../AGENTS.md)
+10. [../tests/README.md](../tests/README.md)
 
 ## Master Docs
 
@@ -34,6 +35,7 @@ The master docs describe the documented baseline of the branch context they were
 | [SDD_WORKFLOW.md](./SDD_WORKFLOW.md) | How future work should move from current state to spec, plan, implementation, validation, and documentation. |
 | [../AGENTS.md](../AGENTS.md) | Hard rules for coding agents working in this repo. |
 | [../PLANS.md](../PLANS.md) | Reusable structure for long-running plans. |
+| [../tests/README.md](../tests/README.md) | Test-artifact entry point for manual smoke checks and future automated validation assets. |
 
 ## Feature-Level Reference Docs
 
@@ -54,6 +56,7 @@ The master docs describe the documented baseline of the branch context they were
 | [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md) | Review sheet of unresolved product and technical decisions for the real DB and auth migration. |
 | [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md) | Closed product and architecture decisions that answer the migration decision sheet and unblock implementation planning. |
 | [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md) | Ops runbook for applying Supabase SQL, configuring auth, setting Vercel env vars, and validating the migration. |
+| [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the active branch preview environment. |
 
 ## Suggested Reading By Topic
 
@@ -104,6 +107,9 @@ The master docs describe the documented baseline of the branch context they were
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
   - [../PLANS.md](../PLANS.md)
   - [../AGENTS.md](../AGENTS.md)
+- Manual smoke and validation:
+  - [../tests/README.md](../tests/README.md)
+  - [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md)
 
 ## Maintenance Rules
 
