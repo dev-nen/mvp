@@ -11,10 +11,10 @@
 
 Marca cuando este listo:
 
-- [ ] SQL `2026-04-21_real_db_auth_phase.sql` aplicado en Supabase
-- [ ] Auth de Supabase configurado
-- [ ] Redirect URLs de preview configuradas
-- [ ] Variables de entorno de Vercel configuradas
+- [x ] SQL `2026-04-21_real_db_auth_phase.sql` aplicado en Supabase
+- [ x] Auth de Supabase configurado
+- [x ] Redirect URLs de preview configuradas
+- [ x] Variables de entorno de Vercel configuradas
 
 ## Limitacion Conocida
 
@@ -53,13 +53,13 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
 
 ```txt
-
+Las card de actividades (reales) traen el placeholder, desde devtools se ve q las trae pero no se muestran
 ```
 
 ## 2. Accion protegida abre la compuerta de acceso
@@ -77,7 +77,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -102,7 +102,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -125,7 +125,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -149,7 +149,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -171,7 +171,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -200,13 +200,13 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [ x] `Pass`
 - [ ] `Fail`
 
 Comentarios:
 
 ```txt
-
+incluso deslogie y borre cache y sigue funcionando, todo ok. PERO la imagen de la card desde la seccion de favoritos no carga y tampoco entra el placeholder, lo que si mantiene el tamaño la card al menos.
 ```
 
 ## 8. Detalle maneja correctamente el estado actual sin contacto
@@ -224,7 +224,7 @@ Esperado hoy:
 
 Checklist:
 
-- [ ] `Pass`
+- [x ] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -247,7 +247,7 @@ Esperado:
 
 Checklist:
 
-- [ ] `Pass`
+- [x ] `Pass`
 - [ ] `Fail`
 
 Comentarios:
@@ -283,3 +283,44 @@ Preview URL:
 
 Comentarios:
 ```
+
+-cada vez q recargo la pagina aparece un cartel de "etamos recargando", ese comportamiento nunca lo pedi tal cual. solo en su momento pedi q los placeholder aparecieran en las cards como mucho.
+-al hacer logout te deja en /perfil y te logea de nuevo google, se debe apretar x para que te deje ir a /perfil sin logearte y de ahi manualmente ir a home usando el logo.
+
+- cuando se esta logeado no deberia ya de aparecer "esion
+
+Cuenta autenticada en Supabase Auth
+El email se muestra solo como referencia. No existe flujo de cambio de email en esta fase.
+
+Proveedor
+Google
+Usuario Auth
+abb3ed10-0ce1-4636-9437-cf487a5be0ce
+Usuario app
+abb3ed10-0ce1-4636-9437-cf487a5be0ce
+Estado de sesion
+Activa"
+eso pertenecia al primer mvp y es imperativo que deje de exister.
+
+- en perfil "Perfil
+
+Tu cuenta
+Esta pantalla solo refleja el estado real de autenticacion base para MVP 2.0.
+
+Cuenta autenticada
+Emmanuel Brandon
+Esta pantalla refleja el estado real de autenticacion y el perfil de app respaldado por `user_profiles`.
+
+"
+
+- en: Perfil
+
+Tu cuenta
+Esta pantalla solo refleja el estado real de autenticacion base para MVP 2.0.
+
+Cuenta autenticada
+Emmanuel Brandon
+Esta pantalla refleja el estado real de autenticacion y el perfil de app respaldado por `user_profiles`.
+
+"
+no debe decir "Esta pantalla refleja el estado real de autenticacion y el perfil de app respaldado por `user_profiles`."
