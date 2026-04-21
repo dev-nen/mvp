@@ -29,12 +29,13 @@ Those still belong in `docs/` or the codebase itself.
 
 - `manual/`
   - human-run smoke tests and guided checklists
+- `evidence/`
+  - dated notes that capture the outcome of a real smoke run
 
 This folder can grow later with:
 
 - `automated/`
 - `fixtures/`
-- `evidence/`
 
 Only add those when they are actually needed.
 
