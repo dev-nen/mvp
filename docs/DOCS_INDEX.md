@@ -47,6 +47,7 @@ The master docs describe the documented baseline of the branch context they were
 | [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md) | Detail mapping to the current runtime shape. |
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
+| [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Current PVI blocker, deferred local-fallback decision, and reopen conditions. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
 | [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md) | SDD for moving from local fallback truth to real Supabase-backed catalog/user flows and expanding auth to Google plus classic sign-up. |
@@ -69,6 +70,7 @@ The master docs describe the documented baseline of the branch context they were
   - [detail-view-mvp2-structure.md](./detail-view-mvp2-structure.md)
   - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
   - [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md)
+  - [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md)
   - [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md)
 - Auth, profile, and protected flows:
   - [PROJECT_STATE.md](./PROJECT_STATE.md)
@@ -93,6 +95,7 @@ The master docs describe the documented baseline of the branch context they were
   - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
   - [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md)
   - [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md)
+  - [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md)
   - [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md)
   - [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md)
   - [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md)
