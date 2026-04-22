@@ -56,6 +56,11 @@ The master docs describe the documented baseline of the branch context they were
 | [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md) | Review sheet of unresolved product and technical decisions for the real DB and auth migration. |
 | [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md) | Closed product and architecture decisions that answer the migration decision sheet and unblock implementation planning. |
 | [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md) | Ops runbook for applying Supabase SQL, configuring auth, setting Vercel env vars, and validating the migration. |
+| [scout-draft-inbox-product-plan.md](./scout-draft-inbox-product-plan.md) | Product framing for Scout and Draft Inbox as an internal editorial-ingestion capability. |
+| [scout-sources-strategy.md](./scout-sources-strategy.md) | Source prioritization, connector model, and validation strategy for Scout inputs. |
+| [scout-draft-inbox-phase1-sdd.md](./scout-draft-inbox-phase1-sdd.md) | Phase 1 SDD for an internal Draft Inbox and safe draft approval into real activities. |
+| [scout-draft-inbox-viability-assessment.md](./scout-draft-inbox-viability-assessment.md) | Feasibility, readiness gaps, and effort estimates for Scout plus Draft Inbox. |
+| [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md) | Manual smoke checklist for validating Draft Inbox Phase 1 after SQL apply and seed setup. |
 | [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the active branch preview environment. |
 
 ## Suggested Reading By Topic
@@ -103,12 +108,25 @@ The master docs describe the documented baseline of the branch context they were
   - [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md)
   - [real-db-auth-migration-closed-decisions.md](./real-db-auth-migration-closed-decisions.md)
   - [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md)
+- Scout and Draft Inbox planning:
+  - [PROJECT_STATE.md](./PROJECT_STATE.md)
+  - [ARCHITECTURE.md](./ARCHITECTURE.md)
+  - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+  - [TECH_DEBT.md](./TECH_DEBT.md)
+  - [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
+  - [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md)
+  - [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md)
+  - [scout-draft-inbox-product-plan.md](./scout-draft-inbox-product-plan.md)
+  - [scout-sources-strategy.md](./scout-sources-strategy.md)
+  - [scout-draft-inbox-phase1-sdd.md](./scout-draft-inbox-phase1-sdd.md)
+  - [scout-draft-inbox-viability-assessment.md](./scout-draft-inbox-viability-assessment.md)
 - Long implementation work:
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
   - [../PLANS.md](../PLANS.md)
   - [../AGENTS.md](../AGENTS.md)
 - Manual smoke and validation:
   - [../tests/README.md](../tests/README.md)
+  - [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md)
   - [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md)
 
 ## Maintenance Rules

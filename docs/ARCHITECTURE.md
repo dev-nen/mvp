@@ -3,8 +3,8 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of
-`feat/real-db-auth-migration`.
-Baseline checked on April 21, 2026 against the active branch working tree.
+`feat/internal-draft-inbox`.
+Baseline checked on April 22, 2026 against the active branch working tree.
 This file documents the architecture currently implemented in the branch, not
 the ideal future architecture.
 
@@ -31,6 +31,8 @@ The branch now uses a mixed runtime:
 | `/favoritos` | Favorites list | Protected route. Reads favorites from `user_favorite_activities`. |
 | `/favoritos/:activityId` | Favorites detail page | Protected route. Routed detail surface. |
 | `/perfil` | App profile surface | Protected route. Reflects auth state plus `user_profiles` readiness. |
+| `/internal/drafts` | Internal Draft Inbox list | Internal-tool route. Requires authenticated app-user readiness plus `internal_tool_access`. |
+| `/internal/drafts/:draftId` | Internal Draft Inbox detail | Internal-tool route. Uses the same guard and works against `activity_drafts`. |
 | `/pvi` | Internal placeholder | Publicly routable, but intentionally non-operational in the browser. |
 | `/soporte` | Placeholder surface | Not implemented as a real support workflow yet. |
 | `/api/internal/pvi` | Private metrics API | Server-side reporting path for PO and DEV only. |
@@ -42,6 +44,8 @@ The branch now uses a mixed runtime:
 - `src/App.jsx` defines the route map.
 - `AuthProvider` wraps the full route tree.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
+- `InternalToolRoute` guards `/internal/drafts` and `/internal/drafts/:draftId`
+  without pushing internal-permission reads into `AuthContext`.
 
 ### Public Home and catalog
 
@@ -75,6 +79,19 @@ The branch now uses a mixed runtime:
 
 - `src/pages/PviPage.jsx` is now only a public placeholder.
 - `api/internal/pvi.js` is the intended real read path for internal reporting.
+
+### Internal Draft Inbox
+
+- `src/pages/InternalDraftInboxPage.jsx` lists visible drafts for the internal
+  team.
+- `src/pages/InternalDraftDetailPage.jsx` owns review, reject, and approve
+  actions.
+- `src/services/internalToolAccessService.js` checks whether the ready app user
+  has access to `draft_inbox`.
+- `src/services/internalDraftsService.js` reads and updates `activity_drafts`
+  plus reference data for centers, categories, and types.
+- `src/services/draftApprovalService.js` executes
+  `approve_activity_draft(...)`.
 
 ## Current Catalog Data Flow
 
@@ -127,6 +144,9 @@ Current flow:
    provisioned enough for app use
 6. Onboarding completion uses the Supabase RPC instead of direct frontend
    inserts into `public.user_profiles`
+7. Internal Draft Inbox routes then layer a second check on top:
+   - `internal_tool_access`
+   - without storing internal-permission truth in `AuthContext`
 
 Current access-state model:
 
@@ -149,6 +169,9 @@ Supabase now owns the product-side browser data contracts for this branch:
 - Public catalog read model
 - Per-activity contact options
 - Remote favorites persistence
+- Internal editorial drafts through `activity_drafts`
+- Internal reviewer permission truth through `internal_tool_access`
+- Transacted draft approval through `approve_activity_draft(...)`
 - Write-side analytics for views and contact clicks
 
 Supabase is no longer limited to auth plus a partial analytics table in this
@@ -169,6 +192,7 @@ private reporting seam in this phase.
 ## Current Persistence Layers
 
 - Favorites: Supabase `user_favorite_activities`
+- Internal Draft Inbox: Supabase `activity_drafts` and `internal_tool_access`
 - Pending protected intent: `sessionStorage`
 - Auth session: Supabase-managed browser session persistence
 - Internal metrics read path: server-side API only
@@ -181,6 +205,10 @@ state, but not with local catalog or local favorites truth.
 - `catalog_activities_read` is the read contract the frontend depends on
 - `activity_contact_options` is the only contact source
 - `user_profiles` is the app-user truth
+- `activity_drafts` is the internal editorial source of truth for Draft Inbox
+- `internal_tool_access` is the internal permission seam for Draft Inbox
+- `approve_activity_draft(...)` is the only safe publish path from draft to
+  `activities` in this phase
 - `auth.users` remains the identity authority for email
 - `user_profiles.email` is treated as a synchronized read-side copy, not a
   user-editable field
@@ -195,7 +223,7 @@ Important current seams still visible:
 ## Architectural Summary
 
 The current branch architecture is a mixed Supabase + Vercel product runtime:
-catalog, auth, profile, favorites, and analytics writes now live on Supabase
-contracts, while private analytics reads are pushed behind a server-side Vercel
-API. The code is aligned to that architecture, but external readiness and final
-validation are still pending.
+catalog, auth, profile, favorites, analytics writes, and first-pass internal
+editorial moderation now live on Supabase contracts, while private analytics
+reads are pushed behind a server-side Vercel API. The code is aligned to that
+architecture, but external readiness and final validation are still pending.

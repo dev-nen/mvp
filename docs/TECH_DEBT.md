@@ -1,7 +1,7 @@
 # Technical Debt
 
 This file lists current, relevant debt and known gaps in
-`feat/real-db-auth-migration`. It is not a backlog of every possible
+`feat/internal-draft-inbox`. It is not a backlog of every possible
 improvement.
 
 | Area | Current debt or gap | Why it matters now |
@@ -13,6 +13,9 @@ improvement.
 | Detail architecture | Detail remains split between Home modal and Favorites routed page | The branch shares view-model logic, but it is still not a single closed detail surface |
 | Contact data quality | Contact CTA behavior depends entirely on activity-level `activity_contact_options` quality in Supabase | Missing or malformed options now directly affect the public product path |
 | Profile model | Profile readiness is now real app state, but richer editing remains out of scope | The product still lacks a broader account-management surface |
+| Draft Inbox readiness | Internal Draft Inbox is implemented in repo, but still depends on manual SQL apply, internal access rows, and seed setup in Supabase | Repo code alone does not make the internal editorial workflow operational |
+| Draft publish boundary | Draft approval currently creates only `activities` and intentionally skips `activity_contact_options` | The editorial loop is now safer, but not yet fully complete for contact publication |
+| Source creation | Draft Inbox Phase 1 still depends on seeded drafts rather than real source intake | Scout Manual v0 is still the next phase, not already delivered |
 | Internal metrics validation | `/api/internal/pvi` exists, but the final server-side contract and Vercel rewrite behavior still need live verification | Internal reporting is implemented but not yet proven in the target environment |
 | Tooling | `package.json` still exposes no test or lint scripts | Verification remains mostly manual and regressions are easier to miss |
 
@@ -24,4 +27,3 @@ improvement.
 - Favorite analytics events
 - Public or third-party metrics visibility
 - Collapsing the split detail experience into a single final surface
-

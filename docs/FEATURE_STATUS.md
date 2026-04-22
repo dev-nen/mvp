@@ -3,8 +3,8 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of
-`feat/real-db-auth-migration`.
-Baseline checked on April 21, 2026 against the active branch working tree.
+`feat/internal-draft-inbox`.
+Baseline checked on April 22, 2026 against the active branch working tree.
 Statuses below describe the current branch baseline, not older `main` intent.
 
 ## Status Legend
@@ -17,7 +17,7 @@ Statuses below describe the current branch baseline, not older `main` intent.
 
 ## Current Feature Table
 
-| Feature | Status | Current scope in `feat/real-db-auth-migration` | Notes and gaps |
+| Feature | Status | Current scope in `feat/internal-draft-inbox` | Notes and gaps |
 | --- | --- | --- | --- |
 | Branding | Done | NensGo branding remains active across the current app surfaces and assets | Brand evolution can continue later, but the current baseline is already merged |
 | Public catalog UI | Done | Home exposes the current landing plus searchable/filterable public catalog UI | UI path is active and compiled against the Supabase read model |
@@ -29,7 +29,7 @@ Statuses below describe the current branch baseline, not older `main` intent.
 | Favorites by user | Partial | Favorites are now modeled as remote user-linked data in `user_favorite_activities` | Still pending live SQL readiness and end-to-end validation |
 | Profile | Partial | `/perfil` reflects auth state plus app-profile readiness from `user_profiles` | Richer profile editing is still out of scope |
 | Auth expansion | Partial | Google plus email/password flows are implemented in code, including verification-pending and onboarding-required states | Still depends on Supabase provider setup, redirects, and verification config |
+| Internal Draft Inbox | Partial | Internal routes, guard, services, review form, and Draft Inbox SQL artifacts are implemented in repo | Still depends on applying the new SQL, granting internal access rows, and running live validation in Supabase |
 | PVI public route | Done | `/pvi` is intentionally reduced to a non-operational internal placeholder in the public app | Browser-side analytics reads are removed from the route |
 | Private internal metrics path | Partial | `api/internal/pvi` exists for PO/DEV reporting with bearer-token protection | Requires Vercel server secrets and live validation |
-| Roadmap toward fuller MVP 2.0 and beta | In progress | The branch closes a large migration checkpoint, but external readiness and later product phases remain open | This is not production-ready closure yet |
-
+| Roadmap toward fuller MVP 2.0, Draft Inbox, and beta | In progress | The branch closes a large migration checkpoint and adds the first internal editorial slice, but external readiness and later Scout phases remain open | This is not production-ready closure yet |

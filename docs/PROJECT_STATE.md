@@ -3,15 +3,16 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of
-`feat/real-db-auth-migration`.
-Baseline checked on April 21, 2026 against the active branch working tree.
+`feat/internal-draft-inbox`.
+Baseline checked on April 22, 2026 against the active branch working tree.
 Where implementation is partial or externally blocked, the active branch state
 takes precedence over older `main` docs and chat history.
 
 ## What NensGo Is Today In This Branch
 
 NensGo is currently a frontend MVP that has moved into a real DB and auth
-migration checkpoint. The branch already contains:
+migration checkpoint plus the first internal Draft Inbox slice. The branch
+already contains:
 
 - A public landing and catalog experience on `/`
 - A separate public B2B landing on `/para-centros`
@@ -25,6 +26,12 @@ migration checkpoint. The branch already contains:
 - Analytics writes aligned to `activity_view_events` and `activity_contact_events`
 - A public `/pvi` placeholder that no longer reads analytics in the browser
 - A private `/api/internal/pvi` path intended for PO and DEV reporting
+- Internal routes for `/internal/drafts` and `/internal/drafts/:draftId`
+- A repo-tracked Draft Inbox SQL phase with:
+  - `activity_drafts`
+  - `internal_tool_access`
+  - `approve_activity_draft(...)`
+  - seed examples for one authorized internal user
 
 This branch is no longer using local catalog mocks as runtime truth for primary
 paths.
@@ -34,6 +41,7 @@ paths.
 The current branch is best described as:
 
 - A compiled implementation checkpoint of the real DB and auth migration
+- A compiled implementation checkpoint of Draft Inbox Phase 1
 - Runtime code aligned to the new Supabase contracts
 - Still partially blocked on external readiness and end-to-end validation
 
@@ -60,6 +68,8 @@ The branch compiles locally, but full readiness still depends on:
   states.
 - App-user truth now comes from `public.user_profiles`, not auth metadata.
 - Email is treated as non-editable in this phase.
+- Draft Inbox pages and guard now exist in the app for authorized internal
+  users.
 - `/pvi` remains routable in the public app only as a non-operational internal
   placeholder.
 - `api/internal/pvi` exists as the intended private reporting path for PO and
@@ -73,6 +83,10 @@ The branch compiles locally, but full readiness still depends on:
   URLs, and email verification configuration.
 - `ensure_my_profile(...)` is versioned in repo, but still requires human
   application and validation in Supabase.
+- Draft Inbox still depends on:
+  - applying `supabase/sql/2026-04-22_internal_draft_inbox_phase1.sql`
+  - granting one or more real internal users in `internal_tool_access`
+  - running the draft seed helper against a real internal user id
 - The internal metrics API requires Vercel secrets that are not validated from
   inside the repo alone.
 - Detail is still intentionally split across Home modal and Favorites routed
@@ -82,12 +96,14 @@ The branch compiles locally, but full readiness still depends on:
 
 ## Difference Between Present Branch State, External Readiness, And Later Product Work
 
-### Present state in `feat/real-db-auth-migration`
+### Present state in `feat/internal-draft-inbox`
 
 - Runtime contracts have moved to Supabase-backed data and auth boundaries.
 - Local catalog fallback is no longer the primary product truth.
 - Favorites are modeled as remote user data.
 - Browser-side analytics dashboard reads have been retired.
+- Internal editorial review now has a first route and data-contract slice in
+  repo, but not yet validated live.
 
 ### External readiness still pending
 
@@ -106,6 +122,7 @@ The branch compiles locally, but full readiness still depends on:
 ## Current State Summary
 
 This branch is not a mock-backed MVP anymore. It is a real DB and auth migration
-checkpoint with compiled runtime changes already in place. It is also not yet
-fully closed: external Supabase and Vercel readiness still gate the move from
-implemented code to validated product behavior.
+checkpoint with a first internal Draft Inbox implementation slice already added
+in repo. It is also not yet fully closed: external Supabase and Vercel
+readiness still gate the move from implemented code to validated product
+behavior.
