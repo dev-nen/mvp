@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { InternalDraftDetailPage } from "@/pages/InternalDraftDetailPage";
+import { InternalApprovedActivityPage } from "@/pages/InternalApprovedActivityPage";
 import { InternalDraftInboxPage } from "@/pages/InternalDraftInboxPage";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
@@ -25,6 +26,10 @@ export default function App() {
         <Route
           path="/internal/drafts/:draftId"
           element={<InternalDraftDetailPage />}
+        />
+        <Route
+          path="/internal/activities/:activityId"
+          element={<InternalApprovedActivityPage />}
         />
         <Route
           path="/perfil"
