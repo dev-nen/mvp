@@ -18,12 +18,13 @@ Marca cuando este listo:
 
 ## Limitacion Conocida
 
-- `activity_contact_options` sigue sin filas reales en Supabase
+- `activity_contact_options` ya tiene filas reales para algunos casos, pero
+  todavia no cubre el estado de multiples opciones
 
 Consecuencia:
 
-- se puede validar el estado "sin contacto publicado"
-- no se puede cerrar todavia el caso de una sola opcion
+- ya se puede validar el estado "sin contacto publicado"
+- ya se puede validar el caso de una sola opcion
 - no se puede cerrar todavia el caso de multiples opciones
 
 ## Resultado General
