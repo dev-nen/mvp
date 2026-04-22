@@ -14,7 +14,8 @@ improvement.
 | Contact data quality | Contact CTA behavior depends entirely on activity-level `activity_contact_options` quality in Supabase | Missing or malformed options now directly affect the public product path |
 | Profile model | Profile readiness is now real app state, but richer editing remains out of scope | The product still lacks a broader account-management surface |
 | Draft Inbox readiness | Internal Draft Inbox is implemented in repo, but still depends on manual SQL apply, internal access rows, and seed setup in Supabase | Repo code alone does not make the internal editorial workflow operational |
-| Draft publish boundary | Draft approval currently creates only `activities` and intentionally skips `activity_contact_options` | The editorial loop is now safer, but not yet fully complete for contact publication |
+| Approved activity lifecycle readiness | Edit, unpublish, and republish for approved activities now exist in repo, but still depend on phase 2 SQL apply and live catalog validation | Repo code alone does not prove that approved activities cleanly enter and leave the public catalog |
+| Draft publish boundary | Draft approval and approved-activity lifecycle currently manage only `activities` and intentionally skip `activity_contact_options` | The editorial loop is now broader, but still not fully complete for contact publication |
 | Source creation | Draft Inbox Phase 1 still depends on seeded drafts rather than real source intake | Scout Manual v0 is still the next phase, not already delivered |
 | Internal metrics validation | `/api/internal/pvi` exists, but the final server-side contract and Vercel rewrite behavior still need live verification | Internal reporting is implemented but not yet proven in the target environment |
 | Tooling | `package.json` still exposes no test or lint scripts | Verification remains mostly manual and regressions are easier to miss |

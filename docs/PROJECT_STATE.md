@@ -27,11 +27,18 @@ already contains:
 - A public `/pvi` placeholder that no longer reads analytics in the browser
 - A private `/api/internal/pvi` path intended for PO and DEV reporting
 - Internal routes for `/internal/drafts` and `/internal/drafts/:draftId`
+- An internal route for `/internal/activities/:activityId`
 - A repo-tracked Draft Inbox SQL phase with:
   - `activity_drafts`
   - `internal_tool_access`
   - `approve_activity_draft(...)`
   - seed examples for one authorized internal user
+- A repo-tracked approved-activity lifecycle SQL phase with:
+  - `list_internal_approved_activity_states(...)`
+  - `get_internal_approved_activity(...)`
+  - `update_approved_activity_from_draft(...)`
+  - `unpublish_approved_activity(...)`
+  - `republish_approved_activity(...)`
 
 This branch is no longer using local catalog mocks as runtime truth for primary
 paths.
@@ -70,6 +77,8 @@ The branch compiles locally, but full readiness still depends on:
 - Email is treated as non-editable in this phase.
 - Draft Inbox pages and guard now exist in the app for authorized internal
   users.
+- Approved activities linked from Draft Inbox now have a dedicated internal page
+  and internal edit/publish lifecycle in repo.
 - `/pvi` remains routable in the public app only as a non-operational internal
   placeholder.
 - `api/internal/pvi` exists as the intended private reporting path for PO and
@@ -85,8 +94,12 @@ The branch compiles locally, but full readiness still depends on:
   application and validation in Supabase.
 - Draft Inbox still depends on:
   - applying `supabase/sql/2026-04-22_internal_draft_inbox_phase1.sql`
+  - applying `supabase/sql/2026-04-22_internal_approved_activity_lifecycle_phase2.sql`
   - granting one or more real internal users in `internal_tool_access`
   - running the draft seed helper against a real internal user id
+- Approved activity lifecycle still depends on:
+  - applying the phase 2 SQL
+  - validating edit, unpublish, and republish against the real public catalog
 - The internal metrics API requires Vercel secrets that are not validated from
   inside the repo alone.
 - Detail is still intentionally split across Home modal and Favorites routed
@@ -122,7 +135,7 @@ The branch compiles locally, but full readiness still depends on:
 ## Current State Summary
 
 This branch is not a mock-backed MVP anymore. It is a real DB and auth migration
-checkpoint with a first internal Draft Inbox implementation slice already added
-in repo. It is also not yet fully closed: external Supabase and Vercel
-readiness still gate the move from implemented code to validated product
+checkpoint with an internal Draft Inbox plus approved-activity lifecycle
+already added in repo. It is also not yet fully closed: external Supabase and
+Vercel readiness still gate the move from implemented code to validated product
 behavior.

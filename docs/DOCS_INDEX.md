@@ -59,8 +59,10 @@ The master docs describe the documented baseline of the branch context they were
 | [scout-draft-inbox-product-plan.md](./scout-draft-inbox-product-plan.md) | Product framing for Scout and Draft Inbox as an internal editorial-ingestion capability. |
 | [scout-sources-strategy.md](./scout-sources-strategy.md) | Source prioritization, connector model, and validation strategy for Scout inputs. |
 | [scout-draft-inbox-phase1-sdd.md](./scout-draft-inbox-phase1-sdd.md) | Phase 1 SDD for an internal Draft Inbox and safe draft approval into real activities. |
+| [approved-activity-lifecycle-phase2-sdd.md](./approved-activity-lifecycle-phase2-sdd.md) | Phase 2 SDD for editing, unpublishing, and republishing activities already approved through Draft Inbox. |
 | [scout-draft-inbox-viability-assessment.md](./scout-draft-inbox-viability-assessment.md) | Feasibility, readiness gaps, and effort estimates for Scout plus Draft Inbox. |
 | [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md) | Manual smoke checklist for validating Draft Inbox Phase 1 after SQL apply and seed setup. |
+| [../tests/manual/approved-activity-lifecycle-smoke.md](../tests/manual/approved-activity-lifecycle-smoke.md) | Manual smoke checklist for validating approved activity edit plus publish lifecycle after applying the phase 2 SQL. |
 | [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the active branch preview environment. |
 
 ## Suggested Reading By Topic
@@ -119,6 +121,7 @@ The master docs describe the documented baseline of the branch context they were
   - [scout-draft-inbox-product-plan.md](./scout-draft-inbox-product-plan.md)
   - [scout-sources-strategy.md](./scout-sources-strategy.md)
   - [scout-draft-inbox-phase1-sdd.md](./scout-draft-inbox-phase1-sdd.md)
+  - [approved-activity-lifecycle-phase2-sdd.md](./approved-activity-lifecycle-phase2-sdd.md)
   - [scout-draft-inbox-viability-assessment.md](./scout-draft-inbox-viability-assessment.md)
 - Long implementation work:
   - [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)

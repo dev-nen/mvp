@@ -26,6 +26,8 @@ external readiness or later product work.
 - Repo-tracked SQL and runbook artifacts for the migration
 - Repo-tracked SQL, routes, guard, services, and review UI for Draft Inbox
   Phase 1
+- Repo-tracked SQL, route, services, and lifecycle UI for approved activities
+  linked from Draft Inbox
 
 These are active branch capabilities. They should not be rediscovered as if the
 branch were still on mock-backed runtime behavior.
@@ -40,6 +42,10 @@ branch were still on mock-backed runtime behavior.
   - applying `2026-04-22_internal_draft_inbox_phase1.sql`
   - granting one or more internal users
   - running the seed helper and manual smoke checks
+- Approved activity lifecycle still needs:
+  - applying `2026-04-22_internal_approved_activity_lifecycle_phase2.sql`
+  - validating edit, unpublish, and republish against the real catalog read
+    model
 - Private internal metrics still need Vercel server-secret setup and live
   verification
 - Detail remains split across Home modal and Favorites routed detail page
@@ -52,6 +58,7 @@ Recommended next implementation order from the current branch:
    constraints, and write-table ids for:
    - real DB and auth migration
    - Draft Inbox Phase 1
+   - approved activity lifecycle Phase 2
 2. Configure and validate Supabase Auth for:
    - Google
    - email/password
@@ -66,13 +73,14 @@ Recommended next implementation order from the current branch:
    - remote favorites
    - internal Draft Inbox list and detail
    - draft save, reject, and approve
+   - approved activity edit, unpublish, and republish
    - view/contact analytics writes
    - private `/api/internal/pvi`
 5. Once private internal metrics are validated, remove the public `/pvi` route
    instead of growing a placeholder frontend surface with no lasting product
    purpose.
-6. Once Draft Inbox is validated, move to Scout Manual v0 instead of broad
-   connector work.
+6. Once Draft Inbox plus approved activity lifecycle are validated, move to
+   Scout Manual v0 instead of broad connector work.
 7. Clean up any remaining dead code or docs drift after external validation.
 
 ## Later Phase
@@ -80,6 +88,7 @@ Recommended next implementation order from the current branch:
 - Richer profile editing and account management
 - Scout Manual v0 for creating drafts from simple source inputs
 - First structured Scout connector after Draft Inbox is live
+- Richer editorial lifecycle beyond one approved activity per draft
 - Role expansion beyond the current family-user baseline
 - Public or role-based metrics visibility
 - More complete company/internal account lines
