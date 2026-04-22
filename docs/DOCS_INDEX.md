@@ -7,7 +7,10 @@ This repo now uses two documentation layers:
 - Master docs for current state, architecture, roadmap, debt, feature status, and working rules.
 - Feature-level reference docs for narrower contracts already documented in past stories.
 
-The master docs describe the documented baseline of the branch context they were written against. Check each document's scope note before assuming it describes `main`. Feature-level docs can preserve more historical or story-specific context, but they do not override the current repository state of the active branch.
+The master docs below are currently maintained against `main` unless a scope
+note explicitly marks a document as historical. Feature-level docs can preserve
+older branch-era or story-specific context, but they do not override the
+current repository state of `main`.
 
 ## Recommended Reading Order
 
@@ -32,7 +35,7 @@ The master docs describe the documented baseline of the branch context they were
 | [DECISIONS_LOG.md](./DECISIONS_LOG.md) | Short record of decisions that should not be rediscovered from chat history. |
 | [TECH_DEBT.md](./TECH_DEBT.md) | Real debt, gaps, and known risks worth keeping visible. |
 | [FEATURE_STATUS.md](./FEATURE_STATUS.md) | Feature-by-feature status using honest labels. |
-| [2026-04-22-cross-branch-state-assessment.md](./2026-04-22-cross-branch-state-assessment.md) | Cross-branch snapshot of current repo state, active workstreams, and Draft Inbox / Scout readiness. |
+| [2026-04-22-cross-branch-state-assessment.md](./2026-04-22-cross-branch-state-assessment.md) | Historical pre-merge cross-branch snapshot captured before `feat/real-db-auth-migration` and `feat/internal-draft-inbox` were consolidated into `main`. |
 | [SDD_WORKFLOW.md](./SDD_WORKFLOW.md) | How future work should move from current state to spec, plan, implementation, validation, and documentation. |
 | [../AGENTS.md](../AGENTS.md) | Hard rules for coding agents working in this repo. |
 | [../PLANS.md](../PLANS.md) | Reusable structure for long-running plans. |
@@ -64,7 +67,7 @@ The master docs describe the documented baseline of the branch context they were
 | [scout-draft-inbox-viability-assessment.md](./scout-draft-inbox-viability-assessment.md) | Feasibility, readiness gaps, and effort estimates for Scout plus Draft Inbox. |
 | [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md) | Manual smoke checklist for validating Draft Inbox Phase 1 after SQL apply and seed setup. |
 | [../tests/manual/approved-activity-lifecycle-smoke.md](../tests/manual/approved-activity-lifecycle-smoke.md) | Manual smoke checklist for validating approved activity edit plus publish lifecycle after applying the phase 2 SQL. |
-| [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the active branch preview environment. |
+| [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the `main` preview environment. |
 
 ## Suggested Reading By Topic
 
@@ -138,4 +141,6 @@ The master docs describe the documented baseline of the branch context they were
 - Update master docs when current state, architecture, feature status, roadmap priority, or technical debt changes materially.
 - Keep feature-level docs focused on their specific contracts. Do not clone the same content into multiple master docs.
 - Make branch context explicit in master docs when the documented baseline matters.
-- If historical docs or old commit language conflict with current code in the active branch, the current code and master docs for that branch context take precedence.
+- If historical docs or old commit language conflict with current code in
+  `main`, the current code and master docs for the current `main` context take
+  precedence.

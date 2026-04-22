@@ -2,10 +2,11 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of
-`feat/internal-draft-inbox`.
-Baseline checked on April 22, 2026 against the active branch working tree.
-Statuses below describe the current branch baseline, not older `main` intent.
+This documentation reflects the current checked-out working state of `main`.
+Baseline rechecked on April 23, 2026 after consolidating
+`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
+Statuses below describe the current `main` baseline, not the older pre-merge
+branch split.
 
 ## Status Legend
 
@@ -17,7 +18,7 @@ Statuses below describe the current branch baseline, not older `main` intent.
 
 ## Current Feature Table
 
-| Feature | Status | Current scope in `feat/internal-draft-inbox` | Notes and gaps |
+| Feature | Status | Current scope in `main` | Notes and gaps |
 | --- | --- | --- | --- |
 | Branding | Done | NensGo branding remains active across the current app surfaces and assets | Brand evolution can continue later, but the current baseline is already merged |
 | Public catalog UI | Done | Home exposes the current landing plus searchable/filterable public catalog UI | UI path is active and compiled against the Supabase read model |
@@ -33,4 +34,4 @@ Statuses below describe the current branch baseline, not older `main` intent.
 | Approved activity lifecycle | Partial | Internal approved-activity route plus edit, unpublish, and republish RPC contracts are implemented in repo | Still depends on applying the phase 2 SQL and validating public catalog disappearance/reappearance in Supabase |
 | PVI public route | Done | `/pvi` is intentionally reduced to a non-operational internal placeholder in the public app | Browser-side analytics reads are removed from the route |
 | Private internal metrics path | Partial | `api/internal/pvi` exists for PO/DEV reporting with bearer-token protection | Requires Vercel server secrets and live validation |
-| Roadmap toward fuller MVP 2.0, Draft Inbox, and beta | In progress | The branch closes a large migration checkpoint and adds internal editorial slices for draft approval plus approved-activity lifecycle, but external readiness and later Scout phases remain open | This is not production-ready closure yet |
+| Roadmap toward fuller MVP 2.0, Draft Inbox, and beta | In progress | `main` closes a large migration checkpoint and adds internal editorial slices for draft approval plus approved-activity lifecycle, but external readiness and later Scout phases remain open | This is not production-ready closure yet |

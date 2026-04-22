@@ -2,11 +2,11 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of
-`feat/internal-draft-inbox`.
-Baseline checked on April 22, 2026 against the active branch working tree.
-This file documents the architecture currently implemented in the branch, not
-the ideal future architecture.
+This documentation reflects the current checked-out working state of `main`.
+Baseline rechecked on April 23, 2026 after consolidating
+`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
+This file documents the architecture currently implemented in `main`, not the
+ideal future architecture.
 
 ## Stack And Runtime Boundary
 
@@ -16,7 +16,7 @@ the ideal future architecture.
 - Browser data/auth client: `@supabase/supabase-js`
 - Private internal metrics path: Vercel serverless function under `api/`
 
-The branch now uses a mixed runtime:
+`main` now uses a mixed runtime:
 
 - public app logic in the browser
 - product data and auth in Supabase
@@ -109,8 +109,7 @@ The catalog path is now Supabase-backed:
    `reload`
 5. Home and Favorites consume that hook
 
-There is no active runtime path from `src/data/catalogFallback.js` in this
-branch.
+There is no active runtime path from `src/data/catalogFallback.js` in `main`.
 
 ## Current Detail And Contact Flow
 
@@ -122,7 +121,7 @@ The detail experience is still split across two surfaces:
 Both surfaces use the shared detail view model and lazy-load
 `activity_contact_options` for the selected activity only.
 
-Contact rules in the current branch:
+Contact rules in `main`:
 
 - no fallback to center-level contact
 - no hardcoded WhatsApp number
@@ -132,7 +131,7 @@ Contact rules in the current branch:
 
 ## Current Auth And Access Flow
 
-The auth line in this branch is no longer Google-only metadata gating.
+The auth line in `main` is no longer Google-only metadata gating.
 
 Current flow:
 
@@ -164,7 +163,7 @@ Current access-state model:
 
 ## Current Role Of Supabase
 
-Supabase now owns the product-side browser data contracts for this branch:
+Supabase now owns the product-side browser data contracts for `main`:
 
 - Auth session bootstrap and session changes
 - Google sign-in
@@ -180,8 +179,8 @@ Supabase now owns the product-side browser data contracts for this branch:
 - Internal approved-activity lifecycle through dedicated phase 2 RPCs
 - Write-side analytics for views and contact clicks
 
-Supabase is no longer limited to auth plus a partial analytics table in this
-branch.
+Supabase is no longer limited to auth plus a partial analytics table in
+`main`.
 
 ## Current Role Of Vercel
 
@@ -203,8 +202,8 @@ private reporting seam in this phase.
 - Auth session: Supabase-managed browser session persistence
 - Internal metrics read path: server-side API only
 
-This branch now mixes remote product persistence with minimal browser-side UI
-state, but not with local catalog or local favorites truth.
+`main` now mixes remote product persistence with minimal browser-side UI state,
+but not with local catalog or local favorites truth.
 
 ## Current Contract Boundaries And Seams
 
@@ -233,7 +232,7 @@ Important current seams still visible:
 
 ## Architectural Summary
 
-The current branch architecture is a mixed Supabase + Vercel product runtime:
+The current `main` architecture is a mixed Supabase + Vercel product runtime:
 catalog, auth, profile, favorites, analytics writes, and first-pass internal
 editorial moderation now live on Supabase contracts, while private analytics
 reads are pushed behind a server-side Vercel API. The code is aligned to that

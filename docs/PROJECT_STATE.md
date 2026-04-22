@@ -2,17 +2,17 @@
 
 ## Documentation Scope Note
 
-This documentation reflects the current checked-out working state of
-`feat/internal-draft-inbox`.
-Baseline checked on April 22, 2026 against the active branch working tree.
-Where implementation is partial or externally blocked, the active branch state
-takes precedence over older `main` docs and chat history.
+This documentation reflects the current checked-out working state of `main`.
+Baseline rechecked on April 23, 2026 after consolidating
+`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
+Where implementation is partial or externally blocked, the current repository
+state of `main` takes precedence over older branch docs and chat history.
 
-## What NensGo Is Today In This Branch
+## What NensGo Is Today In `main`
 
 NensGo is currently a frontend MVP that has moved into a real DB and auth
-migration checkpoint plus the first internal Draft Inbox slice. The branch
-already contains:
+migration checkpoint plus the first internal Draft Inbox slice. `main` already
+contains:
 
 - A public landing and catalog experience on `/`
 - A separate public B2B landing on `/para-centros`
@@ -40,26 +40,26 @@ already contains:
   - `unpublish_approved_activity(...)`
   - `republish_approved_activity(...)`
 
-This branch is no longer using local catalog mocks as runtime truth for primary
+`main` is no longer using local catalog mocks as runtime truth for primary
 paths.
 
 ## Current Stage
 
-The current branch is best described as:
+`main` is best described as:
 
 - A compiled implementation checkpoint of the real DB and auth migration
 - A compiled implementation checkpoint of Draft Inbox Phase 1
 - Runtime code aligned to the new Supabase contracts
 - Still partially blocked on external readiness and end-to-end validation
 
-The branch compiles locally, but full readiness still depends on:
+`main` compiles locally, but full readiness still depends on:
 
 - applying the repo-tracked SQL in Supabase
 - configuring Supabase Auth providers and email verification
 - configuring Vercel server secrets
 - validating real preview/production flows
 
-## Currently Operational In The Active Branch
+## Currently Operational In `main`
 
 - Home acts as landing plus public catalog entry point.
 - `/para-centros` still exists as a separate public B2B landing.
@@ -86,7 +86,7 @@ The branch compiles locally, but full readiness still depends on:
 
 ## Partial Or Configuration-Dependent Areas
 
-- The branch has not yet been validated against a live Supabase project with the
+- `main` has not yet been validated against a live Supabase project with the
   new SQL applied.
 - The expanded auth flow depends on external Supabase provider setup, redirect
   URLs, and email verification configuration.
@@ -107,9 +107,9 @@ The branch compiles locally, but full readiness still depends on:
 - `/pvi` is intentionally not an operational dashboard in the public app during
   this phase.
 
-## Difference Between Present Branch State, External Readiness, And Later Product Work
+## Difference Between Present `main` State, External Readiness, And Later Product Work
 
-### Present state in `feat/internal-draft-inbox`
+### Present state in `main`
 
 - Runtime contracts have moved to Supabase-backed data and auth boundaries.
 - Local catalog fallback is no longer the primary product truth.
@@ -134,7 +134,7 @@ The branch compiles locally, but full readiness still depends on:
 
 ## Current State Summary
 
-This branch is not a mock-backed MVP anymore. It is a real DB and auth migration
+`main` is not a mock-backed MVP anymore. It is a real DB and auth migration
 checkpoint with an internal Draft Inbox plus approved-activity lifecycle
 already added in repo. It is also not yet fully closed: external Supabase and
 Vercel readiness still gate the move from implemented code to validated product

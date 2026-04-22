@@ -3,11 +3,12 @@
 ## Baseline
 
 This roadmap is an internal implementation roadmap, not a product pitch. It is
-grounded in the current checked-out state of `feat/internal-draft-inbox` and
-separates what is already implemented in the branch from what is still pending
-external readiness or later product work.
+grounded in the current checked-out state of `main` after consolidating
+`feat/real-db-auth-migration` and `feat/internal-draft-inbox`. It separates
+what is already implemented in `main` from what is still pending external
+readiness or later product work.
 
-## Already Implemented In The Active Branch
+## Already Implemented In `main`
 
 - Real route structure for Home, Favorites, Favorites detail, Profile, PVI, and
   Support placeholder
@@ -29,8 +30,8 @@ external readiness or later product work.
 - Repo-tracked SQL, route, services, and lifecycle UI for approved activities
   linked from Draft Inbox
 
-These are active branch capabilities. They should not be rediscovered as if the
-branch were still on mock-backed runtime behavior.
+These are current `main` capabilities. They should not be rediscovered as if
+the repo were still on mock-backed runtime behavior.
 
 ## Partial Or Still Gated By External Readiness
 
@@ -52,7 +53,7 @@ branch were still on mock-backed runtime behavior.
 
 ## Next Real Phase
 
-Recommended next implementation order from the current branch:
+Recommended next implementation order from `main`:
 
 1. Apply the repo-tracked SQL in Supabase and validate the read model, RPC,
    constraints, and write-table ids for:
@@ -105,10 +106,10 @@ Recommended next implementation order from the current branch:
 
 ## Practical Reading Of The Roadmap
 
-- "Already implemented" means the branch code is already aligned to that
+- "Already implemented" means the `main` code is already aligned to that
   behavior.
-- "Partial" means real work exists in the branch, but the line is still gated by
+- "Partial" means real work exists in `main`, but the line is still gated by
   external readiness, validation, or remaining architectural debt.
-- "Next" means the most defensible sequence from the current branch state.
+- "Next" means the most defensible sequence from the current `main` state.
 - "Later" means desirable, but not the immediate next implementation pass.
 - "Deferred" means consciously outside the current migration phase.

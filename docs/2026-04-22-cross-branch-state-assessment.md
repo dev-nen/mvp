@@ -1,5 +1,26 @@
 # Cross-Branch State Assessment - 2026-04-22
 
+## Historical Update After Merge
+
+This document remains useful as a pre-merge branch assessment.
+
+On April 22-23, 2026, the work that was previously split across
+`feat/real-db-auth-migration` and `feat/internal-draft-inbox` was merged into
+`main`.
+
+That means any statement below describing `main` as still behind those branches
+is now historical context, not the current repository state.
+
+Use this document for:
+
+- understanding the branch split that existed before consolidation
+- reviewing the reasoning around Draft Inbox / Scout readiness at that time
+- recovering cross-branch context for old discussions or artifacts
+
+Do not use this document as the current source of truth for runtime status.
+After the merge, the implementation source of truth moved back to `main` and to
+the master docs that are updated for the active branch context.
+
 ## Scope Note
 
 This assessment was produced from the checked-out branch
