@@ -82,6 +82,13 @@
   align-items: center;
 }
 
+.internal-draft-inbox-page__draft-statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
 .internal-draft-inbox-page__draft-meta {
   display: flex;
   flex-wrap: wrap;

@@ -7,11 +7,13 @@ import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
+import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
 import { useAuth } from "@/hooks/useAuth";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
+import { getInternalApprovedActivity } from "@/services/internalApprovedActivitiesService";
 import { approveInternalDraft } from "@/services/draftApprovalService";
 import {
   getInternalDraftById,
@@ -25,13 +27,13 @@ import "./InternalDraftDetailPage.css";
 
 function formatDateLabel(value) {
   if (!value) {
-    return "Unknown";
+    return "Desconocida";
   }
 
   const dateValue = new Date(value);
 
   if (Number.isNaN(dateValue.getTime())) {
-    return "Unknown";
+    return "Desconocida";
   }
 
   return new Intl.DateTimeFormat("es-ES", {
@@ -73,39 +75,39 @@ function getInitialDraftPayload(draft) {
 
 function validateDraftForApproval(formState) {
   if (!getTrimmedText(formState.title)) {
-    return "El title es obligatorio para aprobar.";
+    return "El titulo es obligatorio para aprobar.";
   }
 
   if (!getTrimmedText(formState.description)) {
-    return "La description es obligatoria para aprobar.";
+    return "La descripcion es obligatoria para aprobar.";
   }
 
   if (!getTrimmedText(formState.centerId)) {
-    return "El center es obligatorio para aprobar.";
+    return "El centro es obligatorio para aprobar.";
   }
 
   if (!getTrimmedText(formState.categoryId)) {
-    return "La category es obligatoria para aprobar.";
+    return "La categoria es obligatoria para aprobar.";
   }
 
   if (!getTrimmedText(formState.typeId)) {
-    return "El type es obligatorio para aprobar.";
+    return "El tipo es obligatorio para aprobar.";
   }
 
   if (!getTrimmedText(formState.scheduleLabel)) {
-    return "El schedule es obligatorio para aprobar.";
+    return "El horario es obligatorio para aprobar.";
   }
 
   if (formState.ageRuleType === "range" && (!getTrimmedText(formState.ageMin) || !getTrimmedText(formState.ageMax))) {
-    return "El age rule range necesita age_min y age_max.";
+    return "La regla de edad rango necesita edad minima y maxima.";
   }
 
   if (formState.ageRuleType === "from" && !getTrimmedText(formState.ageMin)) {
-    return "El age rule from necesita age_min.";
+    return "La regla de edad desde necesita edad minima.";
   }
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
-    return "El age rule until necesita age_max.";
+    return "La regla de edad hasta necesita edad maxima.";
   }
 
   return "";
@@ -121,6 +123,8 @@ export function InternalDraftDetailPage() {
   const [centerChoices, setCenterChoices] = useState([]);
   const [categoryChoices, setCategoryChoices] = useState([]);
   const [typeChoices, setTypeChoices] = useState([]);
+  const [linkedApprovedActivity, setLinkedApprovedActivity] = useState(null);
+  const [linkedApprovedActivityError, setLinkedApprovedActivityError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState("");
@@ -131,6 +135,37 @@ export function InternalDraftDetailPage() {
 
   useEffect(() => {
     let isMounted = true;
+
+    const loadLinkedApprovedActivity = async (nextDraft) => {
+      if (
+        nextDraft?.reviewStatus !== "approved" ||
+        !nextDraft?.approvedActivityId
+      ) {
+        return {
+          nextLinkedApprovedActivity: null,
+          nextLinkedApprovedActivityError: "",
+        };
+      }
+
+      try {
+        const nextLinkedApprovedActivity = await getInternalApprovedActivity(
+          nextDraft.approvedActivityId,
+        );
+
+        return {
+          nextLinkedApprovedActivity,
+          nextLinkedApprovedActivityError: "",
+        };
+      } catch (linkedActivityError) {
+        return {
+          nextLinkedApprovedActivity: null,
+          nextLinkedApprovedActivityError:
+            linkedActivityError instanceof Error
+              ? linkedActivityError.message
+              : "No pudimos resolver la actividad aprobada vinculada.",
+        };
+      }
+    };
 
     const loadDraftDetail = async () => {
       setIsLoading(true);
@@ -144,6 +179,10 @@ export function InternalDraftDetailPage() {
           listDraftCategories(),
           listDraftTypes(),
         ]);
+        const {
+          nextLinkedApprovedActivity,
+          nextLinkedApprovedActivityError,
+        } = await loadLinkedApprovedActivity(nextDraft);
 
         if (!isMounted) {
           return;
@@ -157,6 +196,8 @@ export function InternalDraftDetailPage() {
           setError("");
           setFormState(mapDraftPayloadToFormState({}));
           setReviewNotes("");
+          setLinkedApprovedActivity(null);
+          setLinkedApprovedActivityError("");
           return;
         }
 
@@ -166,12 +207,16 @@ export function InternalDraftDetailPage() {
         setTypeChoices(nextTypes);
         setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
         setReviewNotes(nextDraft.reviewNotes || "");
+        setLinkedApprovedActivity(nextLinkedApprovedActivity);
+        setLinkedApprovedActivityError(nextLinkedApprovedActivityError);
       } catch (loadError) {
         if (!isMounted) {
           return;
         }
 
         setDraft(null);
+        setLinkedApprovedActivity(null);
+        setLinkedApprovedActivityError("");
         setError(
           loadError instanceof Error
             ? loadError.message
@@ -204,9 +249,27 @@ export function InternalDraftDetailPage() {
       throw new Error("No pudimos refrescar el draft despues de la operacion.");
     }
 
+    let nextLinkedApprovedActivity = null;
+    let nextLinkedApprovedActivityError = "";
+
+    if (nextDraft.reviewStatus === "approved" && nextDraft.approvedActivityId) {
+      try {
+        nextLinkedApprovedActivity = await getInternalApprovedActivity(
+          nextDraft.approvedActivityId,
+        );
+      } catch (linkedActivityError) {
+        nextLinkedApprovedActivityError =
+          linkedActivityError instanceof Error
+            ? linkedActivityError.message
+            : "No pudimos resolver la actividad aprobada vinculada.";
+      }
+    }
+
     setDraft(nextDraft);
     setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
     setReviewNotes(nextDraft.reviewNotes || "");
+    setLinkedApprovedActivity(nextLinkedApprovedActivity);
+    setLinkedApprovedActivityError(nextLinkedApprovedActivityError);
     setFeedbackMessage(nextFeedbackMessage);
     setFeedbackTone(nextFeedbackTone);
   };
@@ -310,7 +373,7 @@ export function InternalDraftDetailPage() {
       });
       const approvedActivityId = await approveInternalDraft(draft.id);
       await refreshDraft(
-        `Draft aprobado. Activity creada con id ${approvedActivityId}.`,
+        `Draft aprobado. Actividad creada con id ${approvedActivityId}.`,
         "success",
       );
     } catch (approveError) {
@@ -339,13 +402,13 @@ export function InternalDraftDetailPage() {
                 onClick={() => navigate("/internal/drafts")}
               >
                 <ArrowLeft />
-                Back to Draft Inbox
+                Volver al Draft Inbox
               </Button>
 
               <div className="internal-draft-detail-page__intro">
-                <p className="internal-draft-detail-page__eyebrow">Uso interno | Draft detail</p>
+                <p className="internal-draft-detail-page__eyebrow">Uso interno | Detalle de draft</p>
                 <h1 className="internal-draft-detail-page__title">
-                  {draft ? draft.displayTitle : "Draft detail"}
+                  {draft ? draft.displayTitle : "Detalle de draft"}
                 </h1>
                 <p className="internal-draft-detail-page__description">
                   Corrige el payload publicable, guarda la revision y decide si el
@@ -354,9 +417,14 @@ export function InternalDraftDetailPage() {
                 {draft ? (
                   <div className="internal-draft-detail-page__header-meta">
                     <ScoutDraftStatusBadge reviewStatus={draft.reviewStatus} />
+                    {linkedApprovedActivity ? (
+                      <ActivityPublicationBadge
+                        isPublished={linkedApprovedActivity.isPublished}
+                      />
+                    ) : null}
                     <span>Draft #{draft.id}</span>
                     {draft.approvedActivityId ? (
-                      <span>Approved activity #{draft.approvedActivityId}</span>
+                      <span>Actividad #{draft.approvedActivityId}</span>
                     ) : null}
                   </div>
                 ) : null}
@@ -366,7 +434,7 @@ export function InternalDraftDetailPage() {
             {isLoading ? (
               <CatalogState
                 icon={LoaderCircle}
-                eyebrow="Draft detail"
+                eyebrow="Detalle de draft"
                 title="Cargando detalle del draft"
                 description="Estamos recuperando el draft, sus referencias y el payload revisable."
               />
@@ -394,7 +462,7 @@ export function InternalDraftDetailPage() {
                   <Card className="internal-draft-detail-page__panel">
                     <CardContent className="internal-draft-detail-page__panel-content">
                       <h2 className="internal-draft-detail-page__panel-title">
-                        Reviewed payload
+                        Payload revisado
                       </h2>
 
                       <ScoutDraftReviewForm
@@ -407,7 +475,7 @@ export function InternalDraftDetailPage() {
                       />
 
                       <div className="internal-draft-detail-page__notes-field">
-                        <label htmlFor="draft-review-notes">Review notes</label>
+                        <label htmlFor="draft-review-notes">Notas editoriales</label>
                         <textarea
                           id="draft-review-notes"
                           className="internal-draft-detail-page__notes-input"
@@ -426,28 +494,48 @@ export function InternalDraftDetailPage() {
                         </p>
                       ) : null}
 
-                      <div className="internal-draft-detail-page__actions">
-                        <Button
-                          variant="outline"
-                          onClick={handleSaveDraft}
-                          disabled={isTerminalDraft || isSaving || isRejecting || isApproving}
-                        >
-                          {isSaving ? "Saving..." : "Save draft"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={handleRejectDraft}
-                          disabled={isTerminalDraft || isSaving || isRejecting || isApproving}
-                        >
-                          {isRejecting ? "Rejecting..." : "Reject draft"}
-                        </Button>
-                        <Button
-                          onClick={handleApproveDraft}
-                          disabled={isTerminalDraft || isSaving || isRejecting || isApproving}
-                        >
-                          {isApproving ? "Approving..." : "Approve"}
-                        </Button>
-                      </div>
+                      {draft.reviewStatus === "pending_review" ? (
+                        <div className="internal-draft-detail-page__actions">
+                          <Button
+                            variant="outline"
+                            onClick={handleSaveDraft}
+                            disabled={isSaving || isRejecting || isApproving}
+                          >
+                            {isSaving ? "Guardando..." : "Guardar draft"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={handleRejectDraft}
+                            disabled={isSaving || isRejecting || isApproving}
+                          >
+                            {isRejecting ? "Rechazando..." : "Rechazar draft"}
+                          </Button>
+                          <Button
+                            onClick={handleApproveDraft}
+                            disabled={isSaving || isRejecting || isApproving}
+                          >
+                            {isApproving ? "Aprobando..." : "Aprobar"}
+                          </Button>
+                        </div>
+                      ) : draft.reviewStatus === "approved" && draft.approvedActivityId ? (
+                        <div className="internal-draft-detail-page__approved-handoff">
+                          <div className="internal-draft-detail-page__approved-copy">
+                            <p className="internal-draft-detail-page__approved-title">
+                              La actividad ya fue creada
+                            </p>
+                            <p className="internal-draft-detail-page__approved-description">
+                              Desde aqui solo mantienes contexto editorial. La edicion y el publish lifecycle viven ahora en la actividad aprobada.
+                            </p>
+                          </div>
+                          <Button
+                            onClick={() =>
+                              navigate(`/internal/activities/${draft.approvedActivityId}`)
+                            }
+                          >
+                            Abrir actividad aprobada
+                          </Button>
+                        </div>
+                      ) : null}
                     </CardContent>
                   </Card>
                 </div>
@@ -462,7 +550,7 @@ export function InternalDraftDetailPage() {
                             Source type
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
-                            {draft.sourceType || "unknown"}
+                            {draft.sourceType || "desconocido"}
                           </span>
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
@@ -470,7 +558,7 @@ export function InternalDraftDetailPage() {
                             Source label
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
-                            {draft.sourceLabel || "No label"}
+                            {draft.sourceLabel || "Sin etiqueta"}
                           </span>
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
@@ -478,7 +566,7 @@ export function InternalDraftDetailPage() {
                             Reference URL
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
-                            {draft.sourceReferenceUrl || "No URL"}
+                            {draft.sourceReferenceUrl || "Sin URL"}
                           </span>
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
@@ -486,9 +574,27 @@ export function InternalDraftDetailPage() {
                             Source file
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
-                            {draft.sourceFileName || "No file"}
+                            {draft.sourceFileName || "Sin archivo"}
                           </span>
                         </div>
+                        {draft.reviewStatus === "approved" && draft.approvedActivityId ? (
+                          <div className="internal-draft-detail-page__metadata-item">
+                            <span className="internal-draft-detail-page__metadata-label">
+                              Estado publico
+                            </span>
+                            <span className="internal-draft-detail-page__metadata-value internal-draft-detail-page__metadata-value--badge">
+                              {linkedApprovedActivity ? (
+                                <ActivityPublicationBadge
+                                  isPublished={linkedApprovedActivity.isPublished}
+                                />
+                              ) : linkedApprovedActivityError ? (
+                                linkedApprovedActivityError
+                              ) : (
+                                "Cargando..."
+                              )}
+                            </span>
+                          </div>
+                        ) : null}
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
                             Created at
@@ -511,16 +617,16 @@ export function InternalDraftDetailPage() {
 
                   <Card className="internal-draft-detail-page__panel">
                     <CardContent className="internal-draft-detail-page__panel-content">
-                      <h2 className="internal-draft-detail-page__panel-title">Raw extracted text</h2>
+                      <h2 className="internal-draft-detail-page__panel-title">Texto extraido</h2>
                       <pre className="internal-draft-detail-page__text-block">
-                        {draft.rawExtractedText || "No extracted text stored for this draft."}
+                        {draft.rawExtractedText || "No hay texto extraido guardado para este draft."}
                       </pre>
                     </CardContent>
                   </Card>
 
                   <Card className="internal-draft-detail-page__panel">
                     <CardContent className="internal-draft-detail-page__panel-content">
-                      <h2 className="internal-draft-detail-page__panel-title">Parsed payload</h2>
+                      <h2 className="internal-draft-detail-page__panel-title">Payload parseado</h2>
                       <pre className="internal-draft-detail-page__json-block">
                         {parsedPayloadPreview}
                       </pre>

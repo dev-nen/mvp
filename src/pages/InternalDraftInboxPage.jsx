@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
 import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { listInternalDrafts } from "@/services/internalDraftsService";
@@ -13,7 +14,7 @@ import "./InternalDraftInboxPage.css";
 
 function formatConfidenceScore(confidenceScore) {
   if (typeof confidenceScore !== "number" || Number.isNaN(confidenceScore)) {
-    return "No signal";
+    return "Sin senal";
   }
 
   const normalizedScore = confidenceScore <= 1 ? confidenceScore * 100 : confidenceScore;
@@ -22,19 +23,35 @@ function formatConfidenceScore(confidenceScore) {
 
 function formatDateLabel(value) {
   if (!value) {
-    return "Unknown";
+    return "Desconocida";
   }
 
   const dateValue = new Date(value);
 
   if (Number.isNaN(dateValue.getTime())) {
-    return "Unknown";
+    return "Desconocida";
   }
 
   return new Intl.DateTimeFormat("es-ES", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(dateValue);
+}
+
+function getApprovedActivitySummary(draft) {
+  if (!draft.approvedActivityId) {
+    return "Pendiente";
+  }
+
+  if (draft.approvedActivityIsPublished === true) {
+    return `#${draft.approvedActivityId} · Publicada`;
+  }
+
+  if (draft.approvedActivityIsPublished === false) {
+    return `#${draft.approvedActivityId} · Oculta`;
+  }
+
+  return `#${draft.approvedActivityId}`;
 }
 
 export function InternalDraftInboxPage() {
@@ -141,10 +158,17 @@ export function InternalDraftInboxPage() {
                       <div className="internal-draft-inbox-page__draft-topline">
                         <div className="internal-draft-inbox-page__draft-meta">
                           <span>Draft #{draft.id}</span>
-                          <span>{draft.sourceType || "unknown"}</span>
+                          <span>{draft.sourceType || "desconocido"}</span>
                           <span>{formatDateLabel(draft.createdAt)}</span>
                         </div>
-                        <ScoutDraftStatusBadge reviewStatus={draft.reviewStatus} />
+                        <div className="internal-draft-inbox-page__draft-statuses">
+                          <ScoutDraftStatusBadge reviewStatus={draft.reviewStatus} />
+                          {draft.approvedActivityId ? (
+                            <ActivityPublicationBadge
+                              isPublished={draft.approvedActivityIsPublished === true}
+                            />
+                          ) : null}
+                        </div>
                       </div>
 
                       <div>
@@ -159,7 +183,7 @@ export function InternalDraftInboxPage() {
                             Source label
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
-                            {draft.sourceLabel || "No label"}
+                            {draft.sourceLabel || "Sin etiqueta"}
                           </span>
                         </div>
 
@@ -174,21 +198,21 @@ export function InternalDraftInboxPage() {
 
                         <div className="internal-draft-inbox-page__draft-field">
                           <span className="internal-draft-inbox-page__draft-field-label">
-                            Reviewed payload
+                            Payload revisado
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
                             {draft.reviewStatus === "pending_review"
                               ? "Editable"
-                              : "Terminal"}
+                              : "Solo lectura"}
                           </span>
                         </div>
 
                         <div className="internal-draft-inbox-page__draft-field">
                           <span className="internal-draft-inbox-page__draft-field-label">
-                            Approved activity
+                            Actividad publicada
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
-                            {draft.approvedActivityId ?? "Pending"}
+                            {getApprovedActivitySummary(draft)}
                           </span>
                         </div>
                       </div>
@@ -198,7 +222,7 @@ export function InternalDraftInboxPage() {
                           variant="outline"
                           onClick={() => navigate(`/internal/drafts/${draft.id}`)}
                         >
-                          Open draft
+                          Abrir draft
                         </Button>
                       </div>
                     </CardContent>

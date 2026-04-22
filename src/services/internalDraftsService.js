@@ -2,6 +2,7 @@ import {
   getSupabaseClient,
   getSupabaseClientError,
 } from "@/services/supabaseClient";
+import { listInternalApprovedActivityStates } from "@/services/internalApprovedActivitiesService";
 
 const LIST_DRAFTS_SELECT =
   "id, source_type, source_label, confidence_score, review_status, parsed_payload_json, reviewed_payload_json, created_at";
@@ -52,6 +53,7 @@ function normalizeDraftRow(row) {
     reviewNotes: getTrimmedText(row.review_notes),
     reviewedBy: row.reviewed_by ?? null,
     approvedActivityId: row.approved_activity_id ?? null,
+    approvedActivityIsPublished: null,
     createdBy: row.created_by ?? null,
     createdAt: row.created_at ?? "",
     updatedAt: row.updated_at ?? "",
@@ -85,7 +87,22 @@ export async function listInternalDrafts() {
     );
   }
 
-  return (data ?? []).map(normalizeDraftRow);
+  const normalizedDrafts = (data ?? []).map(normalizeDraftRow);
+  const approvedDraftIds = normalizedDrafts
+    .filter((draft) => draft.reviewStatus === "approved" && draft.approvedActivityId)
+    .map((draft) => draft.id);
+
+  if (approvedDraftIds.length === 0) {
+    return normalizedDrafts;
+  }
+
+  const activityStatesByDraftId = await listInternalApprovedActivityStates(approvedDraftIds);
+
+  return normalizedDrafts.map((draft) => ({
+    ...draft,
+    approvedActivityIsPublished:
+      activityStatesByDraftId.get(draft.id)?.isPublished ?? null,
+  }));
 }
 
 export async function getInternalDraftById(draftId) {
