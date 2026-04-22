@@ -1,0 +1,15 @@
+.internal-tool-route {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.internal-tool-route__main {
+  flex: 1;
+  padding: var(--space-7) 0 var(--space-8);
+}
+
+.internal-tool-route__container {
+  display: flex;
+  flex-direction: column;
+}
