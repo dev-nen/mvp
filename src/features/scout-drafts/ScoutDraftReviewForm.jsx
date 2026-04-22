@@ -13,7 +13,7 @@ export function ScoutDraftReviewForm({
     <div className="scout-draft-review-form">
       <div className="scout-draft-review-form__grid">
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-title">Title</label>
+          <label htmlFor="draft-title">Titulo</label>
           <Input
             id="draft-title"
             className="scout-draft-review-form__input"
@@ -24,7 +24,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-description">Description</label>
+          <label htmlFor="draft-description">Descripcion</label>
           <textarea
             id="draft-description"
             className="scout-draft-review-form__textarea"
@@ -35,7 +35,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-center-id">Center</label>
+          <label htmlFor="draft-center-id">Centro</label>
           <select
             id="draft-center-id"
             className="scout-draft-review-form__select"
@@ -43,7 +43,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("centerId", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="">Select a center</option>
+            <option value="">Selecciona un centro</option>
             {centerChoices.map((centerChoice) => (
               <option key={centerChoice.id} value={centerChoice.id}>
                 {centerChoice.label}
@@ -53,7 +53,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-category-id">Category</label>
+          <label htmlFor="draft-category-id">Categoria</label>
           <select
             id="draft-category-id"
             className="scout-draft-review-form__select"
@@ -61,7 +61,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("categoryId", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="">Select a category</option>
+            <option value="">Selecciona una categoria</option>
             {categoryChoices.map((categoryChoice) => (
               <option key={categoryChoice.id} value={categoryChoice.id}>
                 {categoryChoice.name}
@@ -71,7 +71,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-type-id">Type</label>
+          <label htmlFor="draft-type-id">Tipo</label>
           <select
             id="draft-type-id"
             className="scout-draft-review-form__select"
@@ -79,7 +79,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("typeId", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="">Select a type</option>
+            <option value="">Selecciona un tipo</option>
             {typeChoices.map((typeChoice) => (
               <option key={typeChoice.id} value={typeChoice.id}>
                 {typeChoice.name}
@@ -89,7 +89,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-image-url">Image URL</label>
+          <label htmlFor="draft-image-url">URL de imagen</label>
           <Input
             id="draft-image-url"
             className="scout-draft-review-form__input"
@@ -98,12 +98,12 @@ export function ScoutDraftReviewForm({
             disabled={isReadOnly}
           />
           <p className="scout-draft-review-form__hint">
-            Empty values are normalized to the standard placeholder on approve.
+            Los valores vacios se normalizan al placeholder estandar al publicar o guardar.
           </p>
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-age-rule-type">Age rule type</label>
+          <label htmlFor="draft-age-rule-type">Regla de edad</label>
           <select
             id="draft-age-rule-type"
             className="scout-draft-review-form__select"
@@ -111,15 +111,15 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("ageRuleType", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="all">All</option>
-            <option value="range">Range</option>
-            <option value="from">From</option>
-            <option value="until">Until</option>
+            <option value="all">Todas</option>
+            <option value="range">Rango</option>
+            <option value="from">Desde</option>
+            <option value="until">Hasta</option>
           </select>
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-age-min">Age min</label>
+          <label htmlFor="draft-age-min">Edad minima</label>
           <Input
             id="draft-age-min"
             type="number"
@@ -131,7 +131,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-age-max">Age max</label>
+          <label htmlFor="draft-age-max">Edad maxima</label>
           <Input
             id="draft-age-max"
             type="number"
@@ -143,7 +143,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-price-label">Price label</label>
+          <label htmlFor="draft-price-label">Texto de precio</label>
           <Input
             id="draft-price-label"
             className="scout-draft-review-form__input"
@@ -154,7 +154,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-is-free">Is free</label>
+          <label htmlFor="draft-is-free">Gratuidad</label>
           <select
             id="draft-is-free"
             className="scout-draft-review-form__select"
@@ -162,13 +162,13 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("isFree", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="false">Paid or unknown</option>
-            <option value="true">Free</option>
+            <option value="false">De pago o sin confirmar</option>
+            <option value="true">Gratuita</option>
           </select>
         </div>
 
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-schedule-label">Schedule</label>
+          <label htmlFor="draft-schedule-label">Horario</label>
           <Input
             id="draft-schedule-label"
             className="scout-draft-review-form__input"
@@ -179,7 +179,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-venue-name">Venue name</label>
+          <label htmlFor="draft-venue-name">Nombre del lugar</label>
           <Input
             id="draft-venue-name"
             className="scout-draft-review-form__input"
@@ -190,7 +190,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-venue-postal-code">Venue postal code</label>
+          <label htmlFor="draft-venue-postal-code">Codigo postal</label>
           <Input
             id="draft-venue-postal-code"
             className="scout-draft-review-form__input"
@@ -201,7 +201,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-venue-address-1">Venue address 1</label>
+          <label htmlFor="draft-venue-address-1">Direccion</label>
           <Input
             id="draft-venue-address-1"
             className="scout-draft-review-form__input"

@@ -8,14 +8,14 @@ function normalizeReviewStatus(reviewStatus) {
 
 function getReviewStatusLabel(reviewStatus) {
   if (reviewStatus === "approved") {
-    return "Approved";
+    return "Aprobado";
   }
 
   if (reviewStatus === "rejected") {
-    return "Rejected";
+    return "Rechazado";
   }
 
-  return "Pending review";
+  return "Pendiente";
 }
 
 export function ScoutDraftStatusBadge({ reviewStatus }) {
