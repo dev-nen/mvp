@@ -1,4 +1,5 @@
 import {
+  buildSupabasePublicStorageUrl,
   getSupabaseClient,
   getSupabaseClientError,
 } from "@/services/supabaseClient";
@@ -27,7 +28,7 @@ function normalizeCatalogImageUrl(value) {
     return imageUrl;
   }
 
-  return `/${imageUrl.replace(/^\/+/, "")}`;
+  return buildSupabasePublicStorageUrl("activities", imageUrl) || "";
 }
 
 function normalizeCatalogActivity(activity) {

@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() ?? "";
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? "";
+const normalizedSupabaseUrl = supabaseUrl.replace(/\/+$/, "");
 
 const missingEnvVars = [];
 
@@ -51,4 +52,33 @@ export function getSupabaseClientError() {
 
 export function getSupabaseClient() {
   return supabase;
+}
+
+export function buildSupabasePublicStorageUrl(bucketName, objectPath) {
+  const normalizedBucketName =
+    typeof bucketName === "string"
+      ? bucketName.trim().replace(/^\/+|\/+$/g, "")
+      : "";
+  const normalizedObjectPath =
+    typeof objectPath === "string" ? objectPath.trim().replace(/^\/+/, "") : "";
+
+  if (
+    !normalizedSupabaseUrl ||
+    !normalizedBucketName ||
+    !normalizedObjectPath
+  ) {
+    return "";
+  }
+
+  const encodedObjectPath = normalizedObjectPath
+    .split("/")
+    .filter(Boolean)
+    .map((pathSegment) => encodeURIComponent(pathSegment))
+    .join("/");
+
+  if (!encodedObjectPath) {
+    return "";
+  }
+
+  return `${normalizedSupabaseUrl}/storage/v1/object/public/${normalizedBucketName}/${encodedObjectPath}`;
 }
