@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
+import { useInternalToolAccess } from "@/hooks/useInternalToolAccess";
 import { useAuth } from "@/hooks/useAuth";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
@@ -61,6 +62,10 @@ export function ProfilePage() {
     signOut,
     user,
   } = useAuth();
+  const {
+    hasAccess: hasDraftInboxAccess,
+    isLoading: isLoadingDraftInboxAccess,
+  } = useInternalToolAccess();
 
   const handleGoBack = () => {
     navigate("/", { replace: true });
@@ -178,6 +183,31 @@ export function ProfilePage() {
                       role="alert"
                     >
                       {authError}
+                    </p>
+                  ) : null}
+
+                  {hasDraftInboxAccess ? (
+                    <div className="profile-page__internal-tool">
+                      <p className="profile-page__internal-tool-label">
+                        Herramienta interna
+                      </p>
+                      <p className="profile-page__internal-tool-description">
+                        Esta cuenta tiene acceso al Draft Inbox del equipo de NensGo.
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="profile-page__action-button"
+                        onClick={() => navigate("/internal/drafts")}
+                      >
+                        Abrir Draft Inbox
+                      </Button>
+                    </div>
+                  ) : null}
+
+                  {isLoadingDraftInboxAccess ? (
+                    <p className="profile-page__hint">
+                      Comprobando acceso interno disponible para esta cuenta.
                     </p>
                   ) : null}
 
