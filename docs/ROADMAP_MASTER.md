@@ -61,8 +61,9 @@ Lectura breve de `main` hoy:
 - `Scout` sigue siendo una linea `Planned`; hoy no existe en runtime.
 - `Assisted Publishing Backoffice` hoy existe a nivel conceptual en la
   recopilacion externa, no como capability versionada del repo.
-- `/pvi` sigue siendo una ruta publica placeholder con copy interna, aunque el
-  reporting real ya esta protegido por `/api/internal/pvi`.
+- El primer hardening publico ya retiro `/pvi` del frontend y recorto copy
+  meta o de diagnostico en superficies visibles; el reporting real sigue
+  protegido por `/api/internal/pvi`.
 
 Para el snapshot de detalle, ver [PROJECT_STATE.md](./PROJECT_STATE.md).
 
@@ -113,16 +114,16 @@ La fase real es:
 - consolidacion del runtime ya integrado en `main`
 - readiness externa de Supabase Auth, SQL y secrets
 - validacion privada integral end-to-end
-- hardening de superficies publicas antes de ensenar mas producto
+- mantenimiento del guardrail de hardening publico ya abierto en `main`
 
 ### 5.3 Fase siguiente recomendada del producto principal
 
 Una vez cerrada la consolidacion actual, la siguiente fase logica es:
 
-- endurecer la presentacion publica
-- retirar superficies publicas con copy interna o de diagnostico
-- dejar una base mas profesional para seguir creciendo sin ambiguedad entre
-  producto visible y tooling interno
+- cerrar readiness externa y validacion privada integral sobre la base publica
+  ya endurecida
+- validar de forma real el seam privado de metricas, auth y SQL aplicado
+- dejar una base operativa estable antes de abrir nuevas capacidades internas
 
 ### 5.4 Fases posteriores
 
@@ -140,7 +141,7 @@ Solo despues del cierre anterior tiene sentido abrir nuevas lineas mayores como:
 | Auth base MVP 2.0 | Transicion absorbida | `Done` | La fase base de auth ya fue absorbida; el trabajo activo ya no es "poner login", sino validar y endurecer el modelo real | `main` + `auth-base-mvp2.md` | Baja | No aplica como nueva SDD |
 | Runtime real DB/Auth/catalog/favoritos | Roadmap principal | `Partial` | El runtime real ya existe en `main`, pero sigue pendiente de SQL apply, auth config y validacion end-to-end | `main` + docs maestras | Muy alta | Listo para SDD de cierre/hardening |
 | Validacion privada integral | Roadmap principal | `In progress` | Ya existen smoke docs y un checkpoint integrado, pero no hay cierre funcional probado contra entorno real | `main` + tests manuales | Muy alta | Listo para SDD corta |
-| Hardening publico y madurez de superficies | Roadmap principal | `Planned` | La necesidad es real hoy, especialmente por `/pvi` publico y copy interna visible | `main` + `deployment-hardening-staging.md` | Muy alta | Listo para SDD corta |
+| Hardening publico y madurez de superficies | Roadmap principal | `In progress` | El primer aterrizaje ya retiro `/pvi` del frontend publico y recorto copy meta o de diagnostico en las superficies mas visibles | `main` + `public-surface-hardening-sdd.md` | Alta | Listo para SDD corta de seguimiento si reaparecen gaps |
 | Draft Inbox Phase 1 | Capability interna | `Partial` | Existe en codigo, SQL y rutas internas, pero depende de SQL, permisos, seed y smoke real | `main` + docs Scout/Draft Inbox | Alta | Casi listo; bloqueado por readiness real |
 | Approved activity lifecycle | Capability interna | `Partial` | Existe en runtime interno y SQL fase 2, pero sigue sin validacion real contra catalogo publico | `main` + docs lifecycle | Alta | Casi listo; bloqueado por readiness real |
 | Scout Manual v0 | Capability interna | `Planned` | Existe en docs y estrategia, no en runtime | Docs versionadas | Media futura | No listo; depende de cerrar Draft Inbox |
@@ -245,9 +246,11 @@ diagnostico en superficies visibles del frontend publico.
 
 ## Evidencia actual
 
-- `/pvi` sigue siendo una ruta publica placeholder.
-- La copy de esa ruta sigue exponiendo lenguaje de uso interno y diagnostico.
-- El reporting real ya vive en `/api/internal/pvi` con proteccion.
+- El primer hardening ya retiro `/pvi` del frontend publico.
+- La via real de reporting sigue viviendo en `/api/internal/pvi` con
+  proteccion.
+- El guardrail sigue siendo necesario para no reintroducir copy interna o de
+  diagnostico en nuevas superficies visibles.
 
 ## Lectura de roadmap
 
@@ -329,12 +332,13 @@ Estas estimaciones son prudentes.
 
 ### Recomendacion principal
 
-Abrir una SDD corta de consolidacion y hardening de `main` que agrupe:
+Abrir una SDD corta de validacion privada integral y readiness externa de
+`main` que agrupe:
 
-- readiness externa pendiente
+- cierre de SQL y configuracion externa pendiente
 - validacion privada end-to-end
 - cierre de Draft Inbox y approved lifecycle en entorno real
-- retiro de superficies publicas con copy interna o de diagnostico
+- validacion real del seam privado de metricas
 
 ### Recomendacion secundaria
 

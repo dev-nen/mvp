@@ -38,7 +38,9 @@ after consolidating `feat/real-db-auth-migration` and
 - Contact CTA driven only by `activity_contact_options`
 - Analytics writes aligned to `activity_view_events` and
   `activity_contact_events`
-- Public `/pvi` reduced to a non-operational placeholder
+- First-pass public-surface hardening on Home, Favorites, Profile, Support,
+  public detail, and the `/para-centros` preview modal
+- Public `/pvi` route retired from the app
 - Private `api/internal/pvi` path added for PO and DEV reporting
 - Repo-tracked SQL and runbook artifacts for the migration
 - Repo-tracked SQL, routes, guard, services, and review UI for Draft Inbox
@@ -97,12 +99,9 @@ Recommended next implementation order from `main`:
    - approved activity edit, unpublish, and republish
    - view/contact analytics writes
    - private `/api/internal/pvi`
-5. Once private internal metrics are validated, remove the public `/pvi` route
-   instead of growing a placeholder frontend surface with no lasting product
-   purpose.
-6. Once Draft Inbox plus approved activity lifecycle are validated, move to
+5. Once Draft Inbox plus approved activity lifecycle are validated, move to
    Scout Manual v0 instead of broad connector work.
-7. Clean up any remaining dead code or docs drift after external validation.
+6. Clean up any remaining dead code or docs drift after external validation.
 
 ## Later Phase
 

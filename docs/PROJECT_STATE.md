@@ -24,7 +24,8 @@ contains:
 - Onboarding completion through a Supabase RPC instead of direct profile inserts
 - Contact actions driven by `activity_contact_options`
 - Analytics writes aligned to `activity_view_events` and `activity_contact_events`
-- A public `/pvi` placeholder that no longer reads analytics in the browser
+- A first public-surface hardening pass that retires the former public `/pvi`
+  placeholder and removes debug-like copy from user-facing surfaces
 - A private `/api/internal/pvi` path intended for PO and DEV reporting
 - Internal routes for `/internal/drafts` and `/internal/drafts/:draftId`
 - An internal route for `/internal/activities/:activityId`
@@ -79,8 +80,7 @@ paths.
   users.
 - Approved activities linked from Draft Inbox now have a dedicated internal page
   and internal edit/publish lifecycle in repo.
-- `/pvi` remains routable in the public app only as a non-operational internal
-  placeholder.
+- The public app no longer exposes `/pvi`.
 - `api/internal/pvi` exists as the intended private reporting path for PO and
   DEV.
 
@@ -104,8 +104,8 @@ paths.
   inside the repo alone.
 - Detail is still intentionally split across Home modal and Favorites routed
   detail page.
-- `/pvi` is intentionally not an operational dashboard in the public app during
-  this phase.
+- Public-surface hardening is only a first pass; the guardrail against
+  debug-like public copy still needs to remain active in future work.
 
 ## Difference Between Present `main` State, External Readiness, And Later Product Work
 
@@ -115,6 +115,7 @@ paths.
 - Local catalog fallback is no longer the primary product truth.
 - Favorites are modeled as remote user data.
 - Browser-side analytics dashboard reads have been retired.
+- The public `/pvi` placeholder route is retired from the app.
 - Internal editorial review now has a first route and data-contract slice in
   repo, but not yet validated live.
 
@@ -136,6 +137,6 @@ paths.
 
 `main` is not a mock-backed MVP anymore. It is a real DB and auth migration
 checkpoint with an internal Draft Inbox plus approved-activity lifecycle
-already added in repo. It is also not yet fully closed: external Supabase and
-Vercel readiness still gate the move from implemented code to validated product
-behavior.
+already added in repo, and with a first public-surface hardening pass already
+landed. It is also not yet fully closed: external Supabase and Vercel readiness
+still gate the move from implemented code to validated product behavior.

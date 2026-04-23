@@ -34,7 +34,6 @@ ideal future architecture.
 | `/internal/drafts` | Internal Draft Inbox list | Internal-tool route. Requires authenticated app-user readiness plus `internal_tool_access`. |
 | `/internal/drafts/:draftId` | Internal Draft Inbox detail | Internal-tool route. Uses the same guard and works against `activity_drafts`. |
 | `/internal/activities/:activityId` | Internal approved activity page | Internal-tool route. Manages one approved activity linked from Draft Inbox. |
-| `/pvi` | Internal placeholder | Publicly routable, but intentionally non-operational in the browser. |
 | `/soporte` | Placeholder surface | Not implemented as a real support workflow yet. |
 | `/api/internal/pvi` | Private metrics API | Server-side reporting path for PO and DEV only. |
 
@@ -76,10 +75,10 @@ ideal future architecture.
 - `src/services/appUsersService.js` reads `public.user_profiles` and calls the
   profile-provisioning RPC.
 
-### PVI
+### Internal metrics seam
 
-- `src/pages/PviPage.jsx` is now only a public placeholder.
-- `api/internal/pvi.js` is the intended real read path for internal reporting.
+- `api/internal/pvi.js` is the intended read path for internal reporting.
+- `main` no longer exposes a public `/pvi` route.
 
 ### Internal Draft Inbox
 
