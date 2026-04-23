@@ -119,7 +119,7 @@ export function FavoriteActivityDetailPage() {
       <CatalogState
         icon={LoaderCircle}
         title="Cargando la ficha"
-        description="Estamos preparando la informacion completa de esta actividad."
+        description="Estamos preparando la información completa de esta actividad."
       />
     );
   } else if (error) {
@@ -136,8 +136,8 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={SearchX}
-        title="Esta actividad ya no esta disponible"
-        description="La actividad sigue guardada, pero no hemos podido recuperarla desde el catalogo actual."
+        title="Esta actividad ya no está disponible"
+        description="La actividad sigue guardada, pero no hemos podido recuperarla desde el catálogo actual."
         actionLabel="Volver a favoritos"
         onAction={handleGoBack}
       />
@@ -147,7 +147,7 @@ export function FavoriteActivityDetailPage() {
       <CatalogState
         icon={SearchX}
         title="No encontramos esta actividad"
-        description="La ficha que intentas abrir no existe en el catalogo actual. Vuelve a favoritos para seguir revisando tus actividades guardadas."
+        description="La ficha que intentas abrir no existe en el catálogo actual. Vuelve a favoritos para seguir revisando tus actividades guardadas."
         actionLabel="Volver a favoritos"
         onAction={handleGoBack}
       />
@@ -156,8 +156,8 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={Heart}
-        title="Esta actividad ya no esta en tus favoritos"
-        description="Vuelve a tu lista para seguir revisando las actividades que todavia tienes guardadas."
+        title="Esta actividad ya no está en tus favoritos"
+        description="Vuelve a tu lista para seguir revisando las actividades que todavía tienes guardadas."
         actionLabel="Volver a favoritos"
         onAction={handleGoBack}
       />

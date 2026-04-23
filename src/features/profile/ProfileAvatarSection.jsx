@@ -83,8 +83,8 @@ export function ProfileAvatarSection({ fullName = "", disabled = false }) {
 
         <p className="profile-avatar-section__helper">
           {previewUrl
-            ? "Vista previa lista. El guardado definitivo del avatar se conectara despues."
-            : "Todavia no hay una foto subida para esta cuenta."}
+            ? "Vista previa lista. El guardado definitivo del avatar se conectará después."
+            : "Todavía no hay una foto subida para esta cuenta."}
         </p>
       </CardContent>
     </Card>

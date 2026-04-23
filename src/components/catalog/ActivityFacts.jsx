@@ -17,7 +17,7 @@ export function ActivityFacts({ activity, className = "" }) {
   const facts = [
     {
       key: "location",
-      label: "Ubicacion",
+      label: "Ubicación",
       value: formatActivityLocationLabel(activity),
       icon: MapPin,
     },

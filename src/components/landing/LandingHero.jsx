@@ -11,7 +11,7 @@ export function LandingHero({ onExploreActivities }) {
           Descubre actividades para peques y familias en un solo lugar
         </h1>
         <p className="landing-hero__description">
-          NensGo reune actividades culturales, deportivas, extraescolares y
+          NensGo reúne actividades culturales, deportivas, extraescolares y
           planes en familia para ayudarte a encontrar opciones cerca de ti sin
           perder tiempo saltando entre webs, redes y mensajes.
         </p>

@@ -55,7 +55,7 @@ export async function listActivities() {
   if (!supabase) {
     throw new Error(
       getSupabaseClientError() ||
-        "No pudimos conectar con Supabase para cargar el catalogo.",
+        "No pudimos conectar con Supabase para cargar el catálogo.",
     );
   }
 
@@ -66,7 +66,7 @@ export async function listActivities() {
 
   if (error) {
     throw new Error(
-      error.message || "No pudimos cargar el catalogo desde la base de datos.",
+      error.message || "No pudimos cargar el catálogo desde la base de datos.",
     );
   }
 

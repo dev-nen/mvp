@@ -47,11 +47,11 @@ function getTrimmedText(value) {
 
 function validateApprovedActivityForm(formState) {
   if (!getTrimmedText(formState.title)) {
-    return "El titulo es obligatorio para guardar.";
+    return "El título es obligatorio para guardar.";
   }
 
   if (!getTrimmedText(formState.description)) {
-    return "La descripcion es obligatoria para guardar.";
+    return "La descripción es obligatoria para guardar.";
   }
 
   if (!getTrimmedText(formState.centerId)) {
@@ -59,7 +59,7 @@ function validateApprovedActivityForm(formState) {
   }
 
   if (!getTrimmedText(formState.categoryId)) {
-    return "La categoria es obligatoria para guardar.";
+    return "La categoría es obligatoria para guardar.";
   }
 
   if (!getTrimmedText(formState.typeId)) {
@@ -71,15 +71,15 @@ function validateApprovedActivityForm(formState) {
   }
 
   if (formState.ageRuleType === "range" && (!getTrimmedText(formState.ageMin) || !getTrimmedText(formState.ageMax))) {
-    return "La regla de edad rango necesita edad minima y maxima.";
+    return "La regla de edad rango necesita edad mínima y máxima.";
   }
 
   if (formState.ageRuleType === "from" && !getTrimmedText(formState.ageMin)) {
-    return "La regla de edad desde necesita edad minima.";
+    return "La regla de edad desde necesita edad mínima.";
   }
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
-    return "La regla de edad hasta necesita edad maxima.";
+    return "La regla de edad hasta necesita edad máxima.";
   }
 
   return "";
@@ -113,7 +113,7 @@ export function InternalApprovedActivityPage() {
 
       try {
         if (!Number.isFinite(numericActivityId)) {
-          throw new Error("La actividad aprobada solicitada no es valida.");
+          throw new Error("La actividad aprobada solicitada no es válida.");
         }
 
         const [nextActivity, nextCenters, nextCategories, nextTypes] = await Promise.all([
@@ -230,20 +230,20 @@ export function InternalApprovedActivityPage() {
           draftId: activity.draftId,
           reviewNotes,
         });
-        await refreshActivity("Actividad retirada del catalogo publico.", "success");
+        await refreshActivity("Actividad retirada del catálogo público.", "success");
       } else {
         await republishInternalApprovedActivity({
           draftId: activity.draftId,
           reviewNotes,
         });
-        await refreshActivity("Actividad devuelta al catalogo publico.", "success");
+        await refreshActivity("Actividad devuelta al catálogo público.", "success");
       }
     } catch (toggleError) {
       setFeedbackTone("error");
       setFeedbackMessage(
         toggleError instanceof Error
           ? toggleError.message
-          : "No pudimos cambiar el estado publico de la actividad.",
+          : "No pudimos cambiar el estado público de la actividad.",
       );
     } finally {
       setIsTogglingPublication(false);
@@ -282,7 +282,7 @@ export function InternalApprovedActivityPage() {
                 </h1>
                 <p className="internal-approved-activity-page__description">
                   Edita la actividad ya creada y controla si entra o sale del
-                  catalogo publico sin romper la trazabilidad con su draft.
+                  catálogo público sin romper la trazabilidad con su draft.
                 </p>
                 {activity ? (
                   <div className="internal-approved-activity-page__header-meta">
@@ -315,7 +315,7 @@ export function InternalApprovedActivityPage() {
                 icon={SearchX}
                 eyebrow="Sin actividad"
                 title="No encontramos esta actividad aprobada"
-                description="La actividad solicitada no esta gestionada por el Draft Inbox actual."
+                description="La actividad solicitada no está gestionada por el Draft Inbox actual."
                 actionLabel="Volver al inbox"
                 onAction={() => navigate("/internal/drafts")}
               />
@@ -391,10 +391,10 @@ export function InternalApprovedActivityPage() {
                       <div className="internal-approved-activity-page__metadata-grid">
                         <div className="internal-approved-activity-page__metadata-item">
                           <span className="internal-approved-activity-page__metadata-label">
-                            Estado publico
+                            Estado público
                           </span>
                           <span className="internal-approved-activity-page__metadata-value">
-                            {activity.isPublished ? "Visible en catalogo" : "Oculta del catalogo"}
+                            {activity.isPublished ? "Visible en catálogo" : "Oculta del catálogo"}
                           </span>
                         </div>
                         <div className="internal-approved-activity-page__metadata-item">
@@ -407,7 +407,7 @@ export function InternalApprovedActivityPage() {
                         </div>
                         <div className="internal-approved-activity-page__metadata-item">
                           <span className="internal-approved-activity-page__metadata-label">
-                            Source label
+                            Etiqueta de origen
                           </span>
                           <span className="internal-approved-activity-page__metadata-value">
                             {activity.sourceLabel || "Sin etiqueta"}
@@ -415,7 +415,7 @@ export function InternalApprovedActivityPage() {
                         </div>
                         <div className="internal-approved-activity-page__metadata-item">
                           <span className="internal-approved-activity-page__metadata-label">
-                            Review status
+                            Estado de revisión
                           </span>
                           <span className="internal-approved-activity-page__metadata-value">
                             {activity.reviewStatus || "approved"}

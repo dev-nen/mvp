@@ -161,12 +161,12 @@ export function ProtectedAccessGate() {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
-      setFormError("Email y password son obligatorios.");
+      setFormError("Email y contraseña son obligatorios.");
       return;
     }
 
     if (authMode === "sign_up" && password !== passwordConfirm) {
-      setFormError("La confirmacion del password no coincide.");
+      setFormError("La confirmación de la contraseña no coincide.");
       return;
     }
 
@@ -198,7 +198,7 @@ export function ProtectedAccessGate() {
     const targetEmail = pendingVerificationEmail || email.trim();
 
     if (!targetEmail) {
-      setFormError("Necesitamos un email para reenviar la verificacion.");
+      setFormError("Necesitamos un email para reenviar la verificación.");
       return;
     }
 
@@ -262,7 +262,7 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <ShieldCheck />
               </div>
-              <p className="protected-access-gate__eyebrow">Acceso minimo</p>
+              <p className="protected-access-gate__eyebrow">Acceso mínimo</p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
@@ -270,7 +270,7 @@ export function ProtectedAccessGate() {
                 Accede con Google para {currentIntentLabel}
               </h2>
               <p className="protected-access-gate__description">
-                El catalogo puede explorarse en abierto, pero esta accion necesita
+                El catálogo puede explorarse en abierto, pero esta acción necesita
                 una cuenta identificada y una ciudad asociada.
               </p>
 
@@ -296,7 +296,7 @@ export function ProtectedAccessGate() {
                 </Button>
 
                 <div className="protected-access-gate__divider">
-                  <span>o usa email y password</span>
+                  <span>o usa email y contraseña</span>
                 </div>
 
                 <div className="protected-access-gate__toggle-row">
@@ -338,7 +338,7 @@ export function ProtectedAccessGate() {
                     className="protected-access-gate__label"
                     htmlFor="access-password"
                   >
-                    Password
+                    Contraseña
                   </label>
                   <Input
                     id="access-password"
@@ -357,7 +357,7 @@ export function ProtectedAccessGate() {
                         className="protected-access-gate__label"
                         htmlFor="access-password-confirm"
                       >
-                        Confirmar password
+                        Confirmar contraseña
                       </label>
                       <Input
                         id="access-password-confirm"
@@ -368,7 +368,7 @@ export function ProtectedAccessGate() {
                         autoComplete="new-password"
                       />
                       <p className="protected-access-gate__hint">
-                        La cuenta clasica requiere verificacion de email antes de
+                        La cuenta clásica requiere verificación de email antes de
                         poder usar la app.
                       </p>
                     </>
@@ -405,7 +405,7 @@ export function ProtectedAccessGate() {
                 Estamos resolviendo tu cuenta
               </h2>
               <p className="protected-access-gate__description">
-                Estamos leyendo los datos minimos asociados a tu cuenta
+                Estamos leyendo los datos mínimos asociados a tu cuenta
                 autenticada para comprobar si ya podemos continuar.
               </p>
             </>
@@ -416,7 +416,7 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <MailCheck />
               </div>
-              <p className="protected-access-gate__eyebrow">Verificacion requerida</p>
+              <p className="protected-access-gate__eyebrow">Verificación requerida</p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
@@ -424,7 +424,7 @@ export function ProtectedAccessGate() {
                 Revisa tu email antes de continuar
               </h2>
               <p className="protected-access-gate__description">
-                La cuenta clasica necesita verificacion de email antes de pasar
+                La cuenta clásica necesita verificación de email antes de pasar
                 al onboarding obligatorio y al flujo normal de la app.
               </p>
 
@@ -461,7 +461,7 @@ export function ProtectedAccessGate() {
                 >
                   {isResendingVerification
                     ? "Reenviando email..."
-                    : "Reenviar verificacion"}
+                    : "Reenviar verificación"}
                 </Button>
                 <Button
                   type="button"
@@ -469,7 +469,7 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__secondary-action"
                   onClick={dismissVerificationPending}
                 >
-                  Ya verifique mi email
+                  Ya verifiqué mi email
                 </Button>
               </div>
             </>
@@ -488,7 +488,7 @@ export function ProtectedAccessGate() {
                 Completa tu perfil para continuar
               </h2>
               <p className="protected-access-gate__description">
-                La cuenta ya esta autenticada, pero todavia no tiene el perfil de
+                La cuenta ya está autenticada, pero todavía no tiene el perfil de
                 app listo o le falta la ciudad obligatoria.
               </p>
 
@@ -581,8 +581,8 @@ export function ProtectedAccessGate() {
                 No pudimos preparar tu acceso
               </h2>
               <p className="protected-access-gate__description">
-                La autenticacion ya existe, pero no hemos podido dejar listo el
-                perfil de aplicacion con la configuracion actual.
+                La autenticación ya existe, pero no hemos podido dejar listo el
+                perfil de aplicación con la configuración actual.
               </p>
 
               {feedbackMessage ? (

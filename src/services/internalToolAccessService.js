@@ -29,7 +29,7 @@ export async function hasInternalToolAccess(userId, toolName = DRAFT_INBOX_TOOL_
   if (error) {
     throw new Error(
       error.message ||
-        "No pudimos comprobar el acceso interno con la configuracion actual.",
+        "No pudimos comprobar el acceso interno con la configuración actual.",
     );
   }
 

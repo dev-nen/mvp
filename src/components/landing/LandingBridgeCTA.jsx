@@ -8,8 +8,8 @@ export function LandingBridgeCTA({ onExploreActivities }) {
         <CardContent className="landing-bridge__content">
           <h2 className="landing-section__title">Empieza a explorar opciones</h2>
           <p className="landing-section__description">
-            Baja al catalogo para ver actividades activas, filtrar por ciudad o
-            categoria y quedarte con las que mejor encajan con tu familia.
+            Baja al catálogo para ver actividades activas, filtrar por ciudad o
+            categoría y quedarte con las que mejor encajan con tu familia.
           </p>
           <Button onClick={onExploreActivities}>Explorar actividades</Button>
         </CardContent>

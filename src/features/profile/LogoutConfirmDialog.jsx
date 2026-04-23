@@ -16,13 +16,13 @@ export function LogoutConfirmDialog({ open, onCancel, onConfirm }) {
         aria-modal="true"
         aria-labelledby="logout-confirm-title"
       >
-        <p className="logout-confirm-dialog__eyebrow">Cerrar sesion</p>
+        <p className="logout-confirm-dialog__eyebrow">Cerrar sesión</p>
         <h2 id="logout-confirm-title" className="logout-confirm-dialog__title">
-          Quieres salir ahora?
+          ¿Quieres salir ahora?
         </h2>
         <p className="logout-confirm-dialog__description">
-          Vas a volver a la Home publica. Despues podras conectar el logout real
-          de autenticacion sin cambiar este flujo.
+          Vas a volver a la Home pública. Después podrás conectar el logout real
+          de autenticación sin cambiar este flujo.
         </p>
 
         <div className="logout-confirm-dialog__actions">

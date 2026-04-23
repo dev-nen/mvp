@@ -11,7 +11,7 @@ function getBlockedRouteState(accessState, appUserError) {
   if (accessState === "loading_user") {
     return {
       description:
-        "Estamos comprobando la sesion y el perfil minimo antes de revisar el acceso interno.",
+        "Estamos comprobando la sesión y el perfil mínimo antes de revisar el acceso interno.",
       eyebrow: "Acceso interno",
       icon: LoaderCircle,
       title: "Preparando el acceso interno",
@@ -20,10 +20,10 @@ function getBlockedRouteState(accessState, appUserError) {
 
   if (accessState === "verification_pending") {
     return {
-      actionLabel: "Revisar verificacion",
+      actionLabel: "Revisar verificación",
       description:
         "Esta ruta interna necesita una cuenta verificada y un perfil de app listo antes de comprobar permisos internos.",
-      eyebrow: "Verificacion",
+      eyebrow: "Verificación",
       icon: MailCheck,
       title: "Falta verificar el email",
     };
@@ -33,7 +33,7 @@ function getBlockedRouteState(accessState, appUserError) {
     return {
       actionLabel: "Completar perfil",
       description:
-        "Primero necesitamos completar el perfil minimo de la cuenta antes de evaluar el acceso interno.",
+        "Primero necesitamos completar el perfil mínimo de la cuenta antes de evaluar el acceso interno.",
       eyebrow: "Onboarding",
       icon: MapPin,
       title: "Falta completar tu perfil",
@@ -128,7 +128,7 @@ export function InternalToolRoute({
               icon={ShieldCheck}
               eyebrow="Acceso interno"
               title="Esta cuenta no tiene acceso al Draft Inbox"
-              description="La sesion ya esta lista, pero no existe un permiso interno activo para esta herramienta. Pide que te autoricen en la base de datos antes de continuar."
+              description="La sesión ya está lista, pero no existe un permiso interno activo para esta herramienta. Pide que te autoricen en la base de datos antes de continuar."
             />
           </div>
         </main>

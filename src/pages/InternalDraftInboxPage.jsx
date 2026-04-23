@@ -1,23 +1,24 @@
 import { LoaderCircle, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { Footer } from "@/components/Footer";
 import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
-import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { listInternalDrafts } from "@/services/internalDraftsService";
 import "./InternalDraftInboxPage.css";
 
 function formatConfidenceScore(confidenceScore) {
   if (typeof confidenceScore !== "number" || Number.isNaN(confidenceScore)) {
-    return "Sin senal";
+    return "Sin señal";
   }
 
-  const normalizedScore = confidenceScore <= 1 ? confidenceScore * 100 : confidenceScore;
+  const normalizedScore =
+    confidenceScore <= 1 ? confidenceScore * 100 : confidenceScore;
   return `${Math.round(normalizedScore)}%`;
 }
 
@@ -109,11 +110,15 @@ export function InternalDraftInboxPage() {
           <div className="page-container internal-draft-inbox-page__container">
             <header className="internal-draft-inbox-page__header">
               <div className="internal-draft-inbox-page__copy">
-                <p className="internal-draft-inbox-page__eyebrow">Uso interno | Draft Inbox</p>
-                <h1 className="internal-draft-inbox-page__title">Draft Inbox</h1>
+                <p className="internal-draft-inbox-page__eyebrow">
+                  Uso interno | Draft Inbox
+                </p>
+                <h1 className="internal-draft-inbox-page__title">
+                  Draft Inbox
+                </h1>
                 <p className="internal-draft-inbox-page__description">
-                  Revisa drafts editoriales, corrige el payload publicable y decide
-                  si pasan o no a una actividad real del catalogo.
+                  Revisa drafts editoriales, corrige el payload publicable y
+                  decide si pasan o no a una actividad real del catálogo.
                 </p>
               </div>
 
@@ -129,7 +134,7 @@ export function InternalDraftInboxPage() {
                 icon={LoaderCircle}
                 eyebrow="Draft Inbox"
                 title="Cargando drafts internos"
-                description="Estamos recuperando los drafts disponibles para revision editorial."
+                description="Estamos recuperando los drafts disponibles para revisión editorial."
               />
             ) : error ? (
               <CatalogState
@@ -144,11 +149,14 @@ export function InternalDraftInboxPage() {
               <CatalogState
                 icon={SearchX}
                 eyebrow="Sin drafts"
-                title="No hay drafts visibles todavia"
+                title="No hay drafts visibles todavía"
                 description="Aplica el SQL de la fase y ejecuta la seed del Draft Inbox para empezar a validar el circuito editorial."
               />
             ) : (
-              <section className="internal-draft-inbox-page__list" aria-live="polite">
+              <section
+                className="internal-draft-inbox-page__list"
+                aria-live="polite"
+              >
                 {drafts.map((draft) => (
                   <Card
                     key={draft.id}
@@ -158,14 +166,18 @@ export function InternalDraftInboxPage() {
                       <div className="internal-draft-inbox-page__draft-topline">
                         <div className="internal-draft-inbox-page__draft-meta">
                           <span>Draft #{draft.id}</span>
-                          <span>{draft.sourceType || "desconocido"}</span>
+                          <span>{draft.sourceType || "Desconocido"}</span>
                           <span>{formatDateLabel(draft.createdAt)}</span>
                         </div>
                         <div className="internal-draft-inbox-page__draft-statuses">
-                          <ScoutDraftStatusBadge reviewStatus={draft.reviewStatus} />
+                          <ScoutDraftStatusBadge
+                            reviewStatus={draft.reviewStatus}
+                          />
                           {draft.approvedActivityId ? (
                             <ActivityPublicationBadge
-                              isPublished={draft.approvedActivityIsPublished === true}
+                              isPublished={
+                                draft.approvedActivityIsPublished === true
+                              }
                             />
                           ) : null}
                         </div>
@@ -180,7 +192,7 @@ export function InternalDraftInboxPage() {
                       <div className="internal-draft-inbox-page__draft-grid">
                         <div className="internal-draft-inbox-page__draft-field">
                           <span className="internal-draft-inbox-page__draft-field-label">
-                            Source label
+                            Etiqueta de origen
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
                             {draft.sourceLabel || "Sin etiqueta"}
@@ -189,7 +201,7 @@ export function InternalDraftInboxPage() {
 
                         <div className="internal-draft-inbox-page__draft-field">
                           <span className="internal-draft-inbox-page__draft-field-label">
-                            Confidence
+                            Confianza
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
                             {formatConfidenceScore(draft.confidenceScore)}

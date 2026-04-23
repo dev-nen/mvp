@@ -56,7 +56,7 @@ export function Navbar({ enableSearch = false }) {
               variant="ghost"
               size="icon"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              aria-label={isSearchOpen ? "Cerrar busqueda" : "Buscar"}
+              aria-label={isSearchOpen ? "Cerrar búsqueda" : "Buscar"}
             >
               {isSearchOpen ? <X /> : <Search />}
             </Button>
@@ -69,7 +69,7 @@ export function Navbar({ enableSearch = false }) {
               <Link
                 to="/perfil"
                 className="navbar__auth-chip"
-                aria-label={`Sesion activa${
+                aria-label={`Sesión activa${
                   user?.email ? ` para ${user.email}` : ""
                 }`}
               >

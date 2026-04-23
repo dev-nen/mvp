@@ -24,7 +24,7 @@ export function CatalogToolbar({
       <CardContent className="catalog-toolbar">
         <div className="catalog-toolbar__header">
           <div>
-            <h2 className="catalog-toolbar__title">Busqueda y filtros</h2>
+            <h2 className="catalog-toolbar__title">Búsqueda y filtros</h2>
           </div>
 
           {hasActiveFilters ? (
@@ -41,7 +41,7 @@ export function CatalogToolbar({
               <Search className="catalog-toolbar__search-icon" />
               <Input
                 type="search"
-                placeholder="Buscar por actividad, categoria, centro o ciudad"
+                placeholder="Buscar por actividad, categoría, centro o ciudad"
                 value={searchQuery}
                 onChange={(event) => onSearchQueryChange(event.target.value)}
                 className="catalog-toolbar__input"
@@ -70,7 +70,7 @@ export function CatalogToolbar({
         </div>
 
         <div className="catalog-toolbar__chip-group">
-          <span className="catalog-toolbar__control-label">Categorias</span>
+          <span className="catalog-toolbar__control-label">Categorías</span>
           <div className="catalog-toolbar__chips">
             {categoryLabelOptions.map((categoryLabel) => {
               const isSelected =

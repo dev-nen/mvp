@@ -54,8 +54,8 @@ export function FavoritesPage() {
             <div className="favorites-page__copy">
               <h1 className="favorites-page__title">Tus actividades guardadas</h1>
               <p className="favorites-page__description">
-                Revisa con mas calma las actividades que te interesan y abre su
-                ficha completa cuando quieras decidir con mas contexto.
+                Revisa con más calma las actividades que te interesan y abre su
+                ficha completa cuando quieras decidir con más contexto.
               </p>
             </div>
           </header>
@@ -81,8 +81,8 @@ export function FavoritesPage() {
           ) : hasNoSavedFavorites ? (
             <CatalogState
               icon={Heart}
-              title="Todavia no has guardado actividades"
-              description="Usa el corazon en el catalogo para recuperar aqui las opciones que quieras revisar mas tarde."
+              title="Todavía no has guardado actividades"
+              description="Usa el corazón en el catálogo para recuperar aquí las opciones que quieras revisar más tarde."
               actionLabel="Volver a Home"
               onAction={() => navigate("/")}
             />
@@ -90,7 +90,7 @@ export function FavoritesPage() {
             <CatalogState
               icon={SearchX}
               title="Tus favoritas ya no estan disponibles"
-              description="Las actividades que habias guardado ya no se pueden recuperar desde el catalogo actual. Vuelve a explorar para guardar nuevas opciones."
+              description="Las actividades que habías guardado ya no se pueden recuperar desde el catálogo actual. Vuelve a explorar para guardar nuevas opciones."
               actionLabel="Explorar actividades"
               onAction={() => navigate("/")}
             />

@@ -75,11 +75,11 @@ function getInitialDraftPayload(draft) {
 
 function validateDraftForApproval(formState) {
   if (!getTrimmedText(formState.title)) {
-    return "El titulo es obligatorio para aprobar.";
+    return "El título es obligatorio para aprobar.";
   }
 
   if (!getTrimmedText(formState.description)) {
-    return "La descripcion es obligatoria para aprobar.";
+    return "La descripción es obligatoria para aprobar.";
   }
 
   if (!getTrimmedText(formState.centerId)) {
@@ -87,7 +87,7 @@ function validateDraftForApproval(formState) {
   }
 
   if (!getTrimmedText(formState.categoryId)) {
-    return "La categoria es obligatoria para aprobar.";
+    return "La categoría es obligatoria para aprobar.";
   }
 
   if (!getTrimmedText(formState.typeId)) {
@@ -99,15 +99,15 @@ function validateDraftForApproval(formState) {
   }
 
   if (formState.ageRuleType === "range" && (!getTrimmedText(formState.ageMin) || !getTrimmedText(formState.ageMax))) {
-    return "La regla de edad rango necesita edad minima y maxima.";
+    return "La regla de edad rango necesita edad mínima y máxima.";
   }
 
   if (formState.ageRuleType === "from" && !getTrimmedText(formState.ageMin)) {
-    return "La regla de edad desde necesita edad minima.";
+    return "La regla de edad desde necesita edad mínima.";
   }
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
-    return "La regla de edad hasta necesita edad maxima.";
+    return "La regla de edad hasta necesita edad máxima.";
   }
 
   return "";
@@ -246,7 +246,7 @@ export function InternalDraftDetailPage() {
     const nextDraft = await getInternalDraftById(draftId);
 
     if (!nextDraft) {
-      throw new Error("No pudimos refrescar el draft despues de la operacion.");
+      throw new Error("No pudimos refrescar el draft después de la operación.");
     }
 
     let nextLinkedApprovedActivity = null;
@@ -411,7 +411,7 @@ export function InternalDraftDetailPage() {
                   {draft ? draft.displayTitle : "Detalle de draft"}
                 </h1>
                 <p className="internal-draft-detail-page__description">
-                  Corrige el payload publicable, guarda la revision y decide si el
+                  Corrige el payload publicable, guarda la revisión y decide si el
                   draft pasa a una actividad real o queda rechazado.
                 </p>
                 {draft ? (
@@ -452,7 +452,7 @@ export function InternalDraftDetailPage() {
                 icon={SearchX}
                 eyebrow="Sin draft"
                 title="No encontramos este draft"
-                description="El draft solicitado no existe o ya no esta visible para esta cuenta."
+                description="El draft solicitado no existe o ya no está visible para esta cuenta."
                 actionLabel="Volver al inbox"
                 onAction={() => navigate("/internal/drafts")}
               />
@@ -524,7 +524,7 @@ export function InternalDraftDetailPage() {
                               La actividad ya fue creada
                             </p>
                             <p className="internal-draft-detail-page__approved-description">
-                              Desde aqui solo mantienes contexto editorial. La edicion y el publish lifecycle viven ahora en la actividad aprobada.
+                              Desde aquí solo mantienes contexto editorial. La edición y el ciclo de publicación viven ahora en la actividad aprobada.
                             </p>
                           </div>
                           <Button
@@ -547,7 +547,7 @@ export function InternalDraftDetailPage() {
                       <div className="internal-draft-detail-page__metadata-grid">
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Source type
+                            Tipo de origen
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {draft.sourceType || "desconocido"}
@@ -555,7 +555,7 @@ export function InternalDraftDetailPage() {
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Source label
+                            Etiqueta de origen
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {draft.sourceLabel || "Sin etiqueta"}
@@ -563,7 +563,7 @@ export function InternalDraftDetailPage() {
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Reference URL
+                            URL de referencia
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {draft.sourceReferenceUrl || "Sin URL"}
@@ -571,7 +571,7 @@ export function InternalDraftDetailPage() {
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Source file
+                            Archivo de origen
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {draft.sourceFileName || "Sin archivo"}
@@ -580,7 +580,7 @@ export function InternalDraftDetailPage() {
                         {draft.reviewStatus === "approved" && draft.approvedActivityId ? (
                           <div className="internal-draft-detail-page__metadata-item">
                             <span className="internal-draft-detail-page__metadata-label">
-                              Estado publico
+                              Estado público
                             </span>
                             <span className="internal-draft-detail-page__metadata-value internal-draft-detail-page__metadata-value--badge">
                               {linkedApprovedActivity ? (
@@ -597,7 +597,7 @@ export function InternalDraftDetailPage() {
                         ) : null}
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Created at
+                            Creado
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {formatDateLabel(draft.createdAt)}
@@ -605,7 +605,7 @@ export function InternalDraftDetailPage() {
                         </div>
                         <div className="internal-draft-detail-page__metadata-item">
                           <span className="internal-draft-detail-page__metadata-label">
-                            Updated at
+                            Actualizado
                           </span>
                           <span className="internal-draft-detail-page__metadata-value">
                             {formatDateLabel(draft.updatedAt)}
@@ -617,9 +617,9 @@ export function InternalDraftDetailPage() {
 
                   <Card className="internal-draft-detail-page__panel">
                     <CardContent className="internal-draft-detail-page__panel-content">
-                      <h2 className="internal-draft-detail-page__panel-title">Texto extraido</h2>
+                      <h2 className="internal-draft-detail-page__panel-title">Texto extraído</h2>
                       <pre className="internal-draft-detail-page__text-block">
-                        {draft.rawExtractedText || "No hay texto extraido guardado para este draft."}
+                        {draft.rawExtractedText || "No hay texto extraído guardado para este draft."}
                       </pre>
                     </CardContent>
                   </Card>

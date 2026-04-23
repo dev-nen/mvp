@@ -8,15 +8,15 @@ export function formatActivityAgeLabel({
   }
 
   if (typeof age_min === "number" && typeof age_max === "number") {
-    return `${age_min}-${age_max} anos`;
+    return `${age_min}-${age_max} años`;
   }
 
   if (typeof age_min === "number") {
-    return `Desde ${age_min} anos`;
+    return `Desde ${age_min} años`;
   }
 
   if (typeof age_max === "number") {
-    return `Hasta ${age_max} anos`;
+    return `Hasta ${age_max} años`;
   }
 
   return "Consulta la edad";
@@ -27,7 +27,7 @@ export function formatActivityLocationLabel({ city_name, venue_name }) {
     return `${city_name} - ${venue_name}`;
   }
 
-  return city_name || venue_name || "Consulta la ubicacion";
+  return city_name || venue_name || "Consulta la ubicación";
 }
 
 export function getActivityDescription(activity) {
@@ -37,5 +37,5 @@ export function getActivityDescription(activity) {
     return longDescription;
   }
 
-  return activity?.short_description || "Consulta mas informacion por WhatsApp.";
+  return activity?.short_description || "Consulta más información por WhatsApp.";
 }

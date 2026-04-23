@@ -118,7 +118,7 @@ export function CatalogActivityCard({
             onClick={() => onToggleFavorite?.(activity)}
             disabled={!onToggleFavorite}
             aria-label={
-              isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
+              isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
             }
           >
             <Heart
@@ -199,7 +199,7 @@ export function CatalogActivityCard({
           }`}
           onClick={() => onToggleFavorite?.(activity)}
           aria-label={
-            isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
+            isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
           }
         >
           <Heart

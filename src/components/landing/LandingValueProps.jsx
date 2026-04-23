@@ -19,9 +19,9 @@ export function LandingValueProps({
     <section className="landing-section">
       <div className="landing-section__header">
         <p className="landing-section__eyebrow">TIPOS DE ACTIVIDADES</p>
-        <h2 className="landing-section__title">Que puedes encontrar</h2>
+        <h2 className="landing-section__title">Qué puedes encontrar</h2>
         <p className="landing-section__description">
-          Una forma mas clara de descubrir propuestas para el dia a dia y para
+          Una forma más clara de descubrir propuestas para el día a día y para
           momentos especiales.
         </p>
       </div>

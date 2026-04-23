@@ -7,13 +7,13 @@ const NAV_ITEMS = [
   {
     to: "/favoritos",
     title: "Favoritos",
-    description: "Consulta las actividades que guardaste para revisar despues.",
+    description: "Consulta las actividades que guardaste para revisar después.",
     icon: Heart,
   },
   {
     to: "/soporte",
     title: "Soporte",
-    description: "Encuentra ayuda basica mientras terminamos el centro de soporte.",
+    description: "Encuentra ayuda básica mientras terminamos el centro de soporte.",
     icon: LifeBuoy,
   },
 ];
@@ -25,7 +25,7 @@ export function ProfileSecondaryNav() {
         <div className="profile-secondary-nav__header">
           <h2 className="profile-secondary-nav__title">Accesos</h2>
           <p className="profile-secondary-nav__description">
-            Navega rapido a otras areas relacionadas con tu cuenta.
+            Navega rápido a otras áreas relacionadas con tu cuenta.
           </p>
         </div>
 

@@ -194,7 +194,7 @@ export function ActivityDetailModal({
                   onClick={handleToggleFavorite}
                   disabled={!onToggleFavorite}
                   aria-label={
-                    isFavorite ? "Quitar de favoritos" : "Anadir a favoritos"
+                    isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
                   }
                 >
                   <Heart

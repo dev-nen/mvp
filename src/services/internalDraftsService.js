@@ -146,7 +146,7 @@ export async function saveInternalDraftReview({
 
   if (error) {
     throw new Error(
-      error.message || "No pudimos guardar la revision del draft.",
+      error.message || "No pudimos guardar la revisión del draft.",
     );
   }
 
@@ -258,7 +258,7 @@ export async function listDraftCategories() {
 
   if (error) {
     throw new Error(
-      error.message || "No pudimos cargar las categorias disponibles.",
+      error.message || "No pudimos cargar las categorías disponibles.",
     );
   }
 

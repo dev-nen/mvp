@@ -10,7 +10,7 @@ function buildActivityGreeting(activity) {
   const activityTitle = getTrimmedText(activity?.title) || "esta actividad";
   const cityFragment = activity?.city_name ? ` en ${activity.city_name}` : "";
 
-  return `Hola, me interesa la actividad "${activityTitle}"${cityFragment}. Podrias darme mas informacion?`;
+  return `Hola, me interesa la actividad "${activityTitle}"${cityFragment}. ¿Podrías darme más información?`;
 }
 
 function buildWhatsappUrl(contactValue, activity) {

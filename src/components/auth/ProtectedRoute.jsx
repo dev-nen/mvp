@@ -16,7 +16,7 @@ function getBlockedRouteState(accessState, appUserError) {
   if (accessState === "loading_user") {
     return {
       description:
-        "Estamos comprobando el acceso social y los datos minimos de la cuenta para esta ruta.",
+        "Estamos comprobando el acceso social y los datos mínimos de la cuenta para esta ruta.",
       eyebrow: "Acceso",
       icon: LoaderCircle,
       title: "Preparando tu acceso",
@@ -25,10 +25,10 @@ function getBlockedRouteState(accessState, appUserError) {
 
   if (accessState === "verification_pending") {
     return {
-      actionLabel: "Revisar verificacion",
+      actionLabel: "Revisar verificación",
       description:
         "Esta ruta necesita una cuenta verificada antes de continuar con el onboarding de perfil.",
-      eyebrow: "Verificacion",
+      eyebrow: "Verificación",
       icon: MailCheck,
       title: "Falta verificar el email",
     };
@@ -38,7 +38,7 @@ function getBlockedRouteState(accessState, appUserError) {
     return {
       actionLabel: "Completar perfil",
       description:
-        "Tu cuenta ya existe, pero todavia falta completar el perfil minimo obligatorio.",
+        "Tu cuenta ya existe, pero todavía falta completar el perfil mínimo obligatorio.",
       eyebrow: "Onboarding",
       icon: MapPin,
       title: "Falta completar tu perfil",
@@ -50,7 +50,7 @@ function getBlockedRouteState(accessState, appUserError) {
       actionLabel: appUserError ? "Reintentar" : "Continuar acceso",
       description:
         appUserError ||
-        "No hemos podido dejar tu acceso listo con la configuracion actual.",
+        "No hemos podido dejar tu acceso listo con la configuración actual.",
       eyebrow: "Acceso",
       icon: AlertTriangle,
       title: "No pudimos cargar tu perfil",

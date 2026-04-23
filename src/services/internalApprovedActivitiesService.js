@@ -83,7 +83,7 @@ export async function listInternalApprovedActivityStates(draftIds) {
   if (error) {
     throw new Error(
       error.message ||
-        "No pudimos comprobar el estado publico de las actividades aprobadas.",
+        "No pudimos comprobar el estado público de las actividades aprobadas.",
     );
   }
 

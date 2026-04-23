@@ -13,7 +13,7 @@ export function ScoutDraftReviewForm({
     <div className="scout-draft-review-form">
       <div className="scout-draft-review-form__grid">
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-title">Titulo</label>
+          <label htmlFor="draft-title">Título</label>
           <Input
             id="draft-title"
             className="scout-draft-review-form__input"
@@ -24,7 +24,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-description">Descripcion</label>
+          <label htmlFor="draft-description">Descripción</label>
           <textarea
             id="draft-description"
             className="scout-draft-review-form__textarea"
@@ -53,7 +53,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-category-id">Categoria</label>
+          <label htmlFor="draft-category-id">Categoría</label>
           <select
             id="draft-category-id"
             className="scout-draft-review-form__select"
@@ -61,7 +61,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("categoryId", event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="">Selecciona una categoria</option>
+            <option value="">Selecciona una categoría</option>
             {categoryChoices.map((categoryChoice) => (
               <option key={categoryChoice.id} value={categoryChoice.id}>
                 {categoryChoice.name}
@@ -98,7 +98,7 @@ export function ScoutDraftReviewForm({
             disabled={isReadOnly}
           />
           <p className="scout-draft-review-form__hint">
-            Los valores vacios se normalizan al placeholder estandar al publicar o guardar.
+            Los valores vacíos se normalizan al placeholder estándar al publicar o guardar.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-age-min">Edad minima</label>
+          <label htmlFor="draft-age-min">Edad mínima</label>
           <Input
             id="draft-age-min"
             type="number"
@@ -131,7 +131,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-age-max">Edad maxima</label>
+          <label htmlFor="draft-age-max">Edad máxima</label>
           <Input
             id="draft-age-max"
             type="number"
@@ -190,7 +190,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-venue-postal-code">Codigo postal</label>
+          <label htmlFor="draft-venue-postal-code">Código postal</label>
           <Input
             id="draft-venue-postal-code"
             className="scout-draft-review-form__input"
@@ -201,7 +201,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-venue-address-1">Direccion</label>
+          <label htmlFor="draft-venue-address-1">Dirección</label>
           <Input
             id="draft-venue-address-1"
             className="scout-draft-review-form__input"

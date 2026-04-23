@@ -6,37 +6,37 @@ const FORM_URL =
 
 const NAV_LINKS = [
   { label: "Nuestra historia", href: "#historia" },
-  { label: "Que es", href: "#que-es" },
+  { label: "Qué es", href: "#que-es" },
   { label: "Beneficios", href: "#beneficios" },
   { label: "Participar", href: "#participar" },
   { label: "Vista previa", href: "#producto" },
 ];
 
 const HERO_POINTS = [
-  "Mas visibilidad local para actividades de calidad.",
-  "Una presentacion clara para que las familias entiendan rapido tu propuesta.",
+  "Más visibilidad local para actividades de calidad.",
+  "Una presentación clara para que las familias entiendan rápido tu propuesta.",
   "Un proceso simple para empezar a formar parte del proyecto.",
 ];
 
 const FEATURE_ITEMS = [
   "Tipo de actividad y edades recomendadas.",
-  "Ubicacion, horarios y zona de trabajo.",
-  "Descripcion breve y visual de la propuesta.",
-  "Imagenes y forma de contacto.",
+  "Ubicación, horarios y zona de trabajo.",
+  "Descripción breve y visual de la propuesta.",
+  "Imágenes y forma de contacto.",
 ];
 
 const ACTIVITY_EXAMPLE = {
   category: "Arte",
   title: "Taller de pintura creativa",
-  ages: "7 a 12 anos",
+  ages: "7 a 12 años",
   center: "Espai Creatiu Ribes",
   locality: "Sant Pere de Ribes",
-  cta: "Ver mas",
+  cta: "Ver más",
 };
 
 const ACTIVITY_PREVIEW = {
   description:
-    "Sesiones creativas para peques que quieren experimentar con color, composicion y materiales en un entorno guiado y cercano.",
+    "Sesiones creativas para peques que quieren experimentar con color, composición y materiales en un entorno guiado y cercano.",
   schedule: "Martes y jueves, 17:30 a 19:00",
   price: "Desde 42 EUR al mes",
   venue: "Espai Creatiu Ribes",
@@ -50,42 +50,42 @@ const ACTIVITY_PREVIEW = {
 
 const BENEFITS = [
   {
-    title: "Mas visibilidad",
+    title: "Más visibilidad",
     description:
       "Tu actividad aparece en un espacio centrado en planes y servicios para peques y familias.",
   },
   {
-    title: "Mas claridad",
+    title: "Más claridad",
     description:
-      "La propuesta se presenta de forma ordenada para que una familia entienda rapido si encaja.",
+      "La propuesta se presenta de forma ordenada para que una familia entienda rápido si encaja.",
   },
   {
-    title: "Mas oportunidades de contacto",
+    title: "Más oportunidades de contacto",
     description:
-      "Facilitamos que nuevos interesados descubran tu actividad y quieran saber mas.",
+      "Facilitamos que nuevos interesados descubran tu actividad y quieran saber más.",
   },
 ];
 
 const AUDIENCE_ITEMS = [
   "Academias y centros formativos.",
   "Actividades extraescolares y deportivas.",
-  "Talleres artisticos, creativos y culturales.",
+  "Talleres artísticos, creativos y culturales.",
   "Espacios familiares, casales y propuestas de temporada.",
   "Profesionales o entidades que trabajen con peques y familias.",
 ];
 
 const REQUIRED_INFO = [
-  "Quien eres o que entidad representas.",
-  "Que actividad o servicio ofreces.",
-  "En que zona trabajas.",
-  "Para que edades esta pensada tu propuesta.",
+  "Quién eres o qué entidad representas.",
+  "Qué actividad o servicio ofreces.",
+  "En qué zona trabajas.",
+  "Para qué edades está pensada tu propuesta.",
   "Una forma de contacto.",
 ];
 
 const FUTURE_SIGNALS = [
-  "Que tipos de actividades despiertan mas interes.",
-  "Que zonas concentran mas busquedas.",
-  "Que fichas generan mas clics o contactos.",
+  "Qué tipos de actividades despiertan más interés.",
+  "Qué zonas concentran más búsquedas.",
+  "Qué fichas generan más clics o contactos.",
 ];
 
 const STORY_INTRO_PARAGRAPHS = [
@@ -93,31 +93,31 @@ const STORY_INTRO_PARAGRAPHS = [
 ];
 
 const STORY_CHALLENGE_PARAGRAPHS = [
-  "Con el tiempo fuimos notando algo que seguramente le pasa a muchas familias: encontrar actividades interesantes no siempre es facil.",
-  "Muchas veces la informacion esta dispersa, incompleta o cuesta muchisimo llegar a propuestas distintas a las de siempre.",
+  "Con el tiempo fuimos notando algo que seguramente le pasa a muchas familias: encontrar actividades interesantes no siempre es fácil.",
+  "Muchas veces la información está dispersa, incompleta o cuesta muchísimo llegar a propuestas distintas a las de siempre.",
 ];
 
 const STORY_PROMPT_INTRO =
-  "Tambien nos paso que, casi sin querer, empezamos a convertirnos en una especie de referencia para otras familias.";
+  "También nos pasó que, casi sin querer, empezamos a convertirnos en una especie de referencia para otras familias.";
 
 const STORY_PROMPTS = [
-  '"Ustedes que siempre estan haciendo cosas... que nos recomendais?"',
-  '"Teneis alguna idea para este finde?"',
-  '"Donde encontrasteis esa actividad?"',
+  '"Ustedes que siempre están haciendo cosas... ¿qué nos recomendáis?"',
+  '"¿Tenéis alguna idea para este finde?"',
+  '"¿Dónde encontrasteis esa actividad?"',
 ];
 
 const STORY_ORIGIN_BRIDGE =
-  "Y asi, entre mensajes, recomendaciones y enlaces compartidos, vimos una necesidad muy clara: por que no crear un sitio donde todo esto pueda encontrarse de forma mas facil y ordenada?";
+  "Y así, entre mensajes, recomendaciones y enlaces compartidos, vimos una necesidad muy clara: ¿por qué no crear un sitio donde todo esto pueda encontrarse de forma más fácil y ordenada?";
 
 const STORY_CLOSING_PARAGRAPHS = [
-  "Por eso NensGo nace con una idea muy simple: ayudar a las familias a descubrir actividades cerca de ellas, dar visibilidad a pequenos proyectos, talleres, espacios y propuestas locales, y reunir en un solo lugar opciones para disfrutar con hijos y en familia.",
-  'Queremos facilitar la busqueda, inspirar nuevos planes y hacer que encontrar algo para hacer no dependa de tener "el contacto correcto" o de que justo alguien te pase la informacion.',
-  "Porque creemos que hay muchisimo por descubrir, y que compartirlo tambien es una forma de construir comunidad.",
+  "Por eso NensGo nace con una idea muy simple: ayudar a las familias a descubrir actividades cerca de ellas, dar visibilidad a pequeños proyectos, talleres, espacios y propuestas locales, y reunir en un solo lugar opciones para disfrutar con hijos y en familia.",
+  'Queremos facilitar la búsqueda, inspirar nuevos planes y hacer que encontrar algo para hacer no dependa de tener "el contacto correcto" o de que justo alguien te pase la información.',
+  "Porque creemos que hay muchísimo por descubrir, y que compartirlo también es una forma de construir comunidad.",
 ];
 
 const STORY_MISSION_POINTS = [
   "Ayudar a las familias a descubrir actividades cerca de ellas.",
-  "Dar visibilidad a pequenos proyectos, talleres, espacios y propuestas locales.",
+  "Dar visibilidad a pequeños proyectos, talleres, espacios y propuestas locales.",
   "Reunir en un solo lugar opciones para disfrutar con hijos y en familia.",
 ];
 
@@ -183,7 +183,7 @@ function ActivityPreviewModal({ open, onClose }) {
           <figure className="para-centros__modal-media">
             <img
               src="/para-centros/kidspainting.png"
-              alt="Tres ninos pintando en un caballete, vistos de espaldas."
+              alt="Tres niños pintando en un caballete, vistos de espaldas."
             />
           </figure>
 
@@ -223,7 +223,7 @@ function ActivityPreviewModal({ open, onClose }) {
               <div className="para-centros__modal-grid">
                 <PreviewInfoCard label="Centro" value={ACTIVITY_PREVIEW.venue} />
                 <PreviewInfoCard
-                  label="Direccion"
+                  label="Dirección"
                   value={ACTIVITY_PREVIEW.address}
                 />
                 <PreviewInfoCard label="Ciudad" value={ACTIVITY_PREVIEW.city} />
@@ -235,7 +235,7 @@ function ActivityPreviewModal({ open, onClose }) {
                 {ACTIVITY_PREVIEW.contactTitle}
               </h3>
               <p className="para-centros__modal-text">
-                Habla directamente con el centro para pedir mas informacion.
+                Habla directamente con el centro para pedir más información.
               </p>
               <a
                 className="para-centros__button para-centros__button--contact"
@@ -366,16 +366,16 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__hero">
             <div className="para-centros__hero-copy">
               <p className="para-centros__section-kicker">
-                Ofreces actividades para peques o familias?
+                ¿Ofreces actividades para peques o familias?
               </p>
               <h1 className="para-centros__hero-title">
                 Haz que tu propuesta llegue mejor a las familias.
               </h1>
               <p className="para-centros__hero-description">
                 NensGo es una plataforma de actividades infantiles y familiares
-                que quiere reunir en un solo lugar propuestas que hoy estan
+                que quiere reunir en un solo lugar propuestas que hoy están
                 dispersas entre redes, grupos y canales poco claros. Esta
-                pagina presenta la vision del proyecto, la plataforma que
+                página presenta la visión del proyecto, la plataforma que
                 estamos construyendo y la convocatoria abierta para talleres,
                 deporte, arte, cultura y espacios para peques que quieran
                 sumarse desde el principio.
@@ -402,7 +402,7 @@ export function ParaCentrosPage() {
                   <div className="para-centros__hero-panel-intro">
                     <strong>Un escaparate digital claro</strong>
                     <p>
-                      Tu propuesta se muestra de forma simple, visual y facil de
+                      Tu propuesta se muestra de forma simple, visual y fácil de
                       entender.
                     </p>
                   </div>
@@ -426,7 +426,7 @@ export function ParaCentrosPage() {
             <div className="para-centros__history-copy">
               <SectionHeading
                 kicker="Nuestra historia"
-                title="Asi nacio NensGo"
+                title="Así nació NensGo"
                 description="NensGo nace de una necesidad muy concreta: encontrar actividades bien explicadas, cercanas y distintas a las de siempre."
               />
 
@@ -475,7 +475,7 @@ export function ParaCentrosPage() {
                 Lo que queremos construir
               </p>
               <h3 className="para-centros__summary-title">
-                Un lugar mas claro para descubrir planes en familia
+                Un lugar más claro para descubrir planes en familia
               </h3>
 
               <ul className="para-centros__simple-list">
@@ -492,25 +492,25 @@ export function ParaCentrosPage() {
             <div className="para-centros__copy-stack">
               <SectionHeading
                 kicker="La idea base"
-                title="Una forma clara, moderna y practica de descubrir actividades"
-                description="Cada propuesta se presenta en una ficha visual y ordenada para que una familia entienda rapido si encaja con lo que esta buscando."
+                title="Una forma clara, moderna y práctica de descubrir actividades"
+                description="Cada propuesta se presenta en una ficha visual y ordenada para que una familia entienda rápido si encaja con lo que está buscando."
               />
 
               <div className="para-centros__copy-paragraphs">
                 <p>
                   NensGo quiere ser ese lugar donde descubrir planes resulte
                   sencillo: una experiencia pensada para ver en pocos segundos
-                  que es cada actividad, para que edades esta pensada y donde
+                  qué es cada actividad, para qué edades está pensada y dónde
                   encontrarla.
                 </p>
                 <p>
-                  La ficha que ves aqui resume esa idea: una propuesta bien
-                  presentada, con la informacion importante a la vista y una
+                  La ficha que ves aquí resume esa idea: una propuesta bien
+                  presentada, con la información importante a la vista y una
                   estructura que ayuda a decidir sin tener que rebuscar entre
                   mensajes, redes o enlaces sueltos.
                 </p>
                 <p>
-                  Buscamos una solucion moderna, organizativa y practica: un
+                  Buscamos una solución moderna, organizativa y práctica: un
                   espacio cuidado para las familias y, al mismo tiempo, una
                   forma clara de mostrar cada proyecto con orden, contexto y
                   utilidad real.
@@ -520,14 +520,14 @@ export function ParaCentrosPage() {
 
             <article className="para-centros__summary-card para-centros__summary-card--preview">
               <p className="para-centros__summary-eyebrow">
-                Asi se vera una actividad
+                Así se verá una actividad
               </p>
 
               <article className="para-centros__activity-example">
                 <figure className="para-centros__activity-media">
                   <img
                     src="/para-centros/kidspainting.png"
-                    alt="Tres ninos pintando en un caballete, vistos de espaldas."
+                    alt="Tres niños pintando en un caballete, vistos de espaldas."
                   />
                 </figure>
 
@@ -569,9 +569,9 @@ export function ParaCentrosPage() {
         >
           <div className="para-centros__container para-centros__stack">
             <SectionHeading
-              kicker="Que gana tu proyecto?"
-              title="Mas visibilidad, mas claridad y mas oportunidades de contacto"
-              description="NensGo esta pensado para que proyectos reales ganen presencia sin perder tiempo en una web compleja."
+              kicker="¿Qué gana tu proyecto?"
+              title="Más visibilidad, más claridad y más oportunidades de contacto"
+              description="NensGo está pensado para que proyectos reales ganen presencia sin perder tiempo en una web compleja."
             />
 
             <div className="para-centros__benefits-grid">
@@ -584,10 +584,10 @@ export function ParaCentrosPage() {
             </div>
 
             <article className="para-centros__future-strip">
-              <strong>Mas adelante</strong>
+              <strong>Más adelante</strong>
               <p>
-                Tambien queremos compartir senales utiles para ayudarte a
-                entender mejor el interes que genera tu actividad:
+                También queremos compartir señales útiles para ayudarte a
+                entender mejor el interés que genera tu actividad:
               </p>
               <ul className="para-centros__future-list">
                 {FUTURE_SIGNALS.map((item) => (
@@ -602,9 +602,9 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__content-grid">
             <article className="para-centros__summary-card">
               <SectionHeading
-                kicker="A quien va dirigido?"
+                kicker="¿A quién va dirigido?"
                 title="A centros, actividades y proyectos pensados para peques y familias"
-                description="Si tu propuesta aporta valor a familias y ninos, nos interesa conocerla."
+                description="Si tu propuesta aporta valor a familias y niños, nos interesa conocerla."
               />
 
               <ul className="para-centros__simple-list">
@@ -616,9 +616,9 @@ export function ParaCentrosPage() {
 
             <article className="para-centros__summary-card para-centros__summary-card--accent">
               <SectionHeading
-                kicker="Que necesitamos de ti?"
+                kicker="¿Qué necesitamos de ti?"
                 title="Solo unos pocos datos para valorar tu propuesta"
-                description="Solo pedimos una primera informacion basica para entender el proyecto y poder hablar contigo."
+                description="Solo pedimos una primera información básica para entender el proyecto y poder hablar contigo."
               />
 
               <ul className="para-centros__simple-list para-centros__simple-list--checks">
@@ -637,8 +637,8 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__product-layout">
             <div className="para-centros__trust-copy">
               <SectionHeading
-                kicker="Que tipo de espacio queremos crear?"
-                title="Un espacio util, cuidado y de valor real"
+                kicker="¿Qué tipo de espacio queremos crear?"
+                title="Un espacio útil, cuidado y de valor real"
                 description="NensGo no quiere ser un listado sin criterio. Queremos crear un espacio donde las familias encuentren propuestas confiables y donde quienes organizan actividades puedan mostrarse de forma clara."
               />
 
@@ -653,12 +653,12 @@ export function ParaCentrosPage() {
               <div className="para-centros__product-frame">
                 <img
                   src="/para-centros/muestra.png"
-                  alt="Vista previa de la aplicacion NensGo con buscador, filtros y tarjetas de actividades."
+                  alt="Vista previa de la aplicación NensGo con buscador, filtros y tarjetas de actividades."
                 />
               </div>
               <figcaption>
-                Vista real de la aplicacion que guiara a las familias a
-                descubrir actividades de forma mas clara.
+                Vista real de la aplicación que guiará a las familias a
+                descubrir actividades de forma más clara.
               </figcaption>
             </figure>
           </div>
@@ -669,13 +669,13 @@ export function ParaCentrosPage() {
             <article className="para-centros__cta-band">
               <div className="para-centros__cta-content">
                 <p className="para-centros__section-kicker para-centros__section-kicker--light">
-                  Quieres unirte al proyecto?
+                  ¿Quieres unirte al proyecto?
                 </p>
                 <h2 className="para-centros__cta-title">
                   Tu actividad puede formar parte de NensGo.
                 </h2>
                 <p className="para-centros__cta-text">
-                  Dejanos tus datos en el formulario y te contactaremos si asi
+                  Déjanos tus datos en el formulario y te contactaremos si así
                   lo deseas.
                 </p>
               </div>
@@ -705,8 +705,8 @@ export function ParaCentrosPage() {
             Copyright {currentYear} NensGo. Todos los derechos reservados.
           </p>
           <p className="para-centros__footer-note">
-            Los textos, disenos, imagenes y materiales publicados en esta web
-            pertenecen a NensGo o se usan con autorizacion.
+            Los textos, diseños, imágenes y materiales publicados en esta web
+            pertenecen a NensGo o se usan con autorización.
           </p>
         </div>
       </footer>

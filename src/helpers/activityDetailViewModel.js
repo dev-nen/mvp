@@ -76,7 +76,7 @@ function buildDetailLocationItems(activity) {
   if (address) {
     locationItems.push({
       key: "address",
-      label: "Direccion",
+      label: "Dirección",
       value: address,
       icon: MapPin,
     });

@@ -30,7 +30,7 @@ export function useCatalog() {
         setError(
           loadError instanceof Error
             ? loadError.message
-            : "No pudimos cargar el catalogo. Intenta de nuevo.",
+          : "No pudimos cargar el catálogo. Intenta de nuevo.",
         );
       } finally {
         if (isMounted) {

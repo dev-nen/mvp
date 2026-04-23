@@ -20,7 +20,7 @@ const PENDING_INTENT_STORAGE_KEY = "nensgo.pending_protected_intent";
 function getDefaultAuthError() {
   return (
     getSupabaseClientError() ||
-    "No pudimos conectar la autenticacion con la configuracion actual."
+    "No pudimos conectar la autenticación con la configuración actual."
   );
 }
 
@@ -291,7 +291,7 @@ export function AuthProvider({ children }) {
         applySession(null);
         setAuthError(
           error.message ||
-            "No pudimos recuperar la sesion actual de autenticacion.",
+          "No pudimos recuperar la sesión actual de autenticación.",
         );
       } else {
         applySession(data.session);
@@ -453,7 +453,7 @@ export function AuthProvider({ children }) {
 
       setAuthError(
         response.error.message ||
-          "No pudimos iniciar sesion con email y password.",
+          "No pudimos iniciar sesión con email y contraseña.",
       );
     }
 
@@ -483,14 +483,14 @@ export function AuthProvider({ children }) {
     if (response.error) {
       setAuthError(
         response.error.message ||
-          "No pudimos crear la cuenta con email y password.",
+          "No pudimos crear la cuenta con email y contraseña.",
       );
       return response;
     }
 
     setPendingVerificationEmail(email);
     setVerificationMessage(
-      "Te enviamos un email de verificacion. Confirma tu cuenta antes de continuar.",
+      "Te enviamos un email de verificación. Confirma tu cuenta antes de continuar.",
     );
 
     return response;
@@ -519,13 +519,13 @@ export function AuthProvider({ children }) {
     if (response.error) {
       setAuthError(
         response.error.message ||
-          "No pudimos reenviar el email de verificacion.",
+          "No pudimos reenviar el email de verificación.",
       );
       return response;
     }
 
     setVerificationMessage(
-      "Te reenviamos el email de verificacion. Revisa tu bandeja de entrada.",
+      "Te reenviamos el email de verificación. Revisa tu bandeja de entrada.",
     );
 
     return response;
@@ -547,7 +547,7 @@ export function AuthProvider({ children }) {
     if (response.error) {
       setAuthError(
         response.error.message ||
-          "No pudimos cerrar la sesion. Prueba de nuevo en unos segundos.",
+          "No pudimos cerrar la sesión. Prueba de nuevo en unos segundos.",
       );
       return response;
     }
@@ -589,7 +589,7 @@ export function AuthProvider({ children }) {
     }
 
     if (!data.user) {
-      const resolvedError = new Error("No hay una sesion autenticada activa.");
+      const resolvedError = new Error("No hay una sesión autenticada activa.");
       setAppUserError(resolvedError.message);
       return { data: null, error: resolvedError };
     }
@@ -639,7 +639,7 @@ export function AuthProvider({ children }) {
       const normalizedIntent = persistPendingIntent(intent);
 
       if (!normalizedIntent) {
-        return { error: new Error("La accion protegida no es valida.") };
+    return { error: new Error("La acción protegida no es válida.") };
       }
 
       if (accessState === "ready") {

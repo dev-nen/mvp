@@ -32,7 +32,7 @@ if (!supabaseConfigError) {
     });
   } catch (error) {
     supabaseRuntimeError =
-      "No pudimos inicializar el cliente de Supabase con la configuracion actual.";
+      "No pudimos inicializar el cliente de Supabase con la configuración actual.";
 
     if (import.meta.env.DEV) {
       console.warn("[supabase] Fallo al crear el cliente.", error);

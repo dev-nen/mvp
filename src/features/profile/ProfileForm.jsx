@@ -25,7 +25,7 @@ export function ProfileForm({
         <div className="profile-form__header">
           <h2 className="profile-form__title">Tus datos</h2>
           <p className="profile-form__description">
-            Edita la informacion basica de tu cuenta. El email se muestra solo
+            Edita la información básica de tu cuenta. El email se muestra solo
             como referencia.
           </p>
         </div>
@@ -81,7 +81,7 @@ export function ProfileForm({
               <div className="profile-form__readonly-block">
                 <p className="profile-form__readonly-value">{profile.email}</p>
                 <p className="profile-form__readonly-help">
-                  Este dato pertenece a tu cuenta y no se edita desde aqui.
+                  Este dato pertenece a tu cuenta y no se edita desde aquí.
                 </p>
               </div>
             </div>

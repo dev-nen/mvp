@@ -107,7 +107,7 @@ export function ProfilePage() {
             <div className="profile-page__intro">
               <h1 className="profile-page__title">Tu cuenta</h1>
               <p className="profile-page__description">
-                Revisa los datos basicos de tu cuenta y cierra sesion cuando lo
+                Revisa los datos básicos de tu cuenta y cierra sesión cuando lo
                 necesites.
               </p>
             </div>
@@ -122,7 +122,7 @@ export function ProfilePage() {
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
-                      Aqui puedes revisar los datos principales asociados a tu
+                      Aquí puedes revisar los datos principales asociados a tu
                       cuenta dentro de NensGo.
                     </p>
                   </div>
@@ -149,7 +149,7 @@ export function ProfilePage() {
                         <ShieldCheck />
                         Email verificado
                       </dt>
-                      <dd>{isEmailVerified ? "Si" : "No"}</dd>
+                      <dd>{isEmailVerified ? "Sí" : "No"}</dd>
                     </div>
 
                     <div className="profile-page__detail-item">
@@ -182,7 +182,7 @@ export function ProfilePage() {
                     <div className="profile-page__internal-tool">
                       <p className="profile-page__internal-tool-description">
                         Si formas parte del equipo, puedes abrir el Draft Inbox
-                        desde aqui.
+                        desde aquí.
                       </p>
                       <Button
                         type="button"
@@ -203,7 +203,7 @@ export function ProfilePage() {
                     disabled={isSigningOut}
                   >
                     <LogOut />
-                    {isSigningOut ? "Cerrando sesion..." : "Cerrar sesion"}
+                    {isSigningOut ? "Cerrando sesión..." : "Cerrar sesión"}
                   </Button>
                 </CardContent>
               </Card>
@@ -249,7 +249,7 @@ export function ProfilePage() {
                 </Button>
 
                 <p className="profile-page__hint">
-                  Volveras aqui despues de completar el acceso.
+                  Volverás aquí después de completar el acceso.
                 </p>
               </CardContent>
             </Card>

@@ -34,7 +34,7 @@ const HOME_QUICK_ACCESS_ITEMS = [
     id: "extraescolares",
     title: "Extraescolares",
     description:
-      "Opciones semanales para deporte, arte y apoyo escolar con un solo acceso rapido.",
+      "Opciones semanales para deporte, arte y apoyo escolar con un solo acceso rápido.",
     targetCategoryLabels: ["Apoyo escolar", "Arte", "Deportes"],
   },
   {
@@ -48,7 +48,7 @@ const HOME_QUICK_ACCESS_ITEMS = [
     id: "deportes-movimiento",
     title: "Deportes y movimiento",
     description:
-      "Escuelas y actividades para moverse, jugar y gastar energia.",
+      "Escuelas y actividades para moverse, jugar y gastar energía.",
     targetCategoryLabels: ["Deportes"],
   },
   {
@@ -212,10 +212,10 @@ export function HomePage() {
           >
             <div className="home-page__catalog-header">
               <div className="home-page__results-copy">
-                <h2 className="home-page__results-title">Catalogo de actividades</h2>
+                <h2 className="home-page__results-title">Catálogo de actividades</h2>
                 <p className="home-page__results-description">
-                  Usa los filtros para acotar por ciudad o categoria y encontrar
-                  una opcion que encaje con tu familia.
+                  Usa los filtros para acotar por ciudad o categoría y encontrar
+                  una opción que encaje con tu familia.
                 </p>
               </div>
             </div>
@@ -246,7 +246,7 @@ export function HomePage() {
             ) : error ? (
               <CatalogState
                 icon={AlertTriangle}
-                title="No pudimos cargar el catalogo"
+                title="No pudimos cargar el catálogo"
                 description={error}
                 actionLabel="Reintentar"
                 onAction={reload}
@@ -255,7 +255,7 @@ export function HomePage() {
               <CatalogState
                 icon={SearchX}
                 title="No encontramos actividades para estos filtros"
-                description="Prueba a limpiar la busqueda o ajustar la ciudad y las categorias."
+                description="Prueba a limpiar la búsqueda o ajustar la ciudad y las categorías."
                 actionLabel="Limpiar filtros"
                 onAction={handleClearFilters}
               />
