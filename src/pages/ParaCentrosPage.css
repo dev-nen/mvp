@@ -257,7 +257,6 @@
 .para-centros__summary-eyebrow,
 .para-centros__activity-category,
 .para-centros__modal-category,
-.para-centros__modal-eyebrow,
 .para-centros__preview-card-label {
   margin: 0;
   font-size: 0.78rem;
@@ -280,7 +279,7 @@
 .para-centros__benefit-card h3,
 .para-centros__activity-title,
 .para-centros__modal-title,
-.para-centros__modal-subheading,
+.para-centros__modal-contact-title,
 .para-centros__cta-title {
   margin: 0;
   color: var(--color-text);
@@ -465,8 +464,7 @@
 
 .para-centros__summary-eyebrow,
 .para-centros__activity-category,
-.para-centros__modal-category,
-.para-centros__modal-eyebrow {
+.para-centros__modal-category {
   color: var(--color-secondary);
 }
 
@@ -835,11 +833,6 @@
   gap: 0.5rem;
 }
 
-.para-centros__modal-subheading {
-  font-size: 1.05rem;
-  line-height: 1.15;
-}
-
 .para-centros__modal-text {
   margin: 0;
   line-height: 1.6;
@@ -876,6 +869,11 @@
 
 .para-centros__modal-contact {
   gap: 0.55rem;
+}
+
+.para-centros__modal-contact-title {
+  font-size: 1.05rem;
+  line-height: 1.15;
 }
 
 .para-centros__button--contact {

@@ -20,8 +20,7 @@ export function PlaceholderPage({ title, description }) {
               <div className="placeholder-page__icon-wrap" aria-hidden="true">
                 <Construction className="placeholder-page__icon" />
               </div>
-              <p className="placeholder-page__eyebrow">{title}</p>
-              <h1 className="placeholder-page__title">Pagina en construccion</h1>
+              <h1 className="placeholder-page__title">{title}</h1>
               <p className="placeholder-page__description">{description}</p>
               <Button onClick={() => navigate("/perfil")}>
                 Volver al perfil

@@ -199,17 +199,12 @@ function ActivityPreviewModal({ open, onClose }) {
             </h2>
 
             <section className="para-centros__modal-section">
-              <p className="para-centros__modal-eyebrow">Descripcion</p>
               <p className="para-centros__modal-text">
                 {ACTIVITY_PREVIEW.description}
               </p>
             </section>
 
             <section className="para-centros__modal-section">
-              <p className="para-centros__modal-eyebrow">Informacion clave</p>
-              <h3 className="para-centros__modal-subheading">
-                Evalua si encaja
-              </h3>
               <div className="para-centros__modal-grid">
                 <PreviewInfoCard label="Edad" value={ACTIVITY_EXAMPLE.ages} />
                 <PreviewInfoCard
@@ -225,10 +220,6 @@ function ActivityPreviewModal({ open, onClose }) {
             </section>
 
             <section className="para-centros__modal-section">
-              <p className="para-centros__modal-eyebrow">Ubicacion</p>
-              <h3 className="para-centros__modal-subheading">
-                Referencia practica
-              </h3>
               <div className="para-centros__modal-grid">
                 <PreviewInfoCard label="Centro" value={ACTIVITY_PREVIEW.venue} />
                 <PreviewInfoCard
@@ -240,12 +231,11 @@ function ActivityPreviewModal({ open, onClose }) {
             </section>
 
             <section className="para-centros__modal-contact">
-              <p className="para-centros__modal-eyebrow">Accion principal</p>
-              <h3 className="para-centros__modal-subheading">
+              <h3 className="para-centros__modal-contact-title">
                 {ACTIVITY_PREVIEW.contactTitle}
               </h3>
               <p className="para-centros__modal-text">
-                {ACTIVITY_PREVIEW.contactCopy}
+                Habla directamente con el centro para pedir mas informacion.
               </p>
               <a
                 className="para-centros__button para-centros__button--contact"

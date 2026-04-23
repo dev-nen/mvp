@@ -77,6 +77,15 @@ export function ActivityDetailModal({
   const hasSingleContactOption = contactOptions.length === 1;
   const hasMultipleContactOptions = contactOptions.length > 1;
   const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
+  const contactMessage = isContactOptionsLoading
+    ? "Cargando opciones de contacto."
+    : contactOptionsError
+      ? "No pudimos cargar el contacto ahora mismo."
+      : hasMultipleContactOptions
+        ? "Elige el canal que prefieras."
+        : hasSingleContactOption
+          ? null
+          : "No hay un canal de contacto publicado en este momento.";
 
   const handleSelectContactOption = (contactOption) => {
     onContactClick?.(activity, contactOption);
@@ -201,9 +210,6 @@ export function ActivityDetailModal({
 
             {viewModel.description ? (
               <section className="activity-detail-modal__section">
-                <p className="activity-detail-modal__section-eyebrow">
-                  Descripcion
-                </p>
                 <p className="activity-detail-modal__description">
                   {viewModel.description}
                 </p>
@@ -212,15 +218,6 @@ export function ActivityDetailModal({
 
             {viewModel.evaluationItems.length > 0 ? (
               <section className="activity-detail-modal__section">
-                <div className="activity-detail-modal__section-head">
-                  <p className="activity-detail-modal__section-eyebrow">
-                    Informacion clave
-                  </p>
-                  <h3 className="activity-detail-modal__section-title">
-                    Evalua si encaja
-                  </h3>
-                </div>
-
                 <dl className="activity-detail-modal__facts-grid">
                   {viewModel.evaluationItems.map(
                     ({ key, label, value, icon: Icon, tone }) => (
@@ -247,15 +244,6 @@ export function ActivityDetailModal({
 
             {viewModel.locationItems.length > 0 ? (
               <section className="activity-detail-modal__section">
-                <div className="activity-detail-modal__section-head">
-                  <p className="activity-detail-modal__section-eyebrow">
-                    Ubicacion
-                  </p>
-                  <h3 className="activity-detail-modal__section-title">
-                    Referencia practica
-                  </h3>
-                </div>
-
                 <dl className="activity-detail-modal__facts-grid activity-detail-modal__facts-grid--location">
                   {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
                     <div key={key} className="activity-detail-modal__fact">
@@ -275,24 +263,15 @@ export function ActivityDetailModal({
 
             <section className="activity-detail-modal__contact">
               <div className="activity-detail-modal__section-head">
-                <p className="activity-detail-modal__section-eyebrow">
-                  Accion principal
-                </p>
                 <h3 className="activity-detail-modal__section-title">
-                  Contactar
+                  Contacto
                 </h3>
               </div>
-              <p className="activity-detail-modal__contact-copy">
-                {isContactOptionsLoading
-                  ? "Estamos cargando las opciones de contacto publicadas para esta actividad."
-                  : contactOptionsError
-                    ? "No pudimos cargar las opciones de contacto ahora mismo."
-                    : hasMultipleContactOptions
-                      ? "Esta actividad tiene varios canales de contacto. Elige el que mejor te encaje."
-                      : hasSingleContactOption
-                        ? "Puedes usar el canal de contacto publicado para pedir mas informacion."
-                        : "Esta actividad no tiene una via de contacto publicada en este momento."}
-              </p>
+              {contactMessage ? (
+                <p className="activity-detail-modal__contact-copy">
+                  {contactMessage}
+                </p>
+              ) : null}
               {contactOptionsError ? (
                 <Button type="button" variant="outline" onClick={reloadContactOptions}>
                   Reintentar contactos

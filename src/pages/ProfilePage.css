@@ -34,15 +34,6 @@
   max-width: 42rem;
 }
 
-.profile-page__eyebrow {
-  margin-bottom: var(--space-2);
-  color: var(--color-secondary);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .profile-page__title {
   color: var(--color-text);
   font-size: clamp(2rem, 5vw, 3rem);
@@ -89,19 +80,13 @@
   align-items: flex-start;
 }
 
-.profile-page__loading-badge,
-.profile-page__status-pill {
+.profile-page__loading-row {
   display: inline-flex;
   align-items: center;
   gap: 0.625rem;
-  width: fit-content;
-  padding: 0.5rem 0.875rem;
-  border-radius: var(--radius-pill);
   color: var(--color-primary-strong);
   font-size: 0.875rem;
   font-weight: 700;
-  background: rgba(75, 143, 231, 0.12);
-  border: 1px solid rgba(75, 143, 231, 0.18);
 }
 
 .profile-page__loading-icon {
@@ -181,14 +166,6 @@
   border-radius: var(--radius-lg);
   border: 1px solid rgba(75, 143, 231, 0.2);
   background: rgba(75, 143, 231, 0.08);
-}
-
-.profile-page__internal-tool-label {
-  color: var(--color-secondary);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 
 .profile-page__internal-tool-description {

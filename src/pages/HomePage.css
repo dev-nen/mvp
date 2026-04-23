@@ -37,16 +37,6 @@
   gap: var(--space-2);
 }
 
-.landing-section__eyebrow,
-.catalog-toolbar__eyebrow,
-.home-page__catalog-eyebrow {
-  color: var(--color-secondary);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .landing-section__title,
 .home-page__results-title {
   color: var(--color-text);
@@ -269,18 +259,11 @@
 .home-page__catalog-header {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
   gap: var(--space-3);
 }
 
 .home-page__results-title {
   font-size: 1.75rem;
-  font-weight: 700;
-}
-
-.home-page__results-count {
-  color: var(--color-secondary);
-  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -298,7 +281,6 @@
 }
 
 .catalog-toolbar__title {
-  margin-top: var(--space-1);
   font-size: 1rem;
   font-weight: 700;
 }

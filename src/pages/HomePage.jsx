@@ -64,7 +64,7 @@ const HOME_CATALOG_PLACEHOLDER_COUNT = 2;
 export function HomePage() {
   const { activities, isLoading, error, reload } = useCatalog();
   const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
-  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
@@ -212,18 +212,12 @@ export function HomePage() {
           >
             <div className="home-page__catalog-header">
               <div className="home-page__results-copy">
-                <p className="home-page__catalog-eyebrow">TU BUSQUEDA EMPIEZA AQUI</p>
                 <h2 className="home-page__results-title">Catalogo de actividades</h2>
                 <p className="home-page__results-description">
                   Usa los filtros para acotar por ciudad o categoria y encontrar
                   una opcion que encaje con tu familia.
                 </p>
               </div>
-
-              <p className="home-page__results-count">
-                {visibleActivities.length} resultados | {favoriteIds.length}{" "}
-                favoritos
-              </p>
             </div>
 
             <CatalogToolbar
@@ -252,7 +246,6 @@ export function HomePage() {
             ) : error ? (
               <CatalogState
                 icon={AlertTriangle}
-                eyebrow="Error"
                 title="No pudimos cargar el catalogo"
                 description={error}
                 actionLabel="Reintentar"
@@ -261,7 +254,6 @@ export function HomePage() {
             ) : visibleActivities.length === 0 ? (
               <CatalogState
                 icon={SearchX}
-                eyebrow="Sin resultados"
                 title="No encontramos actividades para estos filtros"
                 description="Prueba a limpiar la busqueda o ajustar la ciudad y las categorias."
                 actionLabel="Limpiar filtros"

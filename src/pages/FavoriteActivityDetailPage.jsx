@@ -51,6 +51,15 @@ export function FavoriteActivityDetailPage() {
   const hasSingleContactOption = contactOptions.length === 1;
   const hasMultipleContactOptions = contactOptions.length > 1;
   const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
+  const contactMessage = isContactOptionsLoading
+    ? "Cargando opciones de contacto."
+    : contactOptionsError
+      ? "No pudimos cargar el contacto ahora mismo."
+      : hasMultipleContactOptions
+        ? "Elige el canal que prefieras."
+        : hasSingleContactOption
+          ? null
+          : "No hay un canal de contacto publicado en este momento.";
 
   const handleGoBack = () => {
     navigate("/favoritos");
@@ -109,7 +118,6 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={LoaderCircle}
-        eyebrow="Favoritos"
         title="Cargando la ficha"
         description="Estamos preparando la informacion completa de esta actividad."
       />
@@ -118,7 +126,6 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={AlertTriangle}
-        eyebrow="Error"
         title="No pudimos cargar esta actividad"
         description={error}
         actionLabel="Reintentar"
@@ -129,7 +136,6 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={SearchX}
-        eyebrow="No disponible"
         title="Esta actividad ya no esta disponible"
         description="La actividad sigue guardada, pero no hemos podido recuperarla desde el catalogo actual."
         actionLabel="Volver a favoritos"
@@ -140,7 +146,6 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={SearchX}
-        eyebrow="No encontrada"
         title="No encontramos esta actividad"
         description="La ficha que intentas abrir no existe en el catalogo actual. Vuelve a favoritos para seguir revisando tus actividades guardadas."
         actionLabel="Volver a favoritos"
@@ -151,7 +156,6 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={Heart}
-        eyebrow="Fuera de favoritos"
         title="Esta actividad ya no esta en tus favoritos"
         description="Vuelve a tu lista para seguir revisando las actividades que todavia tienes guardadas."
         actionLabel="Volver a favoritos"
@@ -217,9 +221,6 @@ export function FavoriteActivityDetailPage() {
 
           {viewModel.description ? (
             <section className="favorite-activity-detail__section">
-              <p className="favorite-activity-detail__section-eyebrow">
-                Descripcion
-              </p>
               <p className="favorite-activity-detail__description">
                 {viewModel.description}
               </p>
@@ -228,15 +229,6 @@ export function FavoriteActivityDetailPage() {
 
           {viewModel.evaluationItems.length > 0 ? (
             <section className="favorite-activity-detail__section">
-              <div className="favorite-activity-detail__section-head">
-                <p className="favorite-activity-detail__section-eyebrow">
-                  Informacion clave
-                </p>
-                <h2 className="favorite-activity-detail__section-title">
-                  Evalua si encaja
-                </h2>
-              </div>
-
               <dl className="favorite-activity-detail__facts-grid">
                 {viewModel.evaluationItems.map(
                   ({ key, label, value, icon: Icon, tone }) => (
@@ -263,15 +255,6 @@ export function FavoriteActivityDetailPage() {
 
           {viewModel.locationItems.length > 0 ? (
             <section className="favorite-activity-detail__section">
-              <div className="favorite-activity-detail__section-head">
-                <p className="favorite-activity-detail__section-eyebrow">
-                  Ubicacion
-                </p>
-                <h2 className="favorite-activity-detail__section-title">
-                  Referencia practica
-                </h2>
-              </div>
-
               <dl className="favorite-activity-detail__facts-grid favorite-activity-detail__facts-grid--location">
                 {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
                   <div key={key} className="favorite-activity-detail__fact">
@@ -291,24 +274,15 @@ export function FavoriteActivityDetailPage() {
 
           <section className="favorite-activity-detail__contact">
             <div className="favorite-activity-detail__section-head">
-              <p className="favorite-activity-detail__section-eyebrow">
-                Accion principal
-              </p>
               <h2 className="favorite-activity-detail__section-title">
-                Contactar
+                Contacto
               </h2>
             </div>
-            <p className="favorite-activity-detail__contact-copy">
-              {isContactOptionsLoading
-                ? "Estamos cargando las opciones de contacto publicadas para esta actividad."
-                : contactOptionsError
-                  ? "No pudimos cargar las opciones de contacto ahora mismo."
-                  : hasMultipleContactOptions
-                    ? "Esta actividad tiene varios canales de contacto. Elige el que mejor te encaje."
-                    : hasSingleContactOption
-                      ? "Puedes usar el canal de contacto publicado para pedir mas informacion."
-                      : "Esta actividad no tiene una via de contacto publicada en este momento."}
-            </p>
+            {contactMessage ? (
+              <p className="favorite-activity-detail__contact-copy">
+                {contactMessage}
+              </p>
+            ) : null}
             {contactOptionsError ? (
               <Button type="button" variant="outline" onClick={reloadContactOptions}>
                 Reintentar contactos

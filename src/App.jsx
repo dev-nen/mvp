@@ -9,7 +9,6 @@ import { FavoritesPage } from "@/pages/FavoritesPage";
 import { HomePage } from "@/pages/HomePage";
 import { ParaCentrosPage } from "@/pages/ParaCentrosPage";
 import { PlaceholderPage } from "@/pages/PlaceholderPage";
-import { PviPage } from "@/pages/PviPage";
 import { ProfilePage } from "@/pages/ProfilePage";
 
 const OPEN_FAVORITES_INTENT = { type: "open_favorites" };
@@ -21,7 +20,6 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/para-centros" element={<ParaCentrosPage />} />
-        <Route path="/pvi" element={<PviPage />} />
         <Route path="/internal/drafts" element={<InternalDraftInboxPage />} />
         <Route
           path="/internal/drafts/:draftId"

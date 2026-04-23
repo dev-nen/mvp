@@ -24,7 +24,6 @@ export function CatalogToolbar({
       <CardContent className="catalog-toolbar">
         <div className="catalog-toolbar__header">
           <div>
-            <p className="catalog-toolbar__eyebrow">Exploracion</p>
             <h2 className="catalog-toolbar__title">Busqueda y filtros</h2>
           </div>
 

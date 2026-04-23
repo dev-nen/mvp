@@ -31,16 +31,15 @@ function ProfileLoadingState() {
   return (
     <Card className="profile-page__card profile-page__card--loading">
       <CardContent className="profile-page__card-content profile-page__card-content--loading">
-        <div className="profile-page__loading-badge">
+        <div className="profile-page__loading-row">
           <LoaderCircle className="profile-page__loading-icon" />
-          <span>Comprobando tu sesion</span>
+          <span>Preparando tu cuenta</span>
         </div>
         <h2 className="profile-page__section-title">
-          Estamos recuperando el estado de autenticacion.
+          Ya casi puedes revisar tu cuenta.
         </h2>
         <p className="profile-page__section-description">
-          Espera un instante. No mostraremos estados anonimos o autenticados
-          hasta resolver la sesion actual.
+          Estamos cargando tus datos para mostrarte tu perfil en un momento.
         </p>
       </CardContent>
     </Card>
@@ -64,7 +63,6 @@ export function ProfilePage() {
   } = useAuth();
   const {
     hasAccess: hasDraftInboxAccess,
-    isLoading: isLoadingDraftInboxAccess,
   } = useInternalToolAccess();
 
   const handleGoBack = () => {
@@ -107,7 +105,6 @@ export function ProfilePage() {
             </Button>
 
             <div className="profile-page__intro">
-              <p className="profile-page__eyebrow">Perfil</p>
               <h1 className="profile-page__title">Tu cuenta</h1>
               <p className="profile-page__description">
                 Revisa los datos basicos de tu cuenta y cierra sesion cuando lo
@@ -122,11 +119,6 @@ export function ProfilePage() {
             <div className="profile-page__grid profile-page__grid--single">
               <Card className="profile-page__card profile-page__card--highlight">
                 <CardContent className="profile-page__card-content">
-                  <div className="profile-page__status-pill">
-                    <BadgeCheck />
-                    <span>Cuenta autenticada</span>
-                  </div>
-
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
@@ -188,11 +180,9 @@ export function ProfilePage() {
 
                   {hasDraftInboxAccess ? (
                     <div className="profile-page__internal-tool">
-                      <p className="profile-page__internal-tool-label">
-                        Herramienta interna
-                      </p>
                       <p className="profile-page__internal-tool-description">
-                        Esta cuenta tiene acceso al Draft Inbox del equipo de NensGo.
+                        Si formas parte del equipo, puedes abrir el Draft Inbox
+                        desde aqui.
                       </p>
                       <Button
                         type="button"
@@ -203,12 +193,6 @@ export function ProfilePage() {
                         Abrir Draft Inbox
                       </Button>
                     </div>
-                  ) : null}
-
-                  {isLoadingDraftInboxAccess ? (
-                    <p className="profile-page__hint">
-                      Comprobando acceso interno disponible para esta cuenta.
-                    </p>
                   ) : null}
 
                   <Button
@@ -227,13 +211,12 @@ export function ProfilePage() {
           ) : (
             <Card className="profile-page__card profile-page__card--anonymous">
               <CardContent className="profile-page__card-content">
-                <p className="profile-page__eyebrow">Cuenta</p>
                 <h2 className="profile-page__section-title">
-                  Todavia estas en modo anonimo
+                  Accede para ver tu cuenta
                 </h2>
                 <p className="profile-page__section-description">
-                  Accede con Google o con email y password para que NensGo
-                  reconozca una identidad real y mantenga la sesion entre recargas.
+                  Entra con Google o con tu email para revisar tus datos y
+                  recuperar tus actividades guardadas.
                 </p>
 
                 {authError ? (
@@ -266,7 +249,7 @@ export function ProfilePage() {
                 </Button>
 
                 <p className="profile-page__hint">
-                  Volveras a esta misma ruta despues de completar el login.
+                  Volveras aqui despues de completar el acceso.
                 </p>
               </CardContent>
             </Card>

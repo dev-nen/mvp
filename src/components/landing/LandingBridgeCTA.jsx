@@ -6,7 +6,6 @@ export function LandingBridgeCTA({ onExploreActivities }) {
     <section className="landing-section landing-bridge">
       <Card>
         <CardContent className="landing-bridge__content">
-          <p className="landing-section__eyebrow">CATALOGO ACTIVO</p>
           <h2 className="landing-section__title">Empieza a explorar opciones</h2>
           <p className="landing-section__description">
             Baja al catalogo para ver actividades activas, filtrar por ciudad o

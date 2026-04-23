@@ -52,19 +52,12 @@ export function FavoritesPage() {
         <div className="page-container favorites-page__container">
           <header className="favorites-page__header">
             <div className="favorites-page__copy">
-              <p className="favorites-page__eyebrow">Favoritos</p>
               <h1 className="favorites-page__title">Tus actividades guardadas</h1>
               <p className="favorites-page__description">
                 Revisa con mas calma las actividades que te interesan y abre su
                 ficha completa cuando quieras decidir con mas contexto.
               </p>
             </div>
-
-            {!isPageLoading && !resolvedError && !hasNoSavedFavorites && !hasUnresolvableFavorites ? (
-              <p className="favorites-page__count">
-                {favoriteActivities.length} guardadas
-              </p>
-            ) : null}
           </header>
 
           {isPageLoading ? (
@@ -80,7 +73,6 @@ export function FavoritesPage() {
           ) : resolvedError ? (
             <CatalogState
               icon={AlertTriangle}
-              eyebrow="Error"
               title="No pudimos cargar tus favoritas"
               description={resolvedError}
               actionLabel="Reintentar"
@@ -89,7 +81,6 @@ export function FavoritesPage() {
           ) : hasNoSavedFavorites ? (
             <CatalogState
               icon={Heart}
-              eyebrow="Sin favoritas"
               title="Todavia no has guardado actividades"
               description="Usa el corazon en el catalogo para recuperar aqui las opciones que quieras revisar mas tarde."
               actionLabel="Volver a Home"
@@ -98,7 +89,6 @@ export function FavoritesPage() {
           ) : hasUnresolvableFavorites ? (
             <CatalogState
               icon={SearchX}
-              eyebrow="Sin resultados"
               title="Tus favoritas ya no estan disponibles"
               description="Las actividades que habias guardado ya no se pueden recuperar desde el catalogo actual. Vuelve a explorar para guardar nuevas opciones."
               actionLabel="Explorar actividades"
