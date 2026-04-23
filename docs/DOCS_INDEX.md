@@ -61,8 +61,9 @@ Within the master docs, roadmap reading now has two levels:
 | [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md) | Detail mapping to the current runtime shape. |
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
+| [public-surface-hardening-sdd.md](./public-surface-hardening-sdd.md) | SDD for removing debug-like public copy, retiring the public `/pvi` placeholder, and hardening user-facing surfaces in `main`. |
 | [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
-| [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Current PVI blocker, deferred local-fallback decision, and reopen conditions. |
+| [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Historical note for the PVI line before the public placeholder route was retired, plus reopen conditions for internal reporting. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
 | [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md) | SDD for moving from local fallback truth to real Supabase-backed catalog/user flows and expanding auth to Google plus classic sign-up. |
 | [real-db-auth-migration-open-decisions.md](./real-db-auth-migration-open-decisions.md) | Review sheet of unresolved product and technical decisions for the real DB and auth migration. |
@@ -87,6 +88,7 @@ Within the master docs, roadmap reading now has two levels:
 - Public catalog and card work:
   - [PROJECT_STATE.md](./PROJECT_STATE.md)
   - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+  - [public-surface-hardening-sdd.md](./public-surface-hardening-sdd.md)
   - [card-public-v2-data-mapping.md](./card-public-v2-data-mapping.md)
   - [card-public-v2-fallback-rules.md](./card-public-v2-fallback-rules.md)
   - [catalog-fallback-public-contract-audit.md](./catalog-fallback-public-contract-audit.md)
@@ -94,6 +96,7 @@ Within the master docs, roadmap reading now has two levels:
   - [PROJECT_STATE.md](./PROJECT_STATE.md)
   - [ARCHITECTURE.md](./ARCHITECTURE.md)
   - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+  - [public-surface-hardening-sdd.md](./public-surface-hardening-sdd.md)
   - [detail-view-mvp2-structure.md](./detail-view-mvp2-structure.md)
   - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
   - [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md)
