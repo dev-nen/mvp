@@ -62,6 +62,7 @@ Within the master docs, roadmap reading now has two levels:
 | [detail-view-mvp2-fallback-rules.md](./detail-view-mvp2-fallback-rules.md) | Detail visibility and fallback rules. |
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
 | [public-surface-hardening-sdd.md](./public-surface-hardening-sdd.md) | SDD for removing debug-like public copy, retiring the public `/pvi` placeholder, and hardening user-facing surfaces in `main`. |
+| [runtime-real-closure-sdd.md](./runtime-real-closure-sdd.md) | Master SDD for closing the real runtime in `main` with stop/go gates, human/Codex checkpoints, and a real preview smoke checklist. |
 | [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Historical note for the PVI line before the public placeholder route was retired, plus reopen conditions for internal reporting. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
@@ -120,6 +121,7 @@ Within the master docs, roadmap reading now has two levels:
   - [ARCHITECTURE.md](./ARCHITECTURE.md)
   - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
   - [TECH_DEBT.md](./TECH_DEBT.md)
+  - [runtime-real-closure-sdd.md](./runtime-real-closure-sdd.md)
   - [auth-base-mvp2.md](./auth-base-mvp2.md)
   - [catalog-fallback-public-contract-audit.md](./catalog-fallback-public-contract-audit.md)
   - [detail-view-mvp2-data-mapping.md](./detail-view-mvp2-data-mapping.md)
@@ -136,6 +138,7 @@ Within the master docs, roadmap reading now has two levels:
   - [FEATURE_STATUS.md](./FEATURE_STATUS.md)
   - [TECH_DEBT.md](./TECH_DEBT.md)
   - [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
+  - [runtime-real-closure-sdd.md](./runtime-real-closure-sdd.md)
   - [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md)
   - [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md)
   - [scout-draft-inbox-product-plan.md](./scout-draft-inbox-product-plan.md)
