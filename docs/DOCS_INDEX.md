@@ -12,26 +12,34 @@ note explicitly marks a document as historical. Feature-level docs can preserve
 older branch-era or story-specific context, but they do not override the
 current repository state of `main`.
 
+Within the master docs, roadmap reading now has two levels:
+
+- `ROADMAP_MASTER.md` is the canonical project roadmap.
+- `ROADMAP_IMPLEMENTATION.md` is the narrower implementation-oriented roadmap
+  derived from the master roadmap.
+
 ## Recommended Reading Order
 
 1. [PROJECT_STATE.md](./PROJECT_STATE.md)
-2. [ARCHITECTURE.md](./ARCHITECTURE.md)
-3. [FEATURE_STATUS.md](./FEATURE_STATUS.md)
-4. [TECH_DEBT.md](./TECH_DEBT.md)
-5. [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
-6. [DECISIONS_LOG.md](./DECISIONS_LOG.md)
-7. [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
-8. [../PLANS.md](../PLANS.md)
-9. [../AGENTS.md](../AGENTS.md)
-10. [../tests/README.md](../tests/README.md)
+2. [ROADMAP_MASTER.md](./ROADMAP_MASTER.md)
+3. [ARCHITECTURE.md](./ARCHITECTURE.md)
+4. [FEATURE_STATUS.md](./FEATURE_STATUS.md)
+5. [TECH_DEBT.md](./TECH_DEBT.md)
+6. [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
+7. [DECISIONS_LOG.md](./DECISIONS_LOG.md)
+8. [SDD_WORKFLOW.md](./SDD_WORKFLOW.md)
+9. [../PLANS.md](../PLANS.md)
+10. [../AGENTS.md](../AGENTS.md)
+11. [../tests/README.md](../tests/README.md)
 
 ## Master Docs
 
 | Document | What it is for |
 | --- | --- |
 | [PROJECT_STATE.md](./PROJECT_STATE.md) | Current product and implementation snapshot. |
+| [ROADMAP_MASTER.md](./ROADMAP_MASTER.md) | Canonical roadmap for product direction, internal capabilities, absorbed transitions, effort estimates, and SDD readiness. |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | Current frontend architecture, data flow, auth flow, and Supabase role. |
-| [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md) | Internal implementation roadmap split by merged, partial, next, later, and deferred work. |
+| [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md) | Narrower implementation-oriented roadmap derived from the roadmap master for the work already integrated in `main`. |
 | [DECISIONS_LOG.md](./DECISIONS_LOG.md) | Short record of decisions that should not be rediscovered from chat history. |
 | [TECH_DEBT.md](./TECH_DEBT.md) | Real debt, gaps, and known risks worth keeping visible. |
 | [FEATURE_STATUS.md](./FEATURE_STATUS.md) | Feature-by-feature status using honest labels. |
@@ -70,6 +78,11 @@ current repository state of `main`.
 | [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md) | Manual smoke checklist for validating the real DB and auth migration in the `main` preview environment. |
 
 ## Suggested Reading By Topic
+
+- Roadmap and phase direction:
+  - [ROADMAP_MASTER.md](./ROADMAP_MASTER.md)
+  - [ROADMAP_IMPLEMENTATION.md](./ROADMAP_IMPLEMENTATION.md)
+  - [DECISIONS_LOG.md](./DECISIONS_LOG.md)
 
 - Public catalog and card work:
   - [PROJECT_STATE.md](./PROJECT_STATE.md)

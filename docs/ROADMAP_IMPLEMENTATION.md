@@ -1,12 +1,28 @@
 # Roadmap Implementation
 
+## Role In The Documentation Stack
+
+Start with [ROADMAP_MASTER.md](./ROADMAP_MASTER.md) when the question is:
+
+- where the project actually is
+- how product roadmap and internal capabilities fit together
+- what belongs to absorbed history versus active direction
+- which blocks are ready or not ready for a future SDD
+
+This document is narrower.
+
+It exists to track the implementation-oriented sequencing that follows from the
+master roadmap for the work already integrated into or immediately adjacent to
+`main`.
+
 ## Baseline
 
-This roadmap is an internal implementation roadmap, not a product pitch. It is
-grounded in the current checked-out state of `main` after consolidating
-`feat/real-db-auth-migration` and `feat/internal-draft-inbox`. It separates
-what is already implemented in `main` from what is still pending external
-readiness or later product work.
+This document is an internal implementation roadmap derived from
+[ROADMAP_MASTER.md](./ROADMAP_MASTER.md), not the full project roadmap and not
+a product pitch. It is grounded in the current checked-out state of `main`
+after consolidating `feat/real-db-auth-migration` and
+`feat/internal-draft-inbox`. It separates what is already implemented in
+`main` from what is still pending external readiness or later product work.
 
 ## Already Implemented In `main`
 
@@ -32,6 +48,10 @@ readiness or later product work.
 
 These are current `main` capabilities. They should not be rediscovered as if
 the repo were still on mock-backed runtime behavior.
+
+For the broader reading of absorbed transitions, internal workstreams,
+effort sizing, and SDD readiness, use
+[ROADMAP_MASTER.md](./ROADMAP_MASTER.md).
 
 ## Partial Or Still Gated By External Readiness
 
