@@ -10,3 +10,6 @@ dist/
 .env*.local
 .DS_Store
 .vercel
+
+# Generated local runtime-closure snapshot
+tests/evidence/runtime-closure-latest.md

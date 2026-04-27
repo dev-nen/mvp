@@ -38,6 +38,25 @@ For a one-screen reminder of the next action:
 npm.cmd run tomorrow
 ```
 
+To generate a current automated evidence snapshot:
+
+```powershell
+npm.cmd run report:runtime
+```
+
+This runs the local static/contract/build checks plus the safe read-only preview
+check, then writes:
+
+```txt
+tests/evidence/runtime-closure-latest.md
+```
+
+That `latest` file is generated local evidence and is intentionally ignored by
+git to avoid status churn.
+
+Use that report when you want Codex to continue from evidence instead of chat
+memory.
+
 ## Optional Preview Readiness Check
 
 Run this when you want a safe, read-only preview check:

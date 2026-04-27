@@ -2,31 +2,31 @@ const summary = String.raw`
 NensGo runtime closure - next tiny step
 
 1. Run:
-   npm.cmd run check
+   npm.cmd run report:runtime
 
-2. If it passes, open Supabase project:
-   xgvsinjbvsohnreifxcj
+2. Read the generated report:
+   tests/evidence/runtime-closure-latest.md
 
-3. Gate 1A only:
-   Apply the full file:
-   supabase/sql/2026-04-21_real_db_auth_phase.sql
+3. If report:runtime passes, Gate 1 stays closed.
 
-4. Print validation queries:
-   npm.cmd run gate1:queries
+4. Next human checkpoint is Gate 2:
+   - Supabase Auth providers
+   - redirect URLs
+   - email verification
+   - Vercel env vars/secrets
+   - preview redeploy
 
-5. Copy only the Gate 1A queries into Supabase SQL Editor.
+5. If you do not have energy for external config, stop here.
 
-6. Send Codex:
-   - whether the SQL apply succeeded
-   - the Gate 1A query results
-   - any exact error text
+6. Optional PVI authorized-path check:
+   set INTERNAL_PVI_API_TOKEN locally and rerun:
+   npm.cmd run report:runtime
 
-7. Optional read-only check after apply:
-   npm.cmd run check:preview
+7. Send Codex only the report summary or any FAIL output.
 
 Interpretation:
 - If check:preview says Vercel Authentication protects the preview, that is OK.
-- If get_internal_pvi_report is still exposed to anon after Gate 1A, stop and send Codex the output.
+- If get_internal_pvi_report is exposed to anon, stop and send Codex the output.
 - Do not seed drafts yet.
 - Do not run full smoke yet.
 - Do not start Scout or Assisted Publishing work.
