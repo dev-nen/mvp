@@ -47,6 +47,21 @@ At the current maturity level of this repo, testing is a mix of:
 - targeted build validation
 - real-environment validation against Supabase and Vercel
 
+The fastest automated snapshot for the runtime closure effort is:
+
+```powershell
+npm.cmd run report:runtime
+```
+
+It writes the latest generated evidence to:
+
+```txt
+tests/evidence/runtime-closure-latest.md
+```
+
+That `latest` file is ignored by git. Commit only dated evidence notes when a
+validation result needs to become permanent project history.
+
 That is still valid engineering work. It just needs to be documented so the
 same checks can be repeated without relying on memory.
 

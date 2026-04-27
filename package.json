@@ -11,6 +11,7 @@
     "check:static": "node scripts/runtime-static-audit.mjs",
     "check:contracts": "node scripts/runtime-contract-audit.mjs",
     "check:preview": "node scripts/runtime-preview-check.mjs",
+    "report:runtime": "node scripts/runtime-closure-report.mjs",
     "gate1:queries": "node scripts/print-gate1-queries.mjs",
     "tomorrow": "node scripts/tomorrow-runtime-closure.mjs"
   },
