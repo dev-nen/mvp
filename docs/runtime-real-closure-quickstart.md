@@ -27,9 +27,16 @@ npm.cmd run check
 Expected:
 
 - static audit passes
+- contract audit passes
 - Vite build passes
 
 This does not touch Supabase or Vercel.
+
+For a one-screen reminder of the next action:
+
+```powershell
+npm.cmd run tomorrow
+```
 
 ## Optional Preview Readiness Check
 

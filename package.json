@@ -7,10 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "npm run check:static && npm run build",
+    "check": "npm run check:static && npm run check:contracts && npm run build",
     "check:static": "node scripts/runtime-static-audit.mjs",
+    "check:contracts": "node scripts/runtime-contract-audit.mjs",
     "check:preview": "node scripts/runtime-preview-check.mjs",
-    "gate1:queries": "node scripts/print-gate1-queries.mjs"
+    "gate1:queries": "node scripts/print-gate1-queries.mjs",
+    "tomorrow": "node scripts/tomorrow-runtime-closure.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.1",
