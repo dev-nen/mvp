@@ -383,4 +383,7 @@ select jsonb_build_object(
 );
 $$;
 
+revoke all on function public.get_internal_pvi_report() from public, anon, authenticated;
+grant execute on function public.get_internal_pvi_report() to service_role;
+
 commit;
