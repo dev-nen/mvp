@@ -617,28 +617,50 @@ Deltas importantes frente a artefactos anteriores:
 
 ## Queries Minimas De Verificacion Para Gate 1
 
+Gate 1 es estructural. No se deben seedear drafts ni validar smoke de UI aqui.
+
 Usar estas consultas como base de comprobacion tras aplicar SQL:
 
 ```sql
+-- Gate 1A - Base runtime SQL verification
 select * from public.catalog_activities_read limit 5;
 
 select proname
 from pg_proc
 where proname in (
   'ensure_my_profile',
+  'get_internal_pvi_report'
+)
+order by proname;
+
+select public.get_internal_pvi_report();
+
+-- Gate 1B - Draft Inbox SQL verification
+select table_name
+from information_schema.tables
+where table_schema = 'public'
+  and table_name in ('activity_drafts', 'internal_tool_access')
+order by table_name;
+
+select proname
+from pg_proc
+where proname in (
   'approve_activity_draft',
+  'seed_activity_draft_examples'
+)
+order by proname;
+
+-- Gate 1C - Approved lifecycle SQL verification
+select proname
+from pg_proc
+where proname in (
   'list_internal_approved_activity_states',
   'get_internal_approved_activity',
   'update_approved_activity_from_draft',
   'unpublish_approved_activity',
-  'republish_approved_activity',
-  'get_internal_pvi_report'
-);
-
-select count(*) from public.activity_drafts;
-select count(*) from public.internal_tool_access;
-
-select * from public.get_internal_pvi_report();
+  'republish_approved_activity'
+)
+order by proname;
 ```
 
 Consultas de sanity opcionales para datos minimos:
