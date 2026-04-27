@@ -13,6 +13,9 @@
     "check:preview": "node scripts/runtime-preview-check.mjs",
     "report:runtime": "node scripts/runtime-closure-report.mjs",
     "gate1:queries": "node scripts/print-gate1-queries.mjs",
+    "gate2:check": "node scripts/gate2-config-check.mjs",
+    "gate3:audit": "node scripts/gate3-data-readiness.mjs",
+    "gate3:sql": "node scripts/print-gate3-sql.mjs",
     "tomorrow": "node scripts/tomorrow-runtime-closure.mjs"
   },
   "dependencies": {

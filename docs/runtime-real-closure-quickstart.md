@@ -85,6 +85,32 @@ Known current reading before Gate 1A:
   is protecting the preview. The browser smoke can still run after you access
   the preview with your Vercel account.
 
+## Gate 2 Low-Stress Config Check
+
+Run this before touching dashboards:
+
+```powershell
+npm.cmd run gate2:check
+```
+
+What it can check automatically:
+
+- local Supabase env values exist
+- preview home responds or is protected by Vercel Authentication
+- `/api/internal/pvi` rejects requests without token
+- `/api/internal/pvi` accepts the configured token, only if
+  `INTERNAL_PVI_API_TOKEN` is available locally
+
+What it cannot check automatically:
+
+- Google provider is enabled in Supabase dashboard
+- email/password is enabled
+- email verification is required
+- redirect URLs are complete
+- Vercel env vars are actually set in the target project
+
+Those stay human Gate 2 checkpoints.
+
 ## Gate 1 Human Steps
 
 Gate 1 is structural only. Do not seed drafts here. Do not run browser smoke
@@ -126,6 +152,32 @@ supabase/sql/2026-04-22_internal_approved_activity_lifecycle_phase2.sql
 ```
 
 Run the Gate 1C queries printed by `npm.cmd run gate1:queries`.
+
+## Gate 3 Data And Seed Prep
+
+After Gate 2 is closed and preview has been redeployed, audit the real dataset:
+
+```powershell
+npm.cmd run gate3:audit
+```
+
+This is read-only. It checks:
+
+- public catalog rows
+- image coverage
+- contact-option coverage for 0/1/multiple contact cases
+- internal access and draft counts when `SUPABASE_SERVICE_ROLE_KEY` is locally
+  available
+
+To print the SQL blocks for authorizing an internal user and seeding drafts:
+
+```powershell
+npm.cmd run gate3:sql -- --email=<USER_EMAIL>
+npm.cmd run gate3:sql -- --user-id=<USER_UUID>
+```
+
+Use the email query first to find the app user id, then rerun with `--user-id`
+and copy the relevant SQL blocks into Supabase SQL Editor.
 
 ## Evidence To Send Back To Codex
 

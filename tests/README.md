@@ -62,6 +62,17 @@ tests/evidence/runtime-closure-latest.md
 That `latest` file is ignored by git. Commit only dated evidence notes when a
 validation result needs to become permanent project history.
 
+For the next runtime-closure gates, use:
+
+```powershell
+npm.cmd run gate2:check
+npm.cmd run gate3:audit
+npm.cmd run gate3:sql
+```
+
+These commands are intended to reduce manual smoke scope, not replace the final
+human browser checklist.
+
 That is still valid engineering work. It just needs to be documented so the
 same checks can be repeated without relying on memory.
 
