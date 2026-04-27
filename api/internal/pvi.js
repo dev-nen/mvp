@@ -1,4 +1,19 @@
+import { timingSafeEqual } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
+
+function setPrivateJsonHeaders(res) {
+  res.setHeader("Cache-Control", "no-store, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  res.setHeader("Vary", "Authorization");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Robots-Tag", "noindex, nofollow, noarchive");
+}
+
+function sendJson(res, statusCode, payload) {
+  setPrivateJsonHeaders(res);
+  res.status(statusCode).json(payload);
+}
 
 function readBearerToken(authorizationHeader) {
   if (typeof authorizationHeader !== "string") {
@@ -12,6 +27,21 @@ function readBearerToken(authorizationHeader) {
   }
 
   return token?.trim() || "";
+}
+
+function tokensMatch(expectedToken, providedToken) {
+  if (!expectedToken || !providedToken) {
+    return false;
+  }
+
+  const expected = Buffer.from(expectedToken);
+  const provided = Buffer.from(providedToken);
+
+  if (expected.length !== provided.length) {
+    return false;
+  }
+
+  return timingSafeEqual(expected, provided);
 }
 
 function getSupabaseAdminClient() {
@@ -31,37 +61,44 @@ function getSupabaseAdminClient() {
 }
 
 export default async function handler(req, res) {
+  setPrivateJsonHeaders(res);
+
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
-    res.status(405).json({ error: "Method not allowed." });
+    sendJson(res, 405, { ok: false, error: "Method not allowed." });
     return;
   }
 
   const expectedToken = process.env.INTERNAL_PVI_API_TOKEN;
   const providedToken = readBearerToken(req.headers.authorization);
 
-  if (!expectedToken || providedToken !== expectedToken) {
-    res.status(401).json({ error: "Unauthorized." });
+  if (!tokensMatch(expectedToken, providedToken)) {
+    sendJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
 
   const supabase = getSupabaseAdminClient();
 
   if (!supabase) {
-    res.status(500).json({ error: "Missing Supabase server configuration." });
+    sendJson(res, 500, {
+      ok: false,
+      error: "Internal report is not configured.",
+    });
     return;
   }
 
   const { data, error } = await supabase.rpc("get_internal_pvi_report");
 
   if (error) {
-    res.status(500).json({
-      error: error.message || "Could not load internal PVI report.",
+    console.error("Internal PVI report load failed", error);
+    sendJson(res, 500, {
+      ok: false,
+      error: "Could not load internal PVI report.",
     });
     return;
   }
 
-  res.status(200).json({
+  sendJson(res, 200, {
     ok: true,
     generatedAt: new Date().toISOString(),
     report: data ?? {},
