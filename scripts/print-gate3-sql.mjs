@@ -8,6 +8,8 @@ const userId = sqlLiteral(getArgValue("user-id") || "<USER_UUID>");
 const userEmail = sqlLiteral(getArgValue("email") || "<USER_EMAIL>");
 
 const sql = String.raw`
+begin;
+
 -- Gate 3 - Inspect recent app users
 select id, email, name, last_name, city_id, created_at
 from public.user_profiles
@@ -34,7 +36,16 @@ select user_id, tool_name, created_at
 from public.internal_tool_access
 where user_id = '${userId}'::uuid;
 
-select id, review_status, title, created_by, approved_activity_id, created_at
+select
+  id,
+  review_status,
+  coalesce(
+    reviewed_payload_json #>> '{activity,title}',
+    parsed_payload_json #>> '{activity,title}'
+  ) as activity_title,
+  created_by,
+  approved_activity_id,
+  created_at
 from public.activity_drafts
 where created_by = '${userId}'::uuid
 order by created_at desc
@@ -61,6 +72,8 @@ from public_catalog
 left join active_contacts
   on active_contacts.activity_id = public_catalog.id
 order by active_contact_count asc, public_catalog.id asc;
+
+commit;
 `;
 
 console.log(sql.trim());
