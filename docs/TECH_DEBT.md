@@ -11,6 +11,7 @@ improvement.
 | Auth readiness | Google, email/password, redirect URLs, and email verification still depend on external Supabase configuration | Expanded auth is implemented in code but not yet fully validated end to end |
 | Vercel readiness | `SUPABASE_SERVICE_ROLE_KEY` and `INTERNAL_PVI_API_TOKEN` still need real environment setup and validation | The private metrics path is only trustworthy after server-side validation |
 | Catalog contract | The frontend now depends on `catalog_activities_read` and still derives some UI-facing aliases such as `city_slug` | The read model must stay stable enough for the UI contract |
+| Catalog data freshness | When an internal approved activity is unpublished or republished, an already-open public catalog view may need a manual refresh before reflecting the new read-model state | The DB contract is correct, but the frontend does not yet actively revalidate catalog data after internal lifecycle writes |
 | Detail architecture | Detail remains split between Home modal and Favorites routed page | The current repo shares view-model logic, but it is still not a single closed detail surface |
 | Contact data quality | Contact CTA behavior depends entirely on activity-level `activity_contact_options` quality in Supabase | Missing or malformed options now directly affect the public product path |
 | Profile model | Profile readiness is now real app state, but richer editing remains out of scope | The product still lacks a broader account-management surface |
