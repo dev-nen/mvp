@@ -794,21 +794,21 @@ Notas:
 
 ```
 
-#### 2.4 Detail modal abre sin errores
+#### 2.4 Accion de detail desde anonimo abre gate de acceso
 
 Accion:
 
-1. Abrir una actividad desde Home.
+1. Desde anonimo, abrir una actividad desde Home.
 
 Esperado:
 
-- modal abre
+- se abre el gate de acceso
+- no se muestra el detail completo antes de identificarse
 - no hay crash
-- facts/location/contact se renderizan
 
 Evidencia minima:
 
-- captura del modal
+- captura del gate o confirmacion explicita
 
 Resultado:
 

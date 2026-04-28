@@ -285,9 +285,9 @@ ${checklistItem(
 )}
 
 ${checklistItem(
-  `Abrir detalle de actividad con 1 contacto (${activityLabel(oneContact)})`,
-  "El modal abre y muestra CTA de contacto directa sin texto tecnico.",
-  "Actividad usada y resultado.",
+  `Intentar abrir detalle de actividad con 1 contacto desde anonimo (${activityLabel(oneContact)})`,
+  "Aparece el gate de acceso; el detail completo no se muestra antes de identificarse.",
+  "Confirmar gate visible o captura.",
 )}
 
 ${checklistItem(
@@ -322,6 +322,18 @@ ${checklistItem(
   "Entrar con usuario ya validado y completar onboarding si aparece",
   "El usuario queda ready y vuelve a la accion o a la app sin loop.",
   "Email de prueba usado, sin pegar tokens.",
+)}
+
+${checklistItem(
+  `Ya autenticado, abrir detalle de actividad con 1 contacto (${activityLabel(oneContact)})`,
+  "El modal abre sin errores y muestra CTA de contacto directa.",
+  "Actividad usada y resultado.",
+)}
+
+${checklistItem(
+  `Ya autenticado, accionar contacto en actividad con 1 contacto (${activityLabel(oneContact)})`,
+  "Abre la accion directa esperada sin fallback falso.",
+  "Resultado observado, sin pegar datos sensibles.",
 )}
 
 ${checklistItem(

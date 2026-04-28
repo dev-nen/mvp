@@ -34,8 +34,7 @@ Inbox segun el dataset actual.
 - [ ] Home carga catalogo real
 - [ ] Cards muestran imagen real o fallback correcto
 - [ ] Busqueda/filtro simple funciona
-- [ ] Detail modal abre sin errores
-- [ ] Contacto con 1 via funciona
+- [ ] Intentar abrir detail desde anonimo muestra gate de acceso
 - [ ] Contacto con 0 vias comunica indisponibilidad o queda `Blocked` por datos
 - [ ] Contacto con multiples vias abre chooser o queda `Blocked` por datos
 - [ ] No reaparece copy/debug publico viejo
@@ -47,6 +46,8 @@ Inbox segun el dataset actual.
 - [ ] Signup clasico mantiene email verification
 - [ ] Onboarding aparece solo cuando corresponde
 - [ ] Usuario ready puede usar la app
+- [ ] Detail modal abre sin errores ya autenticado
+- [ ] Contacto con 1 via funciona ya autenticado
 - [ ] Favorito se agrega y persiste tras reload
 - [ ] Favorito se quita y persiste tras reload
 - [ ] Perfil no muestra copy tecnica vieja
