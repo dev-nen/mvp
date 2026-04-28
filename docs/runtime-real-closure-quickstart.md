@@ -76,14 +76,17 @@ What it checks:
 Warnings are allowed when Gate 1 or Gate 3 is not complete yet. Failures need
 Codex review before continuing.
 
-Known current reading before Gate 1A:
+Current reading after Gate 1/2/3:
 
-- If `get_internal_pvi_report` is reachable by the anon Supabase client, apply
-  the updated `2026-04-21_real_db_auth_phase.sql` before treating internal PVI
-  as private.
-- If the preview home returns `401`, that usually means Vercel Authentication
-  is protecting the preview. The browser smoke can still run after you access
-  the preview with your Vercel account.
+- Gate 1 SQL has been applied.
+- Gate 2 auth/config has been confirmed by human dashboard review.
+- Gate 3 has internal user access and draft seed, but the durable real catalog
+  still lacks 0-contact and multi-contact fixtures.
+- If `get_internal_pvi_report` becomes reachable by the anon Supabase client,
+  stop and fix grants before treating internal PVI as private.
+- If the preview home returns `401`, that usually means Vercel Authentication is
+  protecting the preview. The browser smoke can still run after you access the
+  preview with your Vercel account.
 
 ## Gate 2 Low-Stress Config Check
 
@@ -229,6 +232,45 @@ The generated session sheet includes:
 
 Run one block at a time. If auth fails, do not continue to favorites or
 internal routes. If Draft Inbox fails, do not continue to approved lifecycle.
+
+## Remaining Gates Prepared
+
+The first four Gate 4 blocks now have dated evidence. The remaining low-friction
+path is:
+
+```powershell
+npm.cmd run gate4:metrics
+npm.cmd run gate5:prep
+npm.cmd run gate6:prep
+```
+
+Open the generated files in this order:
+
+```txt
+tests/evidence/gate4-block5-internal-metrics-latest.md
+tests/evidence/gate5-fix-pass-plan-latest.md
+tests/evidence/gate6-closure-candidate-latest.md
+```
+
+`gate4:metrics` prepares the remaining internal metrics block. It checks that
+the old public `/pvi` surface stays retired, that `/api/internal/pvi` rejects
+unauthenticated requests, and that the direct Supabase anon RPC path cannot read
+the private report. If Vercel Authentication blocks the authorized endpoint from
+CLI, mark the authorized-path case as `Blocked` by preview protection unless the
+browser test proves otherwise.
+
+`gate5:prep` converts the Gate 4 evidence into a fix-pass decision. If there is
+no privacy failure and no new `Fail`, the expected decision is no code fix pass.
+
+`gate6:prep` builds the closure candidate by rerunning the automated checks and
+collecting the known remaining partials:
+
+- multi-contact chooser remains `Blocked` by dataset until a real fixture exists
+- zero-contact is no longer durable in the public catalog after test activity
+  cleanup
+- public catalog may need manual refresh after internal lifecycle writes
+- authorized `api/internal/pvi` may be blocked by Vercel Authentication on
+  protected preview
 
 ## Evidence To Send Back To Codex
 

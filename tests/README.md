@@ -68,6 +68,9 @@ For the next runtime-closure gates, use:
 npm.cmd run gate2:check
 npm.cmd run gate3:audit
 npm.cmd run gate4:prep
+npm.cmd run gate4:metrics
+npm.cmd run gate5:prep
+npm.cmd run gate6:prep
 ```
 
 Manual Supabase SQL lives in `supabase/manual/`; do not copy SQL from scripts.
@@ -77,6 +80,17 @@ Manual Supabase SQL lives in `supabase/manual/`; do not copy SQL from scripts.
 ```txt
 tests/evidence/gate4-smoke-session-latest.md
 ```
+
+`gate4:metrics`, `gate5:prep`, and `gate6:prep` write generated local sheets to:
+
+```txt
+tests/evidence/gate4-block5-internal-metrics-latest.md
+tests/evidence/gate5-fix-pass-plan-latest.md
+tests/evidence/gate6-closure-candidate-latest.md
+```
+
+Those `latest` files are ignored by git. Commit only dated evidence once a
+manual result needs to become project history.
 
 These commands are intended to reduce manual smoke scope, not replace human
 browser validation.

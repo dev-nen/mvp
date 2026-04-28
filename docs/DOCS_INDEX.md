@@ -66,6 +66,8 @@ Within the master docs, roadmap reading now has two levels:
 | [runtime-real-closure-quickstart.md](./runtime-real-closure-quickstart.md) | Short execution guide for runtime-closure checkpoints, local checks, and manual Supabase SQL file usage. |
 | [mostrar-a-PO-runtime-real-closure-query-brief.md](./mostrar-a-PO-runtime-real-closure-query-brief.md) | PO-readable summary of the runtime closure gates, manual Supabase operations, auth trigger fix, and remaining data gaps. |
 | [../tests/manual/runtime-real-gate4-smoke.md](../tests/manual/runtime-real-gate4-smoke.md) | Human-run Gate 4 smoke checklist, paired with the generated `gate4:prep` session sheet. |
+| [../tests/manual/runtime-real-gate5-fix-pass.md](../tests/manual/runtime-real-gate5-fix-pass.md) | Gate 5 fix-pass decision checklist for classifying remaining runtime closure gaps. |
+| [../tests/manual/runtime-real-gate6-closure.md](../tests/manual/runtime-real-gate6-closure.md) | Gate 6 closure checklist for deciding whether the runtime closure branch can merge. |
 | [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Historical note for the PVI line before the public placeholder route was retired, plus reopen conditions for internal reporting. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
@@ -158,6 +160,8 @@ Within the master docs, roadmap reading now has two levels:
 - Manual smoke and validation:
   - [../tests/README.md](../tests/README.md)
   - [../tests/manual/runtime-real-gate4-smoke.md](../tests/manual/runtime-real-gate4-smoke.md)
+  - [../tests/manual/runtime-real-gate5-fix-pass.md](../tests/manual/runtime-real-gate5-fix-pass.md)
+  - [../tests/manual/runtime-real-gate6-closure.md](../tests/manual/runtime-real-gate6-closure.md)
   - [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md)
   - [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md)
 

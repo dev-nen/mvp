@@ -20,6 +20,18 @@ tests/evidence/gate4-smoke-session-latest.md
 Ese archivo trae los ids reales disponibles para catalogo, contacto y Draft
 Inbox segun el dataset actual.
 
+Para el bloque 5, preparar la hoja especifica con:
+
+```powershell
+npm.cmd run gate4:metrics
+```
+
+La hoja generada vive en:
+
+```txt
+tests/evidence/gate4-block5-internal-metrics-latest.md
+```
+
 ## Reglas
 
 - Probar por bloques, no todo de una vez.
@@ -75,6 +87,7 @@ Inbox segun el dataset actual.
 - [ ] `/pvi` publico no existe y vuelve a Home
 - [ ] `/api/internal/pvi` sin token rechaza
 - [ ] `/api/internal/pvi` con token responde o queda `Blocked` por Vercel Authentication
+- [ ] `get_internal_pvi_report` no queda expuesto al cliente anon de Supabase
 
 ## Resumen De Ejecucion
 

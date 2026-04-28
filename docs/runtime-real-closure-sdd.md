@@ -96,6 +96,29 @@ Deltas importantes frente a artefactos anteriores:
 - el cierre ya no es solo `real DB/auth`; ahora incluye tambien Draft Inbox y
   approved activity lifecycle porque ya viven en `main`
 
+## Execution Snapshot 2026-04-28
+
+Este snapshot no reemplaza el plan de gates; solo fija la lectura operativa
+actual tras las validaciones ya ejecutadas.
+
+| Gate | Estado | Lectura actual |
+| --- | --- | --- |
+| Gate 0 - Preflight | `Done` | Proyecto Supabase, preview Vercel y accesos operativos confirmados. |
+| Gate 1 - SQL real | `Done` | SQL base, Draft Inbox y approved lifecycle aplicadas y verificadas. |
+| Gate 2 - Auth/config | `Done` | Email, confirm email, Google, redirects y envs confirmados; preview sigue protegida por Vercel Authentication. |
+| Gate 3 - Datos/seed | `Partial` | Usuario interno, drafts seed y catalogo minimo existen; faltan fixtures durables para 0 contactos y multiples contactos. |
+| Gate 4 - Smoke preview | `Partial` | Bloques publico, auth/favoritos, Draft Inbox y lifecycle tienen evidencia; queda Block 5 internal metrics. |
+| Gate 5 - Fix pass | `Planned` | Preparado con `npm.cmd run gate5:prep`; se ejecuta solo si Gate 4 deja Fail real. |
+| Gate 6 - Closure | `Planned` | Preparado con `npm.cmd run gate6:prep`; depende de cerrar o reclasificar Block 5. |
+
+Comandos preparados para los gates restantes:
+
+```powershell
+npm.cmd run gate4:metrics
+npm.cmd run gate5:prep
+npm.cmd run gate6:prep
+```
+
 ## Out Of Scope
 
 - `Scout Manual v0`
