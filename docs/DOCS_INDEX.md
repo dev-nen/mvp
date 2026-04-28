@@ -65,6 +65,7 @@ Within the master docs, roadmap reading now has two levels:
 | [runtime-real-closure-sdd.md](./runtime-real-closure-sdd.md) | Master SDD for closing the real runtime in `main` with stop/go gates, human/Codex checkpoints, and a real preview smoke checklist. |
 | [runtime-real-closure-quickstart.md](./runtime-real-closure-quickstart.md) | Short execution guide for runtime-closure checkpoints, local checks, and manual Supabase SQL file usage. |
 | [runtime-real-closure-po-brief.md](./runtime-real-closure-po-brief.md) | PO-readable summary of the runtime closure gates, manual Supabase operations, auth trigger fix, and remaining data gaps. |
+| [../tests/manual/runtime-real-gate4-smoke.md](../tests/manual/runtime-real-gate4-smoke.md) | Human-run Gate 4 smoke checklist, paired with the generated `gate4:prep` session sheet. |
 | [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Historical note for the PVI line before the public placeholder route was retired, plus reopen conditions for internal reporting. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
@@ -156,6 +157,7 @@ Within the master docs, roadmap reading now has two levels:
   - [../AGENTS.md](../AGENTS.md)
 - Manual smoke and validation:
   - [../tests/README.md](../tests/README.md)
+  - [../tests/manual/runtime-real-gate4-smoke.md](../tests/manual/runtime-real-gate4-smoke.md)
   - [../tests/manual/internal-draft-inbox-smoke.md](../tests/manual/internal-draft-inbox-smoke.md)
   - [../tests/manual/real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md)
 

@@ -67,12 +67,19 @@ For the next runtime-closure gates, use:
 ```powershell
 npm.cmd run gate2:check
 npm.cmd run gate3:audit
+npm.cmd run gate4:prep
 ```
 
 Manual Supabase SQL lives in `supabase/manual/`; do not copy SQL from scripts.
 
-These commands are intended to reduce manual smoke scope, not replace the final
-human browser checklist.
+`gate4:prep` writes a current browser-smoke session sheet to:
+
+```txt
+tests/evidence/gate4-smoke-session-latest.md
+```
+
+These commands are intended to reduce manual smoke scope, not replace human
+browser validation.
 
 That is still valid engineering work. It just needs to be documented so the
 same checks can be repeated without relying on memory.

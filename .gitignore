@@ -13,3 +13,4 @@ dist/
 
 # Generated local runtime-closure snapshot
 tests/evidence/runtime-closure-latest.md
+tests/evidence/gate4-smoke-session-latest.md

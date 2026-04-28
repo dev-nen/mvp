@@ -14,6 +14,7 @@
     "report:runtime": "node scripts/runtime-closure-report.mjs",
     "gate2:check": "node scripts/gate2-config-check.mjs",
     "gate3:audit": "node scripts/gate3-data-readiness.mjs",
+    "gate4:prep": "node scripts/gate4-smoke-prep.mjs",
     "tomorrow": "node scripts/tomorrow-runtime-closure.mjs"
   },
   "dependencies": {

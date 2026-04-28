@@ -195,6 +195,38 @@ supabase/manual/gate3d_public_catalog_contact_coverage.sql
 Replace placeholders such as `<USER_EMAIL>` and `<USER_UUID>` before running.
 All write blocks are wrapped in `begin;` and `commit;`.
 
+## Gate 4 Smoke Prep
+
+After Gate 3 has no blocking failures, generate the human smoke session sheet:
+
+```powershell
+npm.cmd run gate4:prep
+```
+
+It writes:
+
+```txt
+tests/evidence/gate4-smoke-session-latest.md
+```
+
+Use it together with:
+
+```txt
+tests/manual/runtime-real-gate4-smoke.md
+```
+
+The generated session sheet includes:
+
+- target URLs
+- current catalog/contact coverage
+- current Draft Inbox seed rows
+- known `Blocked` cases caused by missing dataset
+- a block-by-block checklist for public, auth, favorites, Draft Inbox,
+  approved lifecycle, and internal metrics
+
+Run one block at a time. If auth fails, do not continue to favorites or
+internal routes. If Draft Inbox fails, do not continue to approved lifecycle.
+
 ## Evidence To Send Back To Codex
 
 For each Gate 1 part, send:
