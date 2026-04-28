@@ -615,65 +615,34 @@ Deltas importantes frente a artefactos anteriores:
 - [ ] C6.1 Rebaselinar docs maestras si cambia el estado material
 - [ ] C6.2 Dejar nota de cierre final y pendientes explicitos
 
-## Queries Minimas De Verificacion Para Gate 1
+## SQL Manual De Verificacion Y Preparacion
 
 Gate 1 es estructural. No se deben seedear drafts ni validar smoke de UI aqui.
 
-Usar estas consultas como base de comprobacion tras aplicar SQL:
+Los bloques SQL que requieren intervencion humana viven en:
 
-```sql
--- Gate 1A - Base runtime SQL verification
-select * from public.catalog_activities_read limit 5;
-
-select proname
-from pg_proc
-where proname in (
-  'ensure_my_profile',
-  'get_internal_pvi_report'
-)
-order by proname;
-
-select public.get_internal_pvi_report();
-
--- Gate 1B - Draft Inbox SQL verification
-select table_name
-from information_schema.tables
-where table_schema = 'public'
-  and table_name in ('activity_drafts', 'internal_tool_access')
-order by table_name;
-
-select proname
-from pg_proc
-where proname in (
-  'approve_activity_draft',
-  'seed_activity_draft_examples'
-)
-order by proname;
-
--- Gate 1C - Approved lifecycle SQL verification
-select proname
-from pg_proc
-where proname in (
-  'list_internal_approved_activity_states',
-  'get_internal_approved_activity',
-  'update_approved_activity_from_draft',
-  'unpublish_approved_activity',
-  'republish_approved_activity'
-)
-order by proname;
+```txt
+supabase/manual/
 ```
 
-Consultas de sanity opcionales para datos minimos:
+Reglas:
 
-```sql
-select id, title, image_url
-from public.catalog_activities_read
-limit 10;
+- no copiar SQL desde scripts ni desde chat
+- reemplazar placeholders antes de ejecutar
+- usar los archivos independientes por gate
+- los bloques escribibles deben estar envueltos en `begin;` y `commit;`
 
-select activity_id, contact_type, contact_value, is_active
-from public.activity_contact_options
-where is_active = true
-limit 20;
+Archivos principales:
+
+```txt
+supabase/manual/gate1a_verify_base_runtime.sql
+supabase/manual/gate1b_verify_draft_inbox.sql
+supabase/manual/gate1c_verify_approved_lifecycle.sql
+supabase/manual/gate2a_inspect_auth_user_triggers.sql
+supabase/manual/gate3a_find_user_profile.sql
+supabase/manual/gate3b_authorize_internal_user_and_seed_drafts.sql
+supabase/manual/gate3c_verify_internal_access_and_seed.sql
+supabase/manual/gate3d_public_catalog_contact_coverage.sql
 ```
 
 ## Smoke Test Checklist

@@ -67,8 +67,9 @@ For the next runtime-closure gates, use:
 ```powershell
 npm.cmd run gate2:check
 npm.cmd run gate3:audit
-npm.cmd run gate3:sql
 ```
+
+Manual Supabase SQL lives in `supabase/manual/`; do not copy SQL from scripts.
 
 These commands are intended to reduce manual smoke scope, not replace the final
 human browser checklist.

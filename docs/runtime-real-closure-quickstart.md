@@ -133,14 +133,11 @@ Apply the full file in Supabase SQL Editor:
 supabase/sql/2026-04-21_real_db_auth_phase.sql
 ```
 
-Then run:
+Then verify with:
 
-```powershell
-npm.cmd run gate1:queries
+```txt
+supabase/manual/gate1a_verify_base_runtime.sql
 ```
-
-Copy only the Gate 1A queries into Supabase SQL Editor and return the results
-or errors.
 
 ### Gate 1B
 
@@ -150,7 +147,11 @@ Apply:
 supabase/sql/2026-04-22_internal_draft_inbox_phase1.sql
 ```
 
-Run the Gate 1B queries printed by `npm.cmd run gate1:queries`.
+Then verify with:
+
+```txt
+supabase/manual/gate1b_verify_draft_inbox.sql
+```
 
 ### Gate 1C
 
@@ -160,7 +161,11 @@ Apply:
 supabase/sql/2026-04-22_internal_approved_activity_lifecycle_phase2.sql
 ```
 
-Run the Gate 1C queries printed by `npm.cmd run gate1:queries`.
+Then verify with:
+
+```txt
+supabase/manual/gate1c_verify_approved_lifecycle.sql
+```
 
 ## Gate 3 Data And Seed Prep
 
@@ -178,15 +183,17 @@ This is read-only. It checks:
 - internal access and draft counts when `SUPABASE_SERVICE_ROLE_KEY` is locally
   available
 
-To print the SQL blocks for authorizing an internal user and seeding drafts:
+Use the manual SQL files in `supabase/manual/`:
 
-```powershell
-npm.cmd run gate3:sql -- --email=<USER_EMAIL>
-npm.cmd run gate3:sql -- --user-id=<USER_UUID>
+```txt
+supabase/manual/gate3a_find_user_profile.sql
+supabase/manual/gate3b_authorize_internal_user_and_seed_drafts.sql
+supabase/manual/gate3c_verify_internal_access_and_seed.sql
+supabase/manual/gate3d_public_catalog_contact_coverage.sql
 ```
 
-Use the email query first to find the app user id, then rerun with `--user-id`
-and copy the relevant SQL blocks into Supabase SQL Editor.
+Replace placeholders such as `<USER_EMAIL>` and `<USER_UUID>` before running.
+All write blocks are wrapped in `begin;` and `commit;`.
 
 ## Evidence To Send Back To Codex
 
