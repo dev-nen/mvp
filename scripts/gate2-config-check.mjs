@@ -104,6 +104,14 @@ if (internalPviToken) {
 
     if (response.ok && body.includes("\"ok\"")) {
       results.pass("internal PVI accepts configured token", `${response.status}`);
+    } else if (
+      response.status === 401 &&
+      /<!doctype html|vercel|authentication/i.test(body)
+    ) {
+      results.warn(
+        "internal PVI authorized path blocked by Vercel Authentication",
+        "Preview protection responded before the serverless endpoint; validate on an unprotected URL or temporarily disable preview protection.",
+      );
     } else {
       results.fail("internal PVI accepts configured token", `${response.status} ${body.slice(0, 100)}`);
     }
