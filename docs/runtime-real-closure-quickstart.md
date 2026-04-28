@@ -190,10 +190,13 @@ supabase/manual/gate3a_find_user_profile.sql
 supabase/manual/gate3b_authorize_internal_user_and_seed_drafts.sql
 supabase/manual/gate3c_verify_internal_access_and_seed.sql
 supabase/manual/gate3d_public_catalog_contact_coverage.sql
+supabase/manual/gate4a_verify_approved_lifecycle_activity.sql
 ```
 
 Replace placeholders such as `<USER_EMAIL>` and `<USER_UUID>` before running.
-All write blocks are wrapped in `begin;` and `commit;`.
+All manual SQL blocks are wrapped in `begin;` and `commit;`. For Gate 4, use
+the lifecycle verification SQL only if visual validation is ambiguous or a bug
+needs database evidence.
 
 ## Gate 4 Smoke Prep
 

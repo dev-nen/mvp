@@ -26,3 +26,5 @@ son la fuente para copiar SQL manual.
 7. `gate3b_authorize_internal_user_and_seed_drafts.sql`
 8. `gate3c_verify_internal_access_and_seed.sql`
 9. `gate3d_public_catalog_contact_coverage.sql`
+10. `gate4a_verify_approved_lifecycle_activity.sql` si hace falta verificar
+    publish/unpublish/republish desde SQL
