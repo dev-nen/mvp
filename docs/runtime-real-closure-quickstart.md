@@ -111,6 +111,15 @@ What it cannot check automatically:
 
 Those stay human Gate 2 checkpoints.
 
+If classic signup returns `Database error saving new user`, inspect legacy
+triggers on `auth.users`. The current app provisions `user_profiles` after
+verification/onboarding through `ensure_my_profile(...)`, so the old
+`on_auth_user_created` profile trigger must not run. Apply:
+
+```txt
+supabase/sql/2026-04-28_disable_legacy_auth_profile_trigger.sql
+```
+
 ## Gate 1 Human Steps
 
 Gate 1 is structural only. Do not seed drafts here. Do not run browser smoke
