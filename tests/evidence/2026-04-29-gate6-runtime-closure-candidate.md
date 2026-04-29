@@ -45,4 +45,3 @@ perspective:
   production-like environment.
 - Decide later whether catalog UI should actively revalidate after internal
   lifecycle publish/unpublish operations.
-
