@@ -278,7 +278,116 @@
 .catalog-toolbar {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
+}
+
+.catalog-toolbar-card {
+  overflow: hidden;
+  background: rgba(226, 226, 226, 0.9);
+  border-color: rgba(47, 61, 115, 0.08);
+  border-radius: 1.75rem;
+  box-shadow: 0 18px 42px rgba(47, 61, 115, 0.08);
+}
+
+.catalog-toolbar__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.catalog-toolbar__intro {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.catalog-toolbar__accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.catalog-toolbar__section {
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(47, 61, 115, 0.08);
+  border-radius: 1.25rem;
+}
+
+.catalog-toolbar__section--open {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.catalog-toolbar__section-trigger {
+  width: 100%;
+  min-height: 2.375rem;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.5rem 0.875rem;
+  color: var(--color-text);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.catalog-toolbar__section-trigger:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
+
+.catalog-toolbar__section-label {
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+
+.catalog-toolbar__section-summary {
+  min-width: 0;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.catalog-toolbar__section-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  color: var(--color-text);
+  transition: transform var(--transition-fast);
+}
+
+.catalog-toolbar__section--open .catalog-toolbar__section-icon {
+  transform: rotate(180deg);
+}
+
+.catalog-toolbar__section-panel {
+  padding: 0 0.875rem 0.875rem;
+}
+
+.catalog-toolbar__search-field {
+  min-height: 2.625rem;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(47, 61, 115, 0.12);
+  border-radius: 1rem;
+}
+
+.catalog-toolbar__spark-icon {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-secondary);
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .catalog-toolbar__header {
@@ -328,6 +437,14 @@
 
 .catalog-toolbar__input {
   padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.catalog-toolbar__input:focus-visible {
+  box-shadow: none;
 }
 
 .catalog-toolbar__select {
@@ -359,7 +476,7 @@
 
 .catalog-toolbar__chip-group {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: var(--space-2);
 }
 
