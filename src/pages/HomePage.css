@@ -562,3 +562,9 @@
     align-items: flex-start;
   }
 }
+
+@media (max-width: 25rem) {
+  .home-page__grid {
+    grid-template-columns: 1fr;
+  }
+}

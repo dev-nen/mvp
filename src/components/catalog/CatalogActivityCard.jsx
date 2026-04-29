@@ -1,4 +1,13 @@
-import { ArrowRight, Building2, Clock3, Heart, MapPin, Users, Wallet } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  Clock3,
+  Heart,
+  MapPin,
+  Share2,
+  Users,
+  Wallet,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -49,6 +58,32 @@ function handlePublicCardImageError(event) {
 
   imageElement.dataset.placeholderApplied = "true";
   imageElement.src = PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
+}
+
+async function sharePublicActivity(activity) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const title = getTrimmedText(activity?.title) || "Actividad en NensGo";
+  const shareUrl = new URL("/", window.location.origin);
+
+  if (activity?.id) {
+    shareUrl.searchParams.set("actividad", String(activity.id));
+  }
+
+  const sharePayload = {
+    title,
+    text: `Mira esta actividad en NensGo: ${title}`,
+    url: shareUrl.toString(),
+  };
+
+  if (navigator.share) {
+    await navigator.share(sharePayload);
+    return;
+  }
+
+  await navigator.clipboard?.writeText(sharePayload.url);
 }
 
 export function buildPublicCatalogCardViewModel(activity = {}) {
@@ -131,6 +166,19 @@ export function CatalogActivityCard({
           {viewModel.showFreeBadge ? (
             <span className="catalog-card__free-badge">Gratis</span>
           ) : null}
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="catalog-card__share catalog-card__share--public"
+            onClick={() => {
+              void sharePublicActivity(activity).catch(() => {});
+            }}
+            aria-label="Compartir actividad"
+          >
+            <Share2 />
+          </Button>
         </div>
 
         <CardContent className="catalog-card__content catalog-card__content--public">
@@ -146,15 +194,19 @@ export function CatalogActivityCard({
           <div className="catalog-card__public-summary">
             {viewModel.ageLabel ? (
               <p className="catalog-card__public-line catalog-card__public-line--age">
-                {viewModel.ageLabel}
+                <Users />
+                <span>{viewModel.ageLabel}</span>
               </p>
             ) : null}
             {viewModel.centerLabel ? (
-              <p className="catalog-card__public-line">{viewModel.centerLabel}</p>
+              <p className="catalog-card__public-line catalog-card__public-line--center">
+                {viewModel.centerLabel}
+              </p>
             ) : null}
             {viewModel.cityLabel ? (
               <p className="catalog-card__public-line catalog-card__public-line--city">
-                {viewModel.cityLabel}
+                <MapPin />
+                <span>{viewModel.cityLabel}</span>
               </p>
             ) : null}
           </div>
