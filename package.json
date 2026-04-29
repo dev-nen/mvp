@@ -12,7 +12,12 @@
     "check:contracts": "node scripts/runtime-contract-audit.mjs",
     "check:preview": "node scripts/runtime-preview-check.mjs",
     "report:runtime": "node scripts/runtime-closure-report.mjs",
-    "gate1:queries": "node scripts/print-gate1-queries.mjs",
+    "gate2:check": "node scripts/gate2-config-check.mjs",
+    "gate3:audit": "node scripts/gate3-data-readiness.mjs",
+    "gate4:prep": "node scripts/gate4-smoke-prep.mjs",
+    "gate4:metrics": "node scripts/gate4-internal-metrics-prep.mjs",
+    "gate5:prep": "node scripts/gate5-fix-pass-prep.mjs",
+    "gate6:prep": "node scripts/gate6-closure-prep.mjs",
     "tomorrow": "node scripts/tomorrow-runtime-closure.mjs"
   },
   "dependencies": {

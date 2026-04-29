@@ -96,6 +96,29 @@ Deltas importantes frente a artefactos anteriores:
 - el cierre ya no es solo `real DB/auth`; ahora incluye tambien Draft Inbox y
   approved activity lifecycle porque ya viven en `main`
 
+## Execution Snapshot 2026-04-28
+
+Este snapshot no reemplaza el plan de gates; solo fija la lectura operativa
+actual tras las validaciones ya ejecutadas.
+
+| Gate | Estado | Lectura actual |
+| --- | --- | --- |
+| Gate 0 - Preflight | `Done` | Proyecto Supabase, preview Vercel y accesos operativos confirmados. |
+| Gate 1 - SQL real | `Done` | SQL base, Draft Inbox y approved lifecycle aplicadas y verificadas. |
+| Gate 2 - Auth/config | `Done` | Email, confirm email, Google, redirects y envs confirmados; preview sigue protegida por Vercel Authentication. |
+| Gate 3 - Datos/seed | `Partial` | Usuario interno, drafts seed y catalogo minimo existen; faltan fixtures durables para 0 contactos y multiples contactos. |
+| Gate 4 - Smoke preview | `Partial` | Bloques publico, auth/favoritos, Draft Inbox, lifecycle e internal metrics tienen evidencia aceptada; quedan parciales por fixtures de contacto y preview protegida. |
+| Gate 5 - Fix pass | `Done` | No hay fix-pass de codigo requerido; los pendientes son datos/config/validacion posterior. |
+| Gate 6 - Closure | `Done` | Candidato preparado con `npm.cmd run gate6:prep`; listo para merge con parciales documentados. |
+
+Comandos preparados para los gates restantes:
+
+```powershell
+npm.cmd run gate4:metrics
+npm.cmd run gate5:prep
+npm.cmd run gate6:prep
+```
+
 ## Out Of Scope
 
 - `Scout Manual v0`
@@ -615,65 +638,34 @@ Deltas importantes frente a artefactos anteriores:
 - [ ] C6.1 Rebaselinar docs maestras si cambia el estado material
 - [ ] C6.2 Dejar nota de cierre final y pendientes explicitos
 
-## Queries Minimas De Verificacion Para Gate 1
+## SQL Manual De Verificacion Y Preparacion
 
 Gate 1 es estructural. No se deben seedear drafts ni validar smoke de UI aqui.
 
-Usar estas consultas como base de comprobacion tras aplicar SQL:
+Los bloques SQL que requieren intervencion humana viven en:
 
-```sql
--- Gate 1A - Base runtime SQL verification
-select * from public.catalog_activities_read limit 5;
-
-select proname
-from pg_proc
-where proname in (
-  'ensure_my_profile',
-  'get_internal_pvi_report'
-)
-order by proname;
-
-select public.get_internal_pvi_report();
-
--- Gate 1B - Draft Inbox SQL verification
-select table_name
-from information_schema.tables
-where table_schema = 'public'
-  and table_name in ('activity_drafts', 'internal_tool_access')
-order by table_name;
-
-select proname
-from pg_proc
-where proname in (
-  'approve_activity_draft',
-  'seed_activity_draft_examples'
-)
-order by proname;
-
--- Gate 1C - Approved lifecycle SQL verification
-select proname
-from pg_proc
-where proname in (
-  'list_internal_approved_activity_states',
-  'get_internal_approved_activity',
-  'update_approved_activity_from_draft',
-  'unpublish_approved_activity',
-  'republish_approved_activity'
-)
-order by proname;
+```txt
+supabase/manual/
 ```
 
-Consultas de sanity opcionales para datos minimos:
+Reglas:
 
-```sql
-select id, title, image_url
-from public.catalog_activities_read
-limit 10;
+- no copiar SQL desde scripts ni desde chat
+- reemplazar placeholders antes de ejecutar
+- usar los archivos independientes por gate
+- los bloques escribibles deben estar envueltos en `begin;` y `commit;`
 
-select activity_id, contact_type, contact_value, is_active
-from public.activity_contact_options
-where is_active = true
-limit 20;
+Archivos principales:
+
+```txt
+supabase/manual/gate1a_verify_base_runtime.sql
+supabase/manual/gate1b_verify_draft_inbox.sql
+supabase/manual/gate1c_verify_approved_lifecycle.sql
+supabase/manual/gate2a_inspect_auth_user_triggers.sql
+supabase/manual/gate3a_find_user_profile.sql
+supabase/manual/gate3b_authorize_internal_user_and_seed_drafts.sql
+supabase/manual/gate3c_verify_internal_access_and_seed.sql
+supabase/manual/gate3d_public_catalog_contact_coverage.sql
 ```
 
 ## Smoke Test Checklist
@@ -825,21 +817,21 @@ Notas:
 
 ```
 
-#### 2.4 Detail modal abre sin errores
+#### 2.4 Accion de detail desde anonimo abre gate de acceso
 
 Accion:
 
-1. Abrir una actividad desde Home.
+1. Desde anonimo, abrir una actividad desde Home.
 
 Esperado:
 
-- modal abre
+- se abre el gate de acceso
+- no se muestra el detail completo antes de identificarse
 - no hay crash
-- facts/location/contact se renderizan
 
 Evidencia minima:
 
-- captura del modal
+- captura del gate o confirmacion explicita
 
 Resultado:
 

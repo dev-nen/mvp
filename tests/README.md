@@ -62,6 +62,39 @@ tests/evidence/runtime-closure-latest.md
 That `latest` file is ignored by git. Commit only dated evidence notes when a
 validation result needs to become permanent project history.
 
+For the next runtime-closure gates, use:
+
+```powershell
+npm.cmd run gate2:check
+npm.cmd run gate3:audit
+npm.cmd run gate4:prep
+npm.cmd run gate4:metrics
+npm.cmd run gate5:prep
+npm.cmd run gate6:prep
+```
+
+Manual Supabase SQL lives in `supabase/manual/`; do not copy SQL from scripts.
+
+`gate4:prep` writes a current browser-smoke session sheet to:
+
+```txt
+tests/evidence/gate4-smoke-session-latest.md
+```
+
+`gate4:metrics`, `gate5:prep`, and `gate6:prep` write generated local sheets to:
+
+```txt
+tests/evidence/gate4-block5-internal-metrics-latest.md
+tests/evidence/gate5-fix-pass-plan-latest.md
+tests/evidence/gate6-closure-candidate-latest.md
+```
+
+Those `latest` files are ignored by git. Commit only dated evidence once a
+manual result needs to become project history.
+
+These commands are intended to reduce manual smoke scope, not replace human
+browser validation.
+
 That is still valid engineering work. It just needs to be documented so the
 same checks can be repeated without relying on memory.
 
