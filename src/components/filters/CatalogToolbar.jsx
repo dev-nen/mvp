@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, Search, Sparkles } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -95,13 +95,11 @@ export function CatalogToolbar({
                 {isOpen ? (
                   <div id={panelId} className="catalog-toolbar__section-panel">
                     {section.id === "search" ? (
-                      <label className="catalog-toolbar__search-field">
-                        <span className="sr-only">
-                          Buscar por actividad, centro, ciudad o categoría
-                        </span>
+                      <div className="catalog-toolbar__search-field">
                         <Search className="catalog-toolbar__search-icon" />
                         <Input
                           type="search"
+                          aria-label="Buscar por actividad, centro, ciudad o categoría"
                           placeholder="Buscar por actividad, centro o ciudad"
                           value={searchQuery}
                           onChange={(event) =>
@@ -109,8 +107,7 @@ export function CatalogToolbar({
                           }
                           className="catalog-toolbar__input"
                         />
-                        <Sparkles className="catalog-toolbar__spark-icon" />
-                      </label>
+                      </div>
                     ) : null}
 
                     {section.id === "city" ? (

@@ -20,7 +20,6 @@
   display: flex;
   flex-direction: column;
   width: min(25.75rem, calc(100vw - var(--space-3)));
-  height: min(94dvh, 52rem);
   max-height: min(94vh, 52rem);
   overflow: hidden;
   background: var(--color-surface);
@@ -32,6 +31,7 @@
 .activity-detail-modal__scroll {
   flex: 1 1 auto;
   min-height: 0;
+  max-height: inherit;
   overflow: hidden;
   overscroll-behavior: contain;
 }
@@ -347,7 +347,7 @@
 
   .activity-detail-modal__panel {
     width: min(25.75rem, calc(100vw - 1rem));
-    height: min(94dvh, calc(100vh - 1rem));
+    max-height: min(94dvh, calc(100vh - 1rem));
   }
 
   .activity-detail-modal__topbar {
@@ -366,8 +366,84 @@
   }
 }
 
-@media (max-width: 25rem) {
+@media (max-height: 44rem) {
+  .activity-detail-modal__topbar {
+    padding: 0.4rem 0.55rem;
+  }
+
+  .activity-detail-modal__back {
+    min-height: 2rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .activity-detail-modal__close {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .activity-detail-modal__media {
+    height: 4.75rem;
+  }
+
+  .activity-detail-modal__body {
+    gap: 0.35rem;
+    padding:
+      0.55rem
+      0.75rem
+      calc(0.7rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .activity-detail-modal__title {
+    font-size: 1.12rem;
+  }
+
+  .activity-detail-modal__category {
+    font-size: 0.68rem;
+  }
+
+  .activity-detail-modal__description {
+    -webkit-line-clamp: 1;
+  }
+
+  .activity-detail-modal__description,
+  .activity-detail-modal__contact-copy {
+    font-size: 0.8rem;
+    line-height: 1.28;
+  }
+
   .activity-detail-modal__facts-grid {
-    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .activity-detail-modal__fact {
+    padding: 0.34rem;
+  }
+
+  .activity-detail-modal__fact-label {
+    font-size: 0.55rem;
+  }
+
+  .activity-detail-modal__fact-value {
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    line-height: 1.16;
+  }
+
+  .activity-detail-modal__fact--price .activity-detail-modal__fact-value {
+    font-size: 0.74rem;
+  }
+
+  .activity-detail-modal__fact-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  .activity-detail-modal__contact {
+    padding: 0.45rem;
+  }
+
+  .activity-detail-modal__section-title {
+    font-size: 0.98rem;
   }
 }
