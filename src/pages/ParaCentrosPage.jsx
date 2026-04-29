@@ -319,8 +319,8 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__header-inner">
             <a
               className="para-centros__brand"
-              href="#inicio"
-              aria-label="Ir al inicio de NensGo para centros"
+              href="/"
+              aria-label="Volver al catálogo de NensGo"
             >
               <img
                 className="para-centros__brand-mark"
@@ -348,14 +348,29 @@ export function ParaCentrosPage() {
               ))}
             </nav>
 
-            <a
-              className="para-centros__button para-centros__button--secondary"
-              href={FORM_URL}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              Unirme al proyecto
-            </a>
+            <div className="para-centros__actions">
+              <a
+                className="para-centros__home-link"
+                href="/"
+                aria-label="Volver al catálogo familiar"
+              >
+                Explorar
+              </a>
+
+              <a
+                className="para-centros__button para-centros__button--secondary"
+                href={FORM_URL}
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <span className="para-centros__button-label-full">
+                  Unirme al proyecto
+                </span>
+                <span className="para-centros__button-label-short">
+                  Unirme
+                </span>
+              </a>
+            </div>
           </div>
         </header>
 
