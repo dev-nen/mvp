@@ -3,6 +3,46 @@ import { Button } from "@/components/ui/button";
 import { getActivityContactOptionLabel } from "@/helpers/buildActivityContactAction";
 import "./ActivityContactOptionsDialog.css";
 
+function normalizeContactMethod(contactMethod) {
+  return typeof contactMethod === "string" ? contactMethod.trim().toLowerCase() : "";
+}
+
+function getContactOptionTone(contactOption) {
+  const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
+
+  if (["whatsapp", "email", "web", "form", "phone"].includes(contactMethod)) {
+    return contactMethod;
+  }
+
+  return "default";
+}
+
+function getContactOptionDisplayLabel(contactOption) {
+  const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
+
+  if (contactMethod === "whatsapp") {
+    return "WhatsApp";
+  }
+
+  if (contactMethod === "email") {
+    return "E-mail";
+  }
+
+  if (contactMethod === "web") {
+    return "Web";
+  }
+
+  if (contactMethod === "form") {
+    return "Formulario";
+  }
+
+  if (contactMethod === "phone") {
+    return "Llamar";
+  }
+
+  return getActivityContactOptionLabel(contactOption);
+}
+
 export function ActivityContactOptionsDialog({
   activity,
   contactOptions = [],
@@ -29,15 +69,15 @@ export function ActivityContactOptionsDialog({
       >
         <div className="activity-contact-options-dialog__header">
           <div>
-            <p className="activity-contact-options-dialog__eyebrow">
-              Contacto disponible
-            </p>
             <h3
               id="activity-contact-options-dialog-title"
               className="activity-contact-options-dialog__title"
             >
-              Elige como contactar con {activity.title}
+              Elige un canal
             </h3>
+            <p className="activity-contact-options-dialog__subtitle">
+              Contacta con {activity.title}
+            </p>
           </div>
 
           <button
@@ -51,21 +91,25 @@ export function ActivityContactOptionsDialog({
         </div>
 
         <div className="activity-contact-options-dialog__list">
-          {contactOptions.map((contactOption) => (
-            <button
-              key={contactOption.id}
-              type="button"
-              className="activity-contact-options-dialog__item"
-              onClick={() => onSelectOption?.(contactOption)}
-            >
-              <span className="activity-contact-options-dialog__item-label">
-                {getActivityContactOptionLabel(contactOption)}
-              </span>
-              <span className="activity-contact-options-dialog__item-value">
-                {contactOption.contactValue}
-              </span>
-            </button>
-          ))}
+          {contactOptions.map((contactOption) => {
+            const tone = getContactOptionTone(contactOption);
+
+            return (
+              <button
+                key={contactOption.id}
+                type="button"
+                className={`activity-contact-options-dialog__item activity-contact-options-dialog__item--${tone}`}
+                onClick={() => onSelectOption?.(contactOption)}
+              >
+                <span className="activity-contact-options-dialog__item-label">
+                  {getContactOptionDisplayLabel(contactOption)}
+                </span>
+                <span className="activity-contact-options-dialog__item-value">
+                  {contactOption.contactValue}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <Button
@@ -74,7 +118,7 @@ export function ActivityContactOptionsDialog({
           className="activity-contact-options-dialog__dismiss"
           onClick={onClose}
         >
-          Cancelar
+          Volver
         </Button>
       </div>
     </div>

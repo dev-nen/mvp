@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, SearchX } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import {
@@ -8,9 +8,6 @@ import {
 } from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
-import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
-import { LandingHero } from "@/components/landing/LandingHero";
-import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
@@ -29,36 +26,6 @@ import {
 } from "@/services/activityEventsService";
 import "./HomePage.css";
 
-const HOME_QUICK_ACCESS_ITEMS = [
-  {
-    id: "extraescolares",
-    title: "Extraescolares",
-    description:
-      "Opciones semanales para deporte, arte y apoyo escolar con un solo acceso rápido.",
-    targetCategoryLabels: ["Apoyo escolar", "Arte", "Deportes"],
-  },
-  {
-    id: "talleres-puntuales",
-    title: "Talleres y actividades puntuales",
-    description:
-      "Planes para probar algo nuevo entre semana, fines de semana o vacaciones.",
-    targetCategoryLabels: ["Arte", "Cultura", "Familia", "Camps"],
-  },
-  {
-    id: "deportes-movimiento",
-    title: "Deportes y movimiento",
-    description:
-      "Escuelas y actividades para moverse, jugar y gastar energía.",
-    targetCategoryLabels: ["Deportes"],
-  },
-  {
-    id: "cultura-familia",
-    title: "Cultura y planes en familia",
-    description:
-      "Teatro, museos y propuestas culturales para disfrutar juntos.",
-    targetCategoryLabels: ["Cultura", "Familia"],
-  },
-];
 const HOME_CATALOG_PLACEHOLDER_COUNT = 2;
 
 export function HomePage() {
@@ -69,7 +36,6 @@ export function HomePage() {
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [selectedActivity, setSelectedActivity] = useState(null);
-  const catalogSectionRef = useRef(null);
 
   const publicCatalogActivities = useMemo(
     () => activities.filter(isPublicCatalogActivityValid),
@@ -114,21 +80,6 @@ export function HomePage() {
     setSearchQuery("");
     setSelectedCategoryLabels([]);
     setSelectedCityId("");
-  };
-
-  const handleExploreActivities = () => {
-    catalogSectionRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
-
-  const handleLandingQuickAccessSelect = (targetCategoryLabels) => {
-    setSelectedCategoryLabels([...targetCategoryLabels]);
-    catalogSectionRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
   };
 
   useEffect(() => {
@@ -196,26 +147,18 @@ export function HomePage() {
 
       <main className="home-page__main">
         <div className="page-container home-page__container">
-          <LandingHero onExploreActivities={handleExploreActivities} />
-          <LandingValueProps
-            quickAccessItems={HOME_QUICK_ACCESS_ITEMS}
-            selectedCategoryLabels={selectedCategoryLabels}
-            onQuickAccessSelect={handleLandingQuickAccessSelect}
-          />
-          <LandingBridgeCTA onExploreActivities={handleExploreActivities} />
-
           <section
             id="explorar-actividades"
-            ref={catalogSectionRef}
             className="home-page__catalog"
             aria-live="polite"
           >
             <div className="home-page__catalog-header">
               <div className="home-page__results-copy">
-                <h2 className="home-page__results-title">Catálogo de actividades</h2>
+                <p className="home-page__catalog-kicker">Explorar</p>
+                <h1 className="home-page__results-title">Catálogo de actividades</h1>
                 <p className="home-page__results-description">
-                  Usa los filtros para acotar por ciudad o categoría y encontrar
-                  una opción que encaje con tu familia.
+                  Busca por actividad, ciudad o categoría y guarda las opciones
+                  que mejor encajen con tu familia.
                 </p>
               </div>
             </div>
