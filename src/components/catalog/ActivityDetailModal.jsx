@@ -26,6 +26,7 @@ export function ActivityDetailModal({
 }) {
   const scrollContainerRef = useRef(null);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const {
     contactOptions,
     isLoading: isContactOptionsLoading,
@@ -64,6 +65,8 @@ export function ActivityDetailModal({
       return;
     }
 
+    setIsDescriptionExpanded(false);
+
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
@@ -74,6 +77,7 @@ export function ActivityDetailModal({
   }
 
   const viewModel = buildActivityDetailViewModel(activity);
+  const hasDescription = Boolean(viewModel.description);
   const hasSingleContactOption = contactOptions.length === 1;
   const hasMultipleContactOptions = contactOptions.length > 1;
   const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
@@ -115,7 +119,9 @@ export function ActivityDetailModal({
       <div className="activity-detail-modal__overlay" onClick={onClose} />
 
       <div
-        className="activity-detail-modal__panel"
+        className={`activity-detail-modal__panel ${
+          isDescriptionExpanded ? "activity-detail-modal__panel--expanded" : ""
+        }`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="activity-detail-modal-title"
@@ -208,11 +214,26 @@ export function ActivityDetailModal({
               </div>
             </section>
 
-            {viewModel.description ? (
+            {hasDescription ? (
               <section className="activity-detail-modal__section">
-                <p className="activity-detail-modal__description">
+                <p
+                  className={`activity-detail-modal__description ${
+                    isDescriptionExpanded
+                      ? "activity-detail-modal__description--expanded"
+                      : ""
+                  }`}
+                >
                   {viewModel.description}
                 </p>
+                <button
+                  type="button"
+                  className="activity-detail-modal__description-toggle"
+                  onClick={() =>
+                    setIsDescriptionExpanded((currentValue) => !currentValue)
+                  }
+                >
+                  {isDescriptionExpanded ? "Ver menos" : "Ver más"}
+                </button>
               </section>
             ) : null}
 
