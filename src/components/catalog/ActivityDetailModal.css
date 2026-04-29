@@ -210,15 +210,16 @@
   gap: 0.35rem;
 }
 
-.activity-detail-modal__section-head {
-  display: flex;
-}
-
-.activity-detail-modal__section-title {
-  color: var(--color-text);
-  font-size: 1.125rem;
-  font-weight: 700;
-  line-height: 1.25;
+.activity-detail-modal__section-head,
+.activity-detail-modal__fact-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .activity-detail-modal__description,
@@ -281,11 +282,7 @@
 }
 
 .activity-detail-modal__fact-label {
-  color: var(--color-text-muted);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  margin: -1px;
 }
 
 .activity-detail-modal__fact-value {
@@ -420,10 +417,6 @@
     padding: 0.34rem;
   }
 
-  .activity-detail-modal__fact-label {
-    font-size: 0.55rem;
-  }
-
   .activity-detail-modal__fact-value {
     gap: 0.25rem;
     font-size: 0.68rem;
@@ -441,9 +434,5 @@
 
   .activity-detail-modal__contact {
     padding: 0.45rem;
-  }
-
-  .activity-detail-modal__section-title {
-    font-size: 0.98rem;
   }
 }
