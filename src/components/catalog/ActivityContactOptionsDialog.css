@@ -22,7 +22,7 @@
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-4);
-  background: #d9ebff;
+  background: var(--color-surface);
   border: 1px solid rgba(47, 61, 115, 0.12);
   border-radius: 1.75rem;
   box-shadow: var(--shadow-lg);
@@ -86,10 +86,10 @@
   gap: 0.125rem;
   width: 100%;
   padding: 0.55rem 1rem;
-  color: #ffffff;
+  color: var(--color-text);
   text-align: center;
-  background: #5468f2;
-  border: 0;
+  background: rgba(75, 143, 231, 0.08);
+  border: 1px solid rgba(75, 143, 231, 0.16);
   border-radius: 999px;
   transition:
     background var(--transition-fast),
@@ -103,23 +103,33 @@
 }
 
 .activity-contact-options-dialog__item--whatsapp {
-  background: #41b95d;
+  color: #1f7a3a;
+  background: rgba(47, 209, 100, 0.12);
+  border-color: rgba(47, 209, 100, 0.24);
 }
 
 .activity-contact-options-dialog__item--email {
-  background: #8951e8;
+  color: var(--color-secondary);
+  background: rgba(122, 73, 232, 0.1);
+  border-color: rgba(122, 73, 232, 0.2);
 }
 
 .activity-contact-options-dialog__item--web {
-  background: #2559b9;
+  color: var(--color-primary-strong);
+  background: rgba(75, 143, 231, 0.1);
+  border-color: rgba(75, 143, 231, 0.22);
 }
 
 .activity-contact-options-dialog__item--form {
-  background: #858585;
+  color: var(--color-text);
+  background: rgba(249, 246, 241, 0.92);
+  border-color: rgba(237, 239, 245, 0.98);
 }
 
 .activity-contact-options-dialog__item--phone {
-  background: #5468f2;
+  color: var(--color-primary-strong);
+  background: rgba(75, 143, 231, 0.1);
+  border-color: rgba(75, 143, 231, 0.22);
 }
 
 .activity-contact-options-dialog__item-label {
@@ -129,7 +139,7 @@
 
 .activity-contact-options-dialog__item-value {
   max-width: 100%;
-  color: rgba(255, 255, 255, 0.84);
+  color: var(--color-text-muted);
   font-size: 0.75rem;
   overflow-wrap: anywhere;
 }
