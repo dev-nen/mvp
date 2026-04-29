@@ -262,7 +262,8 @@ browser test proves otherwise.
 reading: no code fix pass is required before Gate 6.
 
 `gate6:prep` builds the closure candidate by rerunning the automated checks and
-collecting the known remaining partials:
+collecting the known remaining partials. Current reading: the branch is ready to
+merge with documented non-blocking partials:
 
 - multi-contact chooser remains `Blocked` by dataset until a real fixture exists
 - zero-contact is no longer durable in the public catalog after test activity
