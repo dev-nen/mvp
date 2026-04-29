@@ -235,8 +235,7 @@ internal routes. If Draft Inbox fails, do not continue to approved lifecycle.
 
 ## Remaining Gates Prepared
 
-The first four Gate 4 blocks now have dated evidence. The remaining low-friction
-path is:
+All Gate 4 blocks now have dated evidence. The remaining low-friction path is:
 
 ```powershell
 npm.cmd run gate4:metrics
@@ -259,8 +258,8 @@ the private report. If Vercel Authentication blocks the authorized endpoint from
 CLI, mark the authorized-path case as `Blocked` by preview protection unless the
 browser test proves otherwise.
 
-`gate5:prep` converts the Gate 4 evidence into a fix-pass decision. If there is
-no privacy failure and no new `Fail`, the expected decision is no code fix pass.
+`gate5:prep` converts the Gate 4 evidence into a fix-pass decision. Current
+reading: no code fix pass is required before Gate 6.
 
 `gate6:prep` builds the closure candidate by rerunning the automated checks and
 collecting the known remaining partials:
@@ -269,7 +268,7 @@ collecting the known remaining partials:
 - zero-contact is no longer durable in the public catalog after test activity
   cleanup
 - public catalog may need manual refresh after internal lifecycle writes
-- authorized `api/internal/pvi` may be blocked by Vercel Authentication on
+- authorized `api/internal/pvi` remains blocked by Vercel Authentication on
   protected preview
 
 ## Evidence To Send Back To Codex

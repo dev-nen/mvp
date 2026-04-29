@@ -107,9 +107,9 @@ actual tras las validaciones ya ejecutadas.
 | Gate 1 - SQL real | `Done` | SQL base, Draft Inbox y approved lifecycle aplicadas y verificadas. |
 | Gate 2 - Auth/config | `Done` | Email, confirm email, Google, redirects y envs confirmados; preview sigue protegida por Vercel Authentication. |
 | Gate 3 - Datos/seed | `Partial` | Usuario interno, drafts seed y catalogo minimo existen; faltan fixtures durables para 0 contactos y multiples contactos. |
-| Gate 4 - Smoke preview | `Partial` | Bloques publico, auth/favoritos, Draft Inbox y lifecycle tienen evidencia; queda Block 5 internal metrics. |
-| Gate 5 - Fix pass | `Planned` | Preparado con `npm.cmd run gate5:prep`; se ejecuta solo si Gate 4 deja Fail real. |
-| Gate 6 - Closure | `Planned` | Preparado con `npm.cmd run gate6:prep`; depende de cerrar o reclasificar Block 5. |
+| Gate 4 - Smoke preview | `Partial` | Bloques publico, auth/favoritos, Draft Inbox, lifecycle e internal metrics tienen evidencia aceptada; quedan parciales por fixtures de contacto y preview protegida. |
+| Gate 5 - Fix pass | `Done` | No hay fix-pass de codigo requerido; los pendientes son datos/config/validacion posterior. |
+| Gate 6 - Closure | `In progress` | Candidato preparado con `npm.cmd run gate6:prep`; depende de confirmacion humana final y merge. |
 
 Comandos preparados para los gates restantes:
 

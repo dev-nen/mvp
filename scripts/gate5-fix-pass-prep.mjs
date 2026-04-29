@@ -11,6 +11,7 @@ const evidenceFiles = [
   ["Gate 4 Block 2 Auth/Favorites", "tests/evidence/2026-04-28-gate4-block2-auth-favorites.md"],
   ["Gate 4 Block 3 Draft Inbox", "tests/evidence/2026-04-28-gate4-block3-draft-inbox.md"],
   ["Gate 4 Block 4 Approved Lifecycle", "tests/evidence/2026-04-28-gate4-block4-approved-lifecycle.md"],
+  ["Gate 4 Block 5 Internal Metrics", "tests/evidence/2026-04-29-gate4-block5-internal-metrics.md"],
 ];
 
 function normalizeRelativePath(value) {
@@ -75,7 +76,7 @@ Generated internal-metrics prep:
 | Contact one-option | Done | Activity id 2 contact path passed while authenticated. | No fix pass. |
 | Contact zero-option | Partial | Behavior was observed during lifecycle with activity #7, but no durable real catalog fixture remains after cleanup. | Treat as data fixture gap, not repo bug. |
 | Contact multi-option | Blocked | Dataset still has no public activity with multiple active contacts. | Needs data fixture before full chooser smoke. |
-| Internal metrics | Planned | Block 5 still needs human confirmation using \`npm.cmd run gate4:metrics\`. | Run Gate 4 Block 5. |
+| Internal metrics | Done | Block 5 passed for public route retirement, unauthenticated API rejection, and anon RPC privacy. Authorized API-path check is blocked by Vercel Authentication on protected preview. | No fix pass unless an unprotected preview/prod check fails later. |
 | Catalog freshness | Planned | Already-open public catalog did not re-render automatically after internal publish changes. | Tracked as tech debt, not lifecycle blocker. |
 
 ## Gate 5 Decision Rule
