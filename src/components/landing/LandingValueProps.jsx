@@ -15,6 +15,8 @@ export function LandingValueProps({
   selectedCategoryLabels = [],
   onQuickAccessSelect,
 }) {
+  const isInteractive = typeof onQuickAccessSelect === "function";
+
   return (
     <section className="landing-section">
       <div className="landing-section__header">
@@ -41,21 +43,32 @@ export function LandingValueProps({
               }`}
             >
               <CardContent className="landing-value-props__card">
-                <button
-                  type="button"
-                  className="landing-value-props__button"
-                  onClick={() =>
-                    onQuickAccessSelect?.(quickAccessItem.targetCategoryLabels)
-                  }
-                  aria-pressed={isActive}
-                >
-                  <h3 className="landing-value-props__title">
-                    {quickAccessItem.title}
-                  </h3>
-                  <p className="landing-value-props__description">
-                    {quickAccessItem.description}
-                  </p>
-                </button>
+                {isInteractive ? (
+                  <button
+                    type="button"
+                    className="landing-value-props__button"
+                    onClick={() =>
+                      onQuickAccessSelect(quickAccessItem.targetCategoryLabels)
+                    }
+                    aria-pressed={isActive}
+                  >
+                    <h3 className="landing-value-props__title">
+                      {quickAccessItem.title}
+                    </h3>
+                    <p className="landing-value-props__description">
+                      {quickAccessItem.description}
+                    </p>
+                  </button>
+                ) : (
+                  <div className="landing-value-props__button">
+                    <h3 className="landing-value-props__title">
+                      {quickAccessItem.title}
+                    </h3>
+                    <p className="landing-value-props__description">
+                      {quickAccessItem.description}
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           );

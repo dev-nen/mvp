@@ -4,6 +4,7 @@ import { InternalApprovedActivityPage } from "@/pages/InternalApprovedActivityPa
 import { InternalDraftInboxPage } from "@/pages/InternalDraftInboxPage";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
+import { AboutPage } from "@/pages/AboutPage";
 import { FavoriteActivityDetailPage } from "@/pages/FavoriteActivityDetailPage";
 import { FavoritesPage } from "@/pages/FavoritesPage";
 import { HomePage } from "@/pages/HomePage";
@@ -19,6 +20,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/sobre-nensgo" element={<AboutPage />} />
         <Route path="/para-centros" element={<ParaCentrosPage />} />
         <Route path="/internal/drafts" element={<InternalDraftInboxPage />} />
         <Route

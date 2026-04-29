@@ -27,6 +27,10 @@ export function Navbar({ enableSearch = false }) {
     ]
       .filter(Boolean)
       .join(" ");
+  const getTextNavLinkClassName = ({ isActive }) =>
+    ["navbar__nav-link", isActive ? "navbar__nav-link--active" : ""]
+      .filter(Boolean)
+      .join(" ");
 
   const userDisplayName =
     appUser?.fullName ||
@@ -49,6 +53,18 @@ export function Navbar({ enableSearch = false }) {
         <Link to="/" className="navbar__brand" aria-label="Ir a la Home">
           <BrandLockup variant="navbar" />
         </Link>
+
+        <nav className="navbar__nav" aria-label="Navegación principal">
+          <NavLink to="/" className={getTextNavLinkClassName}>
+            Explorar
+          </NavLink>
+          <NavLink to="/sobre-nensgo" className={getTextNavLinkClassName}>
+            Sobre NensGo
+          </NavLink>
+          <NavLink to="/para-centros" className={getTextNavLinkClassName}>
+            Para centros
+          </NavLink>
+        </nav>
 
         <div className="navbar__actions">
           {enableSearch ? (
