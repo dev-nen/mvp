@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
-import { LandingHero } from "@/components/landing/LandingHero";
 import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { Navbar } from "@/components/Navbar";
 import "./AboutPage.css";
@@ -50,7 +49,17 @@ export function AboutPage() {
 
       <main className="about-page__main">
         <div className="page-container about-page__container">
-          <LandingHero onExploreActivities={handleExploreActivities} />
+          <section className="about-page__hero">
+            <div className="about-page__hero-panel">
+              <p className="about-page__eyebrow">Sobre NensGo</p>
+              <h1 className="about-page__hero-title">Qué es NensGo</h1>
+              <p className="about-page__hero-description">
+                Una forma más sencilla de encontrar actividades, talleres y
+                planes familiares cerca de ti.
+              </p>
+            </div>
+          </section>
+
           <LandingValueProps quickAccessItems={ABOUT_QUICK_ACCESS_ITEMS} />
           <LandingBridgeCTA onExploreActivities={handleExploreActivities} />
         </div>

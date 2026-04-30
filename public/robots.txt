@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /internal/
+Disallow: /perfil
+Disallow: /favoritos
+Disallow: /soporte
+
+Sitemap: https://nensgo.com/sitemap.xml

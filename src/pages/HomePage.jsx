@@ -8,6 +8,7 @@ import {
 } from "@/components/catalog/CatalogActivityCard";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
+import { LandingHero } from "@/components/landing/LandingHero";
 import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
@@ -82,6 +83,12 @@ export function HomePage() {
     setSelectedCityId("");
   };
 
+  const handleExploreActivities = () => {
+    document
+      .getElementById("explorar-actividades")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   useEffect(() => {
     if (isLoading || !resolvedIntent) {
       return;
@@ -147,6 +154,8 @@ export function HomePage() {
 
       <main className="home-page__main">
         <div className="page-container home-page__container">
+          <LandingHero onExploreActivities={handleExploreActivities} />
+
           <section
             id="explorar-actividades"
             className="home-page__catalog"
@@ -155,7 +164,7 @@ export function HomePage() {
             <div className="home-page__catalog-header">
               <div className="home-page__results-copy">
                 <p className="home-page__catalog-kicker">Explorar</p>
-                <h1 className="home-page__results-title">Catálogo de actividades</h1>
+                <h2 className="home-page__results-title">Catálogo de actividades</h2>
                 <p className="home-page__results-description">
                   Busca por actividad, ciudad o categoría y guarda las opciones
                   que mejor encajen con tu familia.
