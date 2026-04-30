@@ -1,35 +1,21 @@
-import { useEffect, useMemo, useState } from "react";
-import { LoaderCircle, MailCheck, MapPin, ShieldCheck, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  Lock,
+  Mail,
+  MailCheck,
+  MapPin,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { listCatalogCityChoices } from "@/services/catalogCityChoicesService";
 import "./ProtectedAccessGate.css";
-
-function getIntentLabel(intent) {
-  if (!intent?.type) {
-    return "continuar";
-  }
-
-  if (intent.type === "view_more") {
-    return "ver el detalle";
-  }
-
-  if (intent.type === "open_favorites") {
-    return "entrar en favoritos";
-  }
-
-  if (intent.type === "open_profile") {
-    return "entrar en tu perfil";
-  }
-
-  if (intent.type === "toggle_favorite") {
-    return "guardar esta actividad";
-  }
-
-  return "continuar";
-}
 
 export function ProtectedAccessGate() {
   const {
@@ -43,7 +29,6 @@ export function ProtectedAccessGate() {
     isAccessGateOpen,
     isCompletingOnboarding,
     pendingVerificationEmail,
-    pendingIntent,
     refreshAppUser,
     resendVerificationEmail,
     signInWithGoogle,
@@ -62,6 +47,7 @@ export function ProtectedAccessGate() {
   const [isLoadingCityChoices, setIsLoadingCityChoices] = useState(false);
   const [selectedCityId, setSelectedCityId] = useState("");
   const [formError, setFormError] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSubmittingCredentials, setIsSubmittingCredentials] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
@@ -118,6 +104,7 @@ export function ProtectedAccessGate() {
       setProfileLastName("");
       setSelectedCityId("");
       setFormError("");
+      setIsPasswordVisible(false);
       setIsStartingGoogleSignIn(false);
       setIsSubmittingCredentials(false);
       setIsResendingVerification(false);
@@ -135,12 +122,9 @@ export function ProtectedAccessGate() {
     setSelectedCityId(defaultOnboardingForm.cityId || "");
   }, [accessState, defaultOnboardingForm, isAccessGateOpen]);
 
-  const currentIntentLabel = useMemo(
-    () => getIntentLabel(pendingIntent),
-    [pendingIntent],
-  );
   const selectedCity =
-    cityChoices.find((cityChoice) => String(cityChoice.id) === selectedCityId) ?? null;
+    cityChoices.find((cityChoice) => String(cityChoice.id) === selectedCityId) ??
+    null;
   const feedbackMessage = formError || appUserError || authError || cityChoicesError;
   const infoMessage = verificationMessage;
 
@@ -155,6 +139,12 @@ export function ProtectedAccessGate() {
     if (error) {
       setIsStartingGoogleSignIn(false);
     }
+  };
+
+  const handleSwitchAuthMode = (nextAuthMode) => {
+    setAuthMode(nextAuthMode);
+    setFormError("");
+    setPasswordConfirm("");
   };
 
   const handleSubmitCredentials = async (event) => {
@@ -259,20 +249,33 @@ export function ProtectedAccessGate() {
 
           {accessState === "anonymous" ? (
             <>
-              <div className="protected-access-gate__icon-wrap" aria-hidden="true">
-                <ShieldCheck />
+              <div className="protected-access-gate__brand">
+                <img
+                  src="/nensgo-navbar-mark.png"
+                  alt=""
+                  className="protected-access-gate__brand-mark"
+                />
+                <span className="protected-access-gate__brand-wordmark" aria-label="NensGo">
+                  <span className="protected-access-gate__brand-wordmark-nens">
+                    Nens
+                  </span>
+                  <span className="protected-access-gate__brand-wordmark-go">Go</span>
+                </span>
               </div>
-              <p className="protected-access-gate__eyebrow">Acceso mínimo</p>
-              <h2
-                id="protected-access-gate-title"
-                className="protected-access-gate__title"
-              >
-                Accede con Google para {currentIntentLabel}
-              </h2>
-              <p className="protected-access-gate__description">
-                El catálogo puede explorarse en abierto, pero esta acción necesita
-                una cuenta identificada y una ciudad asociada.
-              </p>
+
+              <header className="protected-access-gate__header">
+                <h2
+                  id="protected-access-gate-title"
+                  className="protected-access-gate__title"
+                >
+                  {authMode === "sign_up" ? "Crea tu cuenta" : "Bienvenido"}
+                </h2>
+                <p className="protected-access-gate__description">
+                  {authMode === "sign_up"
+                    ? "Regístrate con Google o email"
+                    : "Accede con Google o email"}
+                </p>
+              </header>
 
               {feedbackMessage ? (
                 <p
@@ -286,36 +289,27 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__auth-actions">
                 <Button
                   type="button"
-                  className="protected-access-gate__primary-action"
+                  variant="outline"
+                  className="protected-access-gate__google-action"
                   onClick={handleGoogleSignIn}
                   disabled={isStartingGoogleSignIn}
                 >
-                  {isStartingGoogleSignIn
-                    ? "Conectando con Google..."
-                    : "Continuar con Google"}
+                  <span className="protected-access-gate__google-mark" aria-hidden="true">
+                    G
+                  </span>
+                  <span>
+                    {isStartingGoogleSignIn
+                      ? "Conectando con Google..."
+                      : "Continuar con Google"}
+                  </span>
                 </Button>
 
                 <div className="protected-access-gate__divider">
-                  <span>o usa email y contraseña</span>
-                </div>
-
-                <div className="protected-access-gate__toggle-row">
-                  <Button
-                    type="button"
-                    variant={authMode === "sign_in" ? "default" : "outline"}
-                    className="protected-access-gate__toggle-button"
-                    onClick={() => setAuthMode("sign_in")}
-                  >
-                    Entrar
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={authMode === "sign_up" ? "default" : "outline"}
-                    className="protected-access-gate__toggle-button"
-                    onClick={() => setAuthMode("sign_up")}
-                  >
-                    Crear cuenta
-                  </Button>
+                  <span>
+                    {authMode === "sign_up"
+                      ? "o crea tu cuenta con email"
+                      : "o continúa con email"}
+                  </span>
                 </div>
 
                 <form
@@ -323,16 +317,23 @@ export function ProtectedAccessGate() {
                   onSubmit={handleSubmitCredentials}
                 >
                   <label className="protected-access-gate__label" htmlFor="access-email">
-                    Email
+                    Correo electrónico
                   </label>
-                  <Input
-                    id="access-email"
-                    type="email"
-                    className="protected-access-gate__input"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    autoComplete="email"
-                  />
+                  <div className="protected-access-gate__field">
+                    <Mail
+                      className="protected-access-gate__field-icon"
+                      aria-hidden="true"
+                    />
+                    <Input
+                      id="access-email"
+                      type="email"
+                      className="protected-access-gate__input protected-access-gate__input--with-icon"
+                      placeholder="Correo electrónico"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      autoComplete="email"
+                    />
+                  </div>
 
                   <label
                     className="protected-access-gate__label"
@@ -340,16 +341,33 @@ export function ProtectedAccessGate() {
                   >
                     Contraseña
                   </label>
-                  <Input
-                    id="access-password"
-                    type="password"
-                    className="protected-access-gate__input"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    autoComplete={
-                      authMode === "sign_up" ? "new-password" : "current-password"
-                    }
-                  />
+                  <div className="protected-access-gate__field">
+                    <Lock
+                      className="protected-access-gate__field-icon"
+                      aria-hidden="true"
+                    />
+                    <Input
+                      id="access-password"
+                      type={isPasswordVisible ? "text" : "password"}
+                      className="protected-access-gate__input protected-access-gate__input--with-icon protected-access-gate__input--with-action"
+                      placeholder="Contraseña"
+                      value={password}
+                      onChange={(event) => setPassword(event.target.value)}
+                      autoComplete={
+                        authMode === "sign_up" ? "new-password" : "current-password"
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="protected-access-gate__password-toggle"
+                      onClick={() => setIsPasswordVisible((current) => !current)}
+                      aria-label={
+                        isPasswordVisible ? "Ocultar contraseña" : "Mostrar contraseña"
+                      }
+                    >
+                      {isPasswordVisible ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
 
                   {authMode === "sign_up" ? (
                     <>
@@ -359,17 +377,35 @@ export function ProtectedAccessGate() {
                       >
                         Confirmar contraseña
                       </label>
-                      <Input
-                        id="access-password-confirm"
-                        type="password"
-                        className="protected-access-gate__input"
-                        value={passwordConfirm}
-                        onChange={(event) => setPasswordConfirm(event.target.value)}
-                        autoComplete="new-password"
-                      />
+                      <div className="protected-access-gate__field">
+                        <Lock
+                          className="protected-access-gate__field-icon"
+                          aria-hidden="true"
+                        />
+                        <Input
+                          id="access-password-confirm"
+                          type={isPasswordVisible ? "text" : "password"}
+                          className="protected-access-gate__input protected-access-gate__input--with-icon protected-access-gate__input--with-action"
+                          placeholder="Confirmar contraseña"
+                          value={passwordConfirm}
+                          onChange={(event) => setPasswordConfirm(event.target.value)}
+                          autoComplete="new-password"
+                        />
+                        <button
+                          type="button"
+                          className="protected-access-gate__password-toggle"
+                          onClick={() => setIsPasswordVisible((current) => !current)}
+                          aria-label={
+                            isPasswordVisible
+                              ? "Ocultar contraseña"
+                              : "Mostrar contraseña"
+                          }
+                        >
+                          {isPasswordVisible ? <EyeOff /> : <Eye />}
+                        </button>
+                      </div>
                       <p className="protected-access-gate__hint">
-                        La cuenta clásica requiere verificación de email antes de
-                        poder usar la app.
+                        Solo te pediremos la ciudad para guardar tus preferencias.
                       </p>
                     </>
                   ) : null}
@@ -385,9 +421,26 @@ export function ProtectedAccessGate() {
                         : "Entrando..."
                       : authMode === "sign_up"
                         ? "Crear cuenta"
-                        : "Entrar con email"}
+                        : "Iniciar sesión"}
                   </Button>
                 </form>
+
+                <div className="protected-access-gate__switch">
+                  <span>
+                    {authMode === "sign_up" ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}
+                  </span>
+                  <button
+                    type="button"
+                    className="protected-access-gate__switch-button"
+                    onClick={() =>
+                      handleSwitchAuthMode(
+                        authMode === "sign_up" ? "sign_in" : "sign_up",
+                      )
+                    }
+                  >
+                    {authMode === "sign_up" ? "Iniciar sesión" : "Crear cuenta"}
+                  </button>
+                </div>
               </div>
             </>
           ) : null}
