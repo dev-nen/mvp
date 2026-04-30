@@ -17,6 +17,7 @@ runtime activity shape:
 - `title`
 - `categoryLabel`
 - `description`
+- `summaryItems`
 - `showFreeBadge`
 - `evaluationItems`
 - `locationItems`
@@ -30,6 +31,7 @@ runtime activity shape:
 | Free badge | `activity.is_free` | Conditional | Optional visible | Show only when `is_free === true` |
 | Title | `activity.title` | Simple | Required | Rendered as the main heading |
 | Description | `activity.short_description` | Simple | Optional visible | Primary descriptive block in MVP 2.0 |
+| Summary | Age, schedule, price, center, address, city | Composed | Optional visible | Home modal uses a natural editorial summary instead of one mini-box per fact |
 | Age | `activity.age_rule_type`, `activity.age_min`, `activity.age_max` | Composed | Optional visible | Uses shared age formatting helper |
 | Schedule | `activity.schedule_label` | Simple | Optional visible | Hidden when empty |
 | Price | `activity.price_label` | Simple with condition | Optional visible | Hidden when `is_free === true` or when empty |
@@ -42,7 +44,27 @@ runtime activity shape:
 
 ## Ordered output contract
 
+### `summaryItems`
+
+Used by the Home modal to avoid an over-atomized dashboard layout.
+
+Order:
+
+1. age + schedule
+2. price
+3. center/address/city
+
+Rules:
+
+- include age only when the formatted age label is valid
+- join age and schedule with `·` when both exist
+- show `Gratis` when `is_free === true`
+- otherwise include `price_label` only when non-empty
+- join center, address, and city into one location line
+
 ### `evaluationItems`
+
+Kept for routed Favorites detail compatibility.
 
 Order:
 
@@ -57,6 +79,8 @@ Rules:
 - include price only when `is_free !== true` and `price_label` is non-empty
 
 ### `locationItems`
+
+Kept for routed Favorites detail compatibility.
 
 Order:
 

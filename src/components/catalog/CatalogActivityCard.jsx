@@ -131,6 +131,9 @@ export function CatalogActivityCard({
     const viewModel = buildPublicCatalogCardViewModel(activity);
     const isPlaceholderImage =
       viewModel.imageSrc === PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
+    const publicMetaLabel = [viewModel.ageLabel, viewModel.cityLabel]
+      .filter(Boolean)
+      .join(" · ");
 
     return (
       <Card className="catalog-card catalog-card--public">
@@ -192,21 +195,12 @@ export function CatalogActivityCard({
           </div>
 
           <div className="catalog-card__public-summary">
-            {viewModel.ageLabel ? (
-              <p className="catalog-card__public-line catalog-card__public-line--age">
-                <Users />
-                <span>{viewModel.ageLabel}</span>
-              </p>
+            {publicMetaLabel ? (
+              <p className="catalog-card__public-meta">{publicMetaLabel}</p>
             ) : null}
             {viewModel.centerLabel ? (
-              <p className="catalog-card__public-line catalog-card__public-line--center">
+              <p className="catalog-card__public-center">
                 {viewModel.centerLabel}
-              </p>
-            ) : null}
-            {viewModel.cityLabel ? (
-              <p className="catalog-card__public-line catalog-card__public-line--city">
-                <MapPin />
-                <span>{viewModel.cityLabel}</span>
               </p>
             ) : null}
           </div>

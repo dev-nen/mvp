@@ -103,6 +103,59 @@ function buildDetailLocationItems(activity) {
   return locationItems;
 }
 
+function buildDetailSummaryItems(activity) {
+  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity));
+  const scheduleLabel = getTrimmedText(activity.schedule_label);
+  const priceLabel = getTrimmedText(activity.price_label);
+  const venueName = getTrimmedText(activity.venue_name);
+  const address = getTrimmedText(activity.venue_address_1);
+  const centerName = getTrimmedText(activity.center_name);
+  const cityName = getTrimmedText(activity.city_name);
+  const summaryItems = [];
+
+  const whenForWho = [ageLabel, scheduleLabel]
+    .filter(Boolean)
+    .filter((value) => value !== "Consulta la edad")
+    .join(" · ");
+
+  if (whenForWho) {
+    summaryItems.push({
+      key: "when-for-who",
+      value: whenForWho,
+      tone: "default",
+    });
+  }
+
+  if (activity.is_free === true) {
+    summaryItems.push({
+      key: "price",
+      value: "Gratis",
+      tone: "price",
+    });
+  } else if (priceLabel) {
+    summaryItems.push({
+      key: "price",
+      value: priceLabel,
+      tone: "price",
+    });
+  }
+
+  const placeLabel = centerName || venueName;
+  const location = [placeLabel, address, cityName]
+    .filter(Boolean)
+    .join(" · ");
+
+  if (location) {
+    summaryItems.push({
+      key: "location",
+      value: location,
+      tone: "location",
+    });
+  }
+
+  return summaryItems;
+}
+
 export function buildActivityDetailViewModel(activity = {}) {
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
@@ -116,6 +169,7 @@ export function buildActivityDetailViewModel(activity = {}) {
     imageSrc: imageUrl || ACTIVITY_DETAIL_PLACEHOLDER_SRC,
     locationItems: buildDetailLocationItems(activity),
     showFreeBadge: activity.is_free === true,
+    summaryItems: buildDetailSummaryItems(activity),
     title,
   };
 }

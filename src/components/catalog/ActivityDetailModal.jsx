@@ -237,48 +237,20 @@ export function ActivityDetailModal({
               </section>
             ) : null}
 
-            {viewModel.evaluationItems.length > 0 ? (
+            {viewModel.summaryItems.length > 0 ? (
               <section className="activity-detail-modal__section">
-                <dl className="activity-detail-modal__facts-grid">
-                  {viewModel.evaluationItems.map(
-                    ({ key, label, value, icon: Icon, tone }) => (
-                      <div
-                        key={key}
-                        className={`activity-detail-modal__fact ${
-                          tone ? `activity-detail-modal__fact--${tone}` : ""
-                        }`}
-                      >
-                        <dt className="activity-detail-modal__fact-label">{label}</dt>
-                        <dd className="activity-detail-modal__fact-value">
-                          <Icon
-                            className="activity-detail-modal__fact-icon"
-                            aria-hidden="true"
-                          />
-                          <span>{value}</span>
-                        </dd>
-                      </div>
-                    ),
-                  )}
-                </dl>
-              </section>
-            ) : null}
-
-            {viewModel.locationItems.length > 0 ? (
-              <section className="activity-detail-modal__section">
-                <dl className="activity-detail-modal__facts-grid activity-detail-modal__facts-grid--location">
-                  {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
-                    <div key={key} className="activity-detail-modal__fact">
-                      <dt className="activity-detail-modal__fact-label">{label}</dt>
-                      <dd className="activity-detail-modal__fact-value">
-                        <Icon
-                          className="activity-detail-modal__fact-icon"
-                          aria-hidden="true"
-                        />
-                        <span>{value}</span>
-                      </dd>
-                    </div>
+                <ul className="activity-detail-modal__summary-list">
+                  {viewModel.summaryItems.map(({ key, value, tone }) => (
+                    <li
+                      key={key}
+                      className={`activity-detail-modal__summary-item ${
+                        tone ? `activity-detail-modal__summary-item--${tone}` : ""
+                      }`}
+                    >
+                      {value}
+                    </li>
                   ))}
-                </dl>
+                </ul>
               </section>
             ) : null}
 

@@ -10,14 +10,14 @@ objetivo es dar forma pública coherente a la web:
 
 - catálogo como primera superficie
 - navegación clara para familias y ofertantes
-- intro actual preservada fuera del primer impacto
-- cards, filtros, detail y contacto alineados con los mocks de PO
+- intro preservada fuera del primer impacto
+- cards, filtros, detail y contacto alineados con la intención de PO
 - runtime real intacto
 
 ## Branch Context
 
-- Rama de implementación: `redesing-2-public-frontend`
-- Baseline: `main`
+- Baseline actual: `main`
+- Rama histórica de implementación: `redesing-2-public-frontend`
 - Runtime validado: Supabase catalog read model, auth, favoritos, contacto,
   Draft Inbox, approved lifecycle y reporting interno protegido.
 
@@ -41,8 +41,46 @@ La PO busca una experiencia más catálogo-first, móvil y directa:
 - detail tipo teléfono
 - contacto por canal con botones visibles
 
-El mock inspira el lenguaje visual, pero no reemplaza las imágenes reales por
-placeholders planos. Las imágenes reales del catálogo siguen teniendo prioridad.
+El mock inspira el comportamiento y la jerarquía, pero no reemplaza las
+imágenes reales por placeholders planos. Las imágenes reales del catálogo
+siguen teniendo prioridad.
+
+## Contrato Visual De Imagen
+
+Card pública y detail deben compartir una composición compatible:
+
+- ratio base `4 / 3`
+- `object-fit: cover`
+- `object-position: center`
+- sin deformar imágenes
+- sin `contain`
+- sin bandas vacías
+- sin modificar `image_url`
+
+El detail puede limitar la altura máxima en viewports bajos, pero no debe volver
+a una imagen tipo banner ultrabajo salvo necesidad extrema.
+
+## Lectura Editorial De La Ficha
+
+La card pública y el detail no deben leerse como dashboard técnico.
+
+Card pública:
+
+- categoría
+- título
+- edad + ciudad en línea natural
+- centro en una línea editorial
+- CTA `Ver más`
+
+Detail:
+
+- título, categoría y favorito
+- descripción resumida con `Ver más` si hace falta
+- resumen natural de edad, horario, precio y ubicación
+- CTA contacto visible
+
+Los datos reales siguen viniendo del mismo read model. La transformación es de
+presentación, no de contrato backend.
 
 ## Detail No-Scroll Rule
 
@@ -57,7 +95,7 @@ Prioridad de información visible:
 4. descripción resumida
 5. imagen compacta
 
-Si falta espacio, primero se reduce la altura de imagen. Si aún falta espacio,
+Si falta espacio, primero se limita la altura de imagen. Si aún falta espacio,
 la descripción se limita a pocas líneas y muestra `Ver más`. Solo al expandir
 la descripción se permite scroll interno.
 
@@ -116,6 +154,7 @@ Smoke manual:
 - cards muestran imagen real o fallback correcto
 - anónimo en `Ver más` abre auth gate
 - logueado en `Ver más` abre modal detail
+- imagen de detail mantiene composición compatible con la card
 - detail cabe sin scroll inicial en iPhone XR
 - descripción larga muestra `Ver más`
 - favoritos agregan/quitan/persisten
@@ -123,4 +162,3 @@ Smoke manual:
 - multi-contact queda `Blocked` por dataset si no hay fixture
 - `/pvi` público no reaparece
 - no reaparece copy/debug viejo ni mojibake
-
