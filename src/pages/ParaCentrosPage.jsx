@@ -383,9 +383,9 @@ export function ParaCentrosPage() {
               <p className="para-centros__section-kicker">
                 ¿Ofreces actividades para peques o familias?
               </p>
-              <h1 className="para-centros__hero-title">
+              <h2 className="para-centros__hero-title">
                 Haz que tu propuesta llegue mejor a las familias.
-              </h1>
+              </h2>
               <p className="para-centros__hero-description">
                 NensGo es una plataforma de actividades infantiles y familiares
                 que quiere reunir en un solo lugar propuestas que hoy están

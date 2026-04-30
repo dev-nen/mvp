@@ -407,9 +407,9 @@ export function InternalDraftDetailPage() {
 
               <div className="internal-draft-detail-page__intro">
                 <p className="internal-draft-detail-page__eyebrow">Uso interno | Detalle de draft</p>
-                <h1 className="internal-draft-detail-page__title">
+                <h2 className="internal-draft-detail-page__title">
                   {draft ? draft.displayTitle : "Detalle de draft"}
-                </h1>
+                </h2>
                 <p className="internal-draft-detail-page__description">
                   Corrige el payload publicable, guarda la revisión y decide si el
                   draft pasa a una actividad real o queda rechazado.

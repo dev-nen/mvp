@@ -185,9 +185,9 @@ export function FavoriteActivityDetailPage() {
           <section className="favorite-activity-detail__identity">
             <div className="favorite-activity-detail__identity-head">
               <div className="favorite-activity-detail__identity-copy">
-                <h1 className="favorite-activity-detail__title">
+                <h2 className="favorite-activity-detail__title">
                   {viewModel.title}
-                </h1>
+                </h2>
                 {viewModel.categoryLabel || viewModel.showFreeBadge ? (
                   <div className="favorite-activity-detail__identity-meta">
                     {viewModel.categoryLabel ? (

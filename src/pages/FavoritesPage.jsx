@@ -52,7 +52,7 @@ export function FavoritesPage() {
         <div className="page-container favorites-page__container">
           <header className="favorites-page__header">
             <div className="favorites-page__copy">
-              <h1 className="favorites-page__title">Tus actividades guardadas</h1>
+              <h2 className="favorites-page__title">Tus actividades guardadas</h2>
               <p className="favorites-page__description">
                 Revisa con más calma las actividades que te interesan y abre su
                 ficha completa cuando quieras decidir con más contexto.

@@ -105,7 +105,7 @@ export function ProfilePage() {
             </Button>
 
             <div className="profile-page__intro">
-              <h1 className="profile-page__title">Tu cuenta</h1>
+              <h2 className="profile-page__title">Tu cuenta</h2>
               <p className="profile-page__description">
                 Revisa los datos básicos de tu cuenta y cierra sesión cuando lo
                 necesites.

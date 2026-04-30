@@ -52,7 +52,7 @@ export function AboutPage() {
           <section className="about-page__hero">
             <div className="about-page__hero-panel">
               <p className="about-page__eyebrow">Sobre NensGo</p>
-              <h1 className="about-page__hero-title">Qué es NensGo</h1>
+              <h2 className="about-page__hero-title">Qué es NensGo</h2>
               <p className="about-page__hero-description">
                 Una forma más sencilla de encontrar actividades, talleres y
                 planes familiares cerca de ti.

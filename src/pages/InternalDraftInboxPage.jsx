@@ -113,9 +113,9 @@ export function InternalDraftInboxPage() {
                 <p className="internal-draft-inbox-page__eyebrow">
                   Uso interno | Draft Inbox
                 </p>
-                <h1 className="internal-draft-inbox-page__title">
+                <h2 className="internal-draft-inbox-page__title">
                   Draft Inbox
-                </h1>
+                </h2>
                 <p className="internal-draft-inbox-page__description">
                   Revisa drafts editoriales, corrige el payload publicable y
                   decide si pasan o no a una actividad real del catálogo.

@@ -277,9 +277,9 @@ export function InternalApprovedActivityPage() {
                 <p className="internal-approved-activity-page__eyebrow">
                   Uso interno | Actividad aprobada
                 </p>
-                <h1 className="internal-approved-activity-page__title">
+                <h2 className="internal-approved-activity-page__title">
                   {activity ? activity.displayTitle : "Actividad aprobada"}
-                </h1>
+                </h2>
                 <p className="internal-approved-activity-page__description">
                   Edita la actividad ya creada y controla si entra o sale del
                   catálogo público sin romper la trazabilidad con su draft.
