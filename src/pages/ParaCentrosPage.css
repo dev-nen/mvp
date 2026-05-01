@@ -71,127 +71,6 @@
   padding-top: clamp(4.25rem, 10vw, 6rem);
 }
 
-.para-centros__header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  padding-block: var(--space-3);
-  background: rgba(255, 253, 249, 0.92);
-  backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(237, 239, 245, 0.96);
-}
-
-.para-centros__header-inner {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.para-centros__brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.875rem;
-  min-width: 0;
-}
-
-.para-centros__brand-mark {
-  width: 3rem;
-  height: auto;
-  object-fit: contain;
-  flex: none;
-}
-
-.para-centros__brand-copy {
-  display: grid;
-  gap: 0.1rem;
-  min-width: 0;
-}
-
-.para-centros__brand-copy strong {
-  font-size: 1rem;
-  line-height: 1;
-  color: var(--color-text);
-}
-
-.para-centros__brand-copy span {
-  font-size: 0.78rem;
-  line-height: 1.2;
-  color: var(--color-text-muted);
-}
-
-.para-centros__nav {
-  display: none;
-  justify-content: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.para-centros__nav-link {
-  position: relative;
-  font-size: 0.96rem;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
-}
-
-.para-centros__nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -0.35rem;
-  height: 0.12rem;
-  border-radius: var(--radius-pill);
-  background: var(--color-primary);
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform var(--transition-fast);
-}
-
-.para-centros__nav-link:hover,
-.para-centros__nav-link:focus-visible {
-  color: var(--color-text);
-}
-
-.para-centros__nav-link:hover::after,
-.para-centros__nav-link:focus-visible::after {
-  transform: scaleX(1);
-}
-
-.para-centros__actions {
-  min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.625rem;
-}
-
-.para-centros__home-link {
-  min-height: 2.65rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1rem;
-  color: var(--color-primary-strong);
-  background: rgba(75, 143, 231, 0.08);
-  border: 1px solid rgba(75, 143, 231, 0.16);
-  border-radius: var(--radius-pill);
-  font-weight: 800;
-  line-height: 1;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
-}
-
-.para-centros__home-link:hover,
-.para-centros__home-link:focus-visible {
-  background: rgba(75, 143, 231, 0.14);
-  border-color: rgba(75, 143, 231, 0.28);
-  transform: translateY(-1px);
-}
-
 .para-centros__button {
   display: inline-flex;
   align-items: center;
@@ -212,8 +91,6 @@
 }
 
 .para-centros__button:focus-visible,
-.para-centros__nav-link:focus-visible,
-.para-centros__home-link:focus-visible,
 .para-centros__modal-back:focus-visible,
 .para-centros__modal-close:focus-visible {
   outline: 3px solid var(--color-focus);
@@ -242,10 +119,6 @@
 .para-centros__button--secondary:focus-visible {
   background: var(--color-accent-coral);
   transform: translateY(-1px);
-}
-
-.para-centros__button-label-short {
-  display: none;
 }
 
 .para-centros__hero,
@@ -928,47 +801,11 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 55.99rem) {
-  .para-centros__header-inner {
-    grid-template-columns: auto 1fr;
-  }
-
-  .para-centros__brand-copy span {
-    display: none;
-  }
-}
-
 @media (max-width: 39.99rem) {
-  .para-centros__header {
-    padding-block: 0.65rem;
-  }
-
-  .para-centros__header-inner {
-    gap: 0.75rem;
-  }
-
   .para-centros__button--secondary {
     min-height: 2.65rem;
     padding-inline: 0.9rem;
     font-size: 0.95rem;
-  }
-
-  .para-centros__actions {
-    gap: 0.45rem;
-  }
-
-  .para-centros__home-link {
-    min-height: 2.5rem;
-    padding: 0.65rem 0.8rem;
-    font-size: 0.9rem;
-  }
-
-  .para-centros__button-label-full {
-    display: none;
-  }
-
-  .para-centros__button-label-short {
-    display: inline;
   }
 
   .para-centros__section--hero {
@@ -1078,12 +915,6 @@
 
   .para-centros__modal-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 56rem) {
-  .para-centros__nav {
-    display: flex;
   }
 }
 

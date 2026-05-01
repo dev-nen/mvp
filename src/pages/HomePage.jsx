@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, SearchX } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import {
   CatalogActivityCard,
@@ -9,7 +10,6 @@ import {
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingHero } from "@/components/landing/LandingHero";
-import { Navbar } from "@/components/Navbar";
 import { SeoHead } from "@/components/SeoHead";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
@@ -31,6 +31,7 @@ import "./HomePage.css";
 const HOME_CATALOG_PLACEHOLDER_COUNT = 2;
 
 export function HomePage() {
+  const location = useLocation();
   const { activities, isLoading, error, reload } = useCatalog();
   const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -89,6 +90,22 @@ export function HomePage() {
       .getElementById("explorar-actividades")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  useEffect(() => {
+    if (location.hash !== "#explorar-actividades") {
+      return undefined;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      document
+        .getElementById("explorar-actividades")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [location.hash]);
 
   useEffect(() => {
     if (isLoading || !resolvedIntent) {
@@ -156,8 +173,6 @@ export function HomePage() {
         description="Descubre actividades culturales, deportivas, extraescolares y planes en familia cerca de ti. Explora opciones por ciudad, categoría y edad."
         canonicalUrl="https://nensgo.com/"
       />
-      <Navbar />
-
       <main className="home-page__main">
         <div className="page-container home-page__container">
           <LandingHero onExploreActivities={handleExploreActivities} />

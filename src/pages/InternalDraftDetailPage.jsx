@@ -2,7 +2,6 @@ import { AlertTriangle, ArrowLeft, LoaderCircle, SearchX } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -391,8 +390,6 @@ export function InternalDraftDetailPage() {
   return (
     <InternalToolRoute>
       <div className="internal-draft-detail-page">
-        <Navbar />
-
         <main className="internal-draft-detail-page__main">
           <div className="page-container internal-draft-detail-page__container">
             <header className="internal-draft-detail-page__header">

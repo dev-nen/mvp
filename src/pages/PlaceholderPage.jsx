@@ -1,7 +1,6 @@
 import { Construction } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "./PlaceholderPage.css";
@@ -11,8 +10,6 @@ export function PlaceholderPage({ title, description }) {
 
   return (
     <div className="placeholder-page">
-      <Navbar />
-
       <main className="placeholder-page__main">
         <div className="page-container placeholder-page__container">
           <Card className="placeholder-page__card">

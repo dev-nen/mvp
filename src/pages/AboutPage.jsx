@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
 import { LandingValueProps } from "@/components/landing/LandingValueProps";
-import { Navbar } from "@/components/Navbar";
 import { SeoHead } from "@/components/SeoHead";
 import "./AboutPage.css";
 
@@ -41,7 +40,7 @@ export function AboutPage() {
   const navigate = useNavigate();
 
   const handleExploreActivities = () => {
-    navigate("/");
+    navigate("/#explorar-actividades");
   };
 
   return (
@@ -51,7 +50,6 @@ export function AboutPage() {
         description="Conoce NensGo, una forma sencilla de encontrar actividades, talleres y planes familiares cerca de ti."
         canonicalUrl="https://nensgo.com/sobre-nensgo"
       />
-      <Navbar />
 
       <main className="about-page__main">
         <div className="page-container about-page__container">

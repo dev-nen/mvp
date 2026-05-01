@@ -7,7 +7,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useAuth } from "@/hooks/useAuth";
 import "./ProtectedRoute.css";
@@ -88,8 +87,6 @@ export function ProtectedRoute({ children, intent }) {
 
   return (
     <div className="protected-route">
-      <Navbar />
-
       <main className="protected-route__main">
         <div className="page-container protected-route__container">
           <CatalogState

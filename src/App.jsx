@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Navbar } from "@/components/Navbar";
 import { RouteLoadingFallback } from "@/components/ui/RouteLoadingFallback";
 import { AuthProvider } from "@/context/AuthContext";
 import { HomePage } from "@/pages/HomePage";
@@ -50,23 +51,29 @@ const ProfilePage = lazyNamedPage(
   "ProfilePage",
 );
 
+function PublicLayout() {
+  return (
+    <>
+      <Navbar />
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Outlet />
+      </Suspense>
+    </>
+  );
+}
+
+function withRouteLoadingFallback(element) {
+  return <Suspense fallback={<RouteLoadingFallback />}>{element}</Suspense>;
+}
+
 export default function App() {
   return (
     <AuthProvider>
-      <Suspense fallback={<RouteLoadingFallback />}>
-        <Routes>
+      <Routes>
+        <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/sobre-nensgo" element={<AboutPage />} />
           <Route path="/para-centros" element={<ParaCentrosPage />} />
-          <Route path="/internal/drafts" element={<InternalDraftInboxPage />} />
-          <Route
-            path="/internal/drafts/:draftId"
-            element={<InternalDraftDetailPage />}
-          />
-          <Route
-            path="/internal/activities/:activityId"
-            element={<InternalApprovedActivityPage />}
-          />
           <Route
             path="/perfil"
             element={
@@ -100,9 +107,21 @@ export default function App() {
               />
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+        </Route>
+        <Route
+          path="/internal/drafts"
+          element={withRouteLoadingFallback(<InternalDraftInboxPage />)}
+        />
+        <Route
+          path="/internal/drafts/:draftId"
+          element={withRouteLoadingFallback(<InternalDraftDetailPage />)}
+        />
+        <Route
+          path="/internal/activities/:activityId"
+          element={withRouteLoadingFallback(<InternalApprovedActivityPage />)}
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </AuthProvider>
   );
 }

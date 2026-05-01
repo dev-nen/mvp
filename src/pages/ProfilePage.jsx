@@ -13,7 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { useInternalToolAccess } from "@/hooks/useInternalToolAccess";
 import { useAuth } from "@/hooks/useAuth";
-import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "./ProfilePage.css";
@@ -90,8 +89,6 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <Navbar />
-
       <main className="profile-page__main">
         <div className="page-container profile-page__container">
           <header className="profile-page__header">

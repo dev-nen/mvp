@@ -1,6 +1,5 @@
 import { AlertTriangle, LoaderCircle, MailCheck, MapPin, ShieldCheck } from "lucide-react";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useAuth } from "@/hooks/useAuth";
 import { useInternalToolAccess } from "@/hooks/useInternalToolAccess";
@@ -81,7 +80,6 @@ export function InternalToolRoute({
   if (accessState === "ready" && isLoadingInternalAccess) {
     return (
       <div className="internal-tool-route">
-        <Navbar />
         <main className="internal-tool-route__main">
           <div className="page-container internal-tool-route__container">
             <CatalogState
@@ -100,7 +98,6 @@ export function InternalToolRoute({
   if (accessState === "ready" && internalAccessError) {
     return (
       <div className="internal-tool-route">
-        <Navbar />
         <main className="internal-tool-route__main">
           <div className="page-container internal-tool-route__container">
             <CatalogState
@@ -121,7 +118,6 @@ export function InternalToolRoute({
   if (accessState === "ready" && !hasAccess) {
     return (
       <div className="internal-tool-route">
-        <Navbar />
         <main className="internal-tool-route__main">
           <div className="page-container internal-tool-route__container">
             <CatalogState
@@ -141,8 +137,6 @@ export function InternalToolRoute({
 
   return (
     <div className="internal-tool-route">
-      <Navbar />
-
       <main className="internal-tool-route__main">
         <div className="page-container internal-tool-route__container">
           <CatalogState

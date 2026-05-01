@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { AlertTriangle, Heart, SearchX } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import {
   CatalogActivityCard,
   CatalogActivityCardPlaceholder,
@@ -46,8 +45,6 @@ export function FavoritesPage() {
 
   return (
     <div className="favorites-page">
-      <Navbar />
-
       <main className="favorites-page__main">
         <div className="page-container favorites-page__container">
           <header className="favorites-page__header">

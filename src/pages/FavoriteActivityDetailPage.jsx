@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
@@ -313,8 +312,6 @@ export function FavoriteActivityDetailPage() {
 
   return (
     <div className="favorite-activity-detail">
-      <Navbar />
-
       <main className="favorite-activity-detail__main">
         <div className="page-container favorite-activity-detail__container">
           <header className="favorite-activity-detail__header">

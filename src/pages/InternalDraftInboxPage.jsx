@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { Footer } from "@/components/Footer";
-import { Navbar } from "@/components/Navbar";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -104,8 +103,6 @@ export function InternalDraftInboxPage() {
   return (
     <InternalToolRoute>
       <div className="internal-draft-inbox-page">
-        <Navbar />
-
         <main className="internal-draft-inbox-page__main">
           <div className="page-container internal-draft-inbox-page__container">
             <header className="internal-draft-inbox-page__header">

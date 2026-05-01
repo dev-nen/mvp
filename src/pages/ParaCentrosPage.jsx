@@ -1,17 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
+import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { SeoHead } from "@/components/SeoHead";
 import "./ParaCentrosPage.css";
 
-const FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSe0r8a3Ej3kf3VABHjRSWlyVk99oTxnRdDZ7ZuOgGAVU667rA/viewform";
-
-const NAV_LINKS = [
-  { label: "Nuestra historia", href: "#historia" },
-  { label: "Qué es", href: "#que-es" },
-  { label: "Beneficios", href: "#beneficios" },
-  { label: "Participar", href: "#participar" },
-  { label: "Vista previa", href: "#producto" },
-];
 
 const HERO_POINTS = [
   "Más visibilidad local para actividades de calidad.",
@@ -243,7 +234,7 @@ function ActivityPreviewModal({ open, onClose }) {
               </p>
               <a
                 className="para-centros__button para-centros__button--contact"
-                href={FORM_URL}
+                href={PARA_CENTROS_FORM_URL}
                 target="_blank"
                 rel="noreferrer noopener"
               >
@@ -290,64 +281,6 @@ export function ParaCentrosPage() {
         canonicalUrl="https://nensgo.com/para-centros"
       />
       <main className="para-centros-page">
-        <header className="para-centros__header">
-          <div className="para-centros__container para-centros__header-inner">
-            <a
-              className="para-centros__brand"
-              href="/"
-              aria-label="Volver al catálogo de NensGo"
-            >
-              <img
-                className="para-centros__brand-mark"
-                src="/nensgo-navbar-mark.png"
-                alt="Logotipo de NensGo"
-              />
-              <span className="para-centros__brand-copy">
-                <strong>NensGo</strong>
-                <span>Plataforma de actividades infantiles y familiares</span>
-              </span>
-            </a>
-
-            <nav
-              className="para-centros__nav"
-              aria-label="Secciones principales para centros"
-            >
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.href}
-                  className="para-centros__nav-link"
-                  href={link.href}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-
-            <div className="para-centros__actions">
-              <a
-                className="para-centros__home-link"
-                href="/"
-                aria-label="Volver al catálogo familiar"
-              >
-                Explorar
-              </a>
-
-              <a
-                className="para-centros__button para-centros__button--secondary"
-                href={FORM_URL}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                <span className="para-centros__button-label-full">
-                  Unirme al proyecto
-                </span>
-                <span className="para-centros__button-label-short">
-                  Unirme
-                </span>
-              </a>
-            </div>
-          </div>
-        </header>
 
         <section
           id="inicio"
@@ -681,7 +614,7 @@ export function ParaCentrosPage() {
               <div className="para-centros__cta-actions">
                 <a
                   className="para-centros__button para-centros__button--secondary"
-                  href={FORM_URL}
+                  href={PARA_CENTROS_FORM_URL}
                   target="_blank"
                   rel="noreferrer noopener"
                 >
