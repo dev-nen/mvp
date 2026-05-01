@@ -183,7 +183,10 @@ function ActivityPreviewModal({ open, onClose }) {
         <div className="para-centros__modal-scroll">
           <figure className="para-centros__modal-media">
             <img
-              src="/para-centros/kidspainting.png"
+              src="/para-centros/kidspainting.webp"
+              width="1122"
+              height="1402"
+              decoding="async"
               alt="Tres niños pintando en un caballete, vistos de espaldas."
             />
           </figure>
@@ -513,7 +516,11 @@ export function ParaCentrosPage() {
               <article className="para-centros__activity-example">
                 <figure className="para-centros__activity-media">
                   <img
-                    src="/para-centros/kidspainting.png"
+                    src="/para-centros/kidspainting.webp"
+                    width="1122"
+                    height="1402"
+                    loading="lazy"
+                    decoding="async"
                     alt="Tres niños pintando en un caballete, vistos de espaldas."
                   />
                 </figure>
@@ -639,7 +646,11 @@ export function ParaCentrosPage() {
             <figure className="para-centros__product-shot">
               <div className="para-centros__product-frame">
                 <img
-                  src="/para-centros/muestra.png"
+                  src="/para-centros/muestra.webp"
+                  width="1024"
+                  height="645"
+                  loading="lazy"
+                  decoding="async"
                   alt="Vista previa de la aplicación NensGo con buscador, filtros y tarjetas de actividades."
                 />
               </div>
