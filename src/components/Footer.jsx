@@ -8,8 +8,8 @@ export function Footer() {
       <div className="page-container footer__inner">
         <BrandLockup variant="footer" />
         <p className="footer__text">
-          NensGo es un prototipo MVP. Algunas actividades mostradas son
-          ejemplos de prueba usados para diseño, validación y desarrollo.
+          Actividades para peques y familias, organizadas para ayudarte a
+          decidir mejor.
         </p>
       </div>
     </footer>

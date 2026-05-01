@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { SeoHead } from "@/components/SeoHead";
 import "./ParaCentrosPage.css";
 
 const FORM_URL =
@@ -258,40 +259,6 @@ export function ParaCentrosPage() {
   const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   useEffect(() => {
-    const previousTitle = document.title;
-    const existingRobotsMeta = document.querySelector('meta[name="robots"]');
-    const hadRobotsMeta = Boolean(existingRobotsMeta);
-    const robotsMeta =
-      existingRobotsMeta || document.createElement("meta");
-    const previousRobotsContent = existingRobotsMeta?.getAttribute("content");
-
-    document.title = "NensGo | Plataforma de actividades infantiles y familiares";
-
-    robotsMeta.setAttribute("name", "robots");
-    robotsMeta.setAttribute("content", "noindex,nofollow");
-
-    if (!hadRobotsMeta) {
-      document.head.appendChild(robotsMeta);
-    }
-
-    return () => {
-      document.title = previousTitle;
-
-      if (hadRobotsMeta) {
-        if (previousRobotsContent === null) {
-          robotsMeta.removeAttribute("content");
-        } else {
-          robotsMeta.setAttribute("content", previousRobotsContent);
-        }
-
-        return;
-      }
-
-      robotsMeta.remove();
-    };
-  }, []);
-
-  useEffect(() => {
     if (!isPreviewOpen) {
       return undefined;
     }
@@ -314,6 +281,11 @@ export function ParaCentrosPage() {
 
   return (
     <>
+      <SeoHead
+        title="Para centros | Publica tus actividades en NensGo"
+        description="Muestra tus actividades, talleres y propuestas familiares en un entorno pensado para familias."
+        canonicalUrl="https://nensgo.com/para-centros"
+      />
       <main className="para-centros-page">
         <header className="para-centros__header">
           <div className="para-centros__container para-centros__header-inner">
@@ -383,9 +355,9 @@ export function ParaCentrosPage() {
               <p className="para-centros__section-kicker">
                 ¿Ofreces actividades para peques o familias?
               </p>
-              <h2 className="para-centros__hero-title">
+              <h1 className="para-centros__hero-title">
                 Haz que tu propuesta llegue mejor a las familias.
-              </h2>
+              </h1>
               <p className="para-centros__hero-description">
                 NensGo es una plataforma de actividades infantiles y familiares
                 que quiere reunir en un solo lugar propuestas que hoy están

@@ -10,6 +10,7 @@ import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogToolbar } from "@/components/filters/CatalogToolbar";
 import { LandingHero } from "@/components/landing/LandingHero";
 import { Navbar } from "@/components/Navbar";
+import { SeoHead } from "@/components/SeoHead";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
   filterActivities,
@@ -150,6 +151,11 @@ export function HomePage() {
 
   return (
     <div className="home-page">
+      <SeoHead
+        title="NensGo | Actividades para peques y familias cerca de ti"
+        description="Descubre actividades culturales, deportivas, extraescolares y planes en familia cerca de ti. Explora opciones por ciudad, categoría y edad."
+        canonicalUrl="https://nensgo.com/"
+      />
       <Navbar />
 
       <main className="home-page__main">

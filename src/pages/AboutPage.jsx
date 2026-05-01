@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
 import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { Navbar } from "@/components/Navbar";
+import { SeoHead } from "@/components/SeoHead";
 import "./AboutPage.css";
 
 const ABOUT_QUICK_ACCESS_ITEMS = [
@@ -45,6 +46,11 @@ export function AboutPage() {
 
   return (
     <div className="about-page">
+      <SeoHead
+        title="Qué es NensGo | Actividades para peques y familias"
+        description="Conoce NensGo, una forma sencilla de encontrar actividades, talleres y planes familiares cerca de ti."
+        canonicalUrl="https://nensgo.com/sobre-nensgo"
+      />
       <Navbar />
 
       <main className="about-page__main">
@@ -52,7 +58,7 @@ export function AboutPage() {
           <section className="about-page__hero">
             <div className="about-page__hero-panel">
               <p className="about-page__eyebrow">Sobre NensGo</p>
-              <h2 className="about-page__hero-title">Qué es NensGo</h2>
+              <h1 className="about-page__hero-title">Qué es NensGo</h1>
               <p className="about-page__hero-description">
                 Una forma más sencilla de encontrar actividades, talleres y
                 planes familiares cerca de ti.
