@@ -1,0 +1,30 @@
+.route-loading-fallback {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  color: var(--color-text);
+  background:
+    radial-gradient(circle at 18% 16%, rgba(99, 190, 235, 0.16), transparent 16rem),
+    radial-gradient(circle at 88% 84%, rgba(245, 138, 58, 0.14), transparent 18rem),
+    var(--color-background);
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.route-loading-fallback__mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0.25rem solid rgba(75, 143, 231, 0.18);
+  border-top-color: var(--brand-blue);
+  border-radius: 50%;
+  animation: route-loading-fallback-spin 0.9s linear infinite;
+}
+
+@keyframes route-loading-fallback-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
