@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/Navbar";
 import { RouteLoadingFallback } from "@/components/ui/RouteLoadingFallback";
@@ -122,6 +123,7 @@ export default function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Analytics />
     </AuthProvider>
   );
 }
