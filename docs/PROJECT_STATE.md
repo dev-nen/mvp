@@ -24,6 +24,8 @@ contains:
 - Onboarding completion through a Supabase RPC instead of direct profile inserts
 - Contact actions driven by `activity_contact_options`
 - Analytics writes aligned to `activity_view_events` and `activity_contact_events`
+- Vercel Web Analytics mounted at the app root for route-level traffic
+  measurement
 - A first public-surface hardening pass that retires the former public `/pvi`
   placeholder and removes debug-like copy from user-facing surfaces
 - A private `/api/internal/pvi` path intended for PO and DEV reporting
@@ -58,6 +60,7 @@ paths.
 - applying the repo-tracked SQL in Supabase
 - configuring Supabase Auth providers and email verification
 - configuring Vercel server secrets
+- confirming Vercel Web Analytics dashboard enablement and live collection
 - validating real preview/production flows
 
 ## Currently Operational In `main`
@@ -83,6 +86,8 @@ paths.
 - The public app no longer exposes `/pvi`.
 - `api/internal/pvi` exists as the intended private reporting path for PO and
   DEV.
+- `@vercel/analytics` is installed and `<Analytics />` is mounted once in
+  `src/App.jsx`, after the route tree and inside `AuthProvider`.
 
 ## Partial Or Configuration-Dependent Areas
 
@@ -102,6 +107,9 @@ paths.
   - validating edit, unpublish, and republish against the real public catalog
 - The internal metrics API requires Vercel secrets that are not validated from
   inside the repo alone.
+- Vercel Web Analytics requires dashboard enablement and live verification
+  outside the repo; current code does not exclude internal routes from
+  pageview collection.
 - Detail is still intentionally split across Home modal and Favorites routed
   detail page.
 - Public-surface hardening is only a first pass; the guardrail against
@@ -115,6 +123,8 @@ paths.
 - Local catalog fallback is no longer the primary product truth.
 - Favorites are modeled as remote user data.
 - Browser-side analytics dashboard reads have been retired.
+- General web traffic analytics now use Vercel Web Analytics and are separate
+  from Supabase-backed product event writes.
 - The public `/pvi` placeholder route is retired from the app.
 - Internal editorial review now has a first route and data-contract slice in
   repo, but not yet validated live.
@@ -124,6 +134,7 @@ paths.
 - Supabase SQL application
 - Auth provider configuration
 - Vercel env and secret configuration
+- Vercel Web Analytics enablement and live collection verification
 - Human-driven end-to-end verification
 
 ### Later product work

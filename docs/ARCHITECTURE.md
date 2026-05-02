@@ -14,12 +14,14 @@ ideal future architecture.
 - Routing: `react-router-dom`
 - Styling: plain CSS by feature/component file
 - Browser data/auth client: `@supabase/supabase-js`
+- Web traffic analytics: `@vercel/analytics` mounted in `src/App.jsx`
 - Private internal metrics path: Vercel serverless function under `api/`
 
 `main` now uses a mixed runtime:
 
 - public app logic in the browser
 - product data and auth in Supabase
+- route-level web traffic collection through Vercel Web Analytics
 - internal metrics reads through a private server-side Vercel path
 
 ## Current Route And Surface Map
@@ -46,6 +48,8 @@ ideal future architecture.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
 - `InternalToolRoute` guards `/internal/drafts` and `/internal/drafts/:draftId`
   without pushing internal-permission reads into `AuthContext`.
+- `<Analytics />` from `@vercel/analytics/react` is mounted once after
+  `<Routes>`, so pageview collection is app-wide rather than route-specific.
 
 ### Public Home and catalog
 
@@ -176,7 +180,7 @@ Supabase now owns the product-side browser data contracts for `main`:
 - Internal reviewer permission truth through `internal_tool_access`
 - Transacted draft approval through `approve_activity_draft(...)`
 - Internal approved-activity lifecycle through dedicated phase 2 RPCs
-- Write-side analytics for views and contact clicks
+- Product write-side analytics for views and contact clicks
 
 Supabase is no longer limited to auth plus a partial analytics table in
 `main`.
@@ -186,12 +190,15 @@ Supabase is no longer limited to auth plus a partial analytics table in
 Vercel is currently used for:
 
 - building and serving the public frontend
+- collecting Web Analytics pageviews through `@vercel/analytics`
 - exposing the private `api/internal/pvi` read path
 - keeping `SUPABASE_SERVICE_ROLE_KEY` and `INTERNAL_PVI_API_TOKEN` on the
   server side
 
-Vercel is not the product backend for catalog/auth/favorites. It only hosts the
-private reporting seam in this phase.
+Vercel is not the product backend for catalog/auth/favorites. Web Analytics is
+traffic measurement, while product events such as activity views and contact
+clicks remain Supabase-backed. Vercel also hosts the private reporting seam in
+this phase.
 
 ## Current Persistence Layers
 
@@ -199,6 +206,7 @@ private reporting seam in this phase.
 - Internal Draft Inbox: Supabase `activity_drafts` and `internal_tool_access`
 - Pending protected intent: `sessionStorage`
 - Auth session: Supabase-managed browser session persistence
+- Web traffic analytics: Vercel-managed Web Analytics collection
 - Internal metrics read path: server-side API only
 
 `main` now mixes remote product persistence with minimal browser-side UI state,
@@ -221,18 +229,22 @@ but not with local catalog or local favorites truth.
 - `auth.users` remains the identity authority for email
 - `user_profiles.email` is treated as a synchronized read-side copy, not a
   user-editable field
+- `@vercel/analytics` is mounted once at the app root for route-level traffic
+  analytics
 - `/api/internal/pvi` is the intended internal reporting boundary
 
 Important current seams still visible:
 
 - `city_slug` is still derived in frontend for UI/routing purposes
 - detail remains split across modal and routed page
+- internal route pageviews are not currently excluded from Vercel Web Analytics
 - runtime readiness still depends on external Supabase and Vercel configuration
 
 ## Architectural Summary
 
 The current `main` architecture is a mixed Supabase + Vercel product runtime:
-catalog, auth, profile, favorites, analytics writes, and first-pass internal
-editorial moderation now live on Supabase contracts, while private analytics
-reads are pushed behind a server-side Vercel API. The code is aligned to that
-architecture, but external readiness and final validation are still pending.
+catalog, auth, profile, favorites, product analytics writes, and first-pass
+internal editorial moderation now live on Supabase contracts. Vercel hosts the
+frontend, collects general Web Analytics traffic, and exposes the private
+analytics read API. The code is aligned to that architecture, but external
+readiness and final validation are still pending.
