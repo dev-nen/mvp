@@ -609,6 +609,10 @@ export function ParaCentrosPage() {
                   Déjanos tus datos en el formulario y te contactaremos si así
                   lo deseas.
                 </p>
+                <p className="para-centros__contact-note">
+                  También puedes escribirnos directamente a{" "}
+                  <a href="mailto:info@nensgo.com">info@nensgo.com</a>.
+                </p>
               </div>
 
               <div className="para-centros__cta-actions">
@@ -634,6 +638,15 @@ export function ParaCentrosPage() {
           <p className="para-centros__footer-brand">NensGo</p>
           <p className="para-centros__footer-rights">
             Copyright {currentYear} NensGo. Todos los derechos reservados.
+          </p>
+          <p className="para-centros__footer-contact">
+            Contacto:{" "}
+            <a
+              className="para-centros__footer-contact-link"
+              href="mailto:info@nensgo.com"
+            >
+              info@nensgo.com
+            </a>
           </p>
           <p className="para-centros__footer-note">
             Los textos, diseños, imágenes y materiales publicados en esta web

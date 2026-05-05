@@ -17,8 +17,18 @@ export function PlaceholderPage({ title, description }) {
               <div className="placeholder-page__icon-wrap" aria-hidden="true">
                 <Construction className="placeholder-page__icon" />
               </div>
-              <h2 className="placeholder-page__title">{title}</h2>
+              <h1 className="placeholder-page__title">{title}</h1>
               <p className="placeholder-page__description">{description}</p>
+              <p className="placeholder-page__contact">
+                Para dudas, sugerencias o incidencias puedes escribirnos a{" "}
+                <a
+                  className="placeholder-page__contact-link"
+                  href="mailto:info@nensgo.com"
+                >
+                  info@nensgo.com
+                </a>
+                .
+              </p>
               <Button onClick={() => navigate("/perfil")}>
                 Volver al perfil
               </Button>

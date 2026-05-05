@@ -11,6 +11,12 @@ export function Footer() {
           Actividades para peques y familias, organizadas para ayudarte a
           decidir mejor.
         </p>
+        <p className="footer__contact">
+          Contacto:{" "}
+          <a className="footer__contact-link" href="mailto:info@nensgo.com">
+            info@nensgo.com
+          </a>
+        </p>
       </div>
     </footer>
   );

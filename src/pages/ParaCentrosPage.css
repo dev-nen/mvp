@@ -606,6 +606,26 @@
   gap: var(--space-3);
 }
 
+.para-centros__contact-note {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.para-centros__contact-note a {
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.para-centros__contact-note a:hover,
+.para-centros__contact-note a:focus-visible {
+  text-decoration-thickness: 0.12em;
+}
+
 .para-centros__footer {
   padding: 0 0 clamp(2rem, 5vw, 3rem);
 }
@@ -620,6 +640,7 @@
 
 .para-centros__footer-brand,
 .para-centros__footer-rights,
+.para-centros__footer-contact,
 .para-centros__footer-note {
   margin: 0;
 }
@@ -631,9 +652,25 @@
 }
 
 .para-centros__footer-rights,
+.para-centros__footer-contact,
 .para-centros__footer-note {
   font-size: 0.92rem;
   line-height: 1.6;
+}
+
+.para-centros__footer-contact {
+  color: var(--color-text-muted);
+}
+
+.para-centros__footer-contact-link {
+  color: var(--color-primary-strong);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.para-centros__footer-contact-link:hover,
+.para-centros__footer-contact-link:focus-visible {
+  text-decoration: underline;
 }
 
 .para-centros__footer-note {
@@ -885,6 +922,7 @@
   }
 
   .para-centros__footer-rights,
+  .para-centros__footer-contact,
   .para-centros__footer-note {
     font-size: 0.88rem;
   }
