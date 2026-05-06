@@ -182,16 +182,7 @@ export function HomePage() {
             className="home-page__catalog"
             aria-live="polite"
           >
-            <div className="home-page__catalog-header">
-              <div className="home-page__results-copy">
-                <p className="home-page__catalog-kicker">Explorar</p>
-                <h2 className="home-page__results-title">Catálogo de actividades</h2>
-                <p className="home-page__results-description">
-                  Busca por actividad, ciudad o categoría y guarda las opciones
-                  que mejor encajen con tu familia.
-                </p>
-              </div>
-            </div>
+            <h2 className="home-page__sr-only">Catálogo de actividades</h2>
 
             <CatalogToolbar
               searchQuery={searchQuery}

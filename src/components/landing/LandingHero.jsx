@@ -7,9 +7,19 @@ export function LandingHero({ onExploreActivities }) {
         <p className="landing-section__eyebrow">
           ACTIVIDADES PARA PEQUES Y FAMILIAS
         </p>
-        <h1 className="landing-hero__title">
-          Descubre actividades para peques y familias en un solo lugar
-        </h1>
+        <div className="landing-hero__headline-row">
+          <img
+            className="landing-hero__brand-mark"
+            src="/android-chrome-512x462.png"
+            alt=""
+            aria-hidden="true"
+            width="512"
+            height="462"
+          />
+          <h1 className="landing-hero__title">
+            Descubre actividades para peques y familias en un solo lugar
+          </h1>
+        </div>
         <p className="landing-hero__description">
           NensGo reúne actividades culturales, deportivas, extraescolares y
           planes en familia para ayudarte a encontrar opciones cerca de ti sin
