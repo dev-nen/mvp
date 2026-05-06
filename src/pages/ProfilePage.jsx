@@ -1,30 +1,20 @@
 import { useState } from "react";
 import {
   ArrowLeft,
-  BadgeCheck,
   LoaderCircle,
   LogOut,
   Mail,
   MapPin,
-  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
+import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useInternalToolAccess } from "@/hooks/useInternalToolAccess";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "./ProfilePage.css";
-
-function formatUserDisplayName(user) {
-  return (
-    user?.user_metadata?.full_name?.trim() ||
-    user?.user_metadata?.name?.trim() ||
-    user?.email?.split("@")[0] ||
-    "Tu cuenta"
-  );
-}
 
 function ProfileLoadingState() {
   return (
@@ -52,7 +42,6 @@ export function ProfilePage() {
   const {
     appUser,
     authError,
-    isEmailVerified,
     isAuthenticated,
     isAuthLoading,
     openAccessGate,
@@ -84,8 +73,7 @@ export function ProfilePage() {
     setIsSigningOut(false);
   };
 
-  const userDisplayName = formatUserDisplayName(user);
-  const appProfileState = appUser?.cityId ? "Completo" : "Pendiente";
+  const userDisplayName = getShortUserDisplayName({ appUser, user });
 
   return (
     <div className="profile-page">
@@ -102,7 +90,7 @@ export function ProfilePage() {
             </Button>
 
             <div className="profile-page__intro">
-              <h2 className="profile-page__title">Tu cuenta</h2>
+              <h1 className="profile-page__title">Tu cuenta</h1>
               <p className="profile-page__description">
                 Revisa los datos básicos de tu cuenta y cierra sesión cuando lo
                 necesites.
@@ -143,27 +131,12 @@ export function ProfilePage() {
 
                     <div className="profile-page__detail-item">
                       <dt>
-                        <ShieldCheck />
-                        Email verificado
-                      </dt>
-                      <dd>{isEmailVerified ? "Sí" : "No"}</dd>
-                    </div>
-
-                    <div className="profile-page__detail-item">
-                      <dt>
                         <MapPin />
                         Ciudad
                       </dt>
                       <dd>{appUser?.cityName || "Sin ciudad asociada"}</dd>
                     </div>
 
-                    <div className="profile-page__detail-item">
-                      <dt>
-                        <BadgeCheck />
-                        Perfil
-                      </dt>
-                      <dd>{appProfileState}</dd>
-                    </div>
                   </dl>
 
                   {authError ? (

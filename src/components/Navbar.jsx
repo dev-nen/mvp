@@ -3,6 +3,7 @@ import { Heart, LogIn, Menu, Search, User, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BrandLockup } from "@/components/branding/BrandLockup";
 import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
+import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,12 +55,7 @@ export function Navbar({ enableSearch = false }) {
       .filter(Boolean)
       .join(" ");
 
-  const userDisplayName =
-    appUser?.fullName ||
-    user?.user_metadata?.full_name?.trim() ||
-    user?.user_metadata?.name?.trim() ||
-    user?.email?.split("@")[0] ||
-    "Cuenta activa";
+  const userDisplayName = getShortUserDisplayName({ appUser, user });
   const isReadyAccess = accessState === "ready";
   const isResolvingAccess = isAuthLoading || accessState === "loading_user";
   const accessButtonLabel =
@@ -112,7 +108,7 @@ export function Navbar({ enableSearch = false }) {
         <Link
           to="/perfil"
           className="navbar__auth-chip"
-          aria-label={`Sesion activa${user?.email ? ` para ${user.email}` : ""}`}
+          aria-label="Sesion activa. Abrir perfil"
           onClick={closeMenu}
         >
           <span className="navbar__auth-status-dot" aria-hidden="true" />
