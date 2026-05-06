@@ -1,5 +1,8 @@
 import { Building2, Clock3, MapPin, Users, Wallet } from "lucide-react";
-import { formatActivityAgeLabel } from "@/helpers/activityPresentation";
+import {
+  formatActivityAgeLabel,
+  getActivityDescription,
+} from "@/helpers/activityPresentation";
 
 export const ACTIVITY_DETAIL_PLACEHOLDER_SRC =
   "/placeholders/activity-card-placeholder.svg";
@@ -153,7 +156,7 @@ function buildDetailSummaryItems(activity) {
 export function buildActivityDetailViewModel(activity = {}) {
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
-  const description = getTrimmedText(activity.short_description);
+  const description = getTrimmedText(getActivityDescription(activity));
   const title = getTrimmedText(activity.title);
 
   return {
