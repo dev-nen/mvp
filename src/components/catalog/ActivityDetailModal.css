@@ -32,12 +32,9 @@
   flex: 1 1 auto;
   min-height: 0;
   max-height: inherit;
-  overflow: hidden;
-  overscroll-behavior: contain;
-}
-
-.activity-detail-modal__panel--expanded .activity-detail-modal__scroll {
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .activity-detail-modal__topbar {
@@ -234,16 +231,24 @@
 }
 
 .activity-detail-modal__description {
-  display: -webkit-box;
   margin: 0;
+}
+
+.activity-detail-modal__description--collapsed {
+  display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-.activity-detail-modal__description--expanded {
+.activity-detail-modal__description.activity-detail-modal__description--expanded {
   display: block;
+  max-height: none;
   overflow: visible;
+  -webkit-box-orient: unset;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
 
 .activity-detail-modal__description-toggle {
@@ -376,8 +381,9 @@
     font-size: 0.68rem;
   }
 
-  .activity-detail-modal__description {
+  .activity-detail-modal__description--collapsed {
     -webkit-line-clamp: 1;
+    line-clamp: 1;
   }
 
   .activity-detail-modal__description,
@@ -399,4 +405,13 @@
   .activity-detail-modal__contact {
     padding: 0.45rem;
   }
+}
+
+.activity-detail-modal__description.activity-detail-modal__description--expanded {
+  display: block;
+  max-height: none;
+  overflow: visible;
+  -webkit-box-orient: unset;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
 }

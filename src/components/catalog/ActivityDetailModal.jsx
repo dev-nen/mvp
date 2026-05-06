@@ -220,7 +220,7 @@ export function ActivityDetailModal({
                   className={`activity-detail-modal__description ${
                     isDescriptionExpanded
                       ? "activity-detail-modal__description--expanded"
-                      : ""
+                      : "activity-detail-modal__description--collapsed"
                   }`}
                 >
                   {viewModel.description}

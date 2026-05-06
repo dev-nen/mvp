@@ -126,13 +126,7 @@ function buildDetailSummaryItems(activity) {
     });
   }
 
-  if (activity.is_free === true) {
-    summaryItems.push({
-      key: "price",
-      value: "Gratis",
-      tone: "price",
-    });
-  } else if (priceLabel) {
+  if (activity.is_free !== true && priceLabel) {
     summaryItems.push({
       key: "price",
       value: priceLabel,
