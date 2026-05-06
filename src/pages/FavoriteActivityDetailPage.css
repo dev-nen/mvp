@@ -40,7 +40,34 @@
 
 .favorite-activity-detail__back-button {
   align-self: flex-start;
-  padding-left: var(--space-2);
+  min-height: 2.5rem;
+  padding: 0.55rem 0.9rem;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.favorite-activity-detail__back-button:hover,
+.favorite-activity-detail__back-button:focus-visible {
+  background: var(--color-surface-subtle);
+  border-color: rgba(75, 143, 231, 0.24);
+  box-shadow: var(--shadow-sm);
+}
+
+.favorite-activity-detail--modal-route {
+  position: relative;
+}
+
+.favorite-activity-detail__modal-route-main {
+  min-height: calc(100vh - var(--navbar-height));
 }
 
 .favorite-activity-detail__detail-card {

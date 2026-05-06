@@ -1,25 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   AlertTriangle,
-  ArrowLeft,
   Heart,
   LoaderCircle,
   SearchX,
 } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
+import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogState } from "@/components/states/CatalogState";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  ACTIVITY_DETAIL_PLACEHOLDER_SRC,
-  buildActivityDetailViewModel,
-  handleActivityDetailImageError,
-} from "@/helpers/activityDetailViewModel";
-import { openActivityContactAction } from "@/helpers/buildActivityContactAction";
 import { useCatalog } from "@/hooks/useCatalog";
-import { useActivityContactOptions } from "@/hooks/useActivityContactOptions";
 import { useFavorites } from "@/hooks/useFavorites";
 import {
   FAVORITES_DETAIL_SOURCE,
@@ -36,29 +26,10 @@ export function FavoriteActivityDetailPage() {
   const { activityId = "" } = useParams();
   const { activities, isLoading, error, reload } = useCatalog();
   const { favoriteIds, removeFavorite } = useFavorites();
-  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
 
   const activity =
     activities.find((item) => String(item.id) === activityId) ?? null;
   const isSavedFavorite = favoriteIds.includes(activityId);
-  const {
-    contactOptions,
-    isLoading: isContactOptionsLoading,
-    error: contactOptionsError,
-    reload: reloadContactOptions,
-  } = useActivityContactOptions(activity?.id, Boolean(activity && isSavedFavorite));
-  const hasSingleContactOption = contactOptions.length === 1;
-  const hasMultipleContactOptions = contactOptions.length > 1;
-  const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
-  const contactMessage = isContactOptionsLoading
-    ? "Cargando opciones de contacto."
-    : contactOptionsError
-      ? "No pudimos cargar el contacto ahora mismo."
-      : hasMultipleContactOptions
-        ? "Elige el canal que prefieras."
-        : hasSingleContactOption
-          ? null
-          : "No hay un canal de contacto publicado en este momento.";
 
   const handleGoBack = () => {
     navigate("/favoritos");
@@ -69,27 +40,12 @@ export function FavoriteActivityDetailPage() {
     navigate("/favoritos");
   };
 
-  const handleSelectContactOption = (contactOption) => {
-    if (!activity) {
-      return;
-    }
-
-    void trackActivityContactClick(activity, FAVORITES_DETAIL_SOURCE, contactOption);
-    openActivityContactAction(activity, contactOption);
-    setIsContactDialogOpen(false);
-  };
-
-  const handleContactAction = () => {
-    if (!hasContactOptions || isContactOptionsLoading) {
-      return;
-    }
-
-    if (hasSingleContactOption) {
-      handleSelectContactOption(contactOptions[0]);
-      return;
-    }
-
-    setIsContactDialogOpen(true);
+  const handleContactClick = (selectedActivity, contactOption) => {
+    void trackActivityContactClick(
+      selectedActivity,
+      FAVORITES_DETAIL_SOURCE,
+      contactOption,
+    );
   };
 
   useEffect(() => {
@@ -161,152 +117,31 @@ export function FavoriteActivityDetailPage() {
         onAction={handleGoBack}
       />
     );
-  } else {
-    const viewModel = buildActivityDetailViewModel(activity);
-
+  } else if (activity && isSavedFavorite) {
     content = (
-      <Card className="favorite-activity-detail__detail-card">
-        <div className="favorite-activity-detail__media">
-          <img
-            src={viewModel.imageSrc}
-            alt={activity.title}
-            className="favorite-activity-detail__image"
-            data-placeholder-applied={
-              viewModel.imageSrc === ACTIVITY_DETAIL_PLACEHOLDER_SRC
-                ? "true"
-                : "false"
-            }
-            onError={handleActivityDetailImageError}
-          />
-        </div>
+      <ActivityDetailModal
+        activity={activity}
+        isFavorite
+        open
+        onClose={handleGoBack}
+        onToggleFavorite={handleRemoveFavorite}
+        onContactClick={handleContactClick}
+      />
+    );
+  }
 
-        <CardContent className="favorite-activity-detail__body">
-          <section className="favorite-activity-detail__identity">
-            <div className="favorite-activity-detail__identity-head">
-              <div className="favorite-activity-detail__identity-copy">
-                <h2 className="favorite-activity-detail__title">
-                  {viewModel.title}
-                </h2>
-                {viewModel.categoryLabel || viewModel.showFreeBadge ? (
-                  <div className="favorite-activity-detail__identity-meta">
-                    {viewModel.categoryLabel ? (
-                      <p className="favorite-activity-detail__category">
-                        {viewModel.categoryLabel}
-                      </p>
-                    ) : null}
-                    {viewModel.showFreeBadge ? (
-                      <span className="favorite-activity-detail__free-badge">
-                        Gratis
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
-              </div>
+  const isModalDetail =
+    Boolean(activity) && isSavedFavorite && !isLoading && !error;
 
-              <div className="favorite-activity-detail__identity-action">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="favorite-activity-detail__favorite favorite-activity-detail__favorite--active"
-                  onClick={handleRemoveFavorite}
-                  aria-label="Quitar de favoritos"
-                >
-                  <Heart className="favorite-activity-detail__favorite-icon favorite-activity-detail__favorite-icon--filled" />
-                </Button>
-              </div>
-            </div>
-          </section>
-
-          {viewModel.description ? (
-            <section className="favorite-activity-detail__section">
-              <p className="favorite-activity-detail__description">
-                {viewModel.description}
-              </p>
-            </section>
-          ) : null}
-
-          {viewModel.evaluationItems.length > 0 ? (
-            <section className="favorite-activity-detail__section">
-              <dl className="favorite-activity-detail__facts-grid">
-                {viewModel.evaluationItems.map(
-                  ({ key, label, value, icon: Icon, tone }) => (
-                    <div
-                      key={key}
-                      className={`favorite-activity-detail__fact ${
-                        tone ? `favorite-activity-detail__fact--${tone}` : ""
-                      }`}
-                    >
-                      <dt className="favorite-activity-detail__fact-label">{label}</dt>
-                      <dd className="favorite-activity-detail__fact-value">
-                        <Icon
-                          className="favorite-activity-detail__fact-icon"
-                          aria-hidden="true"
-                        />
-                        <span>{value}</span>
-                      </dd>
-                    </div>
-                  ),
-                )}
-              </dl>
-            </section>
-          ) : null}
-
-          {viewModel.locationItems.length > 0 ? (
-            <section className="favorite-activity-detail__section">
-              <dl className="favorite-activity-detail__facts-grid favorite-activity-detail__facts-grid--location">
-                {viewModel.locationItems.map(({ key, label, value, icon: Icon }) => (
-                  <div key={key} className="favorite-activity-detail__fact">
-                    <dt className="favorite-activity-detail__fact-label">{label}</dt>
-                    <dd className="favorite-activity-detail__fact-value">
-                      <Icon
-                        className="favorite-activity-detail__fact-icon"
-                        aria-hidden="true"
-                      />
-                      <span>{value}</span>
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
-          ) : null}
-
-          <section className="favorite-activity-detail__contact">
-            <div className="favorite-activity-detail__section-head">
-              <h2 className="favorite-activity-detail__section-title">
-                Contacto
-              </h2>
-            </div>
-            {contactMessage ? (
-              <p className="favorite-activity-detail__contact-copy">
-                {contactMessage}
-              </p>
-            ) : null}
-            {contactOptionsError ? (
-              <Button type="button" variant="outline" onClick={reloadContactOptions}>
-                Reintentar contactos
-              </Button>
-            ) : hasContactOptions ? (
-              <Button
-                type="button"
-                onClick={handleContactAction}
-                disabled={isContactOptionsLoading}
-              >
-                {isContactOptionsLoading ? (
-                  <>
-                    <LoaderCircle className="animate-spin" />
-                    Cargando contacto
-                  </>
-                ) : hasMultipleContactOptions ? (
-                  "Elegir contacto"
-                ) : (
-                  "Contactar"
-                )}
-              </Button>
-            ) : null}
-          </section>
-        </CardContent>
-      </Card>
+  if (isModalDetail) {
+    return (
+      <div className="favorite-activity-detail favorite-activity-detail--modal-route">
+        <main
+          className="favorite-activity-detail__modal-route-main"
+          aria-hidden="true"
+        />
+        {content}
+      </div>
     );
   }
 
@@ -315,14 +150,13 @@ export function FavoriteActivityDetailPage() {
       <main className="favorite-activity-detail__main">
         <div className="page-container favorite-activity-detail__container">
           <header className="favorite-activity-detail__header">
-            <Button
-              variant="ghost"
+            <button
+              type="button"
               className="favorite-activity-detail__back-button"
               onClick={handleGoBack}
             >
-              <ArrowLeft />
               Volver a favoritos
-            </Button>
+            </button>
           </header>
 
           {content}
@@ -330,14 +164,6 @@ export function FavoriteActivityDetailPage() {
       </main>
 
       <Footer />
-
-      <ActivityContactOptionsDialog
-        activity={activity}
-        contactOptions={contactOptions}
-        open={isContactDialogOpen}
-        onClose={() => setIsContactDialogOpen(false)}
-        onSelectOption={handleSelectContactOption}
-      />
     </div>
   );
 }

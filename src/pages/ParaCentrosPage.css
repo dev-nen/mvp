@@ -956,6 +956,19 @@
   }
 }
 
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .para-centros__content-grid--feature,
+  .para-centros__history-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .para-centros__history-summary,
+  .para-centros__summary-card--preview {
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
 @media (min-width: 64rem) {
   .para-centros__hero {
     grid-template-columns: minmax(0, 1.1fr) minmax(22rem, 0.9fr);
