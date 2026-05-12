@@ -5,6 +5,8 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/Navbar";
 import { RouteLoadingFallback } from "@/components/ui/RouteLoadingFallback";
 import { AuthProvider } from "@/context/AuthContext";
+import { I18nProvider } from "@/i18n/I18nProvider";
+import { useI18n } from "@/i18n/useI18n";
 import { HomePage } from "@/pages/HomePage";
 
 const OPEN_FAVORITES_INTENT = { type: "open_favorites" };
@@ -67,7 +69,9 @@ function withRouteLoadingFallback(element) {
   return <Suspense fallback={<RouteLoadingFallback />}>{element}</Suspense>;
 }
 
-export default function App() {
+function AppRoutes() {
+  const { t } = useI18n();
+
   return (
     <AuthProvider>
       <Routes>
@@ -103,8 +107,8 @@ export default function App() {
             path="/soporte"
             element={
               <PlaceholderPage
-                title="Soporte"
-                description="Estamos terminando este espacio para ayudarte con dudas y gestiones de la cuenta."
+                title={t("support.title")}
+                description={t("support.description")}
               />
             }
           />
@@ -125,5 +129,13 @@ export default function App() {
       </Routes>
       <Analytics />
     </AuthProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <I18nProvider>
+      <AppRoutes />
+    </I18nProvider>
   );
 }

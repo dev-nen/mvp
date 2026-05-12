@@ -14,10 +14,19 @@ import {
   formatActivityAgeLabel,
   formatActivityLocationLabel,
 } from "@/helpers/activityPresentation";
+import { useI18n } from "@/i18n/useI18n";
 import "./CatalogActivityCard.css";
 
 const PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC =
   "/placeholders/activity-card-placeholder.svg";
+
+const DEFAULT_CARD_COPY = {
+  allAges: "Para todas las edades",
+  ageRange: "{min} a {max} años",
+  ageFrom: "Desde {min} años",
+  ageUntil: "Hasta {max} años",
+  consultAge: "Consulta la edad",
+};
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -27,23 +36,26 @@ function isValidAgeNumber(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
 
-function formatPublicActivityAgeLabel({ age_rule_type, age_min, age_max }) {
+function formatPublicActivityAgeLabel(
+  { age_rule_type, age_min, age_max },
+  copy = DEFAULT_CARD_COPY,
+) {
   if (age_rule_type === "range") {
     return isValidAgeNumber(age_min) && isValidAgeNumber(age_max)
-      ? `${age_min} a ${age_max} a\u00f1os`
+      ? copy.ageRange.replace("{min}", age_min).replace("{max}", age_max)
       : "";
   }
 
   if (age_rule_type === "from") {
-    return isValidAgeNumber(age_min) ? `Desde ${age_min} a\u00f1os` : "";
+    return isValidAgeNumber(age_min) ? copy.ageFrom.replace("{min}", age_min) : "";
   }
 
   if (age_rule_type === "until") {
-    return isValidAgeNumber(age_max) ? `Hasta ${age_max} a\u00f1os` : "";
+    return isValidAgeNumber(age_max) ? copy.ageUntil.replace("{max}", age_max) : "";
   }
 
-  if (age_rule_type === "all") {
-    return "Para todas las edades";
+  if (age_rule_type === "all" || age_rule_type === "open") {
+    return copy.allAges;
   }
 
   return "";
@@ -60,12 +72,12 @@ function handlePublicCardImageError(event) {
   imageElement.src = PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
 }
 
-async function sharePublicActivity(activity) {
+async function sharePublicActivity(activity, copy) {
   if (typeof window === "undefined") {
     return;
   }
 
-  const title = getTrimmedText(activity?.title) || "Actividad en NensGo";
+  const title = getTrimmedText(activity?.title) || copy.shareTitle;
   const shareUrl = new URL("/", window.location.origin);
 
   if (activity?.id) {
@@ -74,7 +86,7 @@ async function sharePublicActivity(activity) {
 
   const sharePayload = {
     title,
-    text: `Mira esta actividad en NensGo: ${title}`,
+    text: copy.shareText.replace("{title}", title),
     url: shareUrl.toString(),
   };
 
@@ -86,13 +98,16 @@ async function sharePublicActivity(activity) {
   await navigator.clipboard?.writeText(sharePayload.url);
 }
 
-export function buildPublicCatalogCardViewModel(activity = {}) {
+export function buildPublicCatalogCardViewModel(
+  activity = {},
+  copy = DEFAULT_CARD_COPY,
+) {
   const title = getTrimmedText(activity.title);
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
   const centerLabel = getTrimmedText(activity.center_name);
   const cityLabel = getTrimmedText(activity.city_name);
-  const ageLabel = formatPublicActivityAgeLabel(activity);
+  const ageLabel = formatPublicActivityAgeLabel(activity, copy);
 
   return {
     ageLabel,
@@ -124,11 +139,21 @@ export function CatalogActivityCard({
   isFavorite = false,
   onToggleFavorite,
   onViewMore,
-  viewMoreLabel = "Ver más",
+  viewMoreLabel,
   variant = "default",
 }) {
+  const { t } = useI18n();
+  const ageCopy = {
+    allAges: t("catalog.card.allAges"),
+    ageRange: t("catalog.card.ageRange"),
+    ageFrom: t("catalog.card.ageFrom"),
+    ageUntil: t("catalog.card.ageUntil"),
+    consultAge: t("catalog.card.consultAge"),
+  };
+  const resolvedViewMoreLabel = viewMoreLabel || t("catalog.card.viewMore");
+
   if (variant === "public") {
-    const viewModel = buildPublicCatalogCardViewModel(activity);
+    const viewModel = buildPublicCatalogCardViewModel(activity, ageCopy);
     const isPlaceholderImage =
       viewModel.imageSrc === PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
     const publicMetaLabel = [viewModel.ageLabel, viewModel.cityLabel]
@@ -156,7 +181,9 @@ export function CatalogActivityCard({
             onClick={() => onToggleFavorite?.(activity)}
             disabled={!onToggleFavorite}
             aria-label={
-              isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+              isFavorite
+                ? t("catalog.card.removeFavorite")
+                : t("catalog.card.addFavorite")
             }
           >
             <Heart
@@ -167,7 +194,9 @@ export function CatalogActivityCard({
           </Button>
 
           {viewModel.showFreeBadge ? (
-            <span className="catalog-card__free-badge">Gratis</span>
+            <span className="catalog-card__free-badge">
+              {t("catalog.card.free")}
+            </span>
           ) : null}
 
           <Button
@@ -176,9 +205,12 @@ export function CatalogActivityCard({
             size="icon"
             className="catalog-card__share catalog-card__share--public"
             onClick={() => {
-              void sharePublicActivity(activity).catch(() => {});
+              void sharePublicActivity(activity, {
+                shareTitle: t("catalog.card.shareTitle"),
+                shareText: t("catalog.card.shareText"),
+              }).catch(() => {});
             }}
-            aria-label="Compartir actividad"
+            aria-label={t("catalog.card.share")}
           >
             <Share2 />
           </Button>
@@ -212,7 +244,7 @@ export function CatalogActivityCard({
             onClick={() => onViewMore?.(activity)}
             disabled={!onViewMore}
           >
-            Ver más
+            {t("catalog.card.viewMore")}
             <ArrowRight />
           </Button>
         </CardContent>
@@ -245,7 +277,9 @@ export function CatalogActivityCard({
           }`}
           onClick={() => onToggleFavorite?.(activity)}
           aria-label={
-            isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+            isFavorite
+              ? t("catalog.card.removeFavorite")
+              : t("catalog.card.addFavorite")
           }
         >
           <Heart
@@ -267,14 +301,16 @@ export function CatalogActivityCard({
             <div className="catalog-card__fact-inline">
               <MapPin className="catalog-card__fact-icon" />
               <span className="catalog-card__fact-inline-text catalog-card__fact-inline-text--location">
-                {formatActivityLocationLabel(activity)}
+                {formatActivityLocationLabel(activity, {
+                  consultLocation: t("catalog.card.consultLocation"),
+                })}
               </span>
             </div>
 
             <div className="catalog-card__fact-inline catalog-card__fact-inline--age">
               <Users className="catalog-card__fact-icon" />
               <span className="catalog-card__fact-inline-text">
-                {formatActivityAgeLabel(activity)}
+                {formatActivityAgeLabel(activity, ageCopy)}
               </span>
             </div>
           </div>
@@ -282,9 +318,11 @@ export function CatalogActivityCard({
           <div className="catalog-card__fact catalog-card__fact--boxed">
             <Clock3 className="catalog-card__fact-icon" />
             <div className="catalog-card__fact-body">
-              <span className="catalog-card__fact-label">Horario</span>
+              <span className="catalog-card__fact-label">
+                {t("catalog.card.schedule")}
+              </span>
               <span className="catalog-card__fact-value">
-                {activity.schedule_label || "Consulta el horario"}
+                {activity.schedule_label || t("catalog.card.consultSchedule")}
               </span>
             </div>
           </div>
@@ -293,7 +331,7 @@ export function CatalogActivityCard({
             <Wallet className="catalog-card__fact-icon" />
             <div className="catalog-card__fact-body">
               <span className="catalog-card__fact-value">
-                {activity.price_label || "Consulta el precio"}
+                {activity.price_label || t("catalog.card.consultPrice")}
               </span>
             </div>
           </div>
@@ -301,7 +339,7 @@ export function CatalogActivityCard({
           <div className="catalog-card__fact catalog-card__fact--center">
             <Building2 className="catalog-card__fact-icon" />
             <span className="catalog-card__fact-text">
-              {activity.center_name || "Consulta el centro"}
+              {activity.center_name || t("catalog.card.consultCenter")}
             </span>
           </div>
         </div>
@@ -313,7 +351,7 @@ export function CatalogActivityCard({
           onClick={() => onViewMore?.(activity)}
           disabled={!onViewMore}
         >
-          {viewMoreLabel}
+          {resolvedViewMoreLabel}
           <ArrowRight />
         </Button>
       </CardContent>

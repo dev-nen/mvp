@@ -1,117 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { SeoHead } from "@/components/SeoHead";
+import { useI18n } from "@/i18n/useI18n";
 import "./ParaCentrosPage.css";
-
-
-const HERO_POINTS = [
-  "Más visibilidad local para actividades de calidad.",
-  "Una presentación clara para que las familias entiendan rápido tu propuesta.",
-  "Un proceso simple para empezar a formar parte del proyecto.",
-];
-
-const FEATURE_ITEMS = [
-  "Tipo de actividad y edades recomendadas.",
-  "Ubicación, horarios y zona de trabajo.",
-  "Descripción breve y visual de la propuesta.",
-  "Imágenes y forma de contacto.",
-];
-
-const ACTIVITY_EXAMPLE = {
-  category: "Arte",
-  title: "Taller de pintura creativa",
-  ages: "7 a 12 años",
-  center: "Espai Creatiu Ribes",
-  locality: "Sant Pere de Ribes",
-  cta: "Ver más",
-};
-
-const ACTIVITY_PREVIEW = {
-  description:
-    "Sesiones creativas para peques que quieren experimentar con color, composición y materiales en un entorno guiado y cercano.",
-  schedule: "Martes y jueves, 17:30 a 19:00",
-  price: "Desde 42 EUR al mes",
-  venue: "Espai Creatiu Ribes",
-  address: "Carrer de la Pintura, 12",
-  city: "Sant Pere de Ribes",
-  contactTitle: "Contactar",
-  contactCopy:
-    "Puedes escribir directamente al centro si quieres confirmar si esta actividad encaja con tu familia.",
-  contactCta: "Contactar",
-};
-
-const BENEFITS = [
-  {
-    title: "Más visibilidad",
-    description:
-      "Tu actividad aparece en un espacio centrado en planes y servicios para peques y familias.",
-  },
-  {
-    title: "Más claridad",
-    description:
-      "La propuesta se presenta de forma ordenada para que una familia entienda rápido si encaja.",
-  },
-  {
-    title: "Más oportunidades de contacto",
-    description:
-      "Facilitamos que nuevos interesados descubran tu actividad y quieran saber más.",
-  },
-];
-
-const AUDIENCE_ITEMS = [
-  "Academias y centros formativos.",
-  "Actividades extraescolares y deportivas.",
-  "Talleres artísticos, creativos y culturales.",
-  "Espacios familiares, casales y propuestas de temporada.",
-  "Profesionales o entidades que trabajen con peques y familias.",
-];
-
-const REQUIRED_INFO = [
-  "Quién eres o qué entidad representas.",
-  "Qué actividad o servicio ofreces.",
-  "En qué zona trabajas.",
-  "Para qué edades está pensada tu propuesta.",
-  "Una forma de contacto.",
-];
-
-const FUTURE_SIGNALS = [
-  "Qué tipos de actividades despiertan más interés.",
-  "Qué zonas concentran más búsquedas.",
-  "Qué fichas generan más clics o contactos.",
-];
-
-const STORY_INTRO_PARAGRAPHS = [
-  "Somos una familia a la que le encanta hacer planes. Siempre estamos buscando nuevas actividades, propuestas diferentes y experiencias que nos permitan descubrir cosas, compartir tiempo de calidad y, sobre todo, regalarle a nuestro hijo oportunidades para aprender, disfrutar y vivir algo nuevo.",
-];
-
-const STORY_CHALLENGE_PARAGRAPHS = [
-  "Con el tiempo fuimos notando algo que seguramente le pasa a muchas familias: encontrar actividades interesantes no siempre es fácil.",
-  "Muchas veces la información está dispersa, incompleta o cuesta muchísimo llegar a propuestas distintas a las de siempre.",
-];
-
-const STORY_PROMPT_INTRO =
-  "También nos pasó que, casi sin querer, empezamos a convertirnos en una especie de referencia para otras familias.";
-
-const STORY_PROMPTS = [
-  '"Ustedes que siempre están haciendo cosas... ¿qué nos recomendáis?"',
-  '"¿Tenéis alguna idea para este finde?"',
-  '"¿Dónde encontrasteis esa actividad?"',
-];
-
-const STORY_ORIGIN_BRIDGE =
-  "Y así, entre mensajes, recomendaciones y enlaces compartidos, vimos una necesidad muy clara: ¿por qué no crear un sitio donde todo esto pueda encontrarse de forma más fácil y ordenada?";
-
-const STORY_CLOSING_PARAGRAPHS = [
-  "Por eso NensGo nace con una idea muy simple: ayudar a las familias a descubrir actividades cerca de ellas, dar visibilidad a pequeños proyectos, talleres, espacios y propuestas locales, y reunir en un solo lugar opciones para disfrutar con hijos y en familia.",
-  'Queremos facilitar la búsqueda, inspirar nuevos planes y hacer que encontrar algo para hacer no dependa de tener "el contacto correcto" o de que justo alguien te pase la información.',
-  "Porque creemos que hay muchísimo por descubrir, y que compartirlo también es una forma de construir comunidad.",
-];
-
-const STORY_MISSION_POINTS = [
-  "Ayudar a las familias a descubrir actividades cerca de ellas.",
-  "Dar visibilidad a pequeños proyectos, talleres, espacios y propuestas locales.",
-  "Reunir en un solo lugar opciones para disfrutar con hijos y en familia.",
-];
 
 function SectionHeading({ kicker, title, description }) {
   return (
@@ -138,7 +29,7 @@ function PreviewInfoCard({ label, value, accent = false }) {
   );
 }
 
-function ActivityPreviewModal({ open, onClose }) {
+function ActivityPreviewModal({ open, onClose, activityExample, preview }) {
   if (!open) {
     return null;
   }
@@ -158,13 +49,13 @@ function ActivityPreviewModal({ open, onClose }) {
             type="button"
             onClick={onClose}
           >
-            Volver
+            {preview.back}
           </button>
 
           <button
             className="para-centros__modal-close"
             type="button"
-            aria-label="Cerrar vista previa"
+            aria-label={preview.close}
             onClick={onClose}
           >
             x
@@ -178,37 +69,35 @@ function ActivityPreviewModal({ open, onClose }) {
               width="1122"
               height="1402"
               decoding="async"
-              alt="Tres niños pintando en un caballete, vistos de espaldas."
+              alt={activityExample.imageAlt}
             />
           </figure>
 
           <div className="para-centros__modal-content">
             <p className="para-centros__modal-category">
-              {ACTIVITY_EXAMPLE.category}
+              {activityExample.category}
             </p>
             <h2
               id="para-centros-preview-title"
               className="para-centros__modal-title"
             >
-              {ACTIVITY_EXAMPLE.title}
+              {activityExample.title}
             </h2>
 
             <section className="para-centros__modal-section">
-              <p className="para-centros__modal-text">
-                {ACTIVITY_PREVIEW.description}
-              </p>
+              <p className="para-centros__modal-text">{preview.description}</p>
             </section>
 
             <section className="para-centros__modal-section">
               <div className="para-centros__modal-grid">
-                <PreviewInfoCard label="Edad" value={ACTIVITY_EXAMPLE.ages} />
+                <PreviewInfoCard label={preview.age} value={activityExample.ages} />
                 <PreviewInfoCard
-                  label="Horario"
-                  value={ACTIVITY_PREVIEW.schedule}
+                  label={preview.scheduleLabel}
+                  value={preview.schedule}
                 />
                 <PreviewInfoCard
-                  label="Precio"
-                  value={ACTIVITY_PREVIEW.price}
+                  label={preview.priceLabel}
+                  value={preview.price}
                   accent
                 />
               </div>
@@ -216,29 +105,27 @@ function ActivityPreviewModal({ open, onClose }) {
 
             <section className="para-centros__modal-section">
               <div className="para-centros__modal-grid">
-                <PreviewInfoCard label="Centro" value={ACTIVITY_PREVIEW.venue} />
+                <PreviewInfoCard label={preview.center} value={preview.venue} />
                 <PreviewInfoCard
-                  label="Dirección"
-                  value={ACTIVITY_PREVIEW.address}
+                  label={preview.addressLabel}
+                  value={preview.address}
                 />
-                <PreviewInfoCard label="Ciudad" value={ACTIVITY_PREVIEW.city} />
+                <PreviewInfoCard label={preview.cityLabel} value={preview.city} />
               </div>
             </section>
 
             <section className="para-centros__modal-contact">
               <h3 className="para-centros__modal-contact-title">
-                {ACTIVITY_PREVIEW.contactTitle}
+                {preview.contactTitle}
               </h3>
-              <p className="para-centros__modal-text">
-                Habla directamente con el centro para pedir más información.
-              </p>
+              <p className="para-centros__modal-text">{preview.contactCopy}</p>
               <a
                 className="para-centros__button para-centros__button--contact"
                 href={PARA_CENTROS_FORM_URL}
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                {ACTIVITY_PREVIEW.contactCta}
+                {preview.contactCta}
               </a>
             </section>
           </div>
@@ -249,8 +136,20 @@ function ActivityPreviewModal({ open, onClose }) {
 }
 
 export function ParaCentrosPage() {
+  const { t } = useI18n();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const currentYear = useMemo(() => new Date().getFullYear(), []);
+  const hero = t("paraCentros.hero");
+  const story = t("paraCentros.story");
+  const idea = t("paraCentros.idea");
+  const activityExample = t("paraCentros.activityExample");
+  const preview = t("paraCentros.preview");
+  const benefits = t("paraCentros.benefits");
+  const audience = t("paraCentros.audience");
+  const requiredInfo = t("paraCentros.requiredInfo");
+  const product = t("paraCentros.product");
+  const cta = t("paraCentros.cta");
+  const pageFooter = t("paraCentros.footer");
 
   useEffect(() => {
     if (!isPreviewOpen) {
@@ -276,36 +175,25 @@ export function ParaCentrosPage() {
   return (
     <>
       <SeoHead
-        title="Para centros | Publica tus actividades en NensGo"
-        description="Muestra tus actividades, talleres y propuestas familiares en un entorno pensado para familias."
+        title={t("paraCentros.seoTitle")}
+        description={t("paraCentros.seoDescription")}
         canonicalUrl="https://nensgo.com/para-centros"
       />
       <main className="para-centros-page">
-
         <section
           id="inicio"
           className="para-centros__section para-centros__section--hero"
         >
           <div className="para-centros__container para-centros__hero">
             <div className="para-centros__hero-copy">
-              <p className="para-centros__section-kicker">
-                ¿Ofreces actividades para peques o familias?
-              </p>
-              <h1 className="para-centros__hero-title">
-                Haz que tu propuesta llegue mejor a las familias.
-              </h1>
+              <p className="para-centros__section-kicker">{hero.kicker}</p>
+              <h1 className="para-centros__hero-title">{hero.title}</h1>
               <p className="para-centros__hero-description">
-                NensGo es una plataforma de actividades infantiles y familiares
-                que quiere reunir en un solo lugar propuestas que hoy están
-                dispersas entre redes, grupos y canales poco claros. Esta
-                página presenta la visión del proyecto, la plataforma que
-                estamos construyendo y la convocatoria abierta para talleres,
-                deporte, arte, cultura y espacios para peques que quieran
-                sumarse desde el principio.
+                {hero.description}
               </p>
 
               <ul className="para-centros__hero-points">
-                {HERO_POINTS.map((point) => (
+                {hero.points.map((point) => (
                   <li key={point} className="para-centros__hero-point">
                     {point}
                   </li>
@@ -323,16 +211,13 @@ export function ParaCentrosPage() {
                     aria-hidden="true"
                   />
                   <div className="para-centros__hero-panel-intro">
-                    <strong>Un escaparate digital claro</strong>
-                    <p>
-                      Tu propuesta se muestra de forma simple, visual y fácil de
-                      entender.
-                    </p>
+                    <strong>{hero.panelTitle}</strong>
+                    <p>{hero.panelDescription}</p>
                   </div>
                 </div>
 
                 <ul className="para-centros__simple-list para-centros__simple-list--compact">
-                  {FEATURE_ITEMS.map((item) => (
+                  {hero.featureItems.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -348,45 +233,45 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__content-grid para-centros__content-grid--feature para-centros__history-layout">
             <div className="para-centros__history-copy">
               <SectionHeading
-                kicker="Nuestra historia"
-                title="Así nació NensGo"
-                description="NensGo nace de una necesidad muy concreta: encontrar actividades bien explicadas, cercanas y distintas a las de siempre."
+                kicker={story.kicker}
+                title={story.title}
+                description={story.description}
               />
 
               <div className="para-centros__history-narrative">
                 <div className="para-centros__history-block">
-                  {STORY_INTRO_PARAGRAPHS.map((paragraph) => (
+                  {story.intro.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
 
                 <div className="para-centros__history-block">
-                  {STORY_CHALLENGE_PARAGRAPHS.map((paragraph) => (
+                  {story.challenge.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
 
                 <article className="para-centros__summary-card para-centros__summary-card--accent para-centros__history-callout">
                   <p className="para-centros__summary-eyebrow">
-                    Lo empezamos a oir una y otra vez
+                    {story.calloutEyebrow}
                   </p>
                   <p className="para-centros__history-callout-lead">
-                    {STORY_PROMPT_INTRO}
+                    {story.promptIntro}
                   </p>
 
                   <ul className="para-centros__history-prompts">
-                    {STORY_PROMPTS.map((prompt) => (
+                    {story.prompts.map((prompt) => (
                       <li key={prompt}>{prompt}</li>
                     ))}
                   </ul>
 
                   <p className="para-centros__history-callout-footer">
-                    {STORY_ORIGIN_BRIDGE}
+                    {story.bridge}
                   </p>
                 </article>
 
                 <div className="para-centros__history-block">
-                  {STORY_CLOSING_PARAGRAPHS.map((paragraph) => (
+                  {story.closing.map((paragraph) => (
                     <p key={paragraph}>{paragraph}</p>
                   ))}
                 </div>
@@ -395,14 +280,14 @@ export function ParaCentrosPage() {
 
             <aside className="para-centros__summary-card para-centros__history-summary">
               <p className="para-centros__summary-eyebrow">
-                Lo que queremos construir
+                {story.summaryEyebrow}
               </p>
               <h3 className="para-centros__summary-title">
-                Un lugar más claro para descubrir planes en familia
+                {story.summaryTitle}
               </h3>
 
               <ul className="para-centros__simple-list">
-                {STORY_MISSION_POINTS.map((point) => (
+                {story.missionPoints.map((point) => (
                   <li key={point}>{point}</li>
                 ))}
               </ul>
@@ -414,36 +299,21 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__content-grid para-centros__content-grid--feature">
             <div className="para-centros__copy-stack">
               <SectionHeading
-                kicker="La idea base"
-                title="Una forma clara, moderna y práctica de descubrir actividades"
-                description="Cada propuesta se presenta en una ficha visual y ordenada para que una familia entienda rápido si encaja con lo que está buscando."
+                kicker={idea.kicker}
+                title={idea.title}
+                description={idea.description}
               />
 
               <div className="para-centros__copy-paragraphs">
-                <p>
-                  NensGo quiere ser ese lugar donde descubrir planes resulte
-                  sencillo: una experiencia pensada para ver en pocos segundos
-                  qué es cada actividad, para qué edades está pensada y dónde
-                  encontrarla.
-                </p>
-                <p>
-                  La ficha que ves aquí resume esa idea: una propuesta bien
-                  presentada, con la información importante a la vista y una
-                  estructura que ayuda a decidir sin tener que rebuscar entre
-                  mensajes, redes o enlaces sueltos.
-                </p>
-                <p>
-                  Buscamos una solución moderna, organizativa y práctica: un
-                  espacio cuidado para las familias y, al mismo tiempo, una
-                  forma clara de mostrar cada proyecto con orden, contexto y
-                  utilidad real.
-                </p>
+                {idea.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
               </div>
             </div>
 
             <article className="para-centros__summary-card para-centros__summary-card--preview">
               <p className="para-centros__summary-eyebrow">
-                Así se verá una actividad
+                {idea.previewEyebrow}
               </p>
 
               <article className="para-centros__activity-example">
@@ -454,25 +324,25 @@ export function ParaCentrosPage() {
                     height="1402"
                     loading="lazy"
                     decoding="async"
-                    alt="Tres niños pintando en un caballete, vistos de espaldas."
+                    alt={activityExample.imageAlt}
                   />
                 </figure>
 
                 <div className="para-centros__activity-content">
                   <p className="para-centros__activity-category">
-                    {ACTIVITY_EXAMPLE.category}
+                    {activityExample.category}
                   </p>
                   <h3 className="para-centros__activity-title">
-                    {ACTIVITY_EXAMPLE.title}
+                    {activityExample.title}
                   </h3>
                   <p className="para-centros__activity-meta">
-                    {ACTIVITY_EXAMPLE.ages}
+                    {activityExample.ages}
                   </p>
                   <p className="para-centros__activity-meta">
-                    {ACTIVITY_EXAMPLE.center}
+                    {activityExample.center}
                   </p>
                   <p className="para-centros__activity-meta">
-                    {ACTIVITY_EXAMPLE.locality}
+                    {activityExample.locality}
                   </p>
 
                   <div className="para-centros__activity-actions">
@@ -481,7 +351,7 @@ export function ParaCentrosPage() {
                       className="para-centros__button para-centros__button--primary para-centros__activity-button"
                       onClick={() => setIsPreviewOpen(true)}
                     >
-                      {ACTIVITY_EXAMPLE.cta}
+                      {activityExample.cta}
                     </button>
                   </div>
                 </div>
@@ -496,13 +366,13 @@ export function ParaCentrosPage() {
         >
           <div className="para-centros__container para-centros__stack">
             <SectionHeading
-              kicker="¿Qué gana tu proyecto?"
-              title="Más visibilidad, más claridad y más oportunidades de contacto"
-              description="NensGo está pensado para que proyectos reales ganen presencia sin perder tiempo en una web compleja."
+              kicker={benefits.kicker}
+              title={benefits.title}
+              description={benefits.description}
             />
 
             <div className="para-centros__benefits-grid">
-              {BENEFITS.map((benefit) => (
+              {benefits.items.map((benefit) => (
                 <article key={benefit.title} className="para-centros__benefit-card">
                   <h3>{benefit.title}</h3>
                   <p>{benefit.description}</p>
@@ -511,13 +381,10 @@ export function ParaCentrosPage() {
             </div>
 
             <article className="para-centros__future-strip">
-              <strong>Más adelante</strong>
-              <p>
-                También queremos compartir señales útiles para ayudarte a
-                entender mejor el interés que genera tu actividad:
-              </p>
+              <strong>{benefits.futureTitle}</strong>
+              <p>{benefits.futureText}</p>
               <ul className="para-centros__future-list">
-                {FUTURE_SIGNALS.map((item) => (
+                {benefits.futureSignals.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -529,13 +396,13 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__content-grid">
             <article className="para-centros__summary-card">
               <SectionHeading
-                kicker="¿A quién va dirigido?"
-                title="A centros, actividades y proyectos pensados para peques y familias"
-                description="Si tu propuesta aporta valor a familias y niños, nos interesa conocerla."
+                kicker={audience.kicker}
+                title={audience.title}
+                description={audience.description}
               />
 
               <ul className="para-centros__simple-list">
-                {AUDIENCE_ITEMS.map((item) => (
+                {audience.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -543,13 +410,13 @@ export function ParaCentrosPage() {
 
             <article className="para-centros__summary-card para-centros__summary-card--accent">
               <SectionHeading
-                kicker="¿Qué necesitamos de ti?"
-                title="Solo unos pocos datos para valorar tu propuesta"
-                description="Solo pedimos una primera información básica para entender el proyecto y poder hablar contigo."
+                kicker={requiredInfo.kicker}
+                title={requiredInfo.title}
+                description={requiredInfo.description}
               />
 
               <ul className="para-centros__simple-list para-centros__simple-list--checks">
-                {REQUIRED_INFO.map((item) => (
+                {requiredInfo.items.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
@@ -564,16 +431,12 @@ export function ParaCentrosPage() {
           <div className="para-centros__container para-centros__product-layout">
             <div className="para-centros__trust-copy">
               <SectionHeading
-                kicker="¿Qué tipo de espacio queremos crear?"
-                title="Un espacio útil, cuidado y de valor real"
-                description="NensGo no quiere ser un listado sin criterio. Queremos crear un espacio donde las familias encuentren propuestas confiables y donde quienes organizan actividades puedan mostrarse de forma clara."
+                kicker={product.kicker}
+                title={product.title}
+                description={product.description}
               />
 
-              <p className="para-centros__trust-text">
-                Por eso nos interesa contar con proyectos reales, bien
-                explicados y con ganas de formar parte de una plataforma pensada
-                para conectar mejor la oferta con la demanda.
-              </p>
+              <p className="para-centros__trust-text">{product.text}</p>
             </div>
 
             <figure className="para-centros__product-shot">
@@ -584,13 +447,10 @@ export function ParaCentrosPage() {
                   height="645"
                   loading="lazy"
                   decoding="async"
-                  alt="Vista previa de la aplicación NensGo con buscador, filtros y tarjetas de actividades."
+                  alt={product.imageAlt}
                 />
               </div>
-              <figcaption>
-                Vista real de la aplicación que guiará a las familias a
-                descubrir actividades de forma más clara.
-              </figcaption>
+              <figcaption>{product.caption}</figcaption>
             </figure>
           </div>
         </section>
@@ -600,17 +460,12 @@ export function ParaCentrosPage() {
             <article className="para-centros__cta-band">
               <div className="para-centros__cta-content">
                 <p className="para-centros__section-kicker para-centros__section-kicker--light">
-                  ¿Quieres unirte al proyecto?
+                  {cta.kicker}
                 </p>
-                <h2 className="para-centros__cta-title">
-                  Tu actividad puede formar parte de NensGo.
-                </h2>
-                <p className="para-centros__cta-text">
-                  Déjanos tus datos en el formulario y te contactaremos si así
-                  lo deseas.
-                </p>
+                <h2 className="para-centros__cta-title">{cta.title}</h2>
+                <p className="para-centros__cta-text">{cta.text}</p>
                 <p className="para-centros__contact-note">
-                  También puedes escribirnos directamente a{" "}
+                  {cta.contactNote}{" "}
                   <a href="mailto:info@nensgo.com">info@nensgo.com</a>.
                 </p>
               </div>
@@ -622,7 +477,7 @@ export function ParaCentrosPage() {
                   target="_blank"
                   rel="noreferrer noopener"
                 >
-                  Quiero participar
+                  {cta.action}
                 </a>
               </div>
             </article>
@@ -630,17 +485,14 @@ export function ParaCentrosPage() {
         </section>
       </main>
 
-      <footer
-        className="para-centros__footer"
-        aria-label="Pie de pagina de NensGo para centros"
-      >
+      <footer className="para-centros__footer" aria-label={pageFooter.aria}>
         <div className="para-centros__container para-centros__footer-inner">
           <p className="para-centros__footer-brand">NensGo</p>
           <p className="para-centros__footer-rights">
-            Copyright {currentYear} NensGo. Todos los derechos reservados.
+            {t("paraCentros.footer.rights", { year: currentYear })}
           </p>
           <p className="para-centros__footer-contact">
-            Contacto:{" "}
+            {pageFooter.contact}{" "}
             <a
               className="para-centros__footer-contact-link"
               href="mailto:info@nensgo.com"
@@ -648,16 +500,15 @@ export function ParaCentrosPage() {
               info@nensgo.com
             </a>
           </p>
-          <p className="para-centros__footer-note">
-            Los textos, diseños, imágenes y materiales publicados en esta web
-            pertenecen a NensGo o se usan con autorización.
-          </p>
+          <p className="para-centros__footer-note">{pageFooter.note}</p>
         </div>
       </footer>
 
       <ActivityPreviewModal
         open={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
+        activityExample={activityExample}
+        preview={preview}
       />
     </>
   );

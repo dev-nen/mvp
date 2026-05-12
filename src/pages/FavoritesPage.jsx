@@ -9,10 +9,12 @@ import {
 import { CatalogState } from "@/components/states/CatalogState";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useI18n } from "@/i18n/useI18n";
 import "./FavoritesPage.css";
 
 export function FavoritesPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { activities, isLoading, error, reload } = useCatalog();
   const {
     favoriteIds,
@@ -49,10 +51,9 @@ export function FavoritesPage() {
         <div className="page-container favorites-page__container">
           <header className="favorites-page__header">
             <div className="favorites-page__copy">
-              <h2 className="favorites-page__title">Tus actividades guardadas</h2>
+              <h2 className="favorites-page__title">{t("favorites.title")}</h2>
               <p className="favorites-page__description">
-                Revisa con más calma las actividades que te interesan y abre su
-                ficha completa cuando quieras decidir con más contexto.
+                {t("favorites.description")}
               </p>
             </div>
           </header>
@@ -70,25 +71,25 @@ export function FavoritesPage() {
           ) : resolvedError ? (
             <CatalogState
               icon={AlertTriangle}
-              title="No pudimos cargar tus favoritas"
+              title={t("favorites.loadErrorTitle")}
               description={resolvedError}
-              actionLabel="Reintentar"
+              actionLabel={t("home.retry")}
               onAction={reload}
             />
           ) : hasNoSavedFavorites ? (
             <CatalogState
               icon={Heart}
-              title="Todavía no has guardado actividades"
-              description="Usa el corazón en el catálogo para recuperar aquí las opciones que quieras revisar más tarde."
-              actionLabel="Volver a Home"
+              title={t("favorites.noSavedTitle")}
+              description={t("favorites.noSavedDescription")}
+              actionLabel={t("favorites.backHome")}
               onAction={() => navigate("/")}
             />
           ) : hasUnresolvableFavorites ? (
             <CatalogState
               icon={SearchX}
-              title="Tus favoritas ya no estan disponibles"
-              description="Las actividades que habías guardado ya no se pueden recuperar desde el catálogo actual. Vuelve a explorar para guardar nuevas opciones."
-              actionLabel="Explorar actividades"
+              title={t("favorites.unavailableTitle")}
+              description={t("favorites.unavailableDescription")}
+              actionLabel={t("favorites.explore")}
               onAction={() => navigate("/")}
             />
           ) : (
@@ -101,7 +102,7 @@ export function FavoritesPage() {
                     isFavorite={isFavorite(activity.id)}
                     onToggleFavorite={handleToggleFavorite}
                     onViewMore={() => navigate(`/favoritos/${activity.id}`)}
-                    viewMoreLabel="Ver ficha completa"
+                    viewMoreLabel={t("catalog.card.fullCard")}
                   />
                 ))}
               </div>

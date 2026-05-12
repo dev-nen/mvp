@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Eye,
   EyeOff,
@@ -14,10 +14,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
-import { listCatalogCityChoices } from "@/services/catalogCityChoicesService";
+import { useI18n } from "@/i18n/useI18n";
+import {
+  getMunicipalityChoiceById,
+  getMunicipalityChoiceLabel,
+  normalizeMunicipalityQuery,
+  searchMunicipalityChoices,
+} from "@/services/municipalityService";
 import "./ProtectedAccessGate.css";
 
+const MUNICIPALITY_SEARCH_DEBOUNCE_MS = 250;
+const MUNICIPALITY_SEARCH_MIN_LENGTH = 2;
+
 export function ProtectedAccessGate() {
+  const { t } = useI18n();
   const {
     accessState,
     appUserError,
@@ -42,58 +52,75 @@ export function ProtectedAccessGate() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [profileName, setProfileName] = useState("");
   const [profileLastName, setProfileLastName] = useState("");
-  const [cityChoices, setCityChoices] = useState([]);
-  const [cityChoicesError, setCityChoicesError] = useState("");
-  const [isLoadingCityChoices, setIsLoadingCityChoices] = useState(false);
-  const [selectedCityId, setSelectedCityId] = useState("");
+  const [municipalityQuery, setMunicipalityQuery] = useState("");
+  const [municipalityChoices, setMunicipalityChoices] = useState([]);
+  const [municipalityChoicesError, setMunicipalityChoicesError] = useState("");
+  const [isLoadingMunicipalityChoices, setIsLoadingMunicipalityChoices] =
+    useState(false);
+  const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [formError, setFormError] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSubmittingCredentials, setIsSubmittingCredentials] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
 
+  const normalizedMunicipalityQuery = useMemo(
+    () => normalizeMunicipalityQuery(municipalityQuery),
+    [municipalityQuery],
+  );
+  const shouldSearchMunicipalities =
+    accessState === "onboarding_required" &&
+    isAccessGateOpen &&
+    normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH &&
+    municipalityQuery !== getMunicipalityChoiceLabel(selectedMunicipality);
+  const isMunicipalityOptionsOpen =
+    shouldSearchMunicipalities &&
+    (isLoadingMunicipalityChoices ||
+      municipalityChoices.length > 0 ||
+      municipalityChoicesError ||
+      normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH);
+
   useEffect(() => {
-    if (!isAccessGateOpen || accessState !== "onboarding_required") {
+    if (!shouldSearchMunicipalities) {
+      setMunicipalityChoices([]);
+      setIsLoadingMunicipalityChoices(false);
       return undefined;
     }
 
-    let isMounted = true;
+    let isCancelled = false;
 
-    const loadCityChoices = async () => {
-      setIsLoadingCityChoices(true);
-      setCityChoicesError("");
+    setIsLoadingMunicipalityChoices(true);
+    setMunicipalityChoicesError("");
 
-      try {
-        const nextCityChoices = await listCatalogCityChoices();
+    const timeoutId = window.setTimeout(() => {
+      searchMunicipalityChoices(municipalityQuery)
+        .then((nextMunicipalityChoices) => {
+          if (isCancelled) {
+            return;
+          }
 
-        if (!isMounted) {
-          return;
-        }
+          setMunicipalityChoices(nextMunicipalityChoices);
+        })
+        .catch(() => {
+          if (isCancelled) {
+            return;
+          }
 
-        setCityChoices(nextCityChoices);
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        setCityChoicesError(
-          error instanceof Error
-            ? error.message
-            : "No pudimos cargar las ciudades disponibles ahora mismo.",
-        );
-      } finally {
-        if (isMounted) {
-          setIsLoadingCityChoices(false);
-        }
-      }
-    };
-
-    void loadCityChoices();
+          setMunicipalityChoices([]);
+          setMunicipalityChoicesError("municipality");
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setIsLoadingMunicipalityChoices(false);
+          }
+        });
+    }, MUNICIPALITY_SEARCH_DEBOUNCE_MS);
 
     return () => {
-      isMounted = false;
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
     };
-  }, [accessState, isAccessGateOpen]);
+  }, [municipalityQuery, shouldSearchMunicipalities]);
 
   useEffect(() => {
     if (!isAccessGateOpen) {
@@ -102,7 +129,10 @@ export function ProtectedAccessGate() {
       setPasswordConfirm("");
       setProfileName("");
       setProfileLastName("");
-      setSelectedCityId("");
+      setMunicipalityQuery("");
+      setMunicipalityChoices([]);
+      setMunicipalityChoicesError("");
+      setSelectedMunicipality(null);
       setFormError("");
       setIsPasswordVisible(false);
       setIsStartingGoogleSignIn(false);
@@ -114,19 +144,54 @@ export function ProtectedAccessGate() {
 
   useEffect(() => {
     if (!isAccessGateOpen || accessState !== "onboarding_required") {
-      return;
+      return undefined;
     }
+
+    let isMounted = true;
 
     setProfileName(defaultOnboardingForm.name || "");
     setProfileLastName(defaultOnboardingForm.lastName || "");
-    setSelectedCityId(defaultOnboardingForm.cityId || "");
+    setSelectedMunicipality(null);
+    setMunicipalityQuery("");
+
+    if (!defaultOnboardingForm.cityId) {
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    getMunicipalityChoiceById(defaultOnboardingForm.cityId)
+      .then((municipalityChoice) => {
+        if (!isMounted || !municipalityChoice) {
+          return;
+        }
+
+        setSelectedMunicipality(municipalityChoice);
+        setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+      })
+      .catch(() => {
+        if (isMounted) {
+          setMunicipalityChoicesError("saved_city");
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [accessState, defaultOnboardingForm, isAccessGateOpen]);
 
-  const selectedCity =
-    cityChoices.find((cityChoice) => String(cityChoice.id) === selectedCityId) ??
-    null;
-  const feedbackMessage = formError || appUserError || authError || cityChoicesError;
-  const infoMessage = verificationMessage;
+  const feedbackMessage =
+    formError ||
+    (municipalityChoicesError === "saved_city"
+      ? t("auth.feedback.savedCityError")
+      : municipalityChoicesError
+        ? t("auth.feedback.municipalityError")
+        : "") ||
+    (appUserError ? t("auth.feedback.profileError") : "") ||
+    (authError ? t("auth.feedback.authError") : "");
+  const infoMessage = verificationMessage
+    ? t("auth.feedback.verificationSent")
+    : "";
 
   if (!isAccessGateOpen) {
     return null;
@@ -151,12 +216,12 @@ export function ProtectedAccessGate() {
     event.preventDefault();
 
     if (!email.trim() || !password.trim()) {
-      setFormError("Email y contraseña son obligatorios.");
+      setFormError(t("auth.anonymous.emailPasswordRequired"));
       return;
     }
 
     if (authMode === "sign_up" && password !== passwordConfirm) {
-      setFormError("La confirmación de la contraseña no coincide.");
+      setFormError(t("auth.anonymous.passwordMismatch"));
       return;
     }
 
@@ -188,7 +253,7 @@ export function ProtectedAccessGate() {
     const targetEmail = pendingVerificationEmail || email.trim();
 
     if (!targetEmail) {
-      setFormError("Necesitamos un email para reenviar la verificación.");
+      setFormError(t("auth.verification.resendMissingEmail"));
       return;
     }
 
@@ -198,16 +263,38 @@ export function ProtectedAccessGate() {
     setIsResendingVerification(false);
   };
 
+  const handleMunicipalityQueryChange = (event) => {
+    const nextQuery = event.target.value;
+
+    setMunicipalityQuery(nextQuery);
+    setMunicipalityChoicesError("");
+
+    if (
+      selectedMunicipality &&
+      nextQuery !== getMunicipalityChoiceLabel(selectedMunicipality)
+    ) {
+      setSelectedMunicipality(null);
+    }
+  };
+
+  const handleSelectMunicipality = (municipalityChoice) => {
+    setSelectedMunicipality(municipalityChoice);
+    setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+    setMunicipalityChoices([]);
+    setMunicipalityChoicesError("");
+    setFormError("");
+  };
+
   const handleSubmitOnboarding = async (event) => {
     event.preventDefault();
 
     if (!profileName.trim()) {
-      setFormError("El nombre es obligatorio para completar el perfil.");
+      setFormError(t("auth.onboarding.nameRequired"));
       return;
     }
 
-    if (!selectedCity) {
-      setFormError("Selecciona una ciudad para completar el acceso.");
+    if (!selectedMunicipality) {
+      setFormError(t("auth.onboarding.cityRequired"));
       return;
     }
 
@@ -216,11 +303,11 @@ export function ProtectedAccessGate() {
     const { error } = await completeOnboarding({
       name: profileName,
       lastName: profileLastName,
-      cityId: selectedCity.id,
+      cityId: selectedMunicipality.id,
     });
 
     if (error) {
-      setFormError(error.message);
+      setFormError(t("auth.feedback.profileError"));
     }
   };
 
@@ -242,7 +329,7 @@ export function ProtectedAccessGate() {
             type="button"
             className="protected-access-gate__close"
             onClick={closeAccessGate}
-            aria-label="Cerrar acceso"
+            aria-label={t("auth.common.closeAccess")}
           >
             <X />
           </button>
@@ -268,12 +355,14 @@ export function ProtectedAccessGate() {
                   id="protected-access-gate-title"
                   className="protected-access-gate__title"
                 >
-                  {authMode === "sign_up" ? "Crea tu cuenta" : "Bienvenido"}
+                  {authMode === "sign_up"
+                    ? t("auth.anonymous.createTitle")
+                    : t("auth.anonymous.welcome")}
                 </h2>
                 <p className="protected-access-gate__description">
                   {authMode === "sign_up"
-                    ? "Regístrate con Google o email"
-                    : "Accede con Google o email"}
+                    ? t("auth.anonymous.signUpDescription")
+                    : t("auth.anonymous.signInDescription")}
                 </p>
               </header>
 
@@ -299,16 +388,16 @@ export function ProtectedAccessGate() {
                   </span>
                   <span>
                     {isStartingGoogleSignIn
-                      ? "Conectando con Google..."
-                      : "Continuar con Google"}
+                      ? t("auth.common.googleConnecting")
+                      : t("auth.common.googleContinue")}
                   </span>
                 </Button>
 
                 <div className="protected-access-gate__divider">
                   <span>
                     {authMode === "sign_up"
-                      ? "o crea tu cuenta con email"
-                      : "o continúa con email"}
+                      ? t("auth.anonymous.signUpDivider")
+                      : t("auth.anonymous.signInDivider")}
                   </span>
                 </div>
 
@@ -317,7 +406,7 @@ export function ProtectedAccessGate() {
                   onSubmit={handleSubmitCredentials}
                 >
                   <label className="protected-access-gate__label" htmlFor="access-email">
-                    Correo electrónico
+                    {t("auth.common.email")}
                   </label>
                   <div className="protected-access-gate__field">
                     <Mail
@@ -328,7 +417,7 @@ export function ProtectedAccessGate() {
                       id="access-email"
                       type="email"
                       className="protected-access-gate__input protected-access-gate__input--with-icon"
-                      placeholder="Correo electrónico"
+                      placeholder={t("auth.common.email")}
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       autoComplete="email"
@@ -339,7 +428,7 @@ export function ProtectedAccessGate() {
                     className="protected-access-gate__label"
                     htmlFor="access-password"
                   >
-                    Contraseña
+                    {t("auth.common.password")}
                   </label>
                   <div className="protected-access-gate__field">
                     <Lock
@@ -350,7 +439,7 @@ export function ProtectedAccessGate() {
                       id="access-password"
                       type={isPasswordVisible ? "text" : "password"}
                       className="protected-access-gate__input protected-access-gate__input--with-icon protected-access-gate__input--with-action"
-                      placeholder="Contraseña"
+                      placeholder={t("auth.common.password")}
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       autoComplete={
@@ -362,7 +451,9 @@ export function ProtectedAccessGate() {
                       className="protected-access-gate__password-toggle"
                       onClick={() => setIsPasswordVisible((current) => !current)}
                       aria-label={
-                        isPasswordVisible ? "Ocultar contraseña" : "Mostrar contraseña"
+                        isPasswordVisible
+                          ? t("auth.common.hidePassword")
+                          : t("auth.common.showPassword")
                       }
                     >
                       {isPasswordVisible ? <EyeOff /> : <Eye />}
@@ -375,7 +466,7 @@ export function ProtectedAccessGate() {
                         className="protected-access-gate__label"
                         htmlFor="access-password-confirm"
                       >
-                        Confirmar contraseña
+                        {t("auth.common.confirmPassword")}
                       </label>
                       <div className="protected-access-gate__field">
                         <Lock
@@ -386,7 +477,7 @@ export function ProtectedAccessGate() {
                           id="access-password-confirm"
                           type={isPasswordVisible ? "text" : "password"}
                           className="protected-access-gate__input protected-access-gate__input--with-icon protected-access-gate__input--with-action"
-                          placeholder="Confirmar contraseña"
+                          placeholder={t("auth.common.confirmPassword")}
                           value={passwordConfirm}
                           onChange={(event) => setPasswordConfirm(event.target.value)}
                           autoComplete="new-password"
@@ -397,15 +488,15 @@ export function ProtectedAccessGate() {
                           onClick={() => setIsPasswordVisible((current) => !current)}
                           aria-label={
                             isPasswordVisible
-                              ? "Ocultar contraseña"
-                              : "Mostrar contraseña"
+                              ? t("auth.common.hidePassword")
+                              : t("auth.common.showPassword")
                           }
                         >
                           {isPasswordVisible ? <EyeOff /> : <Eye />}
                         </button>
                       </div>
                       <p className="protected-access-gate__hint">
-                        Solo te pediremos la ciudad para guardar tus preferencias.
+                        {t("auth.anonymous.signUpHint")}
                       </p>
                     </>
                   ) : null}
@@ -417,17 +508,19 @@ export function ProtectedAccessGate() {
                   >
                     {isSubmittingCredentials
                       ? authMode === "sign_up"
-                        ? "Creando cuenta..."
-                        : "Entrando..."
+                        ? t("auth.anonymous.creatingAccount")
+                        : t("auth.anonymous.entering")
                       : authMode === "sign_up"
-                        ? "Crear cuenta"
-                        : "Iniciar sesión"}
+                        ? t("auth.common.createAccount")
+                        : t("auth.common.signIn")}
                   </Button>
                 </form>
 
                 <div className="protected-access-gate__switch">
                   <span>
-                    {authMode === "sign_up" ? "¿Ya tienes cuenta?" : "¿No tienes cuenta?"}
+                    {authMode === "sign_up"
+                      ? t("auth.anonymous.alreadyHaveAccount")
+                      : t("auth.anonymous.noAccount")}
                   </span>
                   <button
                     type="button"
@@ -438,7 +531,9 @@ export function ProtectedAccessGate() {
                       )
                     }
                   >
-                    {authMode === "sign_up" ? "Iniciar sesión" : "Crear cuenta"}
+                    {authMode === "sign_up"
+                      ? t("auth.common.signIn")
+                      : t("auth.common.createAccount")}
                   </button>
                 </div>
               </div>
@@ -450,16 +545,17 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <LoaderCircle className="protected-access-gate__spinner" />
               </div>
-              <p className="protected-access-gate__eyebrow">Preparando acceso</p>
+              <p className="protected-access-gate__eyebrow">
+                {t("auth.loading.eyebrow")}
+              </p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
               >
-                Estamos resolviendo tu cuenta
+                {t("auth.loading.title")}
               </h2>
               <p className="protected-access-gate__description">
-                Estamos leyendo los datos mínimos asociados a tu cuenta
-                autenticada para comprobar si ya podemos continuar.
+                {t("auth.loading.description")}
               </p>
             </>
           ) : null}
@@ -469,16 +565,17 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <MailCheck />
               </div>
-              <p className="protected-access-gate__eyebrow">Verificación requerida</p>
+              <p className="protected-access-gate__eyebrow">
+                {t("auth.verification.eyebrow")}
+              </p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
               >
-                Revisa tu email antes de continuar
+                {t("auth.verification.title")}
               </h2>
               <p className="protected-access-gate__description">
-                La cuenta clásica necesita verificación de email antes de pasar
-                al onboarding obligatorio y al flujo normal de la app.
+                {t("auth.verification.description")}
               </p>
 
               {infoMessage ? (
@@ -501,7 +598,8 @@ export function ProtectedAccessGate() {
 
               {pendingVerificationEmail ? (
                 <p className="protected-access-gate__hint">
-                  Email pendiente: <strong>{pendingVerificationEmail}</strong>
+                  {t("auth.verification.pendingEmail")}{" "}
+                  <strong>{pendingVerificationEmail}</strong>
                 </p>
               ) : null}
 
@@ -513,8 +611,8 @@ export function ProtectedAccessGate() {
                   disabled={isResendingVerification}
                 >
                   {isResendingVerification
-                    ? "Reenviando email..."
-                    : "Reenviar verificación"}
+                    ? t("auth.verification.resending")
+                    : t("auth.verification.resend")}
                 </Button>
                 <Button
                   type="button"
@@ -522,7 +620,7 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__secondary-action"
                   onClick={dismissVerificationPending}
                 >
-                  Ya verifiqué mi email
+                  {t("auth.verification.alreadyVerified")}
                 </Button>
               </div>
             </>
@@ -533,16 +631,17 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <MapPin />
               </div>
-              <p className="protected-access-gate__eyebrow">Onboarding obligatorio</p>
+              <p className="protected-access-gate__eyebrow">
+                {t("auth.onboarding.eyebrow")}
+              </p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
               >
-                Completa tu perfil para continuar
+                {t("auth.onboarding.title")}
               </h2>
               <p className="protected-access-gate__description">
-                La cuenta ya está autenticada, pero todavía no tiene el perfil de
-                app listo o le falta la ciudad obligatoria.
+                {t("auth.onboarding.description")}
               </p>
 
               {feedbackMessage ? (
@@ -559,7 +658,7 @@ export function ProtectedAccessGate() {
                 onSubmit={handleSubmitOnboarding}
               >
                 <label className="protected-access-gate__label" htmlFor="profile-name">
-                  Nombre
+                  {t("auth.common.name")}
                 </label>
                 <Input
                   id="profile-name"
@@ -572,7 +671,7 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__label"
                   htmlFor="profile-last-name"
                 >
-                  Apellido
+                  {t("auth.common.lastName")}
                 </label>
                 <Input
                   id="profile-last-name"
@@ -585,37 +684,90 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__label"
                   htmlFor="protected-access-gate-city"
                 >
-                  Tu ciudad
+                  {t("auth.onboarding.cityLabel")}
                 </label>
-                <select
-                  id="protected-access-gate-city"
-                  className="protected-access-gate__select"
-                  value={selectedCityId}
-                  onChange={(event) => setSelectedCityId(event.target.value)}
-                  disabled={isLoadingCityChoices || isCompletingOnboarding}
-                >
-                  <option value="">Selecciona una ciudad</option>
-                  {cityChoices.map((cityChoice) => (
-                    <option key={cityChoice.id} value={cityChoice.id}>
-                      {cityChoice.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="protected-access-gate__autocomplete">
+                  <Input
+                    id="protected-access-gate-city"
+                    type="search"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={Boolean(isMunicipalityOptionsOpen)}
+                    aria-controls="protected-access-gate-city-options"
+                    className="protected-access-gate__input"
+                    placeholder={t("auth.onboarding.cityPlaceholder")}
+                    value={municipalityQuery}
+                    onChange={handleMunicipalityQueryChange}
+                    autoComplete="off"
+                    disabled={isCompletingOnboarding}
+                  />
+
+                  {isMunicipalityOptionsOpen ? (
+                    <div
+                      id="protected-access-gate-city-options"
+                      className="protected-access-gate__autocomplete-panel"
+                      role="listbox"
+                    >
+                      {isLoadingMunicipalityChoices ? (
+                        <p className="protected-access-gate__autocomplete-status">
+                          {t("auth.onboarding.searching")}
+                        </p>
+                      ) : null}
+
+                      {!isLoadingMunicipalityChoices &&
+                      municipalityChoices.length === 0 &&
+                      !municipalityChoicesError ? (
+                        <p className="protected-access-gate__autocomplete-status">
+                          {t("auth.onboarding.noResults")}
+                        </p>
+                      ) : null}
+
+                      {!isLoadingMunicipalityChoices
+                        ? municipalityChoices.map((municipalityChoice) => (
+                            <button
+                              key={
+                                municipalityChoice.isSynthetic
+                                  ? municipalityChoice.syntheticKey
+                                  : municipalityChoice.id
+                              }
+                              type="button"
+                              className="protected-access-gate__autocomplete-option"
+                              role="option"
+                              aria-selected={
+                                selectedMunicipality?.id === municipalityChoice.id &&
+                                selectedMunicipality?.displayName ===
+                                  municipalityChoice.displayName
+                              }
+                              onClick={() =>
+                                handleSelectMunicipality(municipalityChoice)
+                              }
+                            >
+                              <span className="protected-access-gate__autocomplete-option-name">
+                                {municipalityChoice.displayName}
+                              </span>
+                              {municipalityChoice.provinceName ? (
+                                <span className="protected-access-gate__autocomplete-option-meta">
+                                  {municipalityChoice.provinceName}
+                                </span>
+                              ) : null}
+                            </button>
+                          ))
+                        : null}
+                    </div>
+                  ) : null}
+                </div>
+                <p className="protected-access-gate__hint">
+                  {t("auth.onboarding.hint")}
+                </p>
 
                 <Button
                   type="submit"
                   className="protected-access-gate__primary-action"
-                  disabled={
-                    isLoadingCityChoices ||
-                    isCompletingOnboarding ||
-                    cityChoices.length === 0
-                  }
+                  disabled={isCompletingOnboarding || !selectedMunicipality}
                 >
-                  {isLoadingCityChoices
-                    ? "Cargando ciudades..."
-                    : isCompletingOnboarding
-                      ? "Guardando perfil..."
-                      : "Guardar y continuar"}
+                  {isCompletingOnboarding
+                    ? t("auth.onboarding.saving")
+                    : t("auth.onboarding.save")}
                 </Button>
               </form>
             </>
@@ -626,16 +778,17 @@ export function ProtectedAccessGate() {
               <div className="protected-access-gate__icon-wrap" aria-hidden="true">
                 <ShieldCheck />
               </div>
-              <p className="protected-access-gate__eyebrow">Acceso no listo</p>
+              <p className="protected-access-gate__eyebrow">
+                {t("auth.error.eyebrow")}
+              </p>
               <h2
                 id="protected-access-gate-title"
                 className="protected-access-gate__title"
               >
-                No pudimos preparar tu acceso
+                {t("auth.error.title")}
               </h2>
               <p className="protected-access-gate__description">
-                La autenticación ya existe, pero no hemos podido dejar listo el
-                perfil de aplicación con la configuración actual.
+                {t("auth.error.description")}
               </p>
 
               {feedbackMessage ? (
@@ -652,7 +805,7 @@ export function ProtectedAccessGate() {
                 className="protected-access-gate__primary-action"
                 onClick={refreshAppUser}
               >
-                Reintentar
+                {t("auth.error.retry")}
               </Button>
             </>
           ) : null}

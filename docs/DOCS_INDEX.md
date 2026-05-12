@@ -63,6 +63,7 @@ Within the master docs, roadmap reading now has two levels:
 | [detail-view-mvp2-subtask-35-closure-justification.md](./detail-view-mvp2-subtask-35-closure-justification.md) | Closure note for the title-first identity order accepted for `NENSGO-35`. |
 | [public-surface-hardening-sdd.md](./public-surface-hardening-sdd.md) | SDD for removing debug-like public copy, retiring the public `/pvi` placeholder, and hardening user-facing surfaces in `main`. |
 | [public-frontend-vnext-sdd.md](./public-frontend-vnext-sdd.md) | SDD for the catalog-first public frontend redesign over the validated real runtime. |
+| [municipality-onboarding-i18n-note.md](./municipality-onboarding-i18n-note.md) | Current MVP contract for DIR3 municipality onboarding, the temporary Les Roquetes exception, catalog area filters, and static-copy i18n. |
 | [runtime-real-closure-sdd.md](./runtime-real-closure-sdd.md) | Master SDD for closing the real runtime in `main` with stop/go gates, human/Codex checkpoints, and a real preview smoke checklist. |
 | [runtime-real-closure-quickstart.md](./runtime-real-closure-quickstart.md) | Short execution guide for runtime-closure checkpoints, local checks, and manual Supabase SQL file usage. |
 | [mostrar-a-PO-runtime-real-closure-query-brief.md](./mostrar-a-PO-runtime-real-closure-query-brief.md) | PO-readable summary of the runtime closure gates, manual Supabase operations, auth trigger fix, and remaining data gaps. |

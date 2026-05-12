@@ -1,16 +1,12 @@
 import { useEffect } from "react";
-import {
-  AlertTriangle,
-  Heart,
-  LoaderCircle,
-  SearchX,
-} from "lucide-react";
+import { AlertTriangle, Heart, LoaderCircle, SearchX } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useI18n } from "@/i18n/useI18n";
 import {
   FAVORITES_DETAIL_SOURCE,
   trackActivityContactClick,
@@ -23,6 +19,7 @@ const trackedFavoriteDetailViews = new Set();
 export function FavoriteActivityDetailPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const { activityId = "" } = useParams();
   const { activities, isLoading, error, reload } = useCatalog();
   const { favoriteIds, removeFavorite } = useFavorites();
@@ -73,17 +70,17 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={LoaderCircle}
-        title="Cargando la ficha"
-        description="Estamos preparando la información completa de esta actividad."
+        title={t("favorites.detailLoadingTitle")}
+        description={t("favorites.detailLoadingDescription")}
       />
     );
   } else if (error) {
     content = (
       <CatalogState
         icon={AlertTriangle}
-        title="No pudimos cargar esta actividad"
+        title={t("favorites.detailLoadErrorTitle")}
         description={error}
-        actionLabel="Reintentar"
+        actionLabel={t("home.retry")}
         onAction={reload}
       />
     );
@@ -91,9 +88,9 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={SearchX}
-        title="Esta actividad ya no está disponible"
-        description="La actividad sigue guardada, pero no hemos podido recuperarla desde el catálogo actual."
-        actionLabel="Volver a favoritos"
+        title={t("favorites.activityUnavailableTitle")}
+        description={t("favorites.activityUnavailableDescription")}
+        actionLabel={t("favorites.backToFavorites")}
         onAction={handleGoBack}
       />
     );
@@ -101,9 +98,9 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={SearchX}
-        title="No encontramos esta actividad"
-        description="La ficha que intentas abrir no existe en el catálogo actual. Vuelve a favoritos para seguir revisando tus actividades guardadas."
-        actionLabel="Volver a favoritos"
+        title={t("favorites.activityNotFoundTitle")}
+        description={t("favorites.activityNotFoundDescription")}
+        actionLabel={t("favorites.backToFavorites")}
         onAction={handleGoBack}
       />
     );
@@ -111,9 +108,9 @@ export function FavoriteActivityDetailPage() {
     content = (
       <CatalogState
         icon={Heart}
-        title="Esta actividad ya no está en tus favoritos"
-        description="Vuelve a tu lista para seguir revisando las actividades que todavía tienes guardadas."
-        actionLabel="Volver a favoritos"
+        title={t("favorites.noLongerFavoriteTitle")}
+        description={t("favorites.noLongerFavoriteDescription")}
+        actionLabel={t("favorites.backToFavorites")}
         onAction={handleGoBack}
       />
     );
@@ -155,7 +152,7 @@ export function FavoriteActivityDetailPage() {
               className="favorite-activity-detail__back-button"
               onClick={handleGoBack}
             >
-              Volver a favoritos
+              {t("favorites.backToFavorites")}
             </button>
           </header>
 

@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getActivityContactOptionLabel } from "@/helpers/buildActivityContactAction";
+import { useI18n } from "@/i18n/useI18n";
 import "./ActivityContactOptionsDialog.css";
 
 function normalizeContactMethod(contactMethod) {
@@ -17,7 +18,7 @@ function getContactOptionTone(contactOption) {
   return "default";
 }
 
-function getContactOptionDisplayLabel(contactOption) {
+function getContactOptionDisplayLabel(contactOption, t) {
   const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
 
   if (contactMethod === "whatsapp") {
@@ -33,11 +34,11 @@ function getContactOptionDisplayLabel(contactOption) {
   }
 
   if (contactMethod === "form") {
-    return "Formulario";
+    return t("catalog.contactOptions.form");
   }
 
   if (contactMethod === "phone") {
-    return "Llamar";
+    return t("catalog.contactOptions.phone");
   }
 
   return getActivityContactOptionLabel(contactOption);
@@ -50,6 +51,8 @@ export function ActivityContactOptionsDialog({
   onClose,
   onSelectOption,
 }) {
+  const { t } = useI18n();
+
   if (!open || !activity) {
     return null;
   }
@@ -73,10 +76,10 @@ export function ActivityContactOptionsDialog({
               id="activity-contact-options-dialog-title"
               className="activity-contact-options-dialog__title"
             >
-              Elige un canal
+              {t("catalog.contactOptions.title")}
             </h3>
             <p className="activity-contact-options-dialog__subtitle">
-              Contacta con {activity.title}
+              {t("catalog.contactOptions.subtitle", { title: activity.title })}
             </p>
           </div>
 
@@ -84,7 +87,7 @@ export function ActivityContactOptionsDialog({
             type="button"
             className="activity-contact-options-dialog__close"
             onClick={onClose}
-            aria-label="Cerrar opciones de contacto"
+            aria-label={t("catalog.contactOptions.close")}
           >
             <X />
           </button>
@@ -102,7 +105,7 @@ export function ActivityContactOptionsDialog({
                 onClick={() => onSelectOption?.(contactOption)}
               >
                 <span className="activity-contact-options-dialog__item-label">
-                  {getContactOptionDisplayLabel(contactOption)}
+                  {getContactOptionDisplayLabel(contactOption, t)}
                 </span>
                 <span className="activity-contact-options-dialog__item-value">
                   {contactOption.contactValue}
@@ -118,7 +121,7 @@ export function ActivityContactOptionsDialog({
           className="activity-contact-options-dialog__dismiss"
           onClick={onClose}
         >
-          Volver
+          {t("catalog.contactOptions.back")}
         </Button>
       </div>
     </div>
