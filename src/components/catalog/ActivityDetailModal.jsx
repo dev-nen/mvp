@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  Heart,
-  LoaderCircle,
-  X,
-} from "lucide-react";
+import { ArrowLeft, Heart, LoaderCircle, X } from "lucide-react";
 import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +9,7 @@ import {
 } from "@/helpers/activityDetailViewModel";
 import { openActivityContactAction } from "@/helpers/buildActivityContactAction";
 import { useActivityContactOptions } from "@/hooks/useActivityContactOptions";
+import { useI18n } from "@/i18n/useI18n";
 import "./ActivityDetailModal.css";
 
 export function ActivityDetailModal({
@@ -24,6 +20,7 @@ export function ActivityDetailModal({
   onClose,
   onContactClick,
 }) {
+  const { t } = useI18n();
   const scrollContainerRef = useRef(null);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -76,20 +73,36 @@ export function ActivityDetailModal({
     return null;
   }
 
-  const viewModel = buildActivityDetailViewModel(activity);
+  const viewModel = buildActivityDetailViewModel(activity, {
+    age: {
+      allAges: t("catalog.card.allAges"),
+      ageRange: t("catalog.card.ageRange"),
+      ageFrom: t("catalog.card.ageFrom"),
+      ageUntil: t("catalog.card.ageUntil"),
+      consultAge: t("catalog.card.consultAge"),
+    },
+    fallbackDescription: t("catalog.detail.fallbackDescription"),
+    ageLabel: t("catalog.detail.ageLabel"),
+    scheduleLabel: t("catalog.detail.scheduleLabel"),
+    priceLabel: t("catalog.detail.priceLabel"),
+    venueLabel: t("catalog.detail.venueLabel"),
+    addressLabel: t("catalog.detail.addressLabel"),
+    centerLabel: t("catalog.detail.centerLabel"),
+    cityLabel: t("catalog.detail.cityLabel"),
+  });
   const hasDescription = Boolean(viewModel.description);
   const hasSingleContactOption = contactOptions.length === 1;
   const hasMultipleContactOptions = contactOptions.length > 1;
   const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
   const contactMessage = isContactOptionsLoading
-    ? "Cargando opciones de contacto."
+    ? t("catalog.detail.loadingContactOptions")
     : contactOptionsError
-      ? "No pudimos cargar el contacto ahora mismo."
+      ? t("catalog.detail.contactOptionsError")
       : hasMultipleContactOptions
-        ? "Elige el canal que prefieras."
+        ? t("catalog.detail.choosePreferredChannel")
         : hasSingleContactOption
           ? null
-          : "No hay un canal de contacto publicado en este momento.";
+          : t("catalog.detail.noContactOptions");
 
   const handleSelectContactOption = (contactOption) => {
     onContactClick?.(activity, contactOption);
@@ -126,10 +139,7 @@ export function ActivityDetailModal({
         aria-modal="true"
         aria-labelledby="activity-detail-modal-title"
       >
-        <div
-          ref={scrollContainerRef}
-          className="activity-detail-modal__scroll"
-        >
+        <div ref={scrollContainerRef} className="activity-detail-modal__scroll">
           <div className="activity-detail-modal__topbar">
             <button
               type="button"
@@ -137,14 +147,14 @@ export function ActivityDetailModal({
               onClick={onClose}
             >
               <ArrowLeft />
-              <span>Volver</span>
+              <span>{t("catalog.detail.back")}</span>
             </button>
 
             <button
               type="button"
               className="activity-detail-modal__close"
               onClick={onClose}
-              aria-label="Cerrar detalle"
+              aria-label={t("catalog.detail.close")}
             >
               <X />
             </button>
@@ -183,7 +193,7 @@ export function ActivityDetailModal({
                       ) : null}
                       {viewModel.showFreeBadge ? (
                         <span className="activity-detail-modal__free-badge">
-                          Gratis
+                          {t("catalog.detail.free")}
                         </span>
                       ) : null}
                     </div>
@@ -200,7 +210,9 @@ export function ActivityDetailModal({
                   onClick={handleToggleFavorite}
                   disabled={!onToggleFavorite}
                   aria-label={
-                    isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"
+                    isFavorite
+                      ? t("catalog.detail.removeFavorite")
+                      : t("catalog.detail.addFavorite")
                   }
                 >
                   <Heart
@@ -232,7 +244,9 @@ export function ActivityDetailModal({
                     setIsDescriptionExpanded((currentValue) => !currentValue)
                   }
                 >
-                  {isDescriptionExpanded ? "Ver menos" : "Ver más"}
+                  {isDescriptionExpanded
+                    ? t("catalog.detail.showLess")
+                    : t("catalog.detail.showMore")}
                 </button>
               </section>
             ) : null}
@@ -257,7 +271,7 @@ export function ActivityDetailModal({
             <section className="activity-detail-modal__contact">
               <div className="activity-detail-modal__section-head">
                 <h3 className="activity-detail-modal__section-title">
-                  Contacto
+                  {t("catalog.detail.contact")}
                 </h3>
               </div>
               {contactMessage ? (
@@ -267,7 +281,7 @@ export function ActivityDetailModal({
               ) : null}
               {contactOptionsError ? (
                 <Button type="button" variant="outline" onClick={reloadContactOptions}>
-                  Reintentar contactos
+                  {t("catalog.detail.retryContacts")}
                 </Button>
               ) : hasContactOptions ? (
                 <Button
@@ -278,12 +292,12 @@ export function ActivityDetailModal({
                   {isContactOptionsLoading ? (
                     <>
                       <LoaderCircle className="animate-spin" />
-                      Cargando contacto
+                      {t("catalog.detail.loadingContact")}
                     </>
                   ) : hasMultipleContactOptions ? (
-                    "Elegir contacto"
+                    t("catalog.detail.chooseContact")
                   ) : (
-                    "Contactar"
+                    t("catalog.detail.contactAction")
                   )}
                 </Button>
               ) : null}

@@ -21,6 +21,7 @@ import { searchActivities } from "@/helpers/catalogSearch";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useI18n } from "@/i18n/useI18n";
 import {
   CATALOG_MODAL_SOURCE,
   trackActivityContactClick,
@@ -32,6 +33,7 @@ const HOME_CATALOG_PLACEHOLDER_COUNT = 2;
 
 export function HomePage() {
   const location = useLocation();
+  const { t } = useI18n();
   const { activities, isLoading, error, reload } = useCatalog();
   const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -166,8 +168,8 @@ export function HomePage() {
   return (
     <div className="home-page">
       <SeoHead
-        title="NensGo | Actividades para peques y familias cerca de ti"
-        description="Descubre actividades culturales, deportivas, extraescolares y planes en familia cerca de ti. Explora opciones por ciudad, categoría y edad."
+        title={t("home.seoTitle")}
+        description={t("home.seoDescription")}
         canonicalUrl="https://nensgo.com/"
       />
       <main className="home-page__main">
@@ -179,7 +181,7 @@ export function HomePage() {
             className="home-page__catalog"
             aria-live="polite"
           >
-            <h2 className="home-page__sr-only">Catálogo de actividades</h2>
+            <h2 className="home-page__sr-only">{t("home.catalogSrTitle")}</h2>
 
             <CatalogToolbar
               searchQuery={searchQuery}
@@ -207,17 +209,17 @@ export function HomePage() {
             ) : error ? (
               <CatalogState
                 icon={AlertTriangle}
-                title="No pudimos cargar el catálogo"
+                title={t("home.catalogLoadErrorTitle")}
                 description={error}
-                actionLabel="Reintentar"
+                actionLabel={t("home.retry")}
                 onAction={reload}
               />
             ) : visibleActivities.length === 0 ? (
               <CatalogState
                 icon={SearchX}
-                title="No encontramos actividades para estos filtros"
-                description="Prueba a limpiar la búsqueda o ajustar la ciudad y las categorías."
-                actionLabel="Limpiar filtros"
+                title={t("home.emptyTitle")}
+                description={t("home.emptyDescription")}
+                actionLabel={t("home.clearFilters")}
                 onAction={handleClearFilters}
               />
             ) : (

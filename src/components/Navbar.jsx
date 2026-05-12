@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Heart, LogIn, Menu, Search, User, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BrandLockup } from "@/components/branding/BrandLockup";
+import { LanguageSelector } from "@/components/i18n/LanguageSelector";
 import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/i18n/useI18n";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import "./Navbar.css";
@@ -12,6 +14,7 @@ import "./Navbar.css";
 export function Navbar({ enableSearch = false }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const {
@@ -60,10 +63,10 @@ export function Navbar({ enableSearch = false }) {
   const isResolvingAccess = isAuthLoading || accessState === "loading_user";
   const accessButtonLabel =
     accessState === "onboarding_required"
-      ? "Completa tu perfil"
+      ? t("nav.completeProfile")
       : accessState === "verification_pending"
-        ? "Verifica tu email"
-        : "Acceder";
+        ? t("nav.verifyEmail")
+        : t("nav.access");
   const isParaCentrosRoute = location.pathname === "/para-centros";
 
   const closeMenu = () => {
@@ -108,7 +111,7 @@ export function Navbar({ enableSearch = false }) {
         <Link
           to="/perfil"
           className="navbar__auth-chip"
-          aria-label="Sesion activa. Abrir perfil"
+          aria-label={t("nav.activeSession")}
           onClick={closeMenu}
         >
           <span className="navbar__auth-status-dot" aria-hidden="true" />
@@ -126,10 +129,10 @@ export function Navbar({ enableSearch = false }) {
           </span>
           <span className="navbar__auth-label navbar__auth-label--compact">
             {accessState === "onboarding_required"
-              ? "Perfil"
+              ? t("nav.profileCompact")
               : accessState === "verification_pending"
-                ? "Email"
-                : "Entrar"}
+                ? t("nav.emailCompact")
+                : t("nav.enter")}
           </span>
         </Button>
       )}
@@ -141,7 +144,7 @@ export function Navbar({ enableSearch = false }) {
       <NavLink
         to="/favoritos"
         className={getNavLinkClassName}
-        aria-label="Favoritos"
+        aria-label={t("nav.favorites")}
         onClick={closeMenu}
       >
         <Heart />
@@ -149,7 +152,7 @@ export function Navbar({ enableSearch = false }) {
       <NavLink
         to="/perfil"
         className={getNavLinkClassName}
-        aria-label="Perfil"
+        aria-label={t("nav.profile")}
         onClick={closeMenu}
       >
         <User />
@@ -163,7 +166,7 @@ export function Navbar({ enableSearch = false }) {
         <Link
           to="/"
           className="navbar__brand"
-          aria-label="NensGo - Inicio"
+          aria-label={t("nav.brandHome")}
           onClick={closeMenu}
         >
           <BrandLockup variant="navbar" />
@@ -177,7 +180,7 @@ export function Navbar({ enableSearch = false }) {
           onClick={() => setIsMenuOpen((current) => !current)}
           aria-controls="navbar-public-menu"
           aria-expanded={isMenuOpen}
-          aria-label={isMenuOpen ? "Cerrar menu" : "Abrir menu"}
+          aria-label={isMenuOpen ? t("nav.closeMenu") : t("nav.openMenu")}
         >
           {isMenuOpen ? <X /> : <Menu />}
         </Button>
@@ -185,33 +188,34 @@ export function Navbar({ enableSearch = false }) {
         <nav
           id="navbar-public-menu"
           className={`navbar__nav${isMenuOpen ? " navbar__nav--open" : ""}`}
-          aria-label="Navegacion principal"
+          aria-label={t("nav.primaryNavigation")}
         >
           <Link to="/" className={getHomeLinkClassName()} onClick={closeMenu}>
-            Inicio
+            {t("nav.home")}
           </Link>
           <Link
             to="/#explorar-actividades"
             className={getActivitiesLinkClassName()}
             onClick={handleActivitiesNavigation}
           >
-            Actividades
+            {t("nav.activities")}
           </Link>
           <NavLink
             to="/sobre-nensgo"
             className={getTextNavLinkClassName}
             onClick={closeMenu}
           >
-            Sobre NensGo
+            {t("nav.about")}
           </NavLink>
           <NavLink
             to="/para-centros"
             className={getTextNavLinkClassName}
             onClick={closeMenu}
           >
-            Para centros
+            {t("nav.centers")}
           </NavLink>
           <div className="navbar__mobile-actions">
+            <LanguageSelector className="navbar__language-selector navbar__language-selector--mobile" />
             {isParaCentrosRoute ? (
               <a
                 className="navbar__b2b-action"
@@ -220,7 +224,7 @@ export function Navbar({ enableSearch = false }) {
                 rel="noreferrer noopener"
                 onClick={closeMenu}
               >
-                Unirme al proyecto
+                {t("nav.joinProject")}
               </a>
             ) : null}
             {renderAuthAction("navbar__auth-slot--mobile")}
@@ -234,7 +238,7 @@ export function Navbar({ enableSearch = false }) {
               variant="ghost"
               size="icon"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
-              aria-label={isSearchOpen ? "Cerrar busqueda" : "Buscar"}
+              aria-label={isSearchOpen ? t("nav.closeSearch") : t("nav.openSearch")}
             >
               {isSearchOpen ? <X /> : <Search />}
             </Button>
@@ -247,9 +251,10 @@ export function Navbar({ enableSearch = false }) {
               target="_blank"
               rel="noreferrer noopener"
             >
-              Unirme
+              {t("nav.joinShort")}
             </a>
           ) : null}
+          <LanguageSelector className="navbar__language-selector" />
           {renderAuthAction()}
           {renderProtectedLinks()}
         </div>
@@ -259,7 +264,7 @@ export function Navbar({ enableSearch = false }) {
         <div className="page-container navbar__search-panel">
           <Input
             type="search"
-            placeholder="Buscar actividades..."
+            placeholder={t("nav.searchPlaceholder")}
             className="navbar__search-input"
             autoFocus
           />

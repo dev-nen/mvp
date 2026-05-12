@@ -1,12 +1,15 @@
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/useI18n";
 
 export function LandingHero({ onExploreActivities }) {
+  const { t } = useI18n();
+
   return (
     <section className="landing-section landing-hero">
       <div className="landing-hero__panel">
         <div className="landing-hero__content">
           <p className="landing-section__eyebrow">
-            ACTIVIDADES PARA PEQUES Y FAMILIAS
+            {t("landingHero.eyebrow")}
           </p>
 
           <div className="landing-hero__brand-lockup" aria-label="NensGo">
@@ -24,17 +27,13 @@ export function LandingHero({ onExploreActivities }) {
             </span>
           </div>
 
-          <h1 className="landing-hero__title">
-            Descubre actividades para peques y familias en un solo lugar
-          </h1>
+          <h1 className="landing-hero__title">{t("landingHero.title")}</h1>
           <p className="landing-hero__description">
-            NensGo reúne actividades culturales, deportivas, extraescolares y
-            planes en familia para ayudarte a encontrar opciones cerca de ti sin
-            perder tiempo saltando entre webs, redes y mensajes.
+            {t("landingHero.description")}
           </p>
 
           <div className="landing-hero__actions">
-            <Button onClick={onExploreActivities}>Explorar actividades</Button>
+            <Button onClick={onExploreActivities}>{t("landingHero.cta")}</Button>
           </div>
         </div>
 

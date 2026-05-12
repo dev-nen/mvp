@@ -1,0 +1,35 @@
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.2rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(75, 143, 231, 0.12);
+  border-radius: var(--radius-pill);
+}
+
+.language-selector__option {
+  min-width: 2.15rem;
+  min-height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.45rem;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 850;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.language-selector__option:hover {
+  color: var(--color-text);
+  background: rgba(75, 143, 231, 0.08);
+}
+
+.language-selector__option--active {
+  color: var(--color-primary-strong);
+  background: rgba(75, 143, 231, 0.14);
+}

@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { useI18n } from "@/i18n/useI18n";
 
 function hasExactCategorySet(selectedCategoryLabels, targetCategoryLabels) {
   if (selectedCategoryLabels.length !== targetCategoryLabels.length) {
@@ -15,16 +16,20 @@ export function LandingValueProps({
   selectedCategoryLabels = [],
   onQuickAccessSelect,
 }) {
+  const { t } = useI18n();
   const isInteractive = typeof onQuickAccessSelect === "function";
 
   return (
     <section className="landing-section">
       <div className="landing-section__header">
-        <p className="landing-section__eyebrow">TIPOS DE ACTIVIDADES</p>
-        <h2 className="landing-section__title">Qué puedes encontrar</h2>
+        <p className="landing-section__eyebrow">
+          {t("landingValueProps.eyebrow")}
+        </p>
+        <h2 className="landing-section__title">
+          {t("landingValueProps.title")}
+        </h2>
         <p className="landing-section__description">
-          Una forma más clara de descubrir propuestas para el día a día y para
-          momentos especiales.
+          {t("landingValueProps.description")}
         </p>
       </div>
 

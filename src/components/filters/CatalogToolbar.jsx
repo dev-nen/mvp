@@ -3,11 +3,12 @@ import { ChevronDown, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/i18n/useI18n";
 
 const FILTER_SECTIONS = [
-  { id: "search", label: "Buscar" },
-  { id: "area", label: "Zona" },
-  { id: "categories", label: "Categorías" },
+  { id: "search", labelKey: "catalog.toolbar.search" },
+  { id: "area", labelKey: "catalog.toolbar.area" },
+  { id: "categories", labelKey: "catalog.toolbar.categories" },
 ];
 
 export function CatalogToolbar({
@@ -21,6 +22,7 @@ export function CatalogToolbar({
   onToggleCategoryLabel,
   onClearFilters,
 }) {
+  const { t } = useI18n();
   const [openSections, setOpenSections] = useState({
     search: true,
     area: false,
@@ -32,7 +34,15 @@ export function CatalogToolbar({
     selectedCategoryLabels.length > 0;
   const selectedAreaName =
     areaOptions.find((areaOption) => areaOption.key === selectedAreaKey)?.label ||
-    "Todas";
+    t("catalog.toolbar.all");
+  const selectedCategorySummary =
+    selectedCategoryLabels.length === 0
+      ? ""
+      : selectedCategoryLabels.length === 1
+        ? t("catalog.toolbar.categorySelectedOne")
+        : t("catalog.toolbar.categorySelectedMany", {
+            count: selectedCategoryLabels.length,
+          });
 
   const toggleSection = (sectionId) => {
     setOpenSections((currentOpenSections) => ({
@@ -45,12 +55,10 @@ export function CatalogToolbar({
     <Card className="catalog-toolbar-card">
       <CardContent className="catalog-toolbar">
         <div className="catalog-toolbar__topline">
-          <p className="catalog-toolbar__intro">
-            Encuentra una actividad por nombre, centro, ciudad o categoría.
-          </p>
+          <p className="catalog-toolbar__intro">{t("catalog.toolbar.intro")}</p>
           {hasActiveFilters ? (
             <Button variant="outline" onClick={onClearFilters}>
-              Limpiar
+              {t("catalog.toolbar.clear")}
             </Button>
           ) : null}
         </div>
@@ -75,18 +83,15 @@ export function CatalogToolbar({
                   aria-controls={panelId}
                 >
                   <span className="catalog-toolbar__section-label">
-                    {section.label}
+                    {t(section.labelKey)}
                   </span>
                   <span className="catalog-toolbar__section-summary">
                     {section.id === "search" && searchQuery
                       ? searchQuery
                       : section.id === "area"
                         ? selectedAreaName
-                        : section.id === "categories" &&
-                            selectedCategoryLabels.length > 0
-                          ? `${selectedCategoryLabels.length} seleccionada${
-                              selectedCategoryLabels.length > 1 ? "s" : ""
-                            }`
+                        : section.id === "categories"
+                          ? selectedCategorySummary
                           : ""}
                   </span>
                   <ChevronDown className="catalog-toolbar__section-icon" />
@@ -99,8 +104,8 @@ export function CatalogToolbar({
                         <Search className="catalog-toolbar__search-icon" />
                         <Input
                           type="search"
-                          aria-label="Buscar por actividad, centro, ciudad o categoría"
-                          placeholder="Buscar por actividad, centro o ciudad"
+                          aria-label={t("catalog.toolbar.searchAria")}
+                          placeholder={t("catalog.toolbar.searchPlaceholder")}
                           value={searchQuery}
                           onChange={(event) =>
                             onSearchQueryChange(event.target.value)
@@ -113,7 +118,7 @@ export function CatalogToolbar({
                     {section.id === "area" ? (
                       <label className="catalog-toolbar__select-field">
                         <span className="catalog-toolbar__control-label">
-                          Zona
+                          {t("catalog.toolbar.area")}
                         </span>
                         <select
                           className="catalog-toolbar__select"
@@ -122,7 +127,7 @@ export function CatalogToolbar({
                             onSelectedAreaKeyChange(event.target.value)
                           }
                         >
-                          <option value="">Todas</option>
+                          <option value="">{t("catalog.toolbar.all")}</option>
                           {areaOptions.map((areaOption) => (
                             <option key={areaOption.key} value={areaOption.key}>
                               {areaOption.label}

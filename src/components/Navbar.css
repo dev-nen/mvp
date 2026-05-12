@@ -75,6 +75,10 @@
   gap: var(--space-1);
 }
 
+.navbar__language-selector {
+  flex-shrink: 0;
+}
+
 .navbar__auth-slot {
   display: flex;
   align-items: center;
@@ -254,6 +258,10 @@
     gap: 0.55rem;
     padding-top: 0.35rem;
     border-top: 1px solid rgba(75, 143, 231, 0.1);
+  }
+
+  .navbar__language-selector--mobile {
+    justify-self: center;
   }
 
   .navbar__auth-slot,

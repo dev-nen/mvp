@@ -23,16 +23,16 @@ function hasDistinctVenueName(venueName, centerName) {
   return venueName.toLocaleLowerCase() !== centerName.toLocaleLowerCase();
 }
 
-function buildDetailEvaluationItems(activity) {
+function buildDetailEvaluationItems(activity, copy) {
   const evaluationItems = [];
-  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity));
+  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity, copy.age));
   const scheduleLabel = getTrimmedText(activity.schedule_label);
   const priceLabel = getTrimmedText(activity.price_label);
 
-  if (ageLabel && ageLabel !== "Consulta la edad") {
+  if (ageLabel && ageLabel !== copy.age.consultAge) {
     evaluationItems.push({
       key: "age",
-      label: "Edad",
+      label: copy.ageLabel,
       value: ageLabel,
       icon: Users,
     });
@@ -41,7 +41,7 @@ function buildDetailEvaluationItems(activity) {
   if (scheduleLabel) {
     evaluationItems.push({
       key: "schedule",
-      label: "Horario",
+      label: copy.scheduleLabel,
       value: scheduleLabel,
       icon: Clock3,
     });
@@ -50,7 +50,7 @@ function buildDetailEvaluationItems(activity) {
   if (activity.is_free !== true && priceLabel) {
     evaluationItems.push({
       key: "price",
-      label: "Precio",
+      label: copy.priceLabel,
       value: priceLabel,
       icon: Wallet,
       tone: "price",
@@ -60,7 +60,7 @@ function buildDetailEvaluationItems(activity) {
   return evaluationItems;
 }
 
-function buildDetailLocationItems(activity) {
+function buildDetailLocationItems(activity, copy) {
   const venueName = getTrimmedText(activity.venue_name);
   const address = getTrimmedText(activity.venue_address_1);
   const centerName = getTrimmedText(activity.center_name);
@@ -70,7 +70,7 @@ function buildDetailLocationItems(activity) {
   if (hasDistinctVenueName(venueName, centerName)) {
     locationItems.push({
       key: "venue",
-      label: "Lugar",
+      label: copy.venueLabel,
       value: venueName,
       icon: MapPin,
     });
@@ -79,7 +79,7 @@ function buildDetailLocationItems(activity) {
   if (address) {
     locationItems.push({
       key: "address",
-      label: "Dirección",
+      label: copy.addressLabel,
       value: address,
       icon: MapPin,
     });
@@ -88,7 +88,7 @@ function buildDetailLocationItems(activity) {
   if (centerName) {
     locationItems.push({
       key: "center",
-      label: "Centro",
+      label: copy.centerLabel,
       value: centerName,
       icon: Building2,
     });
@@ -97,7 +97,7 @@ function buildDetailLocationItems(activity) {
   if (cityName) {
     locationItems.push({
       key: "city",
-      label: "Ciudad",
+      label: copy.cityLabel,
       value: cityName,
       icon: MapPin,
     });
@@ -106,8 +106,8 @@ function buildDetailLocationItems(activity) {
   return locationItems;
 }
 
-function buildDetailSummaryItems(activity) {
-  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity));
+function buildDetailSummaryItems(activity, copy) {
+  const ageLabel = getTrimmedText(formatActivityAgeLabel(activity, copy.age));
   const scheduleLabel = getTrimmedText(activity.schedule_label);
   const priceLabel = getTrimmedText(activity.price_label);
   const venueName = getTrimmedText(activity.venue_name);
@@ -118,7 +118,7 @@ function buildDetailSummaryItems(activity) {
 
   const whenForWho = [ageLabel, scheduleLabel]
     .filter(Boolean)
-    .filter((value) => value !== "Consulta la edad")
+    .filter((value) => value !== copy.age.consultAge)
     .join(" · ");
 
   if (whenForWho) {
@@ -138,9 +138,7 @@ function buildDetailSummaryItems(activity) {
   }
 
   const placeLabel = centerName || venueName;
-  const location = [placeLabel, address, cityName]
-    .filter(Boolean)
-    .join(" · ");
+  const location = [placeLabel, address, cityName].filter(Boolean).join(" · ");
 
   if (location) {
     summaryItems.push({
@@ -153,20 +151,41 @@ function buildDetailSummaryItems(activity) {
   return summaryItems;
 }
 
-export function buildActivityDetailViewModel(activity = {}) {
+export function buildActivityDetailViewModel(activity = {}, copy = {}) {
+  const resolvedCopy = {
+    fallbackDescription: "Consulta más información por WhatsApp.",
+    ageLabel: "Edad",
+    scheduleLabel: "Horario",
+    priceLabel: "Precio",
+    venueLabel: "Lugar",
+    addressLabel: "Dirección",
+    centerLabel: "Centro",
+    cityLabel: "Ciudad",
+    ...copy,
+    age: {
+      allAges: "Todas las edades",
+      ageRange: "{min}-{max} años",
+      ageFrom: "Desde {min} años",
+      ageUntil: "Hasta {max} años",
+      consultAge: "Consulta la edad",
+      ...copy.age,
+    },
+  };
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
-  const description = getTrimmedText(getActivityDescription(activity));
+  const description = getTrimmedText(
+    getActivityDescription(activity, resolvedCopy),
+  );
   const title = getTrimmedText(activity.title);
 
   return {
     categoryLabel,
     description,
-    evaluationItems: buildDetailEvaluationItems(activity),
+    evaluationItems: buildDetailEvaluationItems(activity, resolvedCopy),
     imageSrc: imageUrl || ACTIVITY_DETAIL_PLACEHOLDER_SRC,
-    locationItems: buildDetailLocationItems(activity),
+    locationItems: buildDetailLocationItems(activity, resolvedCopy),
     showFreeBadge: activity.is_free === true,
-    summaryItems: buildDetailSummaryItems(activity),
+    summaryItems: buildDetailSummaryItems(activity, resolvedCopy),
     title,
   };
 }

@@ -9,64 +9,62 @@ import {
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/i18n/useI18n";
 import "./ProtectedRoute.css";
 
-function getBlockedRouteState(accessState, appUserError) {
+function getBlockedRouteState(accessState, hasAppUserError, t) {
   if (accessState === "loading_user") {
     return {
-      description:
-        "Estamos comprobando el acceso social y los datos mínimos de la cuenta para esta ruta.",
-      eyebrow: "Acceso",
+      description: t("protectedRoute.loading.description"),
+      eyebrow: t("protectedRoute.loading.eyebrow"),
       icon: LoaderCircle,
-      title: "Preparando tu acceso",
+      title: t("protectedRoute.loading.title"),
     };
   }
 
   if (accessState === "verification_pending") {
     return {
-      actionLabel: "Revisar verificación",
-      description:
-        "Esta ruta necesita una cuenta verificada antes de continuar con el onboarding de perfil.",
-      eyebrow: "Verificación",
+      actionLabel: t("protectedRoute.verification.action"),
+      description: t("protectedRoute.verification.description"),
+      eyebrow: t("protectedRoute.verification.eyebrow"),
       icon: MailCheck,
-      title: "Falta verificar el email",
+      title: t("protectedRoute.verification.title"),
     };
   }
 
   if (accessState === "onboarding_required") {
     return {
-      actionLabel: "Completar perfil",
-      description:
-        "Tu cuenta ya existe, pero todavía falta completar el perfil mínimo obligatorio.",
-      eyebrow: "Onboarding",
+      actionLabel: t("protectedRoute.onboarding.action"),
+      description: t("protectedRoute.onboarding.description"),
+      eyebrow: t("protectedRoute.onboarding.eyebrow"),
       icon: MapPin,
-      title: "Falta completar tu perfil",
+      title: t("protectedRoute.onboarding.title"),
     };
   }
 
   if (accessState === "error") {
     return {
-      actionLabel: appUserError ? "Reintentar" : "Continuar acceso",
-      description:
-        appUserError ||
-        "No hemos podido dejar tu acceso listo con la configuración actual.",
-      eyebrow: "Acceso",
+      actionLabel: hasAppUserError
+        ? t("protectedRoute.error.retry")
+        : t("protectedRoute.error.continue"),
+      description: t("protectedRoute.error.description"),
+      eyebrow: t("protectedRoute.error.eyebrow"),
       icon: AlertTriangle,
-      title: "No pudimos cargar tu perfil",
+      title: t("protectedRoute.error.title"),
     };
   }
 
   return {
-    actionLabel: "Acceder",
-    description:
-      "Esta pantalla necesita una cuenta identificada y un perfil de app listo para quedar disponible.",
-    eyebrow: "Acceso",
+    actionLabel: t("protectedRoute.anonymous.action"),
+    description: t("protectedRoute.anonymous.description"),
+    eyebrow: t("protectedRoute.anonymous.eyebrow"),
     icon: ShieldCheck,
-    title: "Necesitas acceder para continuar",
+    title: t("protectedRoute.anonymous.title"),
   };
 }
 
 export function ProtectedRoute({ children, intent }) {
+  const { t } = useI18n();
   const { accessState, appUserError, refreshAppUser, startProtectedAction } =
     useAuth();
   const intentKey = useMemo(() => JSON.stringify(intent ?? null), [intent]);
@@ -83,7 +81,11 @@ export function ProtectedRoute({ children, intent }) {
     return children;
   }
 
-  const blockedRouteState = getBlockedRouteState(accessState, appUserError);
+  const blockedRouteState = getBlockedRouteState(
+    accessState,
+    Boolean(appUserError),
+    t,
+  );
 
   return (
     <div className="protected-route">

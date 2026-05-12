@@ -12,23 +12,26 @@ import { Footer } from "@/components/Footer";
 import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useInternalToolAccess } from "@/hooks/useInternalToolAccess";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/i18n/useI18n";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import "./ProfilePage.css";
 
 function ProfileLoadingState() {
+  const { t } = useI18n();
+
   return (
     <Card className="profile-page__card profile-page__card--loading">
       <CardContent className="profile-page__card-content profile-page__card-content--loading">
         <div className="profile-page__loading-row">
           <LoaderCircle className="profile-page__loading-icon" />
-          <span>Preparando tu cuenta</span>
+          <span>{t("profile.loadingLabel")}</span>
         </div>
         <h2 className="profile-page__section-title">
-          Ya casi puedes revisar tu cuenta.
+          {t("profile.loadingTitle")}
         </h2>
         <p className="profile-page__section-description">
-          Estamos cargando tus datos para mostrarte tu perfil en un momento.
+          {t("profile.loadingDescription")}
         </p>
       </CardContent>
     </Card>
@@ -37,6 +40,7 @@ function ProfileLoadingState() {
 
 export function ProfilePage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
   const {
@@ -49,9 +53,7 @@ export function ProfilePage() {
     signOut,
     user,
   } = useAuth();
-  const {
-    hasAccess: hasDraftInboxAccess,
-  } = useInternalToolAccess();
+  const { hasAccess: hasDraftInboxAccess } = useInternalToolAccess();
 
   const handleGoBack = () => {
     navigate("/", { replace: true });
@@ -86,14 +88,13 @@ export function ProfilePage() {
               onClick={handleGoBack}
             >
               <ArrowLeft />
-              Volver
+              {t("profile.back")}
             </Button>
 
             <div className="profile-page__intro">
-              <h1 className="profile-page__title">Tu cuenta</h1>
+              <h1 className="profile-page__title">{t("profile.title")}</h1>
               <p className="profile-page__description">
-                Revisa los datos básicos de tu cuenta y cierra sesión cuando lo
-                necesites.
+                {t("profile.description")}
               </p>
             </div>
           </header>
@@ -107,8 +108,7 @@ export function ProfilePage() {
                   <div className="profile-page__identity-block">
                     <h2 className="profile-page__section-title">{userDisplayName}</h2>
                     <p className="profile-page__section-description">
-                      Aquí puedes revisar los datos principales asociados a tu
-                      cuenta dentro de NensGo.
+                      {t("profile.identityDescription")}
                     </p>
                   </div>
 
@@ -116,7 +116,7 @@ export function ProfilePage() {
                     <div className="profile-page__detail-item">
                       <dt>
                         <UserRound />
-                        Nombre visible
+                        {t("profile.visibleName")}
                       </dt>
                       <dd>{userDisplayName}</dd>
                     </div>
@@ -124,19 +124,18 @@ export function ProfilePage() {
                     <div className="profile-page__detail-item">
                       <dt>
                         <Mail />
-                        Email
+                        {t("profile.email")}
                       </dt>
-                      <dd>{user?.email ?? "No disponible"}</dd>
+                      <dd>{user?.email ?? t("profile.unavailable")}</dd>
                     </div>
 
                     <div className="profile-page__detail-item">
                       <dt>
                         <MapPin />
-                        Ciudad
+                        {t("profile.city")}
                       </dt>
-                      <dd>{appUser?.cityName || "Sin ciudad asociada"}</dd>
+                      <dd>{appUser?.cityName || t("profile.noCity")}</dd>
                     </div>
-
                   </dl>
 
                   {authError ? (
@@ -144,15 +143,14 @@ export function ProfilePage() {
                       className="profile-page__feedback profile-page__feedback--error"
                       role="alert"
                     >
-                      {authError}
+                      {t("profile.authError")}
                     </p>
                   ) : null}
 
                   {hasDraftInboxAccess ? (
                     <div className="profile-page__internal-tool">
                       <p className="profile-page__internal-tool-description">
-                        Si formas parte del equipo, puedes abrir el Draft Inbox
-                        desde aquí.
+                        {t("profile.internalDescription")}
                       </p>
                       <Button
                         type="button"
@@ -160,7 +158,7 @@ export function ProfilePage() {
                         className="profile-page__action-button"
                         onClick={() => navigate("/internal/drafts")}
                       >
-                        Abrir Draft Inbox
+                        {t("profile.internalAction")}
                       </Button>
                     </div>
                   ) : null}
@@ -173,7 +171,7 @@ export function ProfilePage() {
                     disabled={isSigningOut}
                   >
                     <LogOut />
-                    {isSigningOut ? "Cerrando sesión..." : "Cerrar sesión"}
+                    {isSigningOut ? t("profile.signingOut") : t("profile.signOut")}
                   </Button>
                 </CardContent>
               </Card>
@@ -182,11 +180,10 @@ export function ProfilePage() {
             <Card className="profile-page__card profile-page__card--anonymous">
               <CardContent className="profile-page__card-content">
                 <h2 className="profile-page__section-title">
-                  Accede para ver tu cuenta
+                  {t("profile.anonymousTitle")}
                 </h2>
                 <p className="profile-page__section-description">
-                  Entra con Google o con tu email para revisar tus datos y
-                  recuperar tus actividades guardadas.
+                  {t("profile.anonymousDescription")}
                 </p>
 
                 {authError ? (
@@ -194,7 +191,7 @@ export function ProfilePage() {
                     className="profile-page__feedback profile-page__feedback--error"
                     role="alert"
                   >
-                    {authError}
+                    {t("profile.authError")}
                   </p>
                 ) : null}
 
@@ -205,8 +202,8 @@ export function ProfilePage() {
                   disabled={isStartingGoogleSignIn}
                 >
                   {isStartingGoogleSignIn
-                    ? "Conectando con Google..."
-                    : "Continuar con Google"}
+                    ? t("auth.common.googleConnecting")
+                    : t("auth.common.googleContinue")}
                 </Button>
 
                 <Button
@@ -215,12 +212,10 @@ export function ProfilePage() {
                   className="profile-page__action-button"
                   onClick={() => openAccessGate()}
                 >
-                  Abrir acceso con email
+                  {t("profile.openEmailAccess")}
                 </Button>
 
-                <p className="profile-page__hint">
-                  Volverás aquí después de completar el acceso.
-                </p>
+                <p className="profile-page__hint">{t("profile.returnHint")}</p>
               </CardContent>
             </Card>
           )}

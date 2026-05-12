@@ -1,17 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useI18n } from "@/i18n/useI18n";
 
 export function LandingBridgeCTA({ onExploreActivities }) {
+  const { t } = useI18n();
+
   return (
     <section className="landing-section landing-bridge">
       <Card>
         <CardContent className="landing-bridge__content">
-          <h2 className="landing-section__title">Empieza a explorar opciones</h2>
+          <h2 className="landing-section__title">{t("landingBridge.title")}</h2>
           <p className="landing-section__description">
-            Baja al catálogo para ver actividades activas, filtrar por ciudad o
-            categoría y quedarte con las que mejor encajan con tu familia.
+            {t("landingBridge.description")}
           </p>
-          <Button onClick={onExploreActivities}>Explorar actividades</Button>
+          <Button onClick={onExploreActivities}>{t("landingBridge.cta")}</Button>
         </CardContent>
       </Card>
     </section>
