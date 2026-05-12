@@ -99,7 +99,10 @@ select
 from public.cities
 where
   coalesce(is_active, true) = true
-  and place_type = 'municipality';
+  and place_type = 'municipality'
+  and country_code = 'ES'
+  and dir3_code is not null
+  and municipality_code is not null;
 
 grant select on public.municipality_choices_read to anon, authenticated;
 grant select on public.cities to anon, authenticated;

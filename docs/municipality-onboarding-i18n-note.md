@@ -2,7 +2,7 @@
 
 Status: Done for the MVP foundation on `feat/i18n-municipality-onboarding`.
 
-Onboarding city selection now uses official DIR3 municipality rows from `cities`, exposed through `municipality_choices_read`. It no longer depends on activity cities currently visible in the public catalog.
+Onboarding city selection now uses official DIR3-coded municipality rows from `cities`, exposed through `municipality_choices_read`. It no longer depends on activity cities currently visible in the public catalog or on legacy `cities` rows without official codes.
 
 The frontend prefers `municipality_choices_read`, but keeps a transitional fallback to `cities` so onboarding does not hard-fail while the migration is being applied or Supabase refreshes its schema cache. The full all-Spain municipality catalog still requires applying the migration and generated seed.
 
