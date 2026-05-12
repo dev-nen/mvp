@@ -6,6 +6,9 @@ import {
 
 const MUNICIPALITY_SELECT =
   "id, name, slug, province_code, province_name, autonomous_community_code, autonomous_community_name, municipality_code, dir3_code, name_search, search_text";
+const MUNICIPALITY_BASIC_SELECT = "id, name";
+const MUNICIPALITY_SOURCE_VIEW = "municipality_choices_read";
+const MUNICIPALITY_SOURCE_TABLE = "cities";
 const SANT_PERE_DE_RIBES_MUNICIPALITY_CODE = "082310";
 const SANT_PERE_DE_RIBES_DIR3_CODE = "L01082310";
 const ROQUETES_DISPLAY_NAME = "Les Roquetes (Sant Pere de Ribes)";
@@ -36,10 +39,12 @@ function escapeLikePattern(value) {
 }
 
 function buildMunicipalityChoice(row) {
+  const name = getTrimmedText(row.name);
+
   return {
     id: row.id,
-    name: getTrimmedText(row.name),
-    displayName: getTrimmedText(row.name),
+    name,
+    displayName: name,
     provinceCode: getTrimmedText(row.province_code),
     provinceName: getTrimmedText(row.province_name),
     autonomousCommunityCode: getTrimmedText(row.autonomous_community_code),
@@ -48,6 +53,139 @@ function buildMunicipalityChoice(row) {
     dir3Code: getTrimmedText(row.dir3_code),
     isSynthetic: false,
   };
+}
+
+function isRecoverableMunicipalitySchemaError(error) {
+  const errorText = [
+    error?.code,
+    error?.message,
+    error?.details,
+    error?.hint,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    errorText.includes("42p01") ||
+    errorText.includes("42703") ||
+    errorText.includes("pgrst200") ||
+    errorText.includes("pgrst205") ||
+    errorText.includes("does not exist") ||
+    errorText.includes("could not find") ||
+    errorText.includes("schema cache")
+  );
+}
+
+async function runMunicipalityQuery(queryFactories) {
+  let lastRecoverableError = null;
+
+  for (const queryFactory of queryFactories) {
+    const { data, error } = await queryFactory();
+
+    if (!error) {
+      return data ?? [];
+    }
+
+    if (!isRecoverableMunicipalitySchemaError(error)) {
+      throw new Error(getMunicipalityError());
+    }
+
+    lastRecoverableError = error;
+  }
+
+  if (lastRecoverableError) {
+    throw new Error(getMunicipalityError());
+  }
+
+  return [];
+}
+
+async function searchMunicipalityRows(supabase, normalizedQuery, limit) {
+  const escapedQuery = escapeLikePattern(normalizedQuery);
+  const ilikePattern = `%${escapedQuery}%`;
+
+  return runMunicipalityQuery([
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_VIEW)
+        .select(MUNICIPALITY_SELECT)
+        .ilike("search_text", ilikePattern)
+        .order("name", { ascending: true })
+        .limit(limit),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_SELECT)
+        .ilike("search_text", ilikePattern)
+        .eq("place_type", "municipality")
+        .eq("is_active", true)
+        .order("name", { ascending: true })
+        .limit(limit),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_BASIC_SELECT)
+        .ilike("name", ilikePattern)
+        .order("name", { ascending: true })
+        .limit(limit),
+  ]);
+}
+
+async function readSantPereMunicipalityRow(supabase) {
+  const santPereNamePattern = "Sant Pere de Ribes";
+
+  const rows = await runMunicipalityQuery([
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_VIEW)
+        .select(MUNICIPALITY_SELECT)
+        .or(
+          `municipality_code.eq.${SANT_PERE_DE_RIBES_MUNICIPALITY_CODE},dir3_code.eq.${SANT_PERE_DE_RIBES_DIR3_CODE}`,
+        )
+        .limit(1),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_SELECT)
+        .or(
+          `municipality_code.eq.${SANT_PERE_DE_RIBES_MUNICIPALITY_CODE},dir3_code.eq.${SANT_PERE_DE_RIBES_DIR3_CODE}`,
+        )
+        .limit(1),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_BASIC_SELECT)
+        .eq("name", santPereNamePattern)
+        .limit(1),
+  ]);
+
+  return rows[0] ?? null;
+}
+
+async function readMunicipalityRowById(supabase, cityId) {
+  const rows = await runMunicipalityQuery([
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_VIEW)
+        .select(MUNICIPALITY_SELECT)
+        .eq("id", cityId)
+        .limit(1),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_SELECT)
+        .eq("id", cityId)
+        .limit(1),
+    () =>
+      supabase
+        .from(MUNICIPALITY_SOURCE_TABLE)
+        .select(MUNICIPALITY_BASIC_SELECT)
+        .eq("id", cityId)
+        .limit(1),
+  ]);
+
+  return rows[0] ?? null;
 }
 
 function shouldIncludeRoquetesOption(normalizedQuery) {
@@ -95,20 +233,9 @@ async function readSantPereMunicipality() {
     throw new Error(getMunicipalityError());
   }
 
-  santPereMunicipalityPromise = supabase
-    .from("municipality_choices_read")
-    .select(MUNICIPALITY_SELECT)
-    .or(
-      `municipality_code.eq.${SANT_PERE_DE_RIBES_MUNICIPALITY_CODE},dir3_code.eq.${SANT_PERE_DE_RIBES_DIR3_CODE}`,
-    )
-    .limit(1)
-    .maybeSingle()
-    .then(({ data, error }) => {
-      if (error) {
-        throw new Error(getMunicipalityError());
-      }
-
-      return data ? buildMunicipalityChoice(data) : null;
+  santPereMunicipalityPromise = readSantPereMunicipalityRow(supabase)
+    .then((row) => {
+      return row ? buildMunicipalityChoice(row) : null;
     })
     .catch((error) => {
       santPereMunicipalityPromise = null;
@@ -140,17 +267,9 @@ export async function getMunicipalityChoiceById(cityId) {
     throw new Error(getMunicipalityError());
   }
 
-  const { data, error } = await supabase
-    .from("municipality_choices_read")
-    .select(MUNICIPALITY_SELECT)
-    .eq("id", cityId)
-    .maybeSingle();
+  const row = await readMunicipalityRowById(supabase, cityId);
 
-  if (error) {
-    throw new Error(getMunicipalityError());
-  }
-
-  return data ? buildMunicipalityChoice(data) : null;
+  return row ? buildMunicipalityChoice(row) : null;
 }
 
 export async function searchMunicipalityChoices(query, { limit = 20 } = {}) {
@@ -168,21 +287,15 @@ export async function searchMunicipalityChoices(query, { limit = 20 } = {}) {
 
   const includeRoquetes = shouldIncludeRoquetesOption(normalizedQuery);
   const requestedLimit = includeRoquetes ? Math.max(limit - 1, 1) : limit;
-  const escapedQuery = escapeLikePattern(normalizedQuery);
-  const { data, error } = await supabase
-    .from("municipality_choices_read")
-    .select(MUNICIPALITY_SELECT)
-    .ilike("search_text", `%${escapedQuery}%`)
-    .order("name", { ascending: true })
-    .limit(requestedLimit);
-
-  if (error) {
-    throw new Error(getMunicipalityError());
-  }
+  const rows = await searchMunicipalityRows(
+    supabase,
+    normalizedQuery,
+    requestedLimit,
+  );
 
   const choicesByKey = new Map();
 
-  (data ?? []).forEach((row) => {
+  rows.forEach((row) => {
     const choice = buildMunicipalityChoice(row);
 
     if (choice.id) {
