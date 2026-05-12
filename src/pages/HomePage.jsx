@@ -14,8 +14,8 @@ import { SeoHead } from "@/components/SeoHead";
 import { CatalogState } from "@/components/states/CatalogState";
 import {
   filterActivities,
+  getCatalogAreaOptions,
   getCategoryLabelOptions,
-  getCityOptions,
 } from "@/helpers/catalogFilters";
 import { searchActivities } from "@/helpers/catalogSearch";
 import { useCatalog } from "@/hooks/useCatalog";
@@ -37,7 +37,7 @@ export function HomePage() {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
-  const [selectedCityId, setSelectedCityId] = useState("");
+  const [selectedAreaKey, setSelectedAreaKey] = useState("");
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   const publicCatalogActivities = useMemo(
@@ -49,10 +49,7 @@ export function HomePage() {
     () => getCategoryLabelOptions(publicCatalogActivities),
     [publicCatalogActivities],
   );
-  const cityOptions = useMemo(
-    () => getCityOptions(publicCatalogActivities),
-    [publicCatalogActivities],
-  );
+  const areaOptions = useMemo(() => getCatalogAreaOptions(), []);
 
   const visibleActivities = useMemo(() => {
     const searchedActivities = searchActivities(
@@ -62,13 +59,13 @@ export function HomePage() {
 
     return filterActivities(searchedActivities, {
       selectedCategoryLabels,
-      selectedCityId,
+      selectedAreaKey,
     });
   }, [
     publicCatalogActivities,
     searchQuery,
     selectedCategoryLabels,
-    selectedCityId,
+    selectedAreaKey,
   ]);
 
   const handleToggleCategoryLabel = (categoryLabel) => {
@@ -82,7 +79,7 @@ export function HomePage() {
   const handleClearFilters = () => {
     setSearchQuery("");
     setSelectedCategoryLabels([]);
-    setSelectedCityId("");
+    setSelectedAreaKey("");
   };
 
   const handleExploreActivities = () => {
@@ -187,9 +184,9 @@ export function HomePage() {
             <CatalogToolbar
               searchQuery={searchQuery}
               onSearchQueryChange={setSearchQuery}
-              cityOptions={cityOptions}
-              selectedCityId={selectedCityId}
-              onSelectedCityIdChange={setSelectedCityId}
+              areaOptions={areaOptions}
+              selectedAreaKey={selectedAreaKey}
+              onSelectedAreaKeyChange={setSelectedAreaKey}
               categoryLabelOptions={categoryLabelOptions}
               selectedCategoryLabels={selectedCategoryLabels}
               onToggleCategoryLabel={handleToggleCategoryLabel}

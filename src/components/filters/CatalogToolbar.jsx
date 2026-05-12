@@ -6,16 +6,16 @@ import { Input } from "@/components/ui/input";
 
 const FILTER_SECTIONS = [
   { id: "search", label: "Buscar" },
-  { id: "city", label: "Ciudad" },
+  { id: "area", label: "Zona" },
   { id: "categories", label: "Categorías" },
 ];
 
 export function CatalogToolbar({
   searchQuery,
   onSearchQueryChange,
-  cityOptions,
-  selectedCityId,
-  onSelectedCityIdChange,
+  areaOptions,
+  selectedAreaKey,
+  onSelectedAreaKeyChange,
   categoryLabelOptions,
   selectedCategoryLabels,
   onToggleCategoryLabel,
@@ -23,16 +23,16 @@ export function CatalogToolbar({
 }) {
   const [openSections, setOpenSections] = useState({
     search: true,
-    city: false,
+    area: false,
     categories: false,
   });
   const hasActiveFilters =
     searchQuery.trim().length > 0 ||
-    String(selectedCityId).length > 0 ||
+    String(selectedAreaKey).length > 0 ||
     selectedCategoryLabels.length > 0;
-  const selectedCityName =
-    cityOptions.find((cityOption) => String(cityOption.city_id) === String(selectedCityId))
-      ?.city_name || "Todas";
+  const selectedAreaName =
+    areaOptions.find((areaOption) => areaOption.key === selectedAreaKey)?.label ||
+    "Todas";
 
   const toggleSection = (sectionId) => {
     setOpenSections((currentOpenSections) => ({
@@ -80,8 +80,8 @@ export function CatalogToolbar({
                   <span className="catalog-toolbar__section-summary">
                     {section.id === "search" && searchQuery
                       ? searchQuery
-                      : section.id === "city"
-                        ? selectedCityName
+                      : section.id === "area"
+                        ? selectedAreaName
                         : section.id === "categories" &&
                             selectedCategoryLabels.length > 0
                           ? `${selectedCategoryLabels.length} seleccionada${
@@ -110,25 +110,22 @@ export function CatalogToolbar({
                       </div>
                     ) : null}
 
-                    {section.id === "city" ? (
+                    {section.id === "area" ? (
                       <label className="catalog-toolbar__select-field">
                         <span className="catalog-toolbar__control-label">
-                          Ciudad
+                          Zona
                         </span>
                         <select
                           className="catalog-toolbar__select"
-                          value={selectedCityId}
+                          value={selectedAreaKey}
                           onChange={(event) =>
-                            onSelectedCityIdChange(event.target.value)
+                            onSelectedAreaKeyChange(event.target.value)
                           }
                         >
                           <option value="">Todas</option>
-                          {cityOptions.map((cityOption) => (
-                            <option
-                              key={cityOption.city_id}
-                              value={String(cityOption.city_id)}
-                            >
-                              {cityOption.city_name}
+                          {areaOptions.map((areaOption) => (
+                            <option key={areaOption.key} value={areaOption.key}>
+                              {areaOption.label}
                             </option>
                           ))}
                         </select>
