@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Eye,
   EyeOff,
@@ -14,8 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
-import { listCatalogCityChoices } from "@/services/catalogCityChoicesService";
+import {
+  getMunicipalityChoiceById,
+  getMunicipalityChoiceLabel,
+  normalizeMunicipalityQuery,
+  searchMunicipalityChoices,
+} from "@/services/municipalityService";
 import "./ProtectedAccessGate.css";
+
+const MUNICIPALITY_SEARCH_DEBOUNCE_MS = 250;
+const MUNICIPALITY_SEARCH_MIN_LENGTH = 2;
 
 export function ProtectedAccessGate() {
   const {
@@ -42,58 +50,77 @@ export function ProtectedAccessGate() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [profileName, setProfileName] = useState("");
   const [profileLastName, setProfileLastName] = useState("");
-  const [cityChoices, setCityChoices] = useState([]);
-  const [cityChoicesError, setCityChoicesError] = useState("");
-  const [isLoadingCityChoices, setIsLoadingCityChoices] = useState(false);
-  const [selectedCityId, setSelectedCityId] = useState("");
+  const [municipalityQuery, setMunicipalityQuery] = useState("");
+  const [municipalityChoices, setMunicipalityChoices] = useState([]);
+  const [municipalityChoicesError, setMunicipalityChoicesError] = useState("");
+  const [isLoadingMunicipalityChoices, setIsLoadingMunicipalityChoices] =
+    useState(false);
+  const [selectedMunicipality, setSelectedMunicipality] = useState(null);
   const [formError, setFormError] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSubmittingCredentials, setIsSubmittingCredentials] = useState(false);
   const [isResendingVerification, setIsResendingVerification] = useState(false);
 
+  const normalizedMunicipalityQuery = useMemo(
+    () => normalizeMunicipalityQuery(municipalityQuery),
+    [municipalityQuery],
+  );
+  const shouldSearchMunicipalities =
+    accessState === "onboarding_required" &&
+    isAccessGateOpen &&
+    normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH &&
+    municipalityQuery !== getMunicipalityChoiceLabel(selectedMunicipality);
+  const isMunicipalityOptionsOpen =
+    shouldSearchMunicipalities &&
+    (isLoadingMunicipalityChoices ||
+      municipalityChoices.length > 0 ||
+      municipalityChoicesError ||
+      normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH);
+
   useEffect(() => {
-    if (!isAccessGateOpen || accessState !== "onboarding_required") {
+    if (!shouldSearchMunicipalities) {
+      setMunicipalityChoices([]);
+      setIsLoadingMunicipalityChoices(false);
       return undefined;
     }
 
-    let isMounted = true;
+    let isCancelled = false;
 
-    const loadCityChoices = async () => {
-      setIsLoadingCityChoices(true);
-      setCityChoicesError("");
+    setIsLoadingMunicipalityChoices(true);
+    setMunicipalityChoicesError("");
 
-      try {
-        const nextCityChoices = await listCatalogCityChoices();
+    const timeoutId = window.setTimeout(() => {
+      searchMunicipalityChoices(municipalityQuery)
+        .then((nextMunicipalityChoices) => {
+          if (isCancelled) {
+            return;
+          }
 
-        if (!isMounted) {
-          return;
-        }
+          setMunicipalityChoices(nextMunicipalityChoices);
+        })
+        .catch(() => {
+          if (isCancelled) {
+            return;
+          }
 
-        setCityChoices(nextCityChoices);
-      } catch (error) {
-        if (!isMounted) {
-          return;
-        }
-
-        setCityChoicesError(
-          error instanceof Error
-            ? error.message
-            : "No pudimos cargar las ciudades disponibles ahora mismo.",
-        );
-      } finally {
-        if (isMounted) {
-          setIsLoadingCityChoices(false);
-        }
-      }
-    };
-
-    void loadCityChoices();
+          setMunicipalityChoices([]);
+          setMunicipalityChoicesError(
+            "No pudimos cargar municipios ahora mismo.",
+          );
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setIsLoadingMunicipalityChoices(false);
+          }
+        });
+    }, MUNICIPALITY_SEARCH_DEBOUNCE_MS);
 
     return () => {
-      isMounted = false;
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
     };
-  }, [accessState, isAccessGateOpen]);
+  }, [municipalityQuery, shouldSearchMunicipalities]);
 
   useEffect(() => {
     if (!isAccessGateOpen) {
@@ -102,7 +129,10 @@ export function ProtectedAccessGate() {
       setPasswordConfirm("");
       setProfileName("");
       setProfileLastName("");
-      setSelectedCityId("");
+      setMunicipalityQuery("");
+      setMunicipalityChoices([]);
+      setMunicipalityChoicesError("");
+      setSelectedMunicipality(null);
       setFormError("");
       setIsPasswordVisible(false);
       setIsStartingGoogleSignIn(false);
@@ -114,18 +144,46 @@ export function ProtectedAccessGate() {
 
   useEffect(() => {
     if (!isAccessGateOpen || accessState !== "onboarding_required") {
-      return;
+      return undefined;
     }
+
+    let isMounted = true;
 
     setProfileName(defaultOnboardingForm.name || "");
     setProfileLastName(defaultOnboardingForm.lastName || "");
-    setSelectedCityId(defaultOnboardingForm.cityId || "");
+    setSelectedMunicipality(null);
+    setMunicipalityQuery("");
+
+    if (!defaultOnboardingForm.cityId) {
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    getMunicipalityChoiceById(defaultOnboardingForm.cityId)
+      .then((municipalityChoice) => {
+        if (!isMounted || !municipalityChoice) {
+          return;
+        }
+
+        setSelectedMunicipality(municipalityChoice);
+        setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+      })
+      .catch(() => {
+        if (isMounted) {
+          setMunicipalityChoicesError(
+            "No pudimos cargar la ciudad guardada del perfil.",
+          );
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, [accessState, defaultOnboardingForm, isAccessGateOpen]);
 
-  const selectedCity =
-    cityChoices.find((cityChoice) => String(cityChoice.id) === selectedCityId) ??
-    null;
-  const feedbackMessage = formError || appUserError || authError || cityChoicesError;
+  const feedbackMessage =
+    formError || appUserError || authError || municipalityChoicesError;
   const infoMessage = verificationMessage;
 
   if (!isAccessGateOpen) {
@@ -198,6 +256,28 @@ export function ProtectedAccessGate() {
     setIsResendingVerification(false);
   };
 
+  const handleMunicipalityQueryChange = (event) => {
+    const nextQuery = event.target.value;
+
+    setMunicipalityQuery(nextQuery);
+    setMunicipalityChoicesError("");
+
+    if (
+      selectedMunicipality &&
+      nextQuery !== getMunicipalityChoiceLabel(selectedMunicipality)
+    ) {
+      setSelectedMunicipality(null);
+    }
+  };
+
+  const handleSelectMunicipality = (municipalityChoice) => {
+    setSelectedMunicipality(municipalityChoice);
+    setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+    setMunicipalityChoices([]);
+    setMunicipalityChoicesError("");
+    setFormError("");
+  };
+
   const handleSubmitOnboarding = async (event) => {
     event.preventDefault();
 
@@ -206,8 +286,8 @@ export function ProtectedAccessGate() {
       return;
     }
 
-    if (!selectedCity) {
-      setFormError("Selecciona una ciudad para completar el acceso.");
+    if (!selectedMunicipality) {
+      setFormError("Selecciona una ciudad o municipio para completar el acceso.");
       return;
     }
 
@@ -216,7 +296,7 @@ export function ProtectedAccessGate() {
     const { error } = await completeOnboarding({
       name: profileName,
       lastName: profileLastName,
-      cityId: selectedCity.id,
+      cityId: selectedMunicipality.id,
     });
 
     if (error) {
@@ -585,37 +665,91 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__label"
                   htmlFor="protected-access-gate-city"
                 >
-                  Tu ciudad
+                  Tu ciudad o municipio
                 </label>
-                <select
-                  id="protected-access-gate-city"
-                  className="protected-access-gate__select"
-                  value={selectedCityId}
-                  onChange={(event) => setSelectedCityId(event.target.value)}
-                  disabled={isLoadingCityChoices || isCompletingOnboarding}
-                >
-                  <option value="">Selecciona una ciudad</option>
-                  {cityChoices.map((cityChoice) => (
-                    <option key={cityChoice.id} value={cityChoice.id}>
-                      {cityChoice.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="protected-access-gate__autocomplete">
+                  <Input
+                    id="protected-access-gate-city"
+                    type="search"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-expanded={Boolean(isMunicipalityOptionsOpen)}
+                    aria-controls="protected-access-gate-city-options"
+                    className="protected-access-gate__input"
+                    placeholder="Busca tu ciudad o municipio"
+                    value={municipalityQuery}
+                    onChange={handleMunicipalityQueryChange}
+                    autoComplete="off"
+                    disabled={isCompletingOnboarding}
+                  />
+
+                  {isMunicipalityOptionsOpen ? (
+                    <div
+                      id="protected-access-gate-city-options"
+                      className="protected-access-gate__autocomplete-panel"
+                      role="listbox"
+                    >
+                      {isLoadingMunicipalityChoices ? (
+                        <p className="protected-access-gate__autocomplete-status">
+                          Buscando municipios...
+                        </p>
+                      ) : null}
+
+                      {!isLoadingMunicipalityChoices &&
+                      municipalityChoices.length === 0 &&
+                      !municipalityChoicesError ? (
+                        <p className="protected-access-gate__autocomplete-status">
+                          No encontramos municipios para esa búsqueda.
+                        </p>
+                      ) : null}
+
+                      {!isLoadingMunicipalityChoices
+                        ? municipalityChoices.map((municipalityChoice) => (
+                            <button
+                              key={
+                                municipalityChoice.isSynthetic
+                                  ? municipalityChoice.syntheticKey
+                                  : municipalityChoice.id
+                              }
+                              type="button"
+                              className="protected-access-gate__autocomplete-option"
+                              role="option"
+                              aria-selected={
+                                selectedMunicipality?.id === municipalityChoice.id &&
+                                selectedMunicipality?.displayName ===
+                                  municipalityChoice.displayName
+                              }
+                              onClick={() =>
+                                handleSelectMunicipality(municipalityChoice)
+                              }
+                            >
+                              <span className="protected-access-gate__autocomplete-option-name">
+                                {municipalityChoice.displayName}
+                              </span>
+                              {municipalityChoice.provinceName ? (
+                                <span className="protected-access-gate__autocomplete-option-meta">
+                                  {municipalityChoice.provinceName}
+                                </span>
+                              ) : null}
+                            </button>
+                          ))
+                        : null}
+                    </div>
+                  ) : null}
+                </div>
+                <p className="protected-access-gate__hint">
+                  Empieza a escribir al menos dos letras. También puedes buscar
+                  Roquetas o Les Roquetes.
+                </p>
 
                 <Button
                   type="submit"
                   className="protected-access-gate__primary-action"
-                  disabled={
-                    isLoadingCityChoices ||
-                    isCompletingOnboarding ||
-                    cityChoices.length === 0
-                  }
+                  disabled={isCompletingOnboarding || !selectedMunicipality}
                 >
-                  {isLoadingCityChoices
-                    ? "Cargando ciudades..."
-                    : isCompletingOnboarding
-                      ? "Guardando perfil..."
-                      : "Guardar y continuar"}
+                  {isCompletingOnboarding
+                    ? "Guardando perfil..."
+                    : "Guardar y continuar"}
                 </Button>
               </form>
             </>
