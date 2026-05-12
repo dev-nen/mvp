@@ -62,6 +62,10 @@ alter table public.cities
   alter column is_active set default true,
   alter column updated_at set default now();
 
+-- DIR3 has repeated municipality names across provinces, so name alone cannot be unique.
+alter table public.cities drop constraint if exists cities_name_uidx;
+drop index if exists public.cities_name_uidx;
+
 create unique index if not exists cities_dir3_code_unique_idx
   on public.cities (dir3_code)
   where dir3_code is not null;
