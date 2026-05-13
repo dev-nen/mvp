@@ -2,9 +2,6 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import es from "@/i18n/locales/es";
 import ca from "@/i18n/locales/ca";
 import en from "@/i18n/locales/en";
-import esLegal from "@/i18n/legal/es";
-import caLegal from "@/i18n/legal/ca";
-import enLegal from "@/i18n/legal/en";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_STORAGE_KEY,
@@ -14,9 +11,9 @@ import {
 export const I18nContext = createContext(null);
 
 const dictionaries = {
-  es: { ...es, legal: esLegal },
-  ca: { ...ca, legal: caLegal },
-  en: { ...en, legal: enLegal },
+  es,
+  ca,
+  en,
 };
 
 function isSupportedLanguage(language) {
@@ -28,9 +25,29 @@ function getInitialLanguage() {
     return DEFAULT_LANGUAGE;
   }
 
-  const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  const storedLanguage = readStoredLanguage();
 
   return isSupportedLanguage(storedLanguage) ? storedLanguage : DEFAULT_LANGUAGE;
+}
+
+function readStoredLanguage() {
+  try {
+    return window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredLanguage(language) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch {
+    // Keep language changes in memory when browser storage is unavailable.
+  }
 }
 
 function getPathValue(source, key) {
@@ -72,10 +89,7 @@ export function I18nProvider({ children }) {
       : DEFAULT_LANGUAGE;
 
     setLanguageState(resolvedLanguage);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LANGUAGE_STORAGE_KEY, resolvedLanguage);
-    }
+    writeStoredLanguage(resolvedLanguage);
   }, []);
 
   const t = useCallback(
