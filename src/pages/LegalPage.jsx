@@ -1,17 +1,7 @@
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
-import { DEFAULT_LANGUAGE } from "@/i18n/i18nConfig";
-import caLegal from "@/i18n/legal/ca";
-import enLegal from "@/i18n/legal/en";
-import esLegal from "@/i18n/legal/es";
 import { useI18n } from "@/i18n/useI18n";
 import "./LegalPage.css";
-
-const legalDictionaries = {
-  ca: caLegal,
-  en: enLegal,
-  es: esLegal,
-};
 
 function LegalBlock({ block }) {
   if (block.type === "list") {
@@ -38,10 +28,8 @@ function LegalBlock({ block }) {
 }
 
 export function LegalPage({ canonicalUrl, pageKey }) {
-  const { language } = useI18n();
-  const legalDictionary =
-    legalDictionaries[language] || legalDictionaries[DEFAULT_LANGUAGE];
-  const page = legalDictionary[pageKey] || legalDictionaries.es[pageKey];
+  const { t } = useI18n();
+  const page = t(`legal.${pageKey}`);
 
   return (
     <div className="legal-page">
