@@ -79,12 +79,19 @@ function isRecoverableMunicipalitySchemaError(error) {
 
 async function runMunicipalityQuery(queryFactories) {
   let lastRecoverableError = null;
+  let hasSuccessfulSource = false;
 
   for (const queryFactory of queryFactories) {
     const { data, error } = await queryFactory();
 
     if (!error) {
-      return data ?? [];
+      hasSuccessfulSource = true;
+
+      if ((data ?? []).length > 0) {
+        return data;
+      }
+
+      continue;
     }
 
     if (!isRecoverableMunicipalitySchemaError(error)) {
@@ -94,7 +101,7 @@ async function runMunicipalityQuery(queryFactories) {
     lastRecoverableError = error;
   }
 
-  if (lastRecoverableError) {
+  if (!hasSuccessfulSource && lastRecoverableError) {
     throw new Error(getMunicipalityError());
   }
 

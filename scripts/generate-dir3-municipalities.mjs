@@ -1,27 +1,20 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const defaultInputPath =
-  "C:\\Users\\kuro\\Downloads\\nensgo-municipios-normalizados\\municipios_es_dir3.csv";
 const defaultOutputPath = path.join(
   rootDir,
   "supabase",
   "seed",
   "2026-05-12_dir3_municipalities.sql",
 );
-
-const args = process.argv.slice(2);
-const positionalArgs = args.filter((arg) => !arg.startsWith("--"));
-const inputPath = positionalArgs[0] ? path.resolve(positionalArgs[0]) : defaultInputPath;
-const outputPath = positionalArgs[1] ? path.resolve(positionalArgs[1]) : defaultOutputPath;
-const chunkSizeArg = args.find((arg) => arg.startsWith("--chunk-size="));
-const chunkDirArg = args.find((arg) => arg.startsWith("--chunk-dir="));
-const chunkSize = chunkSizeArg ? Number(chunkSizeArg.split("=")[1]) : 0;
-const chunkDir = chunkDirArg
-  ? path.resolve(chunkDirArg.split("=")[1])
-  : path.join(path.dirname(outputPath), "chunks");
+const exampleInputPath = path.join(
+  "data",
+  "raw",
+  "dir3",
+  "municipios_es_dir3.csv",
+);
 
 const requiredColumns = [
   "dir3_code",
@@ -38,6 +31,34 @@ const requiredColumns = [
   "source_file",
   "source_downloaded_at",
 ];
+
+function buildUsageMessage() {
+  return [
+    "Usage: node scripts/generate-dir3-municipalities.mjs <input-csv> [output-sql] [--chunk-size=N] [--chunk-dir=PATH]",
+    "",
+    "Input CSV must be a normalized DIR3 municipalities file with columns:",
+    requiredColumns.join(", "),
+    "",
+    `Example: node scripts/generate-dir3-municipalities.mjs ${exampleInputPath}`,
+  ].join("\n");
+}
+
+const args = process.argv.slice(2);
+const positionalArgs = args.filter((arg) => !arg.startsWith("--"));
+
+if (!positionalArgs[0]) {
+  console.error(buildUsageMessage());
+  process.exit(1);
+}
+
+const inputPath = path.resolve(positionalArgs[0]);
+const outputPath = positionalArgs[1] ? path.resolve(positionalArgs[1]) : defaultOutputPath;
+const chunkSizeArg = args.find((arg) => arg.startsWith("--chunk-size="));
+const chunkDirArg = args.find((arg) => arg.startsWith("--chunk-dir="));
+const chunkSize = chunkSizeArg ? Number(chunkSizeArg.split("=")[1]) : 0;
+const chunkDir = chunkDirArg
+  ? path.resolve(chunkDirArg.split("=")[1])
+  : path.join(path.dirname(outputPath), "chunks");
 
 function parseCsvLine(line) {
   const values = [];
@@ -311,6 +332,18 @@ $$;
 
 commit;
 `;
+}
+
+if (!existsSync(inputPath)) {
+  console.error(
+    [
+      `DIR3 input CSV not found: ${inputPath}`,
+      `Place the normalized CSV at ${exampleInputPath} or pass its path as the first argument.`,
+      "",
+      buildUsageMessage(),
+    ].join("\n"),
+  );
+  process.exit(1);
 }
 
 const csvSource = readFileSync(inputPath, "utf8");
