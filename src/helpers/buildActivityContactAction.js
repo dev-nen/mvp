@@ -6,24 +6,30 @@ function normalizeContactMethod(contactMethod) {
   return getTrimmedText(contactMethod).toLowerCase();
 }
 
-function buildActivityGreeting(activity) {
+function buildActivityGreeting(activity, contactContext = {}) {
   const activityTitle = getTrimmedText(activity?.title) || "esta actividad";
   const cityFragment = activity?.city_name ? ` en ${activity.city_name}` : "";
+  const requesterName = getTrimmedText(contactContext.requesterName);
+  const interestFragment = requesterName
+    ? ` soy ${requesterName}. Me interesa`
+    : " me interesa";
 
-  return `Hola, me interesa la actividad "${activityTitle}"${cityFragment}. ¿Podrías darme más información?`;
+  return `Hola,${interestFragment} la actividad "${activityTitle}"${cityFragment}. ¿Podrías darme más información?`;
 }
 
-function buildWhatsappUrl(contactValue, activity) {
+function buildWhatsappUrl(contactValue, activity, contactContext) {
   const normalizedPhone = getTrimmedText(contactValue).replace(/\D+/g, "");
 
   if (!normalizedPhone) {
     return "";
   }
 
-  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(buildActivityGreeting(activity))}`;
+  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(
+    buildActivityGreeting(activity, contactContext),
+  )}`;
 }
 
-function buildEmailUrl(contactValue, activity) {
+function buildEmailUrl(contactValue, activity, contactContext) {
   const normalizedEmail = getTrimmedText(contactValue);
 
   if (!normalizedEmail) {
@@ -32,7 +38,7 @@ function buildEmailUrl(contactValue, activity) {
 
   const activityTitle = getTrimmedText(activity?.title) || "actividad";
   const subject = `Consulta sobre ${activityTitle}`;
-  const body = buildActivityGreeting(activity);
+  const body = buildActivityGreeting(activity, contactContext);
 
   return `mailto:${normalizedEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
@@ -57,7 +63,11 @@ function buildWebUrl(contactValue) {
   return `https://${normalizedUrl}`;
 }
 
-export function buildActivityContactActionUrl(activity, contactOption) {
+export function buildActivityContactActionUrl(
+  activity,
+  contactOption,
+  contactContext = {},
+) {
   const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
   const contactValue = getTrimmedText(contactOption?.contactValue);
 
@@ -66,11 +76,11 @@ export function buildActivityContactActionUrl(activity, contactOption) {
   }
 
   if (contactMethod === "whatsapp") {
-    return buildWhatsappUrl(contactValue, activity);
+    return buildWhatsappUrl(contactValue, activity, contactContext);
   }
 
   if (contactMethod === "email") {
-    return buildEmailUrl(contactValue, activity);
+    return buildEmailUrl(contactValue, activity, contactContext);
   }
 
   if (contactMethod === "phone") {
@@ -110,13 +120,21 @@ export function getActivityContactOptionLabel(contactOption) {
   return "Abrir contacto";
 }
 
-export function openActivityContactAction(activity, contactOption) {
+export function openActivityContactAction(
+  activity,
+  contactOption,
+  contactContext = {},
+) {
   if (typeof window === "undefined") {
     return false;
   }
 
   const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
-  const contactUrl = buildActivityContactActionUrl(activity, contactOption);
+  const contactUrl = buildActivityContactActionUrl(
+    activity,
+    contactOption,
+    contactContext,
+  );
 
   if (!contactUrl) {
     return false;

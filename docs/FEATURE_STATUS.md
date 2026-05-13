@@ -26,7 +26,7 @@ branch split.
 | B2B centers landing route | Partial | `/para-centros` still exists as a public preparatory landing with isolated layout and external join CTA | It remains intentionally separate from `/` and broader distribution is still deferred |
 | Public catalog card | Done | Home uses the current public teaser card contract | The active card no longer depends on fallback catalog truth |
 | Detail MVP 2.0 | Partial | Detail remains structurally aligned across Home modal and Favorites detail page | The split-surface detail model remains intentional debt in this phase |
-| Contact CTA real path | Partial | Contact now comes only from `activity_contact_options` with direct/single and chooser/multi behavior | Full validation still depends on live data quality in Supabase |
+| Contact CTA real path | Partial | Contact now comes only from `activity_contact_options` with direct/single and chooser/multi behavior; generated WhatsApp/email messages include the signed-in user's display name when available | Full validation still depends on live data quality in Supabase |
 | Favorites by user | Partial | Favorites are now modeled as remote user-linked data in `user_favorite_activities` | Still pending live SQL readiness and end-to-end validation |
 | Profile | Partial | `/perfil` reflects auth state plus app-profile readiness from `user_profiles` | Richer profile editing is still out of scope |
 | Auth expansion | Partial | Google plus email/password flows are implemented in code, including verification-pending and onboarding-required states | Still depends on Supabase provider setup, redirects, and verification config |

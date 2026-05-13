@@ -19,6 +19,7 @@ export function ActivityDetailModal({
   open,
   onClose,
   onContactClick,
+  contactRequesterName = "",
 }) {
   const { t } = useI18n();
   const scrollContainerRef = useRef(null);
@@ -106,7 +107,9 @@ export function ActivityDetailModal({
 
   const handleSelectContactOption = (contactOption) => {
     onContactClick?.(activity, contactOption);
-    openActivityContactAction(activity, contactOption);
+    openActivityContactAction(activity, contactOption, {
+      requesterName: contactRequesterName,
+    });
     setIsContactDialogOpen(false);
   };
 

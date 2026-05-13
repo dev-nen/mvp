@@ -135,6 +135,9 @@ Contact rules in `main`:
 - one active option opens directly
 - multiple active options open a chooser dialog
 - zero options means no operational CTA
+- WhatsApp and email contact messages include the signed-in user's display name
+  when available, while phone, form, and web contact options remain direct URL
+  actions
 
 ## Current Auth And Access Flow
 

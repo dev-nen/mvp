@@ -18,6 +18,7 @@ import {
   getCategoryLabelOptions,
 } from "@/helpers/catalogFilters";
 import { searchActivities } from "@/helpers/catalogSearch";
+import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useCatalog } from "@/hooks/useCatalog";
 import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -35,7 +36,13 @@ export function HomePage() {
   const location = useLocation();
   const { t } = useI18n();
   const { activities, isLoading, error, reload } = useCatalog();
-  const { consumeResolvedIntent, resolvedIntent, startProtectedAction } = useAuth();
+  const {
+    appUser,
+    consumeResolvedIntent,
+    resolvedIntent,
+    startProtectedAction,
+    user,
+  } = useAuth();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategoryLabels, setSelectedCategoryLabels] = useState([]);
@@ -52,6 +59,10 @@ export function HomePage() {
     [publicCatalogActivities],
   );
   const areaOptions = useMemo(() => getCatalogAreaOptions(), []);
+  const contactRequesterName = useMemo(
+    () => (appUser || user ? getShortUserDisplayName({ appUser, user }) : ""),
+    [appUser, user],
+  );
 
   const visibleActivities = useMemo(() => {
     const searchedActivities = searchActivities(
@@ -244,6 +255,7 @@ export function HomePage() {
 
       <ActivityDetailModal
         activity={selectedActivity}
+        contactRequesterName={contactRequesterName}
         isFavorite={selectedActivity ? isFavorite(selectedActivity.id) : false}
         open={Boolean(selectedActivity)}
         onClose={() => setSelectedActivity(null)}

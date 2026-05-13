@@ -4,7 +4,9 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { ActivityDetailModal } from "@/components/catalog/ActivityDetailModal";
 import { CatalogState } from "@/components/states/CatalogState";
+import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useCatalog } from "@/hooks/useCatalog";
+import { useAuth } from "@/hooks/useAuth";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useI18n } from "@/i18n/useI18n";
 import {
@@ -21,8 +23,11 @@ export function FavoriteActivityDetailPage() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const { activityId = "" } = useParams();
+  const { appUser, user } = useAuth();
   const { activities, isLoading, error, reload } = useCatalog();
   const { favoriteIds, removeFavorite } = useFavorites();
+  const contactRequesterName =
+    appUser || user ? getShortUserDisplayName({ appUser, user }) : "";
 
   const activity =
     activities.find((item) => String(item.id) === activityId) ?? null;
@@ -118,6 +123,7 @@ export function FavoriteActivityDetailPage() {
     content = (
       <ActivityDetailModal
         activity={activity}
+        contactRequesterName={contactRequesterName}
         isFavorite
         open
         onClose={handleGoBack}

@@ -71,6 +71,7 @@ Within the master docs, roadmap reading now has two levels:
 | [../tests/manual/runtime-real-gate5-fix-pass.md](../tests/manual/runtime-real-gate5-fix-pass.md) | Gate 5 fix-pass decision checklist for classifying remaining runtime closure gaps. |
 | [../tests/manual/runtime-real-gate6-closure.md](../tests/manual/runtime-real-gate6-closure.md) | Gate 6 closure checklist for deciding whether the runtime closure branch can merge. |
 | [activity-contact-options-readiness-note.md](./activity-contact-options-readiness-note.md) | Readiness note for the real contact-options data source, documenting the current gap between implemented CTA behavior and available contact-option rows. |
+| [contact-message-personalization-sdd.md](./contact-message-personalization-sdd.md) | SDD for including the signed-in user's display name in generated WhatsApp/email contact messages. |
 | [pvi-supabase-readiness-note.md](./pvi-supabase-readiness-note.md) | Historical note for the PVI line before the public placeholder route was retired, plus reopen conditions for internal reporting. |
 | [supabase-schema-preview-2026-04-20.md](./supabase-schema-preview-2026-04-20.md) | External Supabase schema snapshot shared for planning, including tables, columns, relationships, and current unknowns. |
 | [real-db-auth-migration-sdd.md](./real-db-auth-migration-sdd.md) | SDD for moving from local fallback truth to real Supabase-backed catalog/user flows and expanding auth to Google plus classic sign-up. |
