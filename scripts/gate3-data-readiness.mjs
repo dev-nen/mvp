@@ -34,14 +34,12 @@ if (catalogError) {
 }
 
 const { data: contactRows, error: contactError } = await anon
-  .from("activity_contact_options")
+  .from("activity_contact_options_read")
   .select("activity_id, contact_method, contact_value")
-  .eq("is_active", true)
-  .eq("is_deleted", false)
   .limit(200);
 
 if (contactError) {
-  results.fail("activity_contact_options dataset", contactError.message);
+  results.fail("activity_contact_options_read dataset", contactError.message);
 } else {
   const contactCountByActivity = new Map();
 
@@ -61,7 +59,7 @@ if (contactError) {
     .filter(([activityId, count]) => catalogIds.has(activityId) && count > 1)
     .map(([activityId]) => activityId);
 
-  results.pass("activity_contact_options active rows", `${contactRows?.length || 0} active row(s).`);
+  results.pass("activity_contact_options_read rows", `${contactRows?.length || 0} public row(s).`);
 
   if (zeroContactIds.length) {
     results.pass("contact zero-option case", `Activity id(s): ${zeroContactIds.slice(0, 5).join(", ")}`);

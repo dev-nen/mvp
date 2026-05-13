@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/Navbar";
 import { RouteLoadingFallback } from "@/components/ui/RouteLoadingFallback";
@@ -125,15 +126,27 @@ function AppRoutes() {
         </Route>
         <Route
           path="/internal/drafts"
-          element={withRouteLoadingFallback(<InternalDraftInboxPage />)}
+          element={withRouteLoadingFallback(
+            <InternalToolRoute>
+              <InternalDraftInboxPage />
+            </InternalToolRoute>,
+          )}
         />
         <Route
           path="/internal/drafts/:draftId"
-          element={withRouteLoadingFallback(<InternalDraftDetailPage />)}
+          element={withRouteLoadingFallback(
+            <InternalToolRoute>
+              <InternalDraftDetailPage />
+            </InternalToolRoute>,
+          )}
         />
         <Route
           path="/internal/activities/:activityId"
-          element={withRouteLoadingFallback(<InternalApprovedActivityPage />)}
+          element={withRouteLoadingFallback(
+            <InternalToolRoute>
+              <InternalApprovedActivityPage />
+            </InternalToolRoute>,
+          )}
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

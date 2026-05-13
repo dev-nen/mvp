@@ -119,14 +119,12 @@ if (!anon) {
   }
 
   const { data: contacts, error: contactsError } = await anon
-    .from("activity_contact_options")
-    .select("activity_id, contact_method, is_active, is_deleted")
-    .eq("is_active", true)
-    .eq("is_deleted", false)
+    .from("activity_contact_options_read")
+    .select("activity_id, contact_method")
     .limit(200);
 
   if (contactsError) {
-    warnings.push(`No se pudo leer activity_contact_options: ${contactsError.message}`);
+    warnings.push(`No se pudo leer activity_contact_options_read: ${contactsError.message}`);
   } else {
     contactRows = contacts || [];
   }

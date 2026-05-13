@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -7,6 +7,13 @@ const results = [];
 
 function read(relativePath) {
   return readFileSync(path.join(rootDir, relativePath), "utf8");
+}
+
+function readSqlDirectory(relativePath) {
+  return readdirSync(path.join(rootDir, relativePath))
+    .filter((fileName) => fileName.endsWith(".sql"))
+    .sort()
+    .map((fileName) => read(path.join(relativePath, fileName)));
 }
 
 function pass(name, detail = "") {
@@ -80,7 +87,7 @@ const draftSql = read("supabase/sql/2026-04-22_internal_draft_inbox_phase1.sql")
 const lifecycleSql = read(
   "supabase/sql/2026-04-22_internal_approved_activity_lifecycle_phase2.sql",
 );
-const allSql = [realDbSql, draftSql, lifecycleSql].join("\n");
+const allSql = readSqlDirectory("supabase/sql").join("\n");
 
 const catalogService = read("src/services/catalogService.js");
 const catalogSelect = getStringConstValue(catalogService, "CATALOG_SELECT");
@@ -99,10 +106,42 @@ assert(
 
 const contactService = read("src/services/activityContactOptionsService.js");
 assert(
-  "contact service reads only activity_contact_options as contact source",
-  contactService.includes('.from("activity_contact_options")') &&
+  "contact service reads only activity_contact_options_read as contact source",
+  contactService.includes('.from("activity_contact_options_read")') &&
+    !contactService.includes('.from("activity_contact_options")') &&
     !contactService.includes('.from("centers")'),
-  "Contact fallback to centers should not return without an explicit decision.",
+  "Public contact reads must go through the safe published-activity view.",
+);
+
+assert(
+  "contact options read view follows public catalog visibility",
+  allSql.includes("create or replace view public.activity_contact_options_read") &&
+    allSql.includes("join public.activities") &&
+    allSql.includes("join public.centers") &&
+    allSql.includes("activity_contact_options.is_active = true") &&
+    allSql.includes("activities.is_active = true") &&
+    allSql.includes("centers.is_active = true"),
+  "Public contact options must be scoped to active options, activities, and centers.",
+);
+
+assert(
+  "seed helper execute privilege is service-role only",
+  allSql.includes("revoke all on function public.seed_activity_draft_examples(uuid) from public") &&
+    allSql.includes("revoke all on function public.seed_activity_draft_examples(uuid) from anon") &&
+    allSql.includes("revoke all on function public.seed_activity_draft_examples(uuid) from authenticated") &&
+    allSql.includes("grant execute on function public.seed_activity_draft_examples(uuid) to service_role") &&
+    !allSql.includes("grant execute on function public.seed_activity_draft_examples(uuid) to authenticated"),
+  "Draft Inbox seed helper can grant internal access and must not be callable by normal roles.",
+);
+
+assert(
+  "ensure_my_profile validates active DIR3 ES municipalities",
+  allSql.includes("profile_city_id must reference an active ES municipality") &&
+    allSql.includes("place_type = 'municipality'") &&
+    allSql.includes("country_code = 'ES'") &&
+    allSql.includes("municipality_code is not null") &&
+    allSql.includes("dir3_code is not null"),
+  "Profile city ids must be limited to onboarding-valid municipality rows.",
 );
 
 const appUsersService = read("src/services/appUsersService.js");

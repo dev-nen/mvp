@@ -1,7 +1,6 @@
 import { AlertTriangle, ArrowLeft, LoaderCircle, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
@@ -250,8 +249,7 @@ export function InternalApprovedActivityPage() {
   };
 
   return (
-    <InternalToolRoute>
-      <div className="internal-approved-activity-page">
+    <div className="internal-approved-activity-page">
         <main className="internal-approved-activity-page__main">
           <div className="page-container internal-approved-activity-page__container">
             <header className="internal-approved-activity-page__header">
@@ -444,7 +442,6 @@ export function InternalApprovedActivityPage() {
         </main>
 
         <Footer />
-      </div>
-    </InternalToolRoute>
+    </div>
   );
 }

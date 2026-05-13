@@ -165,21 +165,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   }
 
   const { data: contactRows, error: contactError } = await supabase
-    .from("activity_contact_options")
+    .from("activity_contact_options_read")
     .select("activity_id, contact_method, contact_value")
-    .eq("is_active", true)
-    .eq("is_deleted", false)
     .limit(10);
 
   if (contactError) {
-    fail("activity_contact_options anon read", contactError.message);
+    fail("activity_contact_options_read anon read", contactError.message);
   } else if ((contactRows || []).length === 0) {
     warn(
-      "activity_contact_options anon read",
-      "No active contact rows found; contact smoke will need dataset work.",
+      "activity_contact_options_read anon read",
+      "No public contact rows found; contact smoke will need dataset work.",
     );
   } else {
-    pass("activity_contact_options anon read", `${contactRows.length} active row(s).`);
+    pass("activity_contact_options_read anon read", `${contactRows.length} public row(s).`);
   }
 
   const { data: pviReport, error: pviRpcError } = await supabase.rpc(

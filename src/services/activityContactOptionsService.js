@@ -31,11 +31,9 @@ export async function listActivityContactOptions(activityId) {
   }
 
   const { data, error } = await supabase
-    .from("activity_contact_options")
+    .from("activity_contact_options_read")
     .select("id, activity_id, contact_method, contact_value")
     .eq("activity_id", activityId)
-    .eq("is_active", true)
-    .eq("is_deleted", false)
     .order("id", { ascending: true });
 
   if (error) {

@@ -242,7 +242,13 @@ async function readSantPereMunicipality() {
 
   santPereMunicipalityPromise = readSantPereMunicipalityRow(supabase)
     .then((row) => {
-      return row ? buildMunicipalityChoice(row) : null;
+      const municipality = row ? buildMunicipalityChoice(row) : null;
+
+      if (!municipality) {
+        santPereMunicipalityPromise = null;
+      }
+
+      return municipality;
     })
     .catch((error) => {
       santPereMunicipalityPromise = null;

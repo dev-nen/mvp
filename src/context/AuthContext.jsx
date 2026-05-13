@@ -53,13 +53,45 @@ function normalizeProtectedIntent(intent) {
   return nextIntent;
 }
 
-function readStoredProtectedIntent() {
+function safeSessionStorageGet(key) {
   if (typeof window === "undefined") {
     return null;
   }
 
   try {
-    const storedIntent = window.sessionStorage.getItem(PENDING_INTENT_STORAGE_KEY);
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function safeSessionStorageSet(key, value) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch {
+    // Keep protected intents in memory when browser storage is unavailable.
+  }
+}
+
+function safeSessionStorageRemove(key) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.removeItem(key);
+  } catch {
+    // Keep protected intents in memory when browser storage is unavailable.
+  }
+}
+
+function readStoredProtectedIntent() {
+  try {
+    const storedIntent = safeSessionStorageGet(PENDING_INTENT_STORAGE_KEY);
 
     if (!storedIntent) {
       return null;
@@ -72,18 +104,14 @@ function readStoredProtectedIntent() {
 }
 
 function writeStoredProtectedIntent(intent) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
   const normalizedIntent = normalizeProtectedIntent(intent);
 
   if (!normalizedIntent) {
-    window.sessionStorage.removeItem(PENDING_INTENT_STORAGE_KEY);
+    safeSessionStorageRemove(PENDING_INTENT_STORAGE_KEY);
     return;
   }
 
-  window.sessionStorage.setItem(
+  safeSessionStorageSet(
     PENDING_INTENT_STORAGE_KEY,
     JSON.stringify(normalizedIntent),
   );

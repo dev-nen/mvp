@@ -1,7 +1,6 @@
 import { LoaderCircle, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
@@ -101,8 +100,7 @@ export function InternalDraftInboxPage() {
   }, []);
 
   return (
-    <InternalToolRoute>
-      <div className="internal-draft-inbox-page">
+    <div className="internal-draft-inbox-page">
         <main className="internal-draft-inbox-page__main">
           <div className="page-container internal-draft-inbox-page__container">
             <header className="internal-draft-inbox-page__header">
@@ -243,7 +241,6 @@ export function InternalDraftInboxPage() {
         </main>
 
         <Footer />
-      </div>
-    </InternalToolRoute>
+    </div>
   );
 }

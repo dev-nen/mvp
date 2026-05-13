@@ -7,9 +7,7 @@ with public_catalog as (
 ),
 active_contacts as (
   select activity_id, count(*) as active_contact_count
-  from public.activity_contact_options
-  where is_active = true
-    and is_deleted = false
+  from public.activity_contact_options_read
   group by activity_id
 )
 select

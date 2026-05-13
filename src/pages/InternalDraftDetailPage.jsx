@@ -5,7 +5,6 @@ import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
 import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
@@ -388,8 +387,7 @@ export function InternalDraftDetailPage() {
   };
 
   return (
-    <InternalToolRoute>
-      <div className="internal-draft-detail-page">
+    <div className="internal-draft-detail-page">
         <main className="internal-draft-detail-page__main">
           <div className="page-container internal-draft-detail-page__container">
             <header className="internal-draft-detail-page__header">
@@ -636,7 +634,6 @@ export function InternalDraftDetailPage() {
         </main>
 
         <Footer />
-      </div>
-    </InternalToolRoute>
+    </div>
   );
 }
