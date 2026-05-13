@@ -30,6 +30,11 @@ const es = {
     text:
       "Actividades para peques y familias, organizadas para ayudarte a decidir mejor.",
     contactLabel: "Contacto:",
+    legalLinks: [
+      { label: "Política de privacidad", to: "/privacidad" },
+      { label: "Términos de uso", to: "/terminos" },
+    ],
+    legalAria: "Enlaces legales",
   },
   home: {
     seoTitle: "NensGo | Actividades para peques y familias cerca de ti",
@@ -533,13 +538,6 @@ const es = {
       text: "Déjanos tus datos en el formulario y te contactaremos si así lo deseas.",
       contactNote: "También puedes escribirnos directamente a",
       action: "Quiero participar",
-    },
-    footer: {
-      aria: "Pie de página de NensGo para centros",
-      rights: "Copyright {year} NensGo. Todos los derechos reservados.",
-      contact: "Contacto:",
-      note:
-        "Los textos, diseños, imágenes y materiales publicados en esta web pertenecen a NensGo o se usan con autorización.",
     },
   },
 };

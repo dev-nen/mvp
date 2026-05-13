@@ -30,6 +30,8 @@ ideal future architecture.
 | --- | --- | --- |
 | `/` | Landing + public catalog | Public route. Reads catalog from Supabase and opens detail through protected intent handling. |
 | `/para-centros` | B2B landing for centers | Public route. Independent acquisition surface. |
+| `/privacidad` | Privacy policy | Public OAuth trust/legal page. Linked from the shared footer, included in `public/sitemap.xml`, and canonicalized under `https://nensgo.com`. |
+| `/terminos` | Terms of use | Public OAuth trust/legal page. Linked from the shared footer, included in `public/sitemap.xml`, and canonicalized under `https://nensgo.com`. |
 | `/favoritos` | Favorites list | Protected route. Reads favorites from `user_favorite_activities`. |
 | `/favoritos/:activityId` | Favorites detail page | Protected route. Routed detail surface. |
 | `/perfil` | App profile surface | Protected route. Reflects auth state plus `user_profiles` readiness. |
@@ -48,6 +50,8 @@ ideal future architecture.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
 - `InternalToolRoute` guards `/internal/drafts` and `/internal/drafts/:draftId`
   without pushing internal-permission reads into `AuthContext`.
+- The shared public footer links to `/privacidad` and `/terminos` as the single
+  footer source of truth across public pages, including `/para-centros`.
 - `<Analytics />` from `@vercel/analytics/react` is mounted once after
   `<Routes>`, so pageview collection is app-wide rather than route-specific.
 

@@ -16,6 +16,9 @@ contains:
 
 - A public landing and catalog experience on `/`
 - A separate public B2B landing on `/para-centros`
+- Public OAuth trust/legal pages on `/privacidad` and `/terminos`, linked from
+  the shared footer, canonicalized under `https://nensgo.com`, and included in
+  `public/sitemap.xml`
 - Protected routes for `/perfil`, `/favoritos`, and `/favoritos/:activityId`
 - A Supabase-backed catalog read path through `catalog_activities_read`
 - A Supabase-backed favorite model through `user_favorite_activities`
@@ -67,6 +70,8 @@ paths.
 
 - Home acts as landing plus public catalog entry point.
 - `/para-centros` still exists as a separate public B2B landing.
+- `/privacidad` and `/terminos` are public legal/trust routes for OAuth app
+  domain configuration and user trust.
 - Public catalog reads from Supabase through a dedicated read model instead of
   local fallback files.
 - Catalog filters now treat `city_id` as persisted truth and derive slug only

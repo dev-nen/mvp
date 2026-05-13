@@ -30,6 +30,11 @@ const en = {
     text:
       "Activities for children and families, organized to help you decide better.",
     contactLabel: "Contact:",
+    legalLinks: [
+      { label: "Privacy Policy", to: "/privacidad" },
+      { label: "Terms of Use", to: "/terminos" },
+    ],
+    legalAria: "Legal links",
   },
   home: {
     seoTitle: "NensGo | Activities for children and families near you",
@@ -526,13 +531,6 @@ const en = {
       text: "Leave us your details in the form and we will contact you if you wish.",
       contactNote: "You can also write to us directly at",
       action: "I want to participate",
-    },
-    footer: {
-      aria: "NensGo for centers footer",
-      rights: "Copyright {year} NensGo. All rights reserved.",
-      contact: "Contact:",
-      note:
-        "The texts, designs, images and materials published on this website belong to NensGo or are used with authorization.",
     },
   },
 };

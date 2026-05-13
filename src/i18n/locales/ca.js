@@ -30,6 +30,11 @@ const ca = {
     text:
       "Activitats per a nens i famílies, organitzades per ajudar-te a decidir millor.",
     contactLabel: "Contacte:",
+    legalLinks: [
+      { label: "Política de privacitat", to: "/privacidad" },
+      { label: "Termes d’ús", to: "/terminos" },
+    ],
+    legalAria: "Enllaços legals",
   },
   home: {
     seoTitle: "NensGo | Activitats per a nens i famílies a prop teu",
@@ -533,13 +538,6 @@ const ca = {
         "Deixa'ns les teves dades al formulari i et contactarem si així ho vols.",
       contactNote: "També pots escriure'ns directament a",
       action: "Vull participar",
-    },
-    footer: {
-      aria: "Peu de pàgina de NensGo per a centres",
-      rights: "Copyright {year} NensGo. Tots els drets reservats.",
-      contact: "Contacte:",
-      note:
-        "Els textos, dissenys, imatges i materials publicats en aquesta web pertanyen a NensGo o s'utilitzen amb autorització.",
     },
   },
 };

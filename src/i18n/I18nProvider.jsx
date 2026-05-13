@@ -2,6 +2,9 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import es from "@/i18n/locales/es";
 import ca from "@/i18n/locales/ca";
 import en from "@/i18n/locales/en";
+import esLegal from "@/i18n/legal/es";
+import caLegal from "@/i18n/legal/ca";
+import enLegal from "@/i18n/legal/en";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_STORAGE_KEY,
@@ -11,9 +14,9 @@ import {
 export const I18nContext = createContext(null);
 
 const dictionaries = {
-  es,
-  ca,
-  en,
+  es: { ...es, legal: esLegal },
+  ca: { ...ca, legal: caLegal },
+  en: { ...en, legal: enLegal },
 };
 
 function isSupportedLanguage(language) {

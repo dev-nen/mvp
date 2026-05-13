@@ -45,6 +45,10 @@ const ParaCentrosPage = lazyNamedPage(
   () => import("@/pages/ParaCentrosPage"),
   "ParaCentrosPage",
 );
+const PrivacyPolicyPage = lazyNamedPage(
+  () => import("@/pages/PrivacyPolicyPage"),
+  "PrivacyPolicyPage",
+);
 const PlaceholderPage = lazyNamedPage(
   () => import("@/pages/PlaceholderPage"),
   "PlaceholderPage",
@@ -52,6 +56,10 @@ const PlaceholderPage = lazyNamedPage(
 const ProfilePage = lazyNamedPage(
   () => import("@/pages/ProfilePage"),
   "ProfilePage",
+);
+const TermsOfUsePage = lazyNamedPage(
+  () => import("@/pages/TermsOfUsePage"),
+  "TermsOfUsePage",
 );
 
 function PublicLayout() {
@@ -79,6 +87,8 @@ function AppRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/sobre-nensgo" element={<AboutPage />} />
           <Route path="/para-centros" element={<ParaCentrosPage />} />
+          <Route path="/privacidad" element={<PrivacyPolicyPage />} />
+          <Route path="/terminos" element={<TermsOfUsePage />} />
           <Route
             path="/perfil"
             element={

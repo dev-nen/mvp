@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { Footer } from "@/components/Footer";
 import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { SeoHead } from "@/components/SeoHead";
 import { useI18n } from "@/i18n/useI18n";
@@ -138,7 +139,6 @@ function ActivityPreviewModal({ open, onClose, activityExample, preview }) {
 export function ParaCentrosPage() {
   const { t } = useI18n();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
   const hero = t("paraCentros.hero");
   const story = t("paraCentros.story");
   const idea = t("paraCentros.idea");
@@ -149,7 +149,6 @@ export function ParaCentrosPage() {
   const requiredInfo = t("paraCentros.requiredInfo");
   const product = t("paraCentros.product");
   const cta = t("paraCentros.cta");
-  const pageFooter = t("paraCentros.footer");
 
   useEffect(() => {
     if (!isPreviewOpen) {
@@ -485,24 +484,7 @@ export function ParaCentrosPage() {
         </section>
       </main>
 
-      <footer className="para-centros__footer" aria-label={pageFooter.aria}>
-        <div className="para-centros__container para-centros__footer-inner">
-          <p className="para-centros__footer-brand">NensGo</p>
-          <p className="para-centros__footer-rights">
-            {t("paraCentros.footer.rights", { year: currentYear })}
-          </p>
-          <p className="para-centros__footer-contact">
-            {pageFooter.contact}{" "}
-            <a
-              className="para-centros__footer-contact-link"
-              href="mailto:info@nensgo.com"
-            >
-              info@nensgo.com
-            </a>
-          </p>
-          <p className="para-centros__footer-note">{pageFooter.note}</p>
-        </div>
-      </footer>
+      <Footer />
 
       <ActivityPreviewModal
         open={isPreviewOpen}
