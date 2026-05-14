@@ -76,3 +76,9 @@ Every closed task should leave clear:
 - what stayed out of scope
 - what remains pending
 - what was validated
+- final git status
+
+Before ending a task, inspect `git status`. If the agent made any follow-up
+change during the task, stage and commit it as part of that task unless the
+user explicitly asked not to commit. Do not leave agent-made changes staged or
+unstaged for a future task.

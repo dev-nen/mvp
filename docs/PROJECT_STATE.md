@@ -25,7 +25,8 @@ contains:
 - An app-profile flow based on `public.user_profiles`
 - Expanded auth UI for Google plus classic `email/password`
 - Onboarding completion through a Supabase RPC instead of direct profile inserts
-- Contact actions driven by `activity_contact_options`
+- Contact actions driven by the public-safe `activity_contact_options_read`
+  view, backed by activity-level `activity_contact_options`
 - Analytics writes aligned to `activity_view_events` and `activity_contact_events`
 - Vercel Web Analytics mounted at the app root for route-level traffic
   measurement
@@ -77,7 +78,7 @@ paths.
 - Catalog filters now treat `city_id` as persisted truth and derive slug only
   for UI-facing needs.
 - Home detail modal and Favorites detail page both use
-  `activity_contact_options` as the only contact source.
+  `activity_contact_options_read` as the public contact read model.
 - Favorites are remote and user-linked instead of browser-local.
 - Protected auth surfaces support Google sign-in, email/password sign-in,
   email/password sign-up, email verification messaging, and onboarding-required
