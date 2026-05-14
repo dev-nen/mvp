@@ -43,7 +43,6 @@ Within the master docs, roadmap reading now has two levels:
 | [DECISIONS_LOG.md](./DECISIONS_LOG.md) | Short record of decisions that should not be rediscovered from chat history. |
 | [TECH_DEBT.md](./TECH_DEBT.md) | Real debt, gaps, and known risks worth keeping visible. |
 | [FEATURE_STATUS.md](./FEATURE_STATUS.md) | Feature-by-feature status using honest labels. |
-| [2026-05-14-fix-and-hardening-log.md](./2026-05-14-fix-and-hardening-log.md) | Fix log for the municipality/i18n/legal/tooling fixes and the defensive SQL/contact/profile/auth hardening pack. |
 | [2026-04-22-cross-branch-state-assessment.md](./2026-04-22-cross-branch-state-assessment.md) | Historical pre-merge cross-branch snapshot captured before `feat/real-db-auth-migration` and `feat/internal-draft-inbox` were consolidated into `main`. |
 | [SDD_WORKFLOW.md](./SDD_WORKFLOW.md) | How future work should move from current state to spec, plan, implementation, validation, and documentation. |
 | [../AGENTS.md](../AGENTS.md) | Hard rules for coding agents working in this repo. |
