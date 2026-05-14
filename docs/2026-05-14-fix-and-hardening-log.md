@@ -343,6 +343,17 @@ Recommended order:
 6. Run protected onboarding and internal Draft Inbox smoke checks with a real
    authorized internal user.
 
+Production contact-read incident note:
+
+- If the frontend containing `e047b34` is already live and contact reads fail
+  with `PGRST205` for `public.activity_contact_options_read`, apply the
+  standalone contact-read hotfix first:
+  `supabase/sql/2026-05-14_activity_contact_options_read_hotfix.sql`.
+- This unblocks the public contact contract without depending on the internal
+  RPC privilege changes in the broader hardening SQL.
+- The full hardening SQL remains the complete follow-up patch once the target
+  project has the expected internal RPC/functions available.
+
 Rollout constraints:
 
 - The hardening patch assumes the earlier SQL functions already exist.

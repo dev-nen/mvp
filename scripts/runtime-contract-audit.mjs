@@ -125,6 +125,12 @@ assert(
 );
 
 assert(
+  "contact options read view reloads PostgREST schema cache",
+  allSql.includes("notify pgrst, 'reload schema'"),
+  "Contact-view rollout must refresh PostgREST so the REST endpoint is visible.",
+);
+
+assert(
   "seed helper execute privilege is service-role only",
   allSql.includes("revoke all on function public.seed_activity_draft_examples(uuid) from public") &&
     allSql.includes("revoke all on function public.seed_activity_draft_examples(uuid) from anon") &&

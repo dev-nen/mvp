@@ -87,6 +87,7 @@ grant select on public.activity_contact_options_read to anon, authenticated;
 revoke select on public.activity_contact_options from public;
 revoke select on public.activity_contact_options from anon;
 revoke select on public.activity_contact_options from authenticated;
+notify pgrst, 'reload schema';
 
 create or replace function public.ensure_my_profile(
   profile_name text,
