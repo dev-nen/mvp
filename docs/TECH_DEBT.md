@@ -13,7 +13,7 @@ improvement.
 | Catalog contract | The frontend now depends on `catalog_activities_read` and still derives some UI-facing aliases such as `city_slug` | The read model must stay stable enough for the UI contract |
 | Catalog data freshness | When an internal approved activity is unpublished or republished, an already-open public catalog view may need a manual refresh before reflecting the new read-model state | The DB contract is correct, but the frontend does not yet actively revalidate catalog data after internal lifecycle writes |
 | Detail architecture | Detail remains split between Home modal and Favorites routed page | The current repo shares view-model logic, but it is still not a single closed detail surface |
-| Contact data quality | Contact CTA behavior depends entirely on activity-level `activity_contact_options` quality in Supabase | Missing or malformed options now directly affect the public product path |
+| Contact data quality | Contact CTA behavior depends on activity-level `activity_contact_options` quality exposed through `activity_contact_options_read` | Missing or malformed options now directly affect the public product path |
 | Profile model | Profile readiness is now real app state, but richer editing remains out of scope | The product still lacks a broader account-management surface |
 | Draft Inbox readiness | Internal Draft Inbox is implemented in repo, but still depends on manual SQL apply, internal access rows, and seed setup in Supabase | Repo code alone does not make the internal editorial workflow operational |
 | Approved activity lifecycle readiness | Edit, unpublish, and republish for approved activities now exist in repo, but still depend on phase 2 SQL apply and live catalog validation | Repo code alone does not prove that approved activities cleanly enter and leave the public catalog |
@@ -22,6 +22,7 @@ improvement.
 | Internal metrics validation | `/api/internal/pvi` exists, but the final server-side contract and Vercel rewrite behavior still need live verification | Internal reporting is implemented but not yet proven in the target environment |
 | Web Analytics route scope | Vercel Web Analytics currently mounts at the app root and does not exclude internal routes | Internal pageview collection may be acceptable, but should remain an explicit product/ops choice before treating Analytics as final reporting |
 | Tooling | `package.json` still exposes no test or lint scripts | Verification remains mostly manual and regressions are easier to miss |
+| Bundle size | Vite still warns that the main chunk is over 500 kB | Performance cleanup remains useful, but was intentionally deferred from the security hardening pack |
 
 ## Debt That Is Visible But Intentionally Deferred
 

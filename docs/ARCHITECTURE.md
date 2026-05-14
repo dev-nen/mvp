@@ -48,8 +48,9 @@ ideal future architecture.
 - `src/App.jsx` defines the route map.
 - `AuthProvider` wraps the full route tree.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
-- `InternalToolRoute` guards `/internal/drafts` and `/internal/drafts/:draftId`
-  without pushing internal-permission reads into `AuthContext`.
+- `InternalToolRoute` guards `/internal/drafts`, `/internal/drafts/:draftId`,
+  and `/internal/activities/:activityId` without pushing internal-permission
+  reads into `AuthContext`.
 - The shared public footer links to `/privacidad` and `/terminos` as the single
   footer source of truth across public pages, including `/para-centros`.
 - `<Analytics />` from `@vercel/analytics/react` is mounted once after
@@ -60,8 +61,8 @@ ideal future architecture.
 - `src/pages/HomePage.jsx` is the landing plus public catalog surface.
 - `useCatalog()` loads activities through `catalogService`.
 - `CatalogActivityCard` renders the public teaser grid.
-- `ActivityDetailModal` is the Home detail surface and now resolves contact via
-  `activity_contact_options`.
+- `ActivityDetailModal` is the Home detail surface and now resolves public
+  contact via `activity_contact_options_read`.
 
 ### Favorites
 
@@ -126,7 +127,7 @@ The detail experience is still split across two surfaces:
 - Favorites routed page in `FavoriteActivityDetailPage`
 
 Both surfaces use the shared detail view model and lazy-load
-`activity_contact_options` for the selected activity only.
+`activity_contact_options_read` for the selected activity only.
 
 Contact rules in `main`:
 
@@ -222,7 +223,8 @@ but not with local catalog or local favorites truth.
 ## Current Contract Boundaries And Seams
 
 - `catalog_activities_read` is the read contract the frontend depends on
-- `activity_contact_options` is the only contact source
+- `activity_contact_options_read` is the public contact read boundary; it is
+  backed by activity-level `activity_contact_options`
 - `user_profiles` is the app-user truth
 - `activity_drafts` is the internal editorial source of truth for Draft Inbox
 - `internal_tool_access` is the internal permission seam for Draft Inbox
