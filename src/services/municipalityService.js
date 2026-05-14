@@ -38,6 +38,24 @@ function escapeLikePattern(value) {
   return value.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
 }
 
+function mergeMunicipalityRows(rows, nextRows) {
+  const rowsByKey = new Map();
+
+  rows.forEach((row) => {
+    if (row?.id) {
+      rowsByKey.set(`city:${row.id}`, row);
+    }
+  });
+
+  (nextRows ?? []).forEach((row) => {
+    if (row?.id && !rowsByKey.has(`city:${row.id}`)) {
+      rowsByKey.set(`city:${row.id}`, row);
+    }
+  });
+
+  return [...rowsByKey.values()];
+}
+
 function buildMunicipalityChoice(row) {
   const name = getTrimmedText(row.name);
 
@@ -108,34 +126,108 @@ async function runMunicipalityQuery(queryFactories) {
   return [];
 }
 
+async function collectMunicipalityRows(queryBuilders, limit) {
+  let rows = [];
+
+  for (const queryBuilder of queryBuilders) {
+    const { data, error } = await queryBuilder();
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    rows = mergeMunicipalityRows(rows, data);
+  }
+
+  return { data: rows.slice(0, limit), error: null };
+}
+
 async function searchMunicipalityRows(supabase, normalizedQuery, limit) {
   const escapedQuery = escapeLikePattern(normalizedQuery);
+  const prefixPattern = `${escapedQuery}%`;
   const ilikePattern = `%${escapedQuery}%`;
 
   return runMunicipalityQuery([
     () =>
-      supabase
-        .from(MUNICIPALITY_SOURCE_VIEW)
-        .select(MUNICIPALITY_SELECT)
-        .ilike("search_text", ilikePattern)
-        .order("name", { ascending: true })
-        .limit(limit),
+      collectMunicipalityRows(
+        [
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_VIEW)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("name_search", prefixPattern)
+              .order("name", { ascending: true })
+              .limit(limit),
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_VIEW)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("name_search", ilikePattern)
+              .order("name", { ascending: true })
+              .limit(limit),
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_VIEW)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("search_text", ilikePattern)
+              .order("name", { ascending: true })
+              .limit(limit),
+        ],
+        limit,
+      ),
     () =>
-      supabase
-        .from(MUNICIPALITY_SOURCE_TABLE)
-        .select(MUNICIPALITY_SELECT)
-        .ilike("search_text", ilikePattern)
-        .eq("place_type", "municipality")
-        .eq("is_active", true)
-        .order("name", { ascending: true })
-        .limit(limit),
+      collectMunicipalityRows(
+        [
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_TABLE)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("name_search", prefixPattern)
+              .eq("place_type", "municipality")
+              .eq("is_active", true)
+              .order("name", { ascending: true })
+              .limit(limit),
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_TABLE)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("name_search", ilikePattern)
+              .eq("place_type", "municipality")
+              .eq("is_active", true)
+              .order("name", { ascending: true })
+              .limit(limit),
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_TABLE)
+              .select(MUNICIPALITY_SELECT)
+              .ilike("search_text", ilikePattern)
+              .eq("place_type", "municipality")
+              .eq("is_active", true)
+              .order("name", { ascending: true })
+              .limit(limit),
+        ],
+        limit,
+      ),
     () =>
-      supabase
-        .from(MUNICIPALITY_SOURCE_TABLE)
-        .select(MUNICIPALITY_BASIC_SELECT)
-        .ilike("name", ilikePattern)
-        .order("name", { ascending: true })
-        .limit(limit),
+      collectMunicipalityRows(
+        [
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_TABLE)
+              .select(MUNICIPALITY_BASIC_SELECT)
+              .ilike("name", prefixPattern)
+              .order("name", { ascending: true })
+              .limit(limit),
+          () =>
+            supabase
+              .from(MUNICIPALITY_SOURCE_TABLE)
+              .select(MUNICIPALITY_BASIC_SELECT)
+              .ilike("name", ilikePattern)
+              .order("name", { ascending: true })
+              .limit(limit),
+        ],
+        limit,
+      ),
   ]);
 }
 
@@ -221,12 +313,62 @@ function buildRoquetesChoice(santPereMunicipality) {
   };
 }
 
-function sortMunicipalityChoices(leftChoice, rightChoice) {
+function getMunicipalityChoiceRank(choice, normalizedQuery) {
+  if (!normalizedQuery) {
+    return 0;
+  }
+
+  const normalizedDisplayName = normalizeMunicipalityQuery(
+    choice?.displayName || choice?.name,
+  );
+  const normalizedProvinceName = normalizeMunicipalityQuery(choice?.provinceName);
+
+  if (normalizedDisplayName === normalizedQuery) {
+    return 0;
+  }
+
+  if (normalizedDisplayName.startsWith(normalizedQuery)) {
+    return 1;
+  }
+
+  if (normalizedDisplayName.includes(normalizedQuery)) {
+    return 2;
+  }
+
+  if (normalizedProvinceName === normalizedQuery) {
+    return 3;
+  }
+
+  if (normalizedProvinceName.startsWith(normalizedQuery)) {
+    return 4;
+  }
+
+  if (normalizedProvinceName.includes(normalizedQuery)) {
+    return 5;
+  }
+
+  return 6;
+}
+
+function sortMunicipalityChoices(leftChoice, rightChoice, normalizedQuery = "") {
+  const leftRank = getMunicipalityChoiceRank(leftChoice, normalizedQuery);
+  const rightRank = getMunicipalityChoiceRank(rightChoice, normalizedQuery);
+
+  if (leftRank !== rightRank) {
+    return leftRank - rightRank;
+  }
+
   if (leftChoice.isSynthetic !== rightChoice.isSynthetic) {
     return leftChoice.isSynthetic ? 1 : -1;
   }
 
-  return leftChoice.displayName.localeCompare(rightChoice.displayName);
+  const nameComparison = leftChoice.displayName.localeCompare(rightChoice.displayName);
+
+  if (nameComparison !== 0) {
+    return nameComparison;
+  }
+
+  return leftChoice.provinceName.localeCompare(rightChoice.provinceName);
 }
 
 async function readSantPereMunicipality() {
@@ -327,5 +469,9 @@ export async function searchMunicipalityChoices(query, { limit = 20 } = {}) {
     }
   }
 
-  return [...choicesByKey.values()].sort(sortMunicipalityChoices).slice(0, limit);
+  return [...choicesByKey.values()]
+    .sort((leftChoice, rightChoice) =>
+      sortMunicipalityChoices(leftChoice, rightChoice, normalizedQuery),
+    )
+    .slice(0, limit);
 }

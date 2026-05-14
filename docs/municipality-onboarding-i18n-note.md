@@ -6,6 +6,8 @@ Onboarding city selection now uses official DIR3-coded municipality rows from `c
 
 The frontend prefers `municipality_choices_read`, but keeps a transitional fallback to `cities` so onboarding does not hard-fail while the migration is being applied or Supabase refreshes its schema cache. The full all-Spain municipality catalog still requires applying the migration and generated seed.
 
+Municipality search ranking must treat the municipality name as the primary identity field. Exact and prefix matches on `name_search` must be queried and ranked before broader `search_text` matches that include province or other metadata. Do not apply a limited, alphabetic `search_text` result set before name matches are merged; that hides municipalities such as Barcelona or Madrid behind province-wide matches.
+
 Les Roquetes / Roquetas is a temporary curated exception. It is shown as `Les Roquetes (Sant Pere de Ribes)` in onboarding, but selecting it saves the official Sant Pere de Ribes `city_id`. This must move to a real `known_localities` or `areas` model before locality-level persistence is needed.
 
 Catalog area filters are intentionally limited for the MVP to Vilanova i la Geltrú, Sitges, Sant Pere de Ribes, and Les Roquetes. This allowlist controls filter exposure only; it is not a catalog visibility gate. Activities from other cities can still appear in the grid and text search if Supabase returns them.

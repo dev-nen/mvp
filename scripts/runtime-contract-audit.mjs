@@ -150,6 +150,25 @@ assert(
   "Profile city ids must be limited to onboarding-valid municipality rows.",
 );
 
+const municipalityService = read("src/services/municipalityService.js");
+const municipalityNameSearchIndex = municipalityService.indexOf(
+  '.ilike("name_search", prefixPattern)',
+);
+const municipalityMetadataSearchIndex = municipalityService.indexOf(
+  '.ilike("search_text", ilikePattern)',
+);
+
+assert(
+  "municipality search prioritizes names before metadata",
+  municipalityNameSearchIndex >= 0 &&
+    municipalityMetadataSearchIndex >= 0 &&
+    municipalityNameSearchIndex < municipalityMetadataSearchIndex &&
+    municipalityService.includes("getMunicipalityChoiceRank") &&
+    municipalityService.includes("normalizedDisplayName === normalizedQuery") &&
+    municipalityService.includes("normalizedProvinceName === normalizedQuery"),
+  "Onboarding search must not let province/search_text matches hide exact municipality names.",
+);
+
 const appUsersService = read("src/services/appUsersService.js");
 assert(
   "profile provisioning uses ensure_my_profile RPC",
