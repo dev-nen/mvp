@@ -1,5 +1,11 @@
 # Real DB And Auth Migration Open Decisions
 
+Estado: histórico / puede estar desactualizado.
+
+Nota 2026-05-14: varias decisiones de esta hoja ya fueron cerradas o absorbidas
+por la implementación actual. Usar `docs/04_DECISIONS/ADR_INDEX.md`,
+`docs/DECISIONS_LOG.md` y los docs técnicos nuevos para el estado vigente.
+
 ## Scope Note
 
 Este documento recoge las decisiones abiertas que conviene cerrar antes de

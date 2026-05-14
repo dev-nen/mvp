@@ -3,10 +3,13 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of `main`.
-Baseline rechecked on April 23, 2026 after consolidating
-`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
-This file documents the architecture currently implemented in `main`, not the
-ideal future architecture.
+Baseline rechecked on May 14, 2026 after consolidating real DB/auth, internal
+Draft Inbox, municipality onboarding, i18n/legal routes, and defensive
+hardening into `main`. This file documents the architecture currently
+implemented in `main`, not the ideal future architecture.
+
+For the external-review-oriented architecture summary, see
+[02_TECHNICAL/ARCHITECTURE.md](../02_TECHNICAL/ARCHITECTURE.md).
 
 ## Stack And Runtime Boundary
 
@@ -14,6 +17,7 @@ ideal future architecture.
 - Routing: `react-router-dom`
 - Styling: plain CSS by feature/component file
 - Browser data/auth client: `@supabase/supabase-js`
+- Static UI i18n: custom provider and dictionaries under `src/i18n`
 - Web traffic analytics: `@vercel/analytics` mounted in `src/App.jsx`
 - Private internal metrics path: Vercel serverless function under `api/`
 
@@ -29,6 +33,7 @@ ideal future architecture.
 | Route | Current role | Notes |
 | --- | --- | --- |
 | `/` | Landing + public catalog | Public route. Reads catalog from Supabase and opens detail through protected intent handling. |
+| `/sobre-nensgo` | Public about/product route | Public route. Uses shared SEO/head handling and explains the product. |
 | `/para-centros` | B2B landing for centers | Public route. Independent acquisition surface. |
 | `/privacidad` | Privacy policy | Public OAuth trust/legal page. Linked from the shared footer, included in `public/sitemap.xml`, and canonicalized under `https://nensgo.com`. |
 | `/terminos` | Terms of use | Public OAuth trust/legal page. Linked from the shared footer, included in `public/sitemap.xml`, and canonicalized under `https://nensgo.com`. |
@@ -47,6 +52,7 @@ ideal future architecture.
 
 - `src/App.jsx` defines the route map.
 - `AuthProvider` wraps the full route tree.
+- `I18nProvider` wraps the app and keeps static UI copy in ES/CA/EN.
 - `ProtectedRoute` guards `/perfil`, `/favoritos`, and `/favoritos/:activityId`.
 - `InternalToolRoute` guards `/internal/drafts`, `/internal/drafts/:draftId`,
   and `/internal/activities/:activityId` without pushing internal-permission
@@ -83,6 +89,9 @@ ideal future architecture.
   - onboarding-required completion
 - `src/services/appUsersService.js` reads `public.user_profiles` and calls the
   profile-provisioning RPC.
+- `src/services/municipalityService.js` reads `municipality_choices_read`,
+  keeps a rollout fallback to `cities`, and handles the temporary Les
+  Roquetes/Roquetas mapping to Sant Pere de Ribes.
 
 ### Internal metrics seam
 
@@ -181,6 +190,7 @@ Supabase now owns the product-side browser data contracts for `main`:
 - Email/password sign-in and sign-up
 - App-profile reads from `public.user_profiles`
 - Profile provisioning through `ensure_my_profile(...)`
+- Municipality onboarding through `municipality_choices_read` / `cities`
 - Public catalog read model
 - Per-activity contact options
 - Remote favorites persistence
@@ -225,6 +235,8 @@ but not with local catalog or local favorites truth.
 - `catalog_activities_read` is the read contract the frontend depends on
 - `activity_contact_options_read` is the public contact read boundary; it is
   backed by activity-level `activity_contact_options`
+- `municipality_choices_read` is the preferred onboarding municipality read
+  boundary, backed by DIR3-coded municipality rows in `cities`
 - `user_profiles` is the app-user truth
 - `activity_drafts` is the internal editorial source of truth for Draft Inbox
 - `internal_tool_access` is the internal permission seam for Draft Inbox
@@ -247,6 +259,9 @@ Important current seams still visible:
 - `city_slug` is still derived in frontend for UI/routing purposes
 - detail remains split across modal and routed page
 - internal route pageviews are not currently excluded from Vercel Web Analytics
+- static UI i18n does not translate dynamic activity or contact content
+- Les Roquetes/Roquetas is still a curated temporary exception, not a durable
+  locality persistence model
 - runtime readiness still depends on external Supabase and Vercel configuration
 
 ## Architectural Summary

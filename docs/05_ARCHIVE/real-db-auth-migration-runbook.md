@@ -12,7 +12,7 @@ SDD or the closed-decisions document.
 
 Apply:
 
-- [`supabase/sql/2026-04-21_real_db_auth_phase.sql`](../supabase/sql/2026-04-21_real_db_auth_phase.sql)
+- [`supabase/sql/2026-04-21_real_db_auth_phase.sql`](../../supabase/sql/2026-04-21_real_db_auth_phase.sql)
 
 This script is expected to create or update:
 

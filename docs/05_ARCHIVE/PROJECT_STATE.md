@@ -3,8 +3,9 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of `main`.
-Baseline rechecked on April 23, 2026 after consolidating
-`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
+Baseline rechecked on May 14, 2026 after municipality onboarding, i18n/legal,
+contact-read hardening, and defensive security SQL updates were added on top
+of the earlier real DB/auth and internal Draft Inbox consolidation.
 Where implementation is partial or externally blocked, the current repository
 state of `main` takes precedence over older branch docs and chat history.
 
@@ -15,6 +16,7 @@ migration checkpoint plus the first internal Draft Inbox slice. `main` already
 contains:
 
 - A public landing and catalog experience on `/`
+- A public about route on `/sobre-nensgo`
 - A separate public B2B landing on `/para-centros`
 - Public OAuth trust/legal pages on `/privacidad` and `/terminos`, linked from
   the shared footer, canonicalized under `https://nensgo.com`, and included in
@@ -24,6 +26,9 @@ contains:
 - A Supabase-backed favorite model through `user_favorite_activities`
 - An app-profile flow based on `public.user_profiles`
 - Expanded auth UI for Google plus classic `email/password`
+- Municipality onboarding backed by DIR3-coded Spanish municipalities through
+  `municipality_choices_read`, with a temporary Les Roquetes/Roquetas
+  exception that maps to Sant Pere de Ribes
 - Onboarding completion through a Supabase RPC instead of direct profile inserts
 - Contact actions driven by the public-safe `activity_contact_options_read`
   view, backed by activity-level `activity_contact_options`
@@ -32,6 +37,10 @@ contains:
   measurement
 - A first public-surface hardening pass that retires the former public `/pvi`
   placeholder and removes debug-like copy from user-facing surfaces
+- An ES/CA/EN i18n foundation for static UI copy, with legal copy split into
+  lazy route bundles
+- Public sitemap/robots files and canonical route metadata for the current
+  public route set under `https://nensgo.com`
 - A private `/api/internal/pvi` path intended for PO and DEV reporting
 - Internal routes for `/internal/drafts` and `/internal/drafts/:draftId`
 - An internal route for `/internal/activities/:activityId`
@@ -65,6 +74,8 @@ paths.
 - configuring Supabase Auth providers and email verification
 - configuring Vercel server secrets
 - confirming Vercel Web Analytics dashboard enablement and live collection
+- applying and validating the municipality/contact/security hardening SQL in
+  the target Supabase project
 - validating real preview/production flows
 
 ## Currently Operational In `main`
@@ -75,6 +86,7 @@ paths.
   domain configuration and user trust.
 - Public catalog reads from Supabase through a dedicated read model instead of
   local fallback files.
+- `/sobre-nensgo` exists as a public product/brand explanation route.
 - Catalog filters now treat `city_id` as persisted truth and derive slug only
   for UI-facing needs.
 - Home detail modal and Favorites detail page both use
@@ -83,6 +95,9 @@ paths.
 - Protected auth surfaces support Google sign-in, email/password sign-in,
   email/password sign-up, email verification messaging, and onboarding-required
   states.
+- Onboarding uses a municipality autocomplete that prefers
+  `municipality_choices_read` and falls back to `cities` during rollout/schema
+  cache windows.
 - App-user truth now comes from `public.user_profiles`, not auth metadata.
 - Email is treated as non-editable in this phase.
 - Draft Inbox pages and guard now exist in the app for authorized internal
@@ -116,6 +131,10 @@ paths.
 - Vercel Web Analytics requires dashboard enablement and live verification
   outside the repo; current code does not exclude internal routes from
   pageview collection.
+- i18n currently translates static UI copy only. Dynamic activity content,
+  center names, city names, contact values, and user names remain untranslated.
+- Les Roquetes/Roquetas is still a temporary curated exception and should move
+  to a real locality/area model before locality-level persistence is needed.
 - Detail is still intentionally split across Home modal and Favorites routed
   detail page.
 - Public-surface hardening is only a first pass; the guardrail against
@@ -134,6 +153,8 @@ paths.
 - The public `/pvi` placeholder route is retired from the app.
 - Internal editorial review now has a first route and data-contract slice in
   repo, but not yet validated live.
+- Municipality onboarding and public contact hardening are implemented in repo,
+  but still require target-environment SQL application and smoke validation.
 
 ### External readiness still pending
 
@@ -153,7 +174,8 @@ paths.
 ## Current State Summary
 
 `main` is not a mock-backed MVP anymore. It is a real DB and auth migration
-checkpoint with an internal Draft Inbox plus approved-activity lifecycle
-already added in repo, and with a first public-surface hardening pass already
-landed. It is also not yet fully closed: external Supabase and Vercel readiness
-still gate the move from implemented code to validated product behavior.
+checkpoint with municipality onboarding, remote favorites, activity-level
+contact options, static UI i18n, legal/trust routes, internal Draft Inbox, and
+approved-activity lifecycle already added in repo. It is also not yet fully
+closed: external Supabase and Vercel readiness still gate the move from
+implemented code to validated product behavior.

@@ -1,87 +1,77 @@
-# NensGo MVP
+# NensGo
 
-Frontend MVP para descubrir actividades infantiles y planes en familia,
-filtrarlos rapido y contactar directamente con cada centro organizador.
+NensGo es una plataforma web para descubrir actividades infantiles y familiares cerca de ti.
 
-## Resumen
+El proyecto está en fase MVP/validación. Combina catálogo público, autenticación, onboarding por municipio, favoritos remotos y contacto con centros o responsables de actividades.
 
-NensGo es una aplicacion web enfocada en familias que quieren encontrar
-opciones cerca de ellas sin perder tiempo saltando entre webs, redes y
-mensajes.
+## Qué es
 
-El estado actual del repo cubre:
+NensGo ayuda a familias a encontrar actividades culturales, deportivas, educativas y de ocio sin tener que revisar múltiples webs, redes sociales o conversaciones sueltas.
 
-- catalogo de actividades activas
-- busqueda y filtros por ciudad y categoria
-- quick-access editorial en Home
-- favoritos persistidos en `localStorage`
-- detalle modal desde Home
-- detalle completo desde Favoritos
-- CTA de contacto por WhatsApp
-- panel interno `/pvi` para revisar interacciones cuando Supabase esta configurado
+## Estado actual
 
-## Current Scope
+- Catálogo público conectado a Supabase mediante `catalog_activities_read`.
+- Autenticación con Google y email/password.
+- Onboarding de usuario con municipio basado en datos DIR3.
+- Favoritos persistidos en Supabase.
+- Contacto con actividades mediante opciones configuradas en `activity_contact_options_read`.
+- Interfaz pública con base i18n ES/CA/EN.
+- Rutas públicas para presentación, centros, privacidad y términos.
+- Rutas protegidas para perfil y favoritos.
+- Backoffice interno/Draft Inbox implementado en repo, pendiente de validación live completa.
 
-- frontend con React + Vite
-- estilos en CSS plano
-- catalogo servido desde la capa local actual del proyecto
-- tracking de eventos hacia Supabase cuando las credenciales estan disponibles
-- degradacion segura para `/pvi` cuando Supabase o `activity_events` no estan listos
+## Stack resumido
 
-## Tech Stack
+- React + Vite
+- Supabase Auth + Postgres
+- Vercel
+- JavaScript y CSS
 
-- React 18
-- Vite
-- React Router
-- CSS
-- Supabase JS para eventos de interaccion
+## Rutas principales
 
-## Local Setup
+- Públicas: `/`, `/sobre-nensgo`, `/para-centros`, `/privacidad`, `/terminos`
+- Protegidas: `/perfil`, `/favoritos`, `/favoritos/:activityId`
+- Internas: `/internal/drafts`, `/internal/drafts/:draftId`, `/internal/activities/:activityId`
 
-Instalar dependencias:
+## Documentación
 
-```bash
+La documentación principal está en [`docs/README.md`](docs/README.md).
+
+Para una revisión técnica rápida:
+
+- [`docs/00_START/PROJECT_BRIEF.md`](docs/00_START/PROJECT_BRIEF.md)
+- [`docs/02_TECHNICAL/TECHNICAL_HANDOFF_FOR_REVIEW.md`](docs/02_TECHNICAL/TECHNICAL_HANDOFF_FOR_REVIEW.md)
+- [`docs/02_TECHNICAL/ARCHITECTURE.md`](docs/02_TECHNICAL/ARCHITECTURE.md)
+- [`docs/02_TECHNICAL/SUPABASE_MODEL.md`](docs/02_TECHNICAL/SUPABASE_MODEL.md)
+- [`docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md`](docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md)
+- [`docs/03_OPERATIONS/VALIDATION_CHECKLIST.md`](docs/03_OPERATIONS/VALIDATION_CHECKLIST.md)
+
+## Cómo ejecutar en local
+
+```powershell
 npm install
+npm.cmd run dev
 ```
 
-Levantar entorno local:
+Variables necesarias, sin valores en repo:
 
-```bash
-npm run dev
-```
-
-Build de produccion:
-
-```bash
-npm run build
-```
-
-## Env Vars
-
-El proyecto lee estas variables de entorno:
-
-```bash
+```txt
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+INTERNAL_PVI_API_TOKEN=
 ```
 
-Si no estan configuradas, la aplicacion sigue funcionando como frontend MVP y
-simplemente omite el tracking remoto de eventos. En ese caso `/pvi` no rompe la
-ruta: muestra un estado de no disponibilidad en lugar de un error generico.
+## Validación
 
-## Notes
+```powershell
+npm.cmd run check
+npm.cmd run build
+git diff --check
+```
 
-- Los favoritos se guardan localmente en el navegador.
-- El detalle desde Home abre en modal y el detalle desde Favoritos usa ruta dedicada.
-- El CTA de WhatsApp abre contacto directo con el centro usando la informacion de la actividad.
-- El panel `/pvi` depende de `activity_events` en Supabase para mostrar datos reales.
-- PVI es intencionalmente remoto; no existe fallback local de analytics en el navegador.
-- Si `activity_events` no existe o no se puede leer con las credenciales del entorno,
-  `/pvi` degrada a un estado informativo de no disponibilidad.
-- En el entorno actual, Supabase esta devolviendo `PGRST205` porque `public.activity_events`
-  no esta presente en el schema cache.
+`npm.cmd` es la forma recomendada en PowerShell cuando el shim `npm` queda bloqueado por la política de ejecución.
 
-## Disclaimer
+## Contacto
 
-NensGo es un prototipo MVP. Algunas actividades mostradas en la interfaz son
-ejemplos de prueba usados para diseno, validacion y desarrollo.
+El contacto operativo público del proyecto aparece en la ruta `/para-centros`. No se documentan datos societarios, fiscales o legales no verificados en este repositorio.

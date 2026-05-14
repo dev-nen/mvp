@@ -3,10 +3,10 @@
 ## Documentation Scope Note
 
 This documentation reflects the current checked-out working state of `main`.
-Baseline rechecked on April 23, 2026 after consolidating
-`feat/real-db-auth-migration` and `feat/internal-draft-inbox` into `main`.
-Statuses below describe the current `main` baseline, not the older pre-merge
-branch split.
+Baseline rechecked on May 14, 2026 after consolidating real DB/auth, internal
+Draft Inbox, municipality onboarding, i18n/legal routes, and defensive
+hardening into `main`. Statuses below describe the current `main` baseline, not
+older pre-merge branch splits.
 
 ## Status Legend
 
@@ -24,12 +24,17 @@ branch split.
 | Public catalog UI | Done | Home exposes the current landing plus searchable/filterable public catalog UI | UI path is active and compiled against the Supabase read model |
 | Backend catalog real path | Partial | Runtime catalog reads now target `catalog_activities_read` instead of local fallback data | Still externally blocked until the SQL is applied and validated in Supabase |
 | B2B centers landing route | Partial | `/para-centros` still exists as a public preparatory landing with isolated layout and external join CTA | It remains intentionally separate from `/` and broader distribution is still deferred |
+| About route | Done | `/sobre-nensgo` exists as a public explanatory route with SEO metadata | Product copy can evolve, but the route exists in current runtime |
 | Public catalog card | Done | Home uses the current public teaser card contract | The active card no longer depends on fallback catalog truth |
 | Detail MVP 2.0 | Partial | Detail remains structurally aligned across Home modal and Favorites detail page | The split-surface detail model remains intentional debt in this phase |
 | Contact CTA real path | Partial | Public contact now reads `activity_contact_options_read`, backed by activity-level `activity_contact_options`, with direct/single and chooser/multi behavior; generated WhatsApp/email messages include the signed-in user's display name when available | Full validation still depends on live data quality in Supabase |
 | Favorites by user | Partial | Favorites are now modeled as remote user-linked data in `user_favorite_activities` | Still pending live SQL readiness and end-to-end validation |
 | Profile | Partial | `/perfil` reflects auth state plus app-profile readiness from `user_profiles` | Richer profile editing is still out of scope |
 | Auth expansion | Partial | Google plus email/password flows are implemented in code, including verification-pending and onboarding-required states | Still depends on Supabase provider setup, redirects, and verification config |
+| Municipality onboarding | Partial | Onboarding uses `municipality_choices_read` / `cities` with DIR3-coded Spanish municipalities and a temporary Les Roquetes/Roquetas mapping to Sant Pere de Ribes | Still depends on SQL/seed application and live validation; locality/area model remains future work |
+| Static UI i18n | Partial | ES/CA/EN provider, dictionaries, language persistence, `<html lang>`, and legal lazy dictionaries exist | Dynamic activity/center/city/contact content is not translated |
+| Legal/trust public routes | Partial | `/privacidad` and `/terminos` exist with canonical URLs and sitemap inclusion | No claim of full legal compliance; OAuth/domain live setup still needs validation |
+| SEO public route baseline | Partial | `SeoHead`, `public/sitemap.xml`, and `public/robots.txt` exist for current public/protected/internal route posture | No `hreflang`; final production SEO should be validated live |
 | Internal Draft Inbox | Partial | Internal routes, guard, services, review form, approval path, and Phase 1 SQL artifacts are implemented in repo | Still depends on applying the SQL, granting internal access rows, seeding drafts, and running live validation in Supabase |
 | Approved activity lifecycle | Partial | Internal approved-activity route plus edit, unpublish, and republish RPC contracts are implemented in repo | Still depends on applying the phase 2 SQL and validating public catalog disappearance/reappearance in Supabase |
 | Public surface hardening | In progress | A first pass already retired the public `/pvi` route and removed debug-like copy from Home, Favorites, Profile, Support, public detail, and the `/para-centros` preview modal | The guardrail remains active and future public surfaces still need the same standard |

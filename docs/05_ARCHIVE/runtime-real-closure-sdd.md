@@ -14,7 +14,7 @@ tiradas largas de Codex entre checkpoints.
 Antecedentes utiles, pero ya no suficientes como artefacto principal:
 
 - [real-db-auth-migration-runbook.md](./real-db-auth-migration-runbook.md)
-- [real-db-auth-preview-smoke.md](../tests/manual/real-db-auth-preview-smoke.md)
+- [real-db-auth-preview-smoke.md](../../tests/manual/real-db-auth-preview-smoke.md)
 
 Este SDD sustituye a esos antecedentes como guia maestra de trabajo para el
 esfuerzo actual en `main`.

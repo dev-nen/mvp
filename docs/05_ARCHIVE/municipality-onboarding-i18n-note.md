@@ -1,6 +1,6 @@
 # Municipality Onboarding, Catalog Areas, and I18n
 
-Status: Done for the MVP foundation on `feat/i18n-municipality-onboarding`.
+Status: Partial in `main` for live readiness; implemented in repo as the MVP foundation.
 
 Onboarding city selection now uses official DIR3-coded municipality rows from `cities`, exposed through `municipality_choices_read`. It no longer depends on activity cities currently visible in the public catalog or on legacy `cities` rows without official codes.
 

@@ -1,5 +1,12 @@
 # Detail View MVP 2.0 Structure
 
+Estado: histórico / puede estar desactualizado.
+
+Nota 2026-05-14: este documento conserva decisiones de la etapa MVP2. El estado
+actual usa favoritos remotos en Supabase y debe leerse desde
+`docs/02_TECHNICAL/ARCHITECTURE.md` y `docs/02_TECHNICAL/ROUTES.md` si hay
+contradicción.
+
 This document describes the final MVP 2.0 detail-view structure used by the
 two accepted detail surfaces.
 

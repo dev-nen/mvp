@@ -1,5 +1,14 @@
 # Activity Contact Options Readiness Note
 
+Estado: histórico / puede estar desactualizado.
+
+Nota 2026-05-14: el contrato público actual de frontend usa
+`activity_contact_options_read`, no lecturas públicas directas de la tabla raw
+`activity_contact_options`. Este documento conserva contexto de validación de
+una etapa anterior y no debe usarse como fuente de verdad actual frente a
+`docs/02_TECHNICAL/SUPABASE_MODEL.md` y
+`docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md`.
+
 ## Scope Note
 
 This note reflects the current checked environment on

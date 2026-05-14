@@ -1,5 +1,12 @@
 # Real DB And Auth Migration SDD
 
+Estado: histórico / puede estar desactualizado.
+
+Nota 2026-05-14: esta SDD documenta la fase de migración antes de que el estado
+actual quedara consolidado en `main`. Para la verdad actual de catálogo,
+favoritos, auth, onboarding e i18n, usar `docs/README.md`,
+`docs/00_START/PROJECT_BRIEF.md` y `docs/02_TECHNICAL/*`.
+
 ## Scope Note
 
 This document is a spec-first planning artifact for the current checked-out
@@ -306,7 +313,7 @@ Move favorites to `user_favorite_activities` as the durable source of truth.
 Recommended bias:
 
 - keep a temporary local-to-remote migration path for first authenticated use
-- remove browser-local favorites as primary truth once remote persistence is
+- remove legacy browser-storage favorites as primary truth once remote persistence is
   proven
 - decide whether delete in the product means hard delete or soft delete before
   wiring the client

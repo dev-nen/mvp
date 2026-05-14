@@ -1,5 +1,11 @@
 # Deployment Hardening For Public Staging
 
+Estado: histórico / puede estar desactualizado.
+
+Nota 2026-05-14: el repo actual ya contiene `public/robots.txt`,
+`public/sitemap.xml` y canonical URLs para `https://nensgo.com`. Este documento
+describe una etapa previa de staging y no debe leerse como estado SEO actual.
+
 ## Purpose
 
 This document records a narrow hardening pass for the current public staging environment while the project is still living on a temporary public host and before the dev host and production domain are finalized.

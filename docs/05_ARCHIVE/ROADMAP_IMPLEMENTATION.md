@@ -21,13 +21,15 @@ This document is an internal implementation roadmap derived from
 [ROADMAP_MASTER.md](./ROADMAP_MASTER.md), not the full project roadmap and not
 a product pitch. It is grounded in the current checked-out state of `main`
 after consolidating `feat/real-db-auth-migration` and
-`feat/internal-draft-inbox`. It separates what is already implemented in
-`main` from what is still pending external readiness or later product work.
+`feat/internal-draft-inbox`, plus the May 2026 municipality/i18n/legal/contact
+hardening work. It separates what is already implemented in `main` from what is
+still pending external readiness or later product work.
 
 ## Already Implemented In `main`
 
-- Real route structure for Home, Favorites, Favorites detail, Profile, PVI, and
-  Support placeholder
+- Real route structure for Home, About, Para Centros, legal pages, Favorites,
+  Favorites detail, Profile, internal Draft Inbox, internal approved activity
+  lifecycle, and Support placeholder
 - Public catalog UI wired to a Supabase read model instead of local fallback
 - Public teaser card contract for Home catalog
 - Remote favorites persistence through `user_favorite_activities`
@@ -36,8 +38,15 @@ after consolidating `feat/real-db-auth-migration` and
 - Onboarding completion via Supabase RPC instead of direct frontend profile
   inserts
 - Contact CTA driven only by `activity_contact_options`
+- Public-safe contact reads through `activity_contact_options_read`
 - Analytics writes aligned to `activity_view_events` and
   `activity_contact_events`
+- Municipality onboarding using DIR3-coded Spanish municipalities through
+  `municipality_choices_read`, including the temporary Les Roquetes/Roquetas
+  mapping to Sant Pere de Ribes
+- Static UI i18n foundation for ES/CA/EN
+- Public legal/trust routes, sitemap, robots, and canonical metadata under
+  `https://nensgo.com`
 - First-pass public-surface hardening on Home, Favorites, Profile, Support,
   public detail, and the `/para-centros` preview modal
 - Public `/pvi` route retired from the app
@@ -61,6 +70,10 @@ effort sizing, and SDD readiness, use
 - Expanded auth still needs provider configuration, redirects, and email
   verification setup
 - Remote favorites still need end-to-end validation against the real database
+- Municipality onboarding still needs SQL/seed application and live validation
+- Static UI i18n still does not translate dynamic activity content
+- Public legal/trust routes still need domain/OAuth dashboard validation
+- Activity contact read hardening still needs live validation after SQL apply
 - Draft Inbox still needs:
   - applying `2026-04-22_internal_draft_inbox_phase1.sql`
   - granting one or more internal users
@@ -94,6 +107,7 @@ Recommended next implementation order from `main`:
    - classic sign-up and verification
    - onboarding completion
    - remote favorites
+   - municipality onboarding with DIR3 rows
    - internal Draft Inbox list and detail
    - draft save, reject, and approve
    - approved activity edit, unpublish, and republish
@@ -112,6 +126,7 @@ Recommended next implementation order from `main`:
 - Role expansion beyond the current family-user baseline
 - Public or role-based metrics visibility
 - More complete company/internal account lines
+- A real localities/areas model replacing the temporary Les Roquetes hardcode
 - Further UX consolidation of the split detail system
 
 ## Deferred Or Out Of Scope For This Migration Phase
