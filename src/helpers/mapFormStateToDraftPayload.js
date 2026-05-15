@@ -1,3 +1,5 @@
+import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
+
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -37,6 +39,9 @@ export function mapFormStateToDraftPayload(formState) {
     activity: {
       title: getTrimmedText(formState?.title),
       description: getTrimmedText(formState?.description),
+      description_format: normalizeDescriptionFormat(
+        formState?.descriptionFormat,
+      ),
       center_id: normalizeIntegerValue(formState?.centerId),
       category_id: normalizeIntegerValue(formState?.categoryId),
       type_id: normalizeIntegerValue(formState?.typeId),

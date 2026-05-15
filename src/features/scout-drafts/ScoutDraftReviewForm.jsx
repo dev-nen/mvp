@@ -1,14 +1,81 @@
+import { useRef } from "react";
+import { Bold, Heading3, ImagePlus, Italic, Link, List, ListOrdered } from "lucide-react";
+import { SafeMarkdown } from "@/components/ui/SafeMarkdown";
 import { Input } from "@/components/ui/input";
 import "./ScoutDraftReviewForm.css";
+
+function getTextSelection(textareaElement) {
+  if (!textareaElement) {
+    return {
+      end: 0,
+      selectedText: "",
+      start: 0,
+    };
+  }
+
+  const start = textareaElement.selectionStart ?? 0;
+  const end = textareaElement.selectionEnd ?? start;
+
+  return {
+    end,
+    selectedText: textareaElement.value.slice(start, end),
+    start,
+  };
+}
+
+function replaceSelection(value, start, end, nextText) {
+  return `${value.slice(0, start)}${nextText}${value.slice(end)}`;
+}
 
 export function ScoutDraftReviewForm({
   categoryChoices,
   centerChoices,
   formState,
+  imagePreviewSrc = "",
+  isImageUploadEnabled = false,
   isReadOnly = false,
   onFieldChange,
+  onImageFileChange,
+  showImageUrlField = true,
   typeChoices,
 }) {
+  const descriptionRef = useRef(null);
+  const isMarkdownDescription = formState.descriptionFormat === "markdown";
+
+  const applyMarkdownSnippet = (kind) => {
+    if (isReadOnly || !isMarkdownDescription) {
+      return;
+    }
+
+    const textareaElement = descriptionRef.current;
+    const { end, selectedText, start } = getTextSelection(textareaElement);
+    const currentValue = formState.description || "";
+    const fallbackText = selectedText || "texto";
+    let nextText = fallbackText;
+
+    if (kind === "bold") {
+      nextText = `**${fallbackText}**`;
+    } else if (kind === "italic") {
+      nextText = `*${fallbackText}*`;
+    } else if (kind === "heading") {
+      nextText = `### ${selectedText || "Título"}`;
+    } else if (kind === "bullets") {
+      nextText = (selectedText || "Elemento")
+        .split("\n")
+        .map((line) => `- ${line || "Elemento"}`)
+        .join("\n");
+    } else if (kind === "numbers") {
+      nextText = (selectedText || "Elemento")
+        .split("\n")
+        .map((line, index) => `${index + 1}. ${line || "Elemento"}`)
+        .join("\n");
+    } else if (kind === "link") {
+      nextText = `[${fallbackText}](https://)`;
+    }
+
+    onFieldChange("description", replaceSelection(currentValue, start, end, nextText));
+  };
+
   return (
     <div className="scout-draft-review-form">
       <div className="scout-draft-review-form__grid">
@@ -23,16 +90,148 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
+        <div className="scout-draft-review-form__field">
+          <label htmlFor="draft-description-format">Formato de descripción</label>
+          <select
+            id="draft-description-format"
+            className="scout-draft-review-form__select"
+            value={formState.descriptionFormat}
+            onChange={(event) => onFieldChange("descriptionFormat", event.target.value)}
+            disabled={isReadOnly}
+          >
+            <option value="markdown">Markdown</option>
+            <option value="plain">Texto plano</option>
+          </select>
+        </div>
+
         <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <label htmlFor="draft-description">Descripción</label>
+          <div className="scout-draft-review-form__label-row">
+            <label htmlFor="draft-description">Descripción larga</label>
+            {isMarkdownDescription ? (
+              <div
+                className="scout-draft-review-form__toolbar"
+                aria-label="Formato Markdown"
+              >
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("bold")}
+                  disabled={isReadOnly}
+                  aria-label="Negrita"
+                >
+                  <Bold />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("italic")}
+                  disabled={isReadOnly}
+                  aria-label="Cursiva"
+                >
+                  <Italic />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("heading")}
+                  disabled={isReadOnly}
+                  aria-label="Encabezado"
+                >
+                  <Heading3 />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("bullets")}
+                  disabled={isReadOnly}
+                  aria-label="Lista"
+                >
+                  <List />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("numbers")}
+                  disabled={isReadOnly}
+                  aria-label="Lista numerada"
+                >
+                  <ListOrdered />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => applyMarkdownSnippet("link")}
+                  disabled={isReadOnly}
+                  aria-label="Enlace"
+                >
+                  <Link />
+                </button>
+              </div>
+            ) : null}
+          </div>
           <textarea
+            ref={descriptionRef}
             id="draft-description"
             className="scout-draft-review-form__textarea"
             value={formState.description}
             onChange={(event) => onFieldChange("description", event.target.value)}
             disabled={isReadOnly}
           />
+          <p className="scout-draft-review-form__hint">
+            Puedes usar formato simple en la descripción: negrita, listas y enlaces.
+          </p>
         </div>
+
+        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+          <span className="scout-draft-review-form__preview-label">
+            Preview de descripción
+          </span>
+          <div className="scout-draft-review-form__description-preview">
+            {isMarkdownDescription ? (
+              <SafeMarkdown content={formState.description} />
+            ) : (
+              <p>{formState.description || "Sin descripción todavía."}</p>
+            )}
+          </div>
+        </div>
+
+        {isImageUploadEnabled ? (
+          <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+            <label htmlFor="draft-cover-image">Imagen principal</label>
+            <label className="scout-draft-review-form__file-drop" htmlFor="draft-cover-image">
+              <ImagePlus />
+              <span>Seleccionar imagen JPG, PNG o WebP</span>
+              <input
+                id="draft-cover-image"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => onImageFileChange?.(event.target.files?.[0] ?? null)}
+                disabled={isReadOnly}
+              />
+            </label>
+          </div>
+        ) : null}
+
+        {showImageUrlField ? (
+          <div className="scout-draft-review-form__field">
+            <label htmlFor="draft-image-url">Referencia de imagen</label>
+            <Input
+              id="draft-image-url"
+              className="scout-draft-review-form__input"
+              value={formState.imageUrl}
+              onChange={(event) => onFieldChange("imageUrl", event.target.value)}
+              disabled={isReadOnly}
+            />
+            <p className="scout-draft-review-form__hint">
+              Los valores vacíos se normalizan al placeholder estándar al publicar o guardar.
+            </p>
+          </div>
+        ) : null}
+
+        {imagePreviewSrc ? (
+          <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+            <span className="scout-draft-review-form__preview-label">
+              Preview de imagen
+            </span>
+            <div className="scout-draft-review-form__image-preview">
+              <img src={imagePreviewSrc} alt="Preview de imagen principal" />
+            </div>
+          </div>
+        ) : null}
 
         <div className="scout-draft-review-form__field">
           <label htmlFor="draft-center-id">Centro</label>
@@ -86,20 +285,6 @@ export function ScoutDraftReviewForm({
               </option>
             ))}
           </select>
-        </div>
-
-        <div className="scout-draft-review-form__field">
-          <label htmlFor="draft-image-url">URL de imagen</label>
-          <Input
-            id="draft-image-url"
-            className="scout-draft-review-form__input"
-            value={formState.imageUrl}
-            onChange={(event) => onFieldChange("imageUrl", event.target.value)}
-            disabled={isReadOnly}
-          />
-          <p className="scout-draft-review-form__hint">
-            Los valores vacíos se normalizan al placeholder estándar al publicar o guardar.
-          </p>
         </div>
 
         <div className="scout-draft-review-form__field">

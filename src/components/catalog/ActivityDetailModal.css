@@ -234,6 +234,10 @@
   margin: 0;
 }
 
+.activity-detail-modal__description.safe-markdown > *:first-child {
+  margin-top: 0;
+}
+
 .activity-detail-modal__description--collapsed {
   display: -webkit-box;
   -webkit-line-clamp: 2;
