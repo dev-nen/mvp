@@ -20,6 +20,7 @@ import {
   listDraftCenters,
   listDraftTypes,
 } from "@/services/internalDraftsService";
+import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
 import "./InternalApprovedActivityPage.css";
 
 function formatDateLabel(value) {
@@ -328,6 +329,9 @@ export function InternalApprovedActivityPage() {
                         categoryChoices={categoryChoices}
                         typeChoices={typeChoices}
                         formState={formState}
+                        imagePreviewSrc={resolveActivityImagePreviewUrl(
+                          formState.imageUrl,
+                        )}
                         onFieldChange={handleFieldChange}
                       />
 

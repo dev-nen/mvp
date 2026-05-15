@@ -1,4 +1,4 @@
-import { LoaderCircle, SearchX } from "lucide-react";
+import { LoaderCircle, Plus, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -117,11 +117,17 @@ export function InternalDraftInboxPage() {
                 </p>
               </div>
 
-              {!isLoading && !error && drafts.length > 0 ? (
-                <p className="internal-draft-inbox-page__count">
-                  {drafts.length} drafts visibles
-                </p>
-              ) : null}
+              <div className="internal-draft-inbox-page__header-actions">
+                {!isLoading && !error && drafts.length > 0 ? (
+                  <p className="internal-draft-inbox-page__count">
+                    {drafts.length} drafts visibles
+                  </p>
+                ) : null}
+                <Button onClick={() => navigate("/internal/drafts/new")}>
+                  <Plus />
+                  Nueva actividad
+                </Button>
+              </div>
             </header>
 
             {isLoading ? (
