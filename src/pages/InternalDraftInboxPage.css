@@ -31,6 +31,11 @@
   gap: var(--space-2);
 }
 
+.internal-draft-inbox-page__back-button {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
 .internal-draft-inbox-page__eyebrow {
   color: var(--color-secondary);
   font-size: 0.8125rem;

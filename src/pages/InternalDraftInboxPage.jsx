@@ -1,4 +1,4 @@
-import { LoaderCircle, Plus, SearchX } from "lucide-react";
+import { ArrowLeft, LoaderCircle, Plus, SearchX } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -105,6 +105,14 @@ export function InternalDraftInboxPage() {
           <div className="page-container internal-draft-inbox-page__container">
             <header className="internal-draft-inbox-page__header">
               <div className="internal-draft-inbox-page__copy">
+                <Button
+                  variant="ghost"
+                  className="internal-draft-inbox-page__back-button"
+                  onClick={() => navigate("/perfil")}
+                >
+                  <ArrowLeft />
+                  Volver al perfil
+                </Button>
                 <p className="internal-draft-inbox-page__eyebrow">
                   Uso interno | Draft Inbox
                 </p>
