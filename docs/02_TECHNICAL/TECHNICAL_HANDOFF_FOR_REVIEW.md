@@ -22,6 +22,7 @@ El proyecto está en fase MVP/validación. Hay una base real implementada, pero 
 - i18n ES/CA/EN para copy estático.
 - Legal/trust pages para OAuth y confianza pública.
 - Draft Inbox interno y ciclo de actividad aprobada implementados en repo.
+- Alta manual interna de nuevas actividades como `activity_drafts`, con descripciÃ³n `plain`/`markdown` y portada por referencia de Storage.
 - `/api/internal/pvi` como API interna protegida por bearer token.
 
 ## 3. Stack
@@ -105,6 +106,7 @@ Pendiente: configuración externa de Supabase Auth, redirect URLs, OAuth consent
 - El catálogo lee `catalog_activities_read`.
 - La UI deriva aliases como `city_slug`, pero la verdad persistida es `city_id`.
 - El detalle sigue dividido entre modal Home y ruta de favoritos.
+- `short_description` queda como compatibilidad deprecated del read model; no es campo editorial.
 - El contacto lee `activity_contact_options_read`.
 - No hay fallback a contacto de centro ni WhatsApp hardcodeado.
 - Una opción activa abre acción directa.

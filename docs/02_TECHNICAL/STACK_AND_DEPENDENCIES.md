@@ -14,6 +14,7 @@
 | `@vercel/analytics` | Web Analytics |
 | `lucide-react` | Iconos UI |
 | `react` / `react-dom` | UI |
+| `react-markdown` | Render seguro de Markdown controlado para descripciones de actividad |
 | `react-router-dom` | Routing SPA |
 
 ## Dev dependencies
@@ -45,6 +46,8 @@ Supabase:
 ## Storage
 
 El código puede construir URLs públicas para el bucket `activities` mediante `buildSupabasePublicStorageUrl`. No asumir que hay un flujo de subida productizado en este repo.
+
+Nota de portada interna: el alta manual desde Draft Inbox sube imÃ¡genes al bucket `activities` bajo paths `drafts/{draftId}/...`; la base de datos guarda sÃ³lo la referencia/path. No se usa `service_role` en frontend ni se persisten imÃ¡genes base64.
 
 ## Analytics
 

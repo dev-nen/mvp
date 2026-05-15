@@ -59,6 +59,10 @@ Check:
 
 - [ ] Public catalog reads from `catalog_activities_read`.
 - [ ] Empty/error states are user-safe.
+- [ ] `short_description` remains compatibility-only and is not an editor-managed field.
+- [ ] Public detail prefers full `description` and only falls back to `short_description` when `description` is empty.
+- [ ] Markdown descriptions render safely in detail without raw HTML.
+- [ ] Search/area/excerpt logic derives plain text from `description` instead of raw Markdown `short_description`.
 - [ ] Favorite add persists to `user_favorite_activities`.
 - [ ] Favorite remove deletes remote row.
 - [ ] Detail opens from Home.
@@ -98,6 +102,9 @@ Check:
 - [ ] authenticated can execute `ensure_my_profile`.
 - [ ] non-internal authenticated user cannot read Draft Inbox.
 - [ ] internal authorized user can read Draft Inbox.
+- [ ] internal authorized user can create an activity draft from `/internal/drafts/new`.
+- [ ] non-internal authenticated user cannot insert `activity_drafts`.
+- [ ] draft cover upload requires internal access, accepts JPG/PNG/WebP, rejects SVG, and stores only a path/reference.
 - [ ] internal lifecycle RPCs enforce `internal_tool_access`.
 - [ ] `get_internal_pvi_report` is service_role only.
 

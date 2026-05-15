@@ -26,6 +26,8 @@ Expectativas:
 - internal requiere `internal_tool_access`.
 - `service_role` sólo se usa server-side.
 - RPCs internas verifican `auth.uid()` y permiso interno.
+- El alta manual interna crea `activity_drafts`; no escribe directo en `activities` desde el formulario.
+- Las subidas de portada internas usan Storage con usuario autenticado y permiso `internal_tool_access`; no exponen `service_role`.
 
 Validar en live antes de considerar cerrado.
 
@@ -69,6 +71,8 @@ Las rutas `/privacidad` y `/terminos` existen y usan canonical `https://nensgo.c
 - `SUPABASE_SERVICE_ROLE_KEY`.
 - `INTERNAL_PVI_API_TOKEN`.
 - Raw contact table.
+- HTML crudo o Markdown con HTML habilitado en descripciones.
+- Imágenes base64 en `activity_drafts` o `activities`.
 - Reporting interno en rutas públicas.
 
 ## Defensive audit items
