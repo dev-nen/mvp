@@ -89,7 +89,6 @@ select
   activities.type_id,
   type_activity.name as type_label,
   activities.description,
-  activities.description_format,
   case
     when length(trim(activities.description)) <= 180 then trim(activities.description)
     else trim(left(activities.description, 177)) || '...'
@@ -105,7 +104,8 @@ select
   activities.venue_address_1,
   activities.venue_postal_code,
   activities.is_featured,
-  activities.created_at
+  activities.created_at,
+  activities.description_format
 from public.activities
 join public.centers
   on centers.id = activities.center_id
