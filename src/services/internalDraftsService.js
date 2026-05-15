@@ -126,6 +126,40 @@ export async function getInternalDraftById(draftId) {
   return normalizeDraftRow(data);
 }
 
+export async function createInternalDraft({
+  createdByUserId,
+  reviewedPayload,
+  sourceLabel,
+}) {
+  if (!createdByUserId) {
+    throw new Error("Necesitamos una cuenta interna activa para crear drafts.");
+  }
+
+  const supabase = getSupabaseOrThrow();
+  const { data, error } = await supabase
+    .from("activity_drafts")
+    .insert({
+      source_type: "internal_manual",
+      source_label: getTrimmedText(sourceLabel) || "Alta interna manual",
+      raw_extracted_text: null,
+      parsed_payload_json: {},
+      reviewed_payload_json: reviewedPayload,
+      confidence_score: null,
+      review_status: "pending_review",
+      created_by: createdByUserId,
+    })
+    .select(DRAFT_DETAIL_SELECT)
+    .single();
+
+  if (error) {
+    throw new Error(
+      error.message || "No pudimos crear el draft interno.",
+    );
+  }
+
+  return normalizeDraftRow(data);
+}
+
 export async function saveInternalDraftReview({
   draftId,
   reviewedPayload,

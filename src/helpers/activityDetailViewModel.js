@@ -2,6 +2,7 @@ import { Building2, Clock3, MapPin, Users, Wallet } from "lucide-react";
 import {
   formatActivityAgeLabel,
   getActivityDescription,
+  normalizeDescriptionFormat,
 } from "@/helpers/activityPresentation";
 
 export const ACTIVITY_DETAIL_PLACEHOLDER_SRC =
@@ -173,14 +174,19 @@ export function buildActivityDetailViewModel(activity = {}, copy = {}) {
   };
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
+  const hasCanonicalDescription = Boolean(getTrimmedText(activity.description));
   const description = getTrimmedText(
     getActivityDescription(activity, resolvedCopy),
   );
+  const descriptionFormat = hasCanonicalDescription
+    ? normalizeDescriptionFormat(activity.description_format)
+    : "plain";
   const title = getTrimmedText(activity.title);
 
   return {
     categoryLabel,
     description,
+    descriptionFormat,
     evaluationItems: buildDetailEvaluationItems(activity, resolvedCopy),
     imageSrc: imageUrl || ACTIVITY_DETAIL_PLACEHOLDER_SRC,
     locationItems: buildDetailLocationItems(activity, resolvedCopy),

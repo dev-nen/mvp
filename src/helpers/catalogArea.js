@@ -1,4 +1,5 @@
 import { CATALOG_SUPPORTED_AREAS } from "@/config/catalogSupportedAreas";
+import { getPlainActivityDescription } from "@/helpers/activityPresentation";
 import { normalizeSearchText } from "@/helpers/textNormalize";
 
 const AREA_KEY_BY_NORMALIZED_CITY = new Map([
@@ -25,8 +26,7 @@ function getActivityAreaDetectionText(activity = {}) {
     activity.title,
     activity.venue_name,
     activity.venue_address_1,
-    activity.description,
-    activity.short_description,
+    getPlainActivityDescription(activity),
     activity.center_name,
   ]
     .filter(Boolean)

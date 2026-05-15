@@ -38,6 +38,10 @@ const InternalDraftDetailPage = lazyNamedPage(
   () => import("@/pages/InternalDraftDetailPage"),
   "InternalDraftDetailPage",
 );
+const InternalDraftCreatePage = lazyNamedPage(
+  () => import("@/pages/InternalDraftCreatePage"),
+  "InternalDraftCreatePage",
+);
 const InternalDraftInboxPage = lazyNamedPage(
   () => import("@/pages/InternalDraftInboxPage"),
   "InternalDraftInboxPage",
@@ -129,6 +133,14 @@ function AppRoutes() {
           element={withRouteLoadingFallback(
             <InternalToolRoute>
               <InternalDraftInboxPage />
+            </InternalToolRoute>,
+          )}
+        />
+        <Route
+          path="/internal/drafts/new"
+          element={withRouteLoadingFallback(
+            <InternalToolRoute>
+              <InternalDraftCreatePage />
             </InternalToolRoute>,
           )}
         />

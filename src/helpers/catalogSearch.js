@@ -1,3 +1,5 @@
+import { getPlainActivityDescription } from "@/helpers/activityPresentation";
+
 function normalizeSearchValue(value) {
   return value.trim().toLowerCase();
 }
@@ -12,7 +14,7 @@ export function searchActivities(activities, searchQuery) {
   return activities.filter((activity) =>
     [
       activity.title,
-      activity.short_description,
+      getPlainActivityDescription(activity),
       activity.category_label,
       activity.venue_name,
       activity.center_name,

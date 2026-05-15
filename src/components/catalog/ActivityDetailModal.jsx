@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { ArrowLeft, Heart, LoaderCircle, X } from "lucide-react";
 import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,12 @@ import { openActivityContactAction } from "@/helpers/buildActivityContactAction"
 import { useActivityContactOptions } from "@/hooks/useActivityContactOptions";
 import { useI18n } from "@/i18n/useI18n";
 import "./ActivityDetailModal.css";
+
+const SafeMarkdown = lazy(() =>
+  import("@/components/ui/SafeMarkdown").then((module) => ({
+    default: module.SafeMarkdown,
+  })),
+);
 
 export function ActivityDetailModal({
   activity,
@@ -231,15 +237,28 @@ export function ActivityDetailModal({
 
             {hasDescription ? (
               <section className="activity-detail-modal__section">
-                <p
-                  className={`activity-detail-modal__description ${
-                    isDescriptionExpanded
-                      ? "activity-detail-modal__description--expanded"
-                      : "activity-detail-modal__description--collapsed"
-                  }`}
-                >
-                  {viewModel.description}
-                </p>
+                {viewModel.descriptionFormat === "markdown" ? (
+                  <Suspense fallback={null}>
+                    <SafeMarkdown
+                      content={viewModel.description}
+                      className={`activity-detail-modal__description ${
+                        isDescriptionExpanded
+                          ? "activity-detail-modal__description--expanded"
+                          : "activity-detail-modal__description--collapsed"
+                      }`}
+                    />
+                  </Suspense>
+                ) : (
+                  <p
+                    className={`activity-detail-modal__description ${
+                      isDescriptionExpanded
+                        ? "activity-detail-modal__description--expanded"
+                        : "activity-detail-modal__description--collapsed"
+                    }`}
+                  >
+                    {viewModel.description}
+                  </p>
+                )}
                 <button
                   type="button"
                   className="activity-detail-modal__description-toggle"

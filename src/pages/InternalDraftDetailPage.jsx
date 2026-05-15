@@ -21,6 +21,7 @@ import {
   rejectInternalDraft,
   saveInternalDraftReview,
 } from "@/services/internalDraftsService";
+import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
 import "./InternalDraftDetailPage.css";
 
 function formatDateLabel(value) {
@@ -465,6 +466,9 @@ export function InternalDraftDetailPage() {
                         categoryChoices={categoryChoices}
                         typeChoices={typeChoices}
                         formState={formState}
+                        imagePreviewSrc={resolveActivityImagePreviewUrl(
+                          formState.imageUrl,
+                        )}
                         onFieldChange={handleFieldChange}
                         isReadOnly={isTerminalDraft}
                       />

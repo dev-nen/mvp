@@ -55,9 +55,12 @@ function splitSelectColumns(selectValue) {
 }
 
 function getCatalogReadColumns(sql) {
-  const viewBody = sql.match(
-    /create or replace view public\.catalog_activities_read as\s*select\s+([\s\S]+?)\s+from public\.activities/i,
-  )?.[1];
+  const viewMatches = [
+    ...sql.matchAll(
+      /create or replace view public\.catalog_activities_read as\s*select\s+([\s\S]+?)\s+from public\.activities/gi,
+    ),
+  ];
+  const viewBody = viewMatches.at(-1)?.[1];
 
   if (!viewBody) {
     return new Set();
@@ -90,9 +93,12 @@ const lifecycleSql = read(
 const allSql = readSqlDirectory("supabase/sql").join("\n");
 
 const catalogService = read("src/services/catalogService.js");
+const activityPresentation = read("src/helpers/activityPresentation.js");
+const catalogSearch = read("src/helpers/catalogSearch.js");
+const catalogArea = read("src/helpers/catalogArea.js");
 const catalogSelect = getStringConstValue(catalogService, "CATALOG_SELECT");
 const catalogColumns = splitSelectColumns(catalogSelect);
-const catalogReadColumns = getCatalogReadColumns(realDbSql);
+const catalogReadColumns = getCatalogReadColumns(allSql);
 const missingCatalogColumns = catalogColumns.filter((column) => {
   const columnName = column.split(/\s+as\s+/i).pop();
   return !catalogReadColumns.has(columnName);
@@ -102,6 +108,19 @@ assert(
   "catalogService select columns are present in catalog_activities_read SQL",
   missingCatalogColumns.length === 0,
   missingCatalogColumns.join(", "),
+);
+
+assert(
+  "short_description is compatibility-only in frontend logic",
+  activityPresentation.includes("getPlainActivityDescription") &&
+    activityPresentation.includes("getActivityDescriptionExcerpt") &&
+    activityPresentation.includes("short_description` queda") &&
+    catalogSearch.includes("getPlainActivityDescription(activity)") &&
+    catalogArea.includes("getPlainActivityDescription(activity)") &&
+    !read("src/helpers/mapDraftPayloadToFormState.js").includes("shortDescription") &&
+    !read("src/helpers/mapFormStateToDraftPayload.js").includes("short_description") &&
+    !read("src/features/scout-drafts/ScoutDraftReviewForm.jsx").includes("short_description"),
+  "Draft forms and payload mappers must not reintroduce short_description as an editorial field.",
 );
 
 const contactService = read("src/services/activityContactOptionsService.js");
@@ -191,6 +210,7 @@ const frontendServiceFiles = [
   "src/services/draftApprovalService.js",
   "src/services/internalApprovedActivitiesService.js",
 ];
+const routeMap = read("src/App.jsx");
 const rpcCalls = frontendServiceFiles.flatMap((relativePath) =>
   getRpcCalls(read(relativePath)).map((rpcName) => ({ rpcName, relativePath })),
 );
@@ -204,6 +224,36 @@ assert(
   missingRpcDefinitions
     .map(({ rpcName, relativePath }) => `${rpcName} from ${relativePath}`)
     .join(", "),
+);
+
+assert(
+  "internal draft creation route is protected and writes drafts only",
+  routeMap.includes('path="/internal/drafts/new"') &&
+    routeMap.includes("<InternalDraftCreatePage />") &&
+    routeMap.includes("<InternalToolRoute>") &&
+    read("src/services/internalDraftsService.js").includes('.from("activity_drafts")') &&
+    read("src/services/internalDraftsService.js").includes(".insert({") &&
+    !read("src/pages/InternalDraftCreatePage.jsx").includes('.from("activities")') &&
+    !read("src/pages/InternalDraftCreatePage.jsx").includes("activity_contact_options"),
+  "The internal create form must remain inside Draft Inbox and create activity_drafts.",
+);
+
+assert(
+  "versioned SQL allows draft insert only for internal Draft Inbox users",
+  allSql.includes("grant insert on public.activity_drafts to authenticated") &&
+    allSql.includes("create policy activity_drafts_insert_internal_reviewers") &&
+    allSql.includes("created_by = auth.uid()") &&
+    allSql.includes("tool_name = 'draft_inbox'"),
+  "Draft insert RLS must require internal_tool_access.",
+);
+
+assert(
+  "description_format is preserved through draft approval lifecycle",
+  allSql.includes("add column if not exists description_format") &&
+    allSql.includes("activities.description_format") &&
+    allSql.includes("'description_format', resolved_description_format") &&
+    allSql.includes("description_format = resolved_description_format"),
+  "Approved activities must preserve description_format.",
 );
 
 const expectedRpcGrants = [
@@ -233,7 +283,6 @@ assert(
   "Favorites should remain hard-delete in this phase.",
 );
 
-const routeMap = read("src/App.jsx");
 assert(
   "public wildcard still redirects to home",
   routeMap.includes('path="*"') && routeMap.includes('to="/"'),

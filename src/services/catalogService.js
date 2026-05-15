@@ -3,10 +3,11 @@ import {
   getSupabaseClient,
   getSupabaseClientError,
 } from "@/services/supabaseClient";
+import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
 import { slugifyText } from "@/helpers/textSlug";
 
 const CATALOG_SELECT =
-  "id, title, center_id, center_name, city_id, city_name, category_id, category_label, type_id, type_label, description, short_description, image_url, age_rule_type, age_min, age_max, price_label, is_free, schedule_label, venue_name, venue_address_1, venue_postal_code, is_featured, created_at";
+  "id, title, center_id, center_name, city_id, city_name, category_id, category_label, type_id, type_label, description, description_format, short_description, image_url, age_rule_type, age_min, age_max, price_label, is_free, schedule_label, venue_name, venue_address_1, venue_postal_code, is_featured, created_at";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -44,6 +45,7 @@ function normalizeCatalogActivity(activity) {
     city_name: cityName,
     city_slug: slugifyText(cityName),
     description,
+    description_format: normalizeDescriptionFormat(activity.description_format),
     image_url: normalizeCatalogImageUrl(activity.image_url),
     short_description: shortDescription,
   };

@@ -29,6 +29,7 @@ La app usa React Router con tres tipos de superficie:
 - Pública: accesible sin sesión.
 - Protegida: requiere sesión, email verificado y perfil app mínimo.
 - Interna: requiere usuario ready y autorización en `internal_tool_access`.
+- El alta manual interna de actividad vive en Draft Inbox y crea `activity_drafts`; no publica directo en `activities`.
 
 ## Supabase data access pattern
 
@@ -43,6 +44,14 @@ La app usa React Router con tres tipos de superficie:
 - `catalog_activities_read`: catálogo público.
 - `activity_contact_options_read`: contactos activos y seguros para actividades visibles.
 - `municipality_choices_read`: búsqueda de municipios ES DIR3.
+
+## Activity descriptions
+
+- `description` es la fuente editorial canónica.
+- `description_format` define renderizado `plain` o `markdown`.
+- `short_description` queda como salida deprecated de compatibilidad del read model, no como campo gestionado por editores.
+- Los resúmenes plain-text para búsqueda, detección o previews se derivan de `description`.
+- El detalle público puede renderizar Markdown seguro; las cards compactas siguen controladas/plain.
 
 ## Auth/profile flow
 
