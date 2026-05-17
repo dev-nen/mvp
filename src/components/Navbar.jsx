@@ -103,6 +103,28 @@ export function Navbar({ enableSearch = false }) {
     setIsSearchOpen(false);
   }, [location.pathname, location.hash]);
 
+  const renderFavoritesLink = () => (
+    <NavLink
+      to="/favoritos"
+      className={getNavLinkClassName}
+      aria-label={t("nav.favorites")}
+      onClick={closeMenu}
+    >
+      <Heart />
+    </NavLink>
+  );
+
+  const renderProfileLink = () => (
+    <NavLink
+      to="/perfil"
+      className={getNavLinkClassName}
+      aria-label={t("nav.profile")}
+      onClick={closeMenu}
+    >
+      <User />
+    </NavLink>
+  );
+
   const renderAuthAction = (className = "") => (
     <div className={["navbar__auth-slot", className].filter(Boolean).join(" ")}>
       {isResolvingAccess ? (
@@ -122,6 +144,7 @@ export function Navbar({ enableSearch = false }) {
           variant="outline"
           className="navbar__auth-button"
           onClick={handleOpenAccessGate}
+          aria-label={accessButtonLabel}
         >
           <LogIn />
           <span className="navbar__auth-label navbar__auth-label--full">
@@ -141,23 +164,16 @@ export function Navbar({ enableSearch = false }) {
 
   const renderProtectedLinks = () => (
     <>
-      <NavLink
-        to="/favoritos"
-        className={getNavLinkClassName}
-        aria-label={t("nav.favorites")}
-        onClick={closeMenu}
-      >
-        <Heart />
-      </NavLink>
-      <NavLink
-        to="/perfil"
-        className={getNavLinkClassName}
-        aria-label={t("nav.profile")}
-        onClick={closeMenu}
-      >
-        <User />
-      </NavLink>
+      {renderFavoritesLink()}
+      {renderProfileLink()}
     </>
+  );
+
+  const renderMobilePrimaryActions = () => (
+    <div className="navbar__mobile-primary-actions">
+      <div className="navbar__mobile-primary-icon-links">{renderFavoritesLink()}</div>
+      {renderAuthAction("navbar__auth-slot--mobile-primary")}
+    </div>
   );
 
   return (
@@ -171,6 +187,8 @@ export function Navbar({ enableSearch = false }) {
         >
           <BrandLockup variant="navbar" />
         </Link>
+
+        {renderMobilePrimaryActions()}
 
         <Button
           type="button"
@@ -227,8 +245,6 @@ export function Navbar({ enableSearch = false }) {
                 {t("nav.joinProject")}
               </a>
             ) : null}
-            {renderAuthAction("navbar__auth-slot--mobile")}
-            <div className="navbar__mobile-icon-links">{renderProtectedLinks()}</div>
           </div>
         </nav>
 

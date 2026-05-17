@@ -190,8 +190,9 @@
   width: 100%;
 }
 
-.navbar__mobile-actions,
-.navbar__mobile-icon-links {
+.navbar__mobile-primary-actions,
+.navbar__mobile-primary-icon-links,
+.navbar__mobile-actions {
   display: none;
 }
 
@@ -222,9 +223,23 @@
     flex-wrap: wrap;
   }
 
+  .navbar__mobile-primary-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-left: auto;
+    min-width: 0;
+  }
+
+  .navbar__mobile-primary-icon-links {
+    display: flex;
+    flex-shrink: 0;
+  }
+
   .navbar__menu-toggle {
     display: inline-flex;
-    margin-left: auto;
+    flex-shrink: 0;
+    margin-left: 0;
   }
 
   .navbar__nav {
@@ -264,13 +279,11 @@
     justify-self: center;
   }
 
-  .navbar__auth-slot,
-  .navbar__auth-slot--mobile {
+  .navbar__auth-slot {
     min-width: 0;
   }
 
   .navbar__auth-button {
-    width: 100%;
     padding-inline: 0.875rem;
   }
 
@@ -288,10 +301,23 @@
     justify-content: center;
   }
 
-  .navbar__mobile-icon-links {
-    display: flex;
-    justify-content: center;
-    gap: 0.35rem;
+  .navbar__auth-slot--mobile-primary {
+    flex: 0 1 auto;
+  }
+
+  .navbar__auth-slot--mobile-primary .navbar__auth-button {
+    width: auto;
+    max-width: 8rem;
+  }
+
+  .navbar__auth-slot--mobile-primary .navbar__auth-chip {
+    width: auto;
+    max-width: 8rem;
+    padding-inline: 0.75rem;
+  }
+
+  .navbar__auth-slot--mobile-primary .navbar__auth-placeholder {
+    width: 2.25rem;
   }
 
   .navbar__mobile-actions .navbar__b2b-action {
@@ -305,6 +331,10 @@
   }
 
   .navbar__auth-chip-label {
+    display: none;
+  }
+
+  .navbar__mobile-primary-actions .navbar__auth-label--compact {
     display: none;
   }
 
