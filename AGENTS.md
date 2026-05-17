@@ -24,12 +24,12 @@ First verify branch context:
 
 Read at minimum:
 
-- `docs/DOCS_INDEX.md`
-- `docs/PROJECT_STATE.md`
-- `docs/ARCHITECTURE.md`
-- `docs/ROADMAP_IMPLEMENTATION.md`
-- `docs/FEATURE_STATUS.md`
-- `docs/TECH_DEBT.md`
+- `docs/README.md`
+- `docs/00_START/PROJECT_BRIEF.md`
+- `docs/02_TECHNICAL/ARCHITECTURE.md`
+- `docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md`
+- `docs/03_OPERATIONS/AI_WORKFLOW.md`
+- `docs/03_OPERATIONS/VALIDATION_CHECKLIST.md`
 - `PLANS.md`
 
 If the task affects a specific feature, also read that feature's docs in `docs/`.
@@ -40,6 +40,29 @@ If the task affects a specific feature, also read that feature's docs in `docs/`
 - Treat any task touching multiple files, UX, data, auth, detail, catalog, favorites, profile, branding, or Supabase as non-trivial.
 - Do not start implementation from intuition alone.
 - Make branch context explicit in the plan.
+- Use `docs/03_OPERATIONS/AI_WORKFLOW.md` to choose task size and ceremony.
+
+## Task Sizing
+
+The size of a task is defined by real risk, not by the name of the component.
+
+- `XS`: minimal localized change with no logic or flow impact.
+- `S`: localized UI/UX adjustment or small bug fix that does not change rules,
+  auth, data, routes, Supabase, protected intent, or shared contracts.
+- `M`: several files or shared logic with controlled risk; discovery read-only
+  and a short plan are expected.
+- `L`: data, auth, Supabase, RLS, important routing, protected intent, central
+  UX, backoffice, SEO/public route posture, or architecture; use discovery,
+  SDD/scope, implementation, read-only review, and fix pack.
+
+Example: moving existing Favorites and User/Login buttons outside the mobile
+navbar menu is `S` when it does not change auth, routes, Supabase, data,
+protected intent, or favorites logic.
+
+## AI Workflow Docs
+
+- Workflow contract: `docs/03_OPERATIONS/AI_WORKFLOW.md`
+- Prompt templates: `docs/03_OPERATIONS/DISKETNEN_TEMPLATES.md`
 
 ## Scope Rules
 
@@ -64,9 +87,21 @@ Do not describe partial areas as closed, final, fully complete, or production-re
 
 - In the current documented baseline, detail is partial and split across Home modal and Favorites detail page.
 - In the current documented baseline, auth base is already implemented, but still depends on external Supabase and Google OAuth configuration.
-- In the current documented baseline, favorites are still local to the browser.
-- In the current documented baseline, Supabase is used for auth and `activity_events`, not as the full product backend.
+- In the current documented baseline, favorites are remote but still require live validation.
+- In the current documented baseline, Supabase is used for auth, catalog, profile,
+  favorites, contact read models, product events, and internal draft contracts,
+  but external SQL/Auth/Vercel readiness still gates full closure.
 - Re-check the active branch before assuming those baseline facts still apply unchanged.
+
+## Security And Product Guardrails
+
+- Do not expose `SUPABASE_SERVICE_ROLE_KEY` or server-only secrets.
+- Do not add public debug UI or raw technical errors.
+- Do not show Supabase UUIDs to end users.
+- Do not translate dynamic activity, center, city, user, email, URL, or contact
+  values.
+- Do not change auth, protected intent, favorites persistence, Supabase writes,
+  or route contracts unless explicitly in scope.
 
 ## Closure
 

@@ -27,6 +27,8 @@ La raíz de `docs/` se mantiene limpia: este `README.md` y subcarpetas numeradas
 | [02_TECHNICAL/SECURITY_AND_PRIVACY.md](./02_TECHNICAL/SECURITY_AND_PRIVACY.md) | Seguridad, DevOps, CTO | RLS, privacidad, secretos y validaciones pendientes |
 | [02_TECHNICAL/DEPLOYMENT_AND_ENV.md](./02_TECHNICAL/DEPLOYMENT_AND_ENV.md) | DevOps | Entornos, Vercel, Supabase y variables |
 | [03_OPERATIONS/LOCAL_SETUP.md](./03_OPERATIONS/LOCAL_SETUP.md) | Developers | Cómo correr el repo localmente |
+| [03_OPERATIONS/AI_WORKFLOW.md](./03_OPERATIONS/AI_WORKFLOW.md) | PO, IA, developers | Contrato operativo para clasificar tareas y escalar ceremonia por riesgo |
+| [03_OPERATIONS/DISKETNEN_TEMPLATES.md](./03_OPERATIONS/DISKETNEN_TEMPLATES.md) | PO, IA, developers | Plantillas reutilizables para discovery, implementacion, review y fix packs |
 | [03_OPERATIONS/VALIDATION_CHECKLIST.md](./03_OPERATIONS/VALIDATION_CHECKLIST.md) | QA, tech lead | Checks locales, manuales y live |
 | [03_OPERATIONS/RELEASE_CHECKLIST.md](./03_OPERATIONS/RELEASE_CHECKLIST.md) | DevOps, tech lead | Orden de despliegue y pre-release |
 | [03_OPERATIONS/ROLLOUT_NOTES.md](./03_OPERATIONS/ROLLOUT_NOTES.md) | DevOps, PO | Notas de rollout y validación posterior |
@@ -71,6 +73,7 @@ Si vas a pedirle a una IA que analice este repositorio, indícale que empiece po
 4. `docs/02_TECHNICAL/TECHNICAL_HANDOFF_FOR_REVIEW.md`
 5. `docs/02_TECHNICAL/ARCHITECTURE.md`
 6. `docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md`
+7. `docs/03_OPERATIONS/AI_WORKFLOW.md`
 
 La documentación distingue estado actual, decisiones, deuda técnica y próximos pasos. La app está en fase MVP/validación; no asumir que todas las piezas internas están productizadas o validadas en vivo.
 
