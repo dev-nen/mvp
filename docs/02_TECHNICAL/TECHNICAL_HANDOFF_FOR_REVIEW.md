@@ -189,7 +189,7 @@ git diff --cached --check
 Notas:
 
 - `npm.cmd run check` ejecuta auditorías runtime y build.
-- Vite puede seguir mostrando warning de chunk principal > 500 kB.
+- El build Vite usa chunks vendor manuales; el build local actual no muestra warning de chunk principal > 500 kB.
 - Validación local no sustituye Supabase/Vercel live smoke.
 
 ## 15. Riesgos conocidos
@@ -199,7 +199,7 @@ Notas:
 - Contact options dependen de calidad de datos.
 - i18n no traduce contenido dinámico.
 - Legal pages no equivalen a cumplimiento legal completo.
-- El chunk principal Vite puede necesitar optimización.
+- El tamaño de bundle Vite debe monitorizarse al añadir dependencias grandes.
 - Les Roquetes es un hardcode temporal.
 - El detalle sigue dividido entre modal y ruta.
 
@@ -221,5 +221,5 @@ Notas:
 - Calidad de migraciones y orden de rollout.
 - Riesgos de data quality en catálogo/contacto.
 - Cobertura de validación manual/automática.
-- Deuda del bundle, split de detalle y modelo de localities.
+- Tamaño de bundle, split de detalle y modelo de localities.
 - Adecuación del backoffice interno al nivel de madurez declarado.

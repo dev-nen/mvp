@@ -67,5 +67,5 @@ Do not treat internal routes as ready until:
 
 - Supabase schema cache may lag after applying views/functions.
 - Contact read failures with `PGRST205` can indicate missing `activity_contact_options_read`.
-- Vite chunk warning is known and should be monitored.
+- Vite bundle size should be monitored after adding large dependencies.
 - Vercel Web Analytics requires dashboard/live verification.

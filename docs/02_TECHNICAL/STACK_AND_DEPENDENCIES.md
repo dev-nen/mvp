@@ -73,7 +73,7 @@ SUPABASE_SERVICE_ROLE_KEY
 INTERNAL_PVI_API_TOKEN
 ```
 
-## Current known warnings
+## Current build notes
 
-- El build puede mostrar warning de chunk principal por encima de 500 kB.
+- El build usa chunks vendor manuales en `vite.config.js`; el build local actual no muestra warning de chunk principal por encima de 500 kB.
 - No hay lint/test unitario formal en `package.json`.

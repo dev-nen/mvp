@@ -96,7 +96,7 @@ Scripts relevantes:
 
 ## Known technical caveats
 
-- Vite puede avisar de chunk principal mayor de 500 kB.
+- El build Vite usa chunks vendor manuales y debe monitorizarse al añadir dependencias grandes.
 - No hay suite formal de unit tests/lint.
 - El detalle está dividido entre modal Home y ruta Favoritos.
 - Draft Inbox requiere validación live y permisos reales.

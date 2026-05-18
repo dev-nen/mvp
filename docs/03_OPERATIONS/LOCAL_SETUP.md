@@ -61,9 +61,9 @@ git diff --check
 git diff --cached --check
 ```
 
-## Known build warning
+## Build chunking note
 
-Vite may warn that the main chunk is over 500 kB. This is known technical debt and should not be hidden, but it is not the same as a failed build.
+The current Vite build uses manual vendor chunking and should not warn that the main chunk is over 500 kB. If the warning returns after adding large dependencies, treat it as performance debt and inspect the chunk split instead of raising the warning limit first.
 
 ## What local setup cannot validate
 

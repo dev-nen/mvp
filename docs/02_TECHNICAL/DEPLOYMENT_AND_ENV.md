@@ -60,7 +60,7 @@ No documentar como completo sin smoke real.
 
 ## Known caveats
 
-- Vite puede avisar de chunk principal > 500 kB.
+- El build Vite usa chunks vendor manuales; monitorizar tamaño de bundle si se añaden dependencias grandes.
 - Internal route pageviews no están excluidas explícitamente de Vercel Web Analytics.
 - La validación local no prueba RLS live.
 - Supabase schema cache puede requerir tiempo tras aplicar vistas/RPCs.

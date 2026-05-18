@@ -18,7 +18,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 
 - Cerrar smoke tests live de Supabase, RLS y RPC.
 - Revisar calidad de datos del catálogo y contact options.
-- Reducir riesgo del chunk principal Vite si empieza a afectar performance real.
+- Monitorizar tamaño del bundle Vite si se añaden dependencias grandes o vuelve el warning.
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
 - Fortalecer reporting interno y lectura de eventos.
 - Mejorar checklist de release y evidencias de validación.

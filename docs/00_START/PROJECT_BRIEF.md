@@ -93,7 +93,7 @@ El alcance actual cubre un MVP web para:
 | Contacto | Partial | El flujo depende de calidad de datos en `activity_contact_options_read`. |
 | i18n | Partial | Sólo traduce UI estática; contenido dinámico no está traducido. |
 | Legal | Partial | Hay rutas legales, pero no se debe inferir cumplimiento legal completo. |
-| Bundle | In progress | Vite puede seguir avisando de chunk principal mayor de 500 kB. |
+| Bundle | Done | El build local usa chunks vendor manuales y ya no avisa de chunk principal mayor de 500 kB; monitorizar si entran dependencias grandes. |
 
 ## Cómo revisar el repo
 
