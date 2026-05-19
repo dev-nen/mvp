@@ -7,12 +7,20 @@ function normalizeReviewStatus(reviewStatus) {
 }
 
 function getReviewStatusLabel(reviewStatus) {
+  if (reviewStatus === "needs_changes") {
+    return "Necesita cambios";
+  }
+
   if (reviewStatus === "approved") {
     return "Aprobado";
   }
 
   if (reviewStatus === "rejected") {
-    return "Rechazado";
+    return "No aprobado";
+  }
+
+  if (reviewStatus === "archived") {
+    return "Archivado";
   }
 
   return "Pendiente";

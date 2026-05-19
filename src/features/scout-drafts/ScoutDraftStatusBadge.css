@@ -22,8 +22,20 @@
   border: 1px solid rgba(74, 184, 128, 0.2);
 }
 
+.scout-draft-status-badge--needs-changes {
+  color: #7a4a12;
+  background: rgba(236, 163, 65, 0.16);
+  border: 1px solid rgba(236, 163, 65, 0.28);
+}
+
 .scout-draft-status-badge--rejected {
   color: #8c3b2d;
   background: rgba(242, 106, 75, 0.12);
   border: 1px solid rgba(242, 106, 75, 0.22);
+}
+
+.scout-draft-status-badge--archived {
+  color: #4b5563;
+  background: rgba(107, 114, 128, 0.12);
+  border: 1px solid rgba(107, 114, 128, 0.22);
 }

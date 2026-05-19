@@ -8,6 +8,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
+import {
+  DRAFT_REVIEW_TARGET_STATUSES,
+  buildDefaultUserFeedbackSummary,
+  buildUserFeedbackItems,
+  getDraftReviewFeedbackOptions,
+} from "@/features/scout-drafts/draftReviewFeedbackOptions";
 import { useAuth } from "@/hooks/useAuth";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
@@ -15,9 +21,11 @@ import { getInternalApprovedActivity } from "@/services/internalApprovedActiviti
 import { approveInternalDraft } from "@/services/draftApprovalService";
 import {
   getInternalDraftById,
+  archiveInternalDraft,
   listDraftCategories,
   listDraftCenters,
   listDraftTypes,
+  requestInternalDraftChanges,
   rejectInternalDraft,
   saveInternalDraftReview,
 } from "@/services/internalDraftsService";
@@ -112,6 +120,16 @@ function validateDraftForApproval(formState) {
   return "";
 }
 
+function getFeedbackOptionIdsFromItems(items) {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items
+    .map((item) => getTrimmedText(item?.reason_code))
+    .filter(Boolean);
+}
+
 export function InternalDraftDetailPage() {
   const navigate = useNavigate();
   const { draftId } = useParams();
@@ -119,6 +137,11 @@ export function InternalDraftDetailPage() {
   const [draft, setDraft] = useState(null);
   const [formState, setFormState] = useState(() => mapDraftPayloadToFormState({}));
   const [reviewNotes, setReviewNotes] = useState("");
+  const [userFeedbackSummary, setUserFeedbackSummary] = useState("");
+  const [feedbackTargetStatus, setFeedbackTargetStatus] = useState(
+    DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES,
+  );
+  const [selectedFeedbackOptionIds, setSelectedFeedbackOptionIds] = useState([]);
   const [centerChoices, setCenterChoices] = useState([]);
   const [categoryChoices, setCategoryChoices] = useState([]);
   const [typeChoices, setTypeChoices] = useState([]);
@@ -130,6 +153,8 @@ export function InternalDraftDetailPage() {
   const [feedbackTone, setFeedbackTone] = useState("success");
   const [isSaving, setIsSaving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const [isRequestingChanges, setIsRequestingChanges] = useState(false);
+  const [isArchiving, setIsArchiving] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
 
   useEffect(() => {
@@ -195,6 +220,8 @@ export function InternalDraftDetailPage() {
           setError("");
           setFormState(mapDraftPayloadToFormState({}));
           setReviewNotes("");
+          setUserFeedbackSummary("");
+          setSelectedFeedbackOptionIds([]);
           setLinkedApprovedActivity(null);
           setLinkedApprovedActivityError("");
           return;
@@ -205,7 +232,11 @@ export function InternalDraftDetailPage() {
         setCategoryChoices(nextCategories);
         setTypeChoices(nextTypes);
         setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
-        setReviewNotes(nextDraft.reviewNotes || "");
+        setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+        setUserFeedbackSummary(nextDraft.userFeedbackSummary || "");
+        setSelectedFeedbackOptionIds(
+          getFeedbackOptionIdsFromItems(nextDraft.userFeedbackJson),
+        );
         setLinkedApprovedActivity(nextLinkedApprovedActivity);
         setLinkedApprovedActivityError(nextLinkedApprovedActivityError);
       } catch (loadError) {
@@ -235,7 +266,21 @@ export function InternalDraftDetailPage() {
     };
   }, [draftId]);
 
-  const isTerminalDraft = draft?.reviewStatus === "approved" || draft?.reviewStatus === "rejected";
+  const isPendingDraft = draft?.reviewStatus === "pending_review";
+  const isReadOnlyDraft = draft?.reviewStatus !== "pending_review";
+  const canArchiveDraft =
+    draft &&
+    ["pending_review", "needs_changes", "rejected"].includes(draft.reviewStatus) &&
+    !draft.approvedActivityId;
+  const activeFeedbackOptions = useMemo(
+    () => getDraftReviewFeedbackOptions(feedbackTargetStatus),
+    [feedbackTargetStatus],
+  );
+  const selectedFeedbackOptions = useMemo(() => {
+    const selectedIds = new Set(selectedFeedbackOptionIds);
+
+    return activeFeedbackOptions.filter((option) => selectedIds.has(option.id));
+  }, [activeFeedbackOptions, selectedFeedbackOptionIds]);
   const parsedPayloadPreview = useMemo(
     () => JSON.stringify(draft?.parsedPayload ?? {}, null, 2),
     [draft?.parsedPayload],
@@ -266,7 +311,11 @@ export function InternalDraftDetailPage() {
 
     setDraft(nextDraft);
     setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
-    setReviewNotes(nextDraft.reviewNotes || "");
+    setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+    setUserFeedbackSummary(nextDraft.userFeedbackSummary || "");
+    setSelectedFeedbackOptionIds(
+      getFeedbackOptionIdsFromItems(nextDraft.userFeedbackJson),
+    );
     setLinkedApprovedActivity(nextLinkedApprovedActivity);
     setLinkedApprovedActivityError(nextLinkedApprovedActivityError);
     setFeedbackMessage(nextFeedbackMessage);
@@ -280,8 +329,31 @@ export function InternalDraftDetailPage() {
     }));
   };
 
+  const handleFeedbackTargetChange = (nextTargetStatus) => {
+    setFeedbackTargetStatus(nextTargetStatus);
+    setSelectedFeedbackOptionIds([]);
+    setUserFeedbackSummary("");
+  };
+
+  const handleFeedbackOptionToggle = (option) => {
+    setSelectedFeedbackOptionIds((currentOptionIds) => {
+      const nextOptionIds = currentOptionIds.includes(option.id)
+        ? currentOptionIds.filter((optionId) => optionId !== option.id)
+        : [...currentOptionIds, option.id];
+      const nextSelectedOptions = getDraftReviewFeedbackOptions(
+        feedbackTargetStatus,
+      ).filter((feedbackOption) => nextOptionIds.includes(feedbackOption.id));
+
+      setUserFeedbackSummary(
+        buildDefaultUserFeedbackSummary(feedbackTargetStatus, nextSelectedOptions),
+      );
+
+      return nextOptionIds;
+    });
+  };
+
   const handleSaveDraft = async () => {
-    if (!draft || isTerminalDraft) {
+    if (!draft || !isPendingDraft) {
       return;
     }
 
@@ -292,13 +364,14 @@ export function InternalDraftDetailPage() {
     try {
       const nextDraft = await saveInternalDraftReview({
         draftId: draft.id,
+        internalReviewNotes: reviewNotes,
         reviewedPayload: mapFormStateToDraftPayload(formState),
         reviewNotes,
       });
 
       setDraft(nextDraft);
       setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
-      setReviewNotes(nextDraft.reviewNotes || "");
+      setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
       setFeedbackTone("success");
       setFeedbackMessage("Draft guardado.");
     } catch (saveError) {
@@ -314,7 +387,25 @@ export function InternalDraftDetailPage() {
   };
 
   const handleRejectDraft = async () => {
-    if (!draft || isTerminalDraft) {
+    if (!draft || !isPendingDraft) {
+      return;
+    }
+
+    if (feedbackTargetStatus !== DRAFT_REVIEW_TARGET_STATUSES.REJECTED) {
+      setFeedbackTargetStatus(DRAFT_REVIEW_TARGET_STATUSES.REJECTED);
+      setSelectedFeedbackOptionIds([]);
+      setUserFeedbackSummary("");
+      setFeedbackTone("error");
+      setFeedbackMessage("Selecciona motivos de No aprobar antes de continuar.");
+      return;
+    }
+
+    const normalizedSummary = getTrimmedText(userFeedbackSummary);
+
+    if (!normalizedSummary) {
+      setFeedbackTargetStatus(DRAFT_REVIEW_TARGET_STATUSES.REJECTED);
+      setFeedbackTone("error");
+      setFeedbackMessage("Anade un resumen publico antes de no aprobar.");
       return;
     }
 
@@ -325,16 +416,20 @@ export function InternalDraftDetailPage() {
     try {
       const nextDraft = await rejectInternalDraft({
         draftId: draft.id,
+        internalReviewNotes: reviewNotes,
         reviewedPayload: mapFormStateToDraftPayload(formState),
         reviewNotes,
+        userFeedbackJson: buildUserFeedbackItems(selectedFeedbackOptions),
+        userFeedbackSummary: normalizedSummary,
         reviewedByUserId: user?.id,
       });
 
       setDraft(nextDraft);
       setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
-      setReviewNotes(nextDraft.reviewNotes || "");
+      setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+      setUserFeedbackSummary(nextDraft.userFeedbackSummary || "");
       setFeedbackTone("success");
-      setFeedbackMessage("Draft rechazado.");
+      setFeedbackMessage("Draft no aprobado.");
     } catch (rejectError) {
       setFeedbackTone("error");
       setFeedbackMessage(
@@ -347,8 +442,95 @@ export function InternalDraftDetailPage() {
     }
   };
 
+  const handleRequestChanges = async () => {
+    if (!draft || !isPendingDraft) {
+      return;
+    }
+
+    if (feedbackTargetStatus !== DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES) {
+      setFeedbackTargetStatus(DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES);
+      setSelectedFeedbackOptionIds([]);
+      setUserFeedbackSummary("");
+      setFeedbackTone("error");
+      setFeedbackMessage("Selecciona motivos de Pedir cambios antes de continuar.");
+      return;
+    }
+
+    const normalizedSummary = getTrimmedText(userFeedbackSummary);
+
+    if (!normalizedSummary) {
+      setFeedbackTargetStatus(DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES);
+      setFeedbackTone("error");
+      setFeedbackMessage("Anade un resumen publico antes de pedir cambios.");
+      return;
+    }
+
+    setIsRequestingChanges(true);
+    setFeedbackMessage("");
+    setError("");
+
+    try {
+      const nextDraft = await requestInternalDraftChanges({
+        draftId: draft.id,
+        internalReviewNotes: reviewNotes,
+        reviewedPayload: mapFormStateToDraftPayload(formState),
+        reviewNotes,
+        userFeedbackJson: buildUserFeedbackItems(selectedFeedbackOptions),
+        userFeedbackSummary: normalizedSummary,
+      });
+
+      setDraft(nextDraft);
+      setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
+      setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+      setUserFeedbackSummary(nextDraft.userFeedbackSummary || "");
+      setFeedbackTone("success");
+      setFeedbackMessage("Cambios solicitados.");
+    } catch (changesError) {
+      setFeedbackTone("error");
+      setFeedbackMessage(
+        changesError instanceof Error
+          ? changesError.message
+          : "No pudimos pedir cambios para el draft.",
+      );
+    } finally {
+      setIsRequestingChanges(false);
+    }
+  };
+
+  const handleArchiveDraft = async () => {
+    if (!canArchiveDraft) {
+      return;
+    }
+
+    setIsArchiving(true);
+    setFeedbackMessage("");
+    setError("");
+
+    try {
+      const nextDraft = await archiveInternalDraft({
+        draftId: draft.id,
+        internalReviewNotes: reviewNotes,
+      });
+
+      setDraft(nextDraft);
+      setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
+      setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+      setFeedbackTone("success");
+      setFeedbackMessage("Draft archivado.");
+    } catch (archiveError) {
+      setFeedbackTone("error");
+      setFeedbackMessage(
+        archiveError instanceof Error
+          ? archiveError.message
+          : "No pudimos archivar el draft.",
+      );
+    } finally {
+      setIsArchiving(false);
+    }
+  };
+
   const handleApproveDraft = async () => {
-    if (!draft || isTerminalDraft) {
+    if (!draft || !isPendingDraft) {
       return;
     }
 
@@ -367,6 +549,7 @@ export function InternalDraftDetailPage() {
     try {
       await saveInternalDraftReview({
         draftId: draft.id,
+        internalReviewNotes: reviewNotes,
         reviewedPayload: mapFormStateToDraftPayload(formState),
         reviewNotes,
       });
@@ -470,17 +653,103 @@ export function InternalDraftDetailPage() {
                           formState.imageUrl,
                         )}
                         onFieldChange={handleFieldChange}
-                        isReadOnly={isTerminalDraft}
+                        isReadOnly={isReadOnlyDraft}
                       />
 
+                      {isPendingDraft ? (
+                        <div className="internal-draft-detail-page__public-feedback">
+                          <div className="internal-draft-detail-page__feedback-header">
+                            <div>
+                              <h3>Feedback visible para usuario</h3>
+                              <p>
+                                Separa el resumen publico de las notas internas.
+                              </p>
+                            </div>
+                            <div className="internal-draft-detail-page__feedback-targets">
+                              <Button
+                                type="button"
+                                variant={
+                                  feedbackTargetStatus ===
+                                  DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES
+                                    ? "default"
+                                    : "outline"
+                                }
+                                onClick={() =>
+                                  handleFeedbackTargetChange(
+                                    DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES,
+                                  )
+                                }
+                              >
+                                Pedir cambios
+                              </Button>
+                              <Button
+                                type="button"
+                                variant={
+                                  feedbackTargetStatus ===
+                                  DRAFT_REVIEW_TARGET_STATUSES.REJECTED
+                                    ? "default"
+                                    : "outline"
+                                }
+                                onClick={() =>
+                                  handleFeedbackTargetChange(
+                                    DRAFT_REVIEW_TARGET_STATUSES.REJECTED,
+                                  )
+                                }
+                              >
+                                No aprobar
+                              </Button>
+                            </div>
+                          </div>
+
+                          <div className="internal-draft-detail-page__feedback-chips">
+                            {activeFeedbackOptions.map((option) => (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={`internal-draft-detail-page__feedback-chip ${
+                                  selectedFeedbackOptionIds.includes(option.id)
+                                    ? "internal-draft-detail-page__feedback-chip--selected"
+                                    : ""
+                                }`}
+                                onClick={() => handleFeedbackOptionToggle(option)}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          <label
+                            className="internal-draft-detail-page__public-summary-field"
+                            htmlFor="draft-user-feedback-summary"
+                          >
+                            Resumen publico editable
+                            <textarea
+                              id="draft-user-feedback-summary"
+                              className="internal-draft-detail-page__notes-input"
+                              value={userFeedbackSummary}
+                              onChange={(event) =>
+                                setUserFeedbackSummary(event.target.value)
+                              }
+                            />
+                          </label>
+                        </div>
+                      ) : draft.userFeedbackSummary ? (
+                        <div className="internal-draft-detail-page__public-feedback internal-draft-detail-page__public-feedback--readonly">
+                          <h3>Feedback publico enviado</h3>
+                          <p>{draft.userFeedbackSummary}</p>
+                        </div>
+                      ) : null}
+
                       <div className="internal-draft-detail-page__notes-field">
-                        <label htmlFor="draft-review-notes">Notas editoriales</label>
+                        <label htmlFor="draft-review-notes">
+                          Notas internas
+                        </label>
                         <textarea
                           id="draft-review-notes"
                           className="internal-draft-detail-page__notes-input"
                           value={reviewNotes}
                           onChange={(event) => setReviewNotes(event.target.value)}
-                          disabled={isTerminalDraft}
+                          disabled={draft.reviewStatus === "approved" || draft.reviewStatus === "archived"}
                         />
                       </div>
 
@@ -498,22 +767,78 @@ export function InternalDraftDetailPage() {
                           <Button
                             variant="outline"
                             onClick={handleSaveDraft}
-                            disabled={isSaving || isRejecting || isApproving}
+                            disabled={
+                              isSaving ||
+                              isRequestingChanges ||
+                              isRejecting ||
+                              isArchiving ||
+                              isApproving
+                            }
                           >
                             {isSaving ? "Guardando..." : "Guardar draft"}
                           </Button>
                           <Button
                             variant="outline"
-                            onClick={handleRejectDraft}
-                            disabled={isSaving || isRejecting || isApproving}
+                            onClick={handleRequestChanges}
+                            disabled={
+                              isSaving ||
+                              isRequestingChanges ||
+                              isRejecting ||
+                              isArchiving ||
+                              isApproving
+                            }
                           >
-                            {isRejecting ? "Rechazando..." : "Rechazar draft"}
+                            {isRequestingChanges
+                              ? "Pidiendo cambios..."
+                              : "Pedir cambios"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={handleRejectDraft}
+                            disabled={
+                              isSaving ||
+                              isRequestingChanges ||
+                              isRejecting ||
+                              isArchiving ||
+                              isApproving
+                            }
+                          >
+                            {isRejecting ? "No aprobando..." : "No aprobar"}
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={handleArchiveDraft}
+                            disabled={
+                              isSaving ||
+                              isRequestingChanges ||
+                              isRejecting ||
+                              isArchiving ||
+                              isApproving
+                            }
+                          >
+                            {isArchiving ? "Archivando..." : "Archivar"}
                           </Button>
                           <Button
                             onClick={handleApproveDraft}
-                            disabled={isSaving || isRejecting || isApproving}
+                            disabled={
+                              isSaving ||
+                              isRequestingChanges ||
+                              isRejecting ||
+                              isArchiving ||
+                              isApproving
+                            }
                           >
                             {isApproving ? "Aprobando..." : "Aprobar"}
+                          </Button>
+                        </div>
+                      ) : canArchiveDraft ? (
+                        <div className="internal-draft-detail-page__actions">
+                          <Button
+                            variant="outline"
+                            onClick={handleArchiveDraft}
+                            disabled={isArchiving}
+                          >
+                            {isArchiving ? "Archivando..." : "Archivar"}
                           </Button>
                         </div>
                       ) : draft.reviewStatus === "approved" && draft.approvedActivityId ? (
