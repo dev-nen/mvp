@@ -59,6 +59,22 @@ function getApprovedActivitySummary(draft) {
   return `#${draft.approvedActivityId}`;
 }
 
+function getPayloadReviewModeLabel(reviewStatus) {
+  if (reviewStatus === "pending_review") {
+    return "Editable";
+  }
+
+  if (reviewStatus === "needs_changes") {
+    return "Devuelto al usuario";
+  }
+
+  if (reviewStatus === "archived") {
+    return "Archivado";
+  }
+
+  return "Solo lectura";
+}
+
 export function InternalDraftInboxPage() {
   const navigate = useNavigate();
   const [drafts, setDrafts] = useState([]);
@@ -235,9 +251,7 @@ export function InternalDraftInboxPage() {
                             Payload revisado
                           </span>
                           <span className="internal-draft-inbox-page__draft-field-value">
-                            {draft.reviewStatus === "pending_review"
-                              ? "Editable"
-                              : "Solo lectura"}
+                            {getPayloadReviewModeLabel(draft.reviewStatus)}
                           </span>
                         </div>
 

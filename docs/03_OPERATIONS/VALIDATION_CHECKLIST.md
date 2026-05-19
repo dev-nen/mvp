@@ -119,6 +119,45 @@ Check:
 - [ ] internal lifecycle RPCs enforce `internal_tool_access`.
 - [ ] `get_internal_pvi_report` is service_role only.
 
+## Phase 2 Core smoke checklist
+
+Apply the Phase 2 Core SQL manually before these checks. Do not mark Phase 2
+Core live validated until these pass.
+
+Admin:
+
+- [ ] internal user can open `/internal/drafts`.
+- [ ] pending draft can be saved.
+- [ ] pending draft can be marked `needs_changes` with public feedback.
+- [ ] pending draft can be `No aprobada`/`rejected` with strong rejection feedback.
+- [ ] pending/needs_changes/rejected draft can be archived.
+- [ ] approved draft behavior still works.
+- [ ] `/internal/activities` still loads.
+- [ ] Phase 1 publish/unpublish still works.
+
+User:
+
+- [ ] normal user can open `/perfil/publicaciones`.
+- [ ] user sees only own records.
+- [ ] user sees `user_feedback_summary`.
+- [ ] user sees field-level feedback.
+- [ ] user does not see `internal_review_notes`.
+- [ ] user does not see `review_notes`.
+- [ ] user can despublicar own published activity.
+- [ ] user cannot republish directly.
+- [ ] user can open correction flow for `needs_changes`.
+- [ ] user correction creates a new linked `pending_review` draft.
+- [ ] user edit of published activity creates `pending_review` draft and unpublishes current activity.
+
+Negative:
+
+- [ ] anon cannot call user/admin RPCs.
+- [ ] authenticated non-owner cannot unpublish another user's activity.
+- [ ] authenticated non-owner cannot read another user's submissions.
+- [ ] authenticated non-internal cannot call admin lifecycle RPCs.
+- [ ] public catalog still reads `catalog_activities_read`.
+- [ ] inactive/deleted activities remain hidden from public catalog.
+
 Phase 1 admin activity catalog evidence recorded on 2026-05-19:
 
 - [x] authorized internal user loaded `/internal/activities`.

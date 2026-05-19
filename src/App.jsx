@@ -12,6 +12,7 @@ import { HomePage } from "@/pages/HomePage";
 
 const OPEN_FAVORITES_INTENT = { type: "open_favorites" };
 const OPEN_PROFILE_INTENT = { type: "open_profile" };
+const OPEN_PUBLICATIONS_INTENT = { type: "open_publications" };
 
 function lazyNamedPage(importer, exportName) {
   return lazy(() =>
@@ -66,6 +67,18 @@ const ProfilePage = lazyNamedPage(
   () => import("@/pages/ProfilePage"),
   "ProfilePage",
 );
+const UserPublicationsPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationsPage"),
+  "UserPublicationsPage",
+);
+const UserPublicationCorrectionPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationDraftFormPage"),
+  "UserPublicationCorrectionPage",
+);
+const UserActivityEditRequestPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationDraftFormPage"),
+  "UserActivityEditRequestPage",
+);
 const TermsOfUsePage = lazyNamedPage(
   () => import("@/pages/TermsOfUsePage"),
   "TermsOfUsePage",
@@ -103,6 +116,30 @@ function AppRoutes() {
             element={
               <ProtectedRoute intent={OPEN_PROFILE_INTENT}>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserPublicationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones/:draftId/corregir"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserPublicationCorrectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones/actividad/:activityId/editar"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserActivityEditRequestPage />
               </ProtectedRoute>
             }
           />

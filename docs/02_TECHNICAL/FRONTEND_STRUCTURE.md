@@ -13,6 +13,9 @@
 - `ParaCentrosPage`: landing para centros.
 - `PrivacyPolicyPage`, `TermsOfUsePage`, `LegalPage`: legales.
 - `ProfilePage`: perfil protegido.
+- `UserPublicationsPage`: inbox protegido de publicaciones propias.
+- User publication correction/edit pages: rutas protegidas para corregir
+  drafts en `needs_changes` y solicitar edicion de actividad propia publicada.
 - `FavoritesPage`, `FavoriteActivityDetailPage`: favoritos.
 - `InternalDraftInboxPage`, `InternalDraftCreatePage`, `InternalDraftDetailPage`, `InternalActivityCatalogPage`, `InternalApprovedActivityPage`: interno.
 
@@ -43,6 +46,18 @@
 - `activityContactOptionsService.js`: `activity_contact_options_read`.
 - `activityEventsService.js`: eventos vista/contacto.
 - Servicios internos: Draft Inbox, admin activity catalog, approved activities, access y subida de portada interna.
+- `userPublicationsService.js`: RPCs sanitizadas de Phase 2 Core para
+  `/perfil/publicaciones`, despublicar propio, correcciones y solicitudes de
+  edicion.
+
+## Phase 2 Core UI boundaries
+
+- User publication pages are normal protected user pages, not internal tooling.
+- User pages may render `user_feedback_summary` and `user_feedback_json` only.
+- User pages must not render internal notes, raw UUIDs, direct publish,
+  republish, approve, archive, or cross-user management controls.
+- Internal draft pages may render internal notes and feedback chip controls
+  because they are behind `InternalToolRoute` and internal RPC checks.
 
 ## Helpers
 

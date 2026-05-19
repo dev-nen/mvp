@@ -15,6 +15,16 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Mantener registrada la evidencia de Phase 1: `/internal/activities` está implementado y live-smoke validado para catálogo interno y publicar/despublicar.
 - Mantener visible la deuda técnica y no presentar el proyecto como production-ready.
 
+### Phase 2 Core update
+
+- Implementar Phase 2 Core en repo: lifecycle de drafts ampliado, ownership,
+  feedback publico separado, `/perfil/publicaciones`, despublicar propio,
+  correcciones y solicitudes de edicion con revision.
+- Mantener Phase 2 Core como `Partial` hasta aplicar SQL manualmente y validar
+  Supabase/RLS en vivo.
+- Provider/center ownership y alta publica autoservicio quedan para fases
+  posteriores; Phase 2 Core solo modela ownership por usuario que envia.
+
 ## Siguiente
 
 - Cerrar smoke tests live de Supabase, RLS y RPC.
@@ -24,6 +34,14 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Fortalecer reporting interno y lectura de eventos.
 - Mejorar checklist de release y evidencias de validación.
 - Seguir con la fase 2 de [Activity Admin Panel and User Submissions Spec](./ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md): aclaración de lifecycle de drafts (`needs_changes`, rechazo, archivado y reglas de resubmission).
+
+### Siguiente: Phase 2 Core validation
+
+- Completar smoke tests de Phase 2 Core despues de aplicar la migracion SQL:
+  admin lifecycle, inbox de usuario, feedback publico, ownership, despublicar
+  propio, correcciones y edicion de actividad publicada.
+- No marcar Phase 2 Core como validado live hasta comprobar permisos negativos
+  anon/no-owner/no-internal y flujos positivos admin/user.
 
 ## Luego
 

@@ -5,9 +5,9 @@ import {
 import { listInternalApprovedActivityStates } from "@/services/internalApprovedActivitiesService";
 
 const LIST_DRAFTS_SELECT =
-  "id, source_type, source_label, confidence_score, review_status, parsed_payload_json, reviewed_payload_json, created_at";
+  "id, source_type, source_label, confidence_score, review_status, parsed_payload_json, reviewed_payload_json, user_feedback_summary, user_feedback_json, revision_number, approved_activity_id, created_at, updated_at";
 const DRAFT_DETAIL_SELECT =
-  "id, source_type, source_label, source_file_path, source_file_name, source_mime_type, source_reference_url, raw_extracted_text, parsed_payload_json, reviewed_payload_json, confidence_score, review_status, review_notes, reviewed_by, approved_activity_id, created_by, created_at, updated_at";
+  "id, source_type, source_label, source_file_path, source_file_name, source_mime_type, source_reference_url, raw_extracted_text, parsed_payload_json, reviewed_payload_json, confidence_score, review_status, review_notes, internal_review_notes, user_feedback_summary, user_feedback_json, reviewed_by, approved_activity_id, created_by, submitted_by_user_id, parent_draft_id, root_draft_id, revision_number, edit_activity_id, created_at, updated_at";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -17,6 +17,10 @@ function getDraftPayload(payload) {
   return payload && typeof payload === "object" && !Array.isArray(payload)
     ? payload
     : {};
+}
+
+function getFeedbackItems(value) {
+  return Array.isArray(value) ? value : [];
 }
 
 function getDraftDisplayTitle(row) {
@@ -51,10 +55,20 @@ function normalizeDraftRow(row) {
           : Number(row.confidence_score),
     reviewStatus: getTrimmedText(row.review_status),
     reviewNotes: getTrimmedText(row.review_notes),
+    internalReviewNotes:
+      getTrimmedText(row.internal_review_notes) || getTrimmedText(row.review_notes),
+    userFeedbackSummary: getTrimmedText(row.user_feedback_summary),
+    userFeedbackJson: getFeedbackItems(row.user_feedback_json),
     reviewedBy: row.reviewed_by ?? null,
     approvedActivityId: row.approved_activity_id ?? null,
     approvedActivityIsPublished: null,
     createdBy: row.created_by ?? null,
+    submittedByUserId: row.submitted_by_user_id ?? null,
+    parentDraftId: row.parent_draft_id ?? null,
+    rootDraftId: row.root_draft_id ?? null,
+    revisionNumber:
+      typeof row.revision_number === "number" ? row.revision_number : 1,
+    editActivityId: row.edit_activity_id ?? null,
     createdAt: row.created_at ?? "",
     updatedAt: row.updated_at ?? "",
     displayTitle: getDraftDisplayTitle(row),
@@ -162,15 +176,19 @@ export async function createInternalDraft({
 
 export async function saveInternalDraftReview({
   draftId,
+  internalReviewNotes,
   reviewedPayload,
   reviewNotes,
 }) {
   const supabase = getSupabaseOrThrow();
+  const normalizedInternalReviewNotes =
+    getTrimmedText(internalReviewNotes) || getTrimmedText(reviewNotes) || null;
   const { data, error } = await supabase
     .from("activity_drafts")
     .update({
       reviewed_payload_json: reviewedPayload,
-      review_notes: getTrimmedText(reviewNotes) || null,
+      review_notes: normalizedInternalReviewNotes,
+      internal_review_notes: normalizedInternalReviewNotes,
       updated_at: new Date().toISOString(),
     })
     .eq("id", draftId)
@@ -193,8 +211,11 @@ export async function saveInternalDraftReview({
 
 export async function rejectInternalDraft({
   draftId,
+  internalReviewNotes,
   reviewedPayload,
   reviewNotes,
+  userFeedbackJson = [],
+  userFeedbackSummary = "",
   reviewedByUserId,
 }) {
   if (!reviewedByUserId) {
@@ -202,19 +223,19 @@ export async function rejectInternalDraft({
   }
 
   const supabase = getSupabaseOrThrow();
-  const { data, error } = await supabase
-    .from("activity_drafts")
-    .update({
-      reviewed_payload_json: reviewedPayload,
-      review_notes: getTrimmedText(reviewNotes) || null,
-      review_status: "rejected",
-      reviewed_by: reviewedByUserId,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", draftId)
-    .eq("review_status", "pending_review")
-    .select(DRAFT_DETAIL_SELECT)
-    .maybeSingle();
+  const { data, error } = await supabase.rpc(
+    "reject_activity_draft_with_feedback",
+    {
+      p_draft_id: draftId,
+      p_internal_review_notes:
+        getTrimmedText(internalReviewNotes) || getTrimmedText(reviewNotes) || null,
+      p_reviewed_payload: reviewedPayload,
+      p_user_feedback_json: Array.isArray(userFeedbackJson)
+        ? userFeedbackJson
+        : [],
+      p_user_feedback_summary: getTrimmedText(userFeedbackSummary) || null,
+    },
+  );
 
   if (error) {
     throw new Error(
@@ -222,11 +243,74 @@ export async function rejectInternalDraft({
     );
   }
 
-  if (!data) {
+  const row = Array.isArray(data) ? data[0] ?? null : data;
+
+  if (!row) {
     throw new Error("No pudimos rechazar el draft pendiente solicitado.");
   }
 
-  return normalizeDraftRow(data);
+  return getInternalDraftById(draftId);
+}
+
+export async function requestInternalDraftChanges({
+  draftId,
+  internalReviewNotes,
+  reviewedPayload,
+  reviewNotes,
+  userFeedbackJson = [],
+  userFeedbackSummary = "",
+}) {
+  const supabase = getSupabaseOrThrow();
+  const { data, error } = await supabase.rpc(
+    "request_activity_draft_changes",
+    {
+      p_draft_id: draftId,
+      p_internal_review_notes:
+        getTrimmedText(internalReviewNotes) || getTrimmedText(reviewNotes) || null,
+      p_reviewed_payload: reviewedPayload,
+      p_user_feedback_json: Array.isArray(userFeedbackJson)
+        ? userFeedbackJson
+        : [],
+      p_user_feedback_summary: getTrimmedText(userFeedbackSummary) || null,
+    },
+  );
+
+  if (error) {
+    throw new Error(
+      error.message || "No pudimos pedir cambios para el draft solicitado.",
+    );
+  }
+
+  const row = Array.isArray(data) ? data[0] ?? null : data;
+
+  if (!row) {
+    throw new Error("No pudimos pedir cambios para el draft pendiente solicitado.");
+  }
+
+  return getInternalDraftById(draftId);
+}
+
+export async function archiveInternalDraft({ draftId, internalReviewNotes, reviewNotes }) {
+  const supabase = getSupabaseOrThrow();
+  const { data, error } = await supabase.rpc("archive_activity_draft", {
+    p_draft_id: draftId,
+    p_internal_review_notes:
+      getTrimmedText(internalReviewNotes) || getTrimmedText(reviewNotes) || null,
+  });
+
+  if (error) {
+    throw new Error(
+      error.message || "No pudimos archivar el draft solicitado.",
+    );
+  }
+
+  const row = Array.isArray(data) ? data[0] ?? null : data;
+
+  if (!row) {
+    throw new Error("No pudimos archivar el draft solicitado.");
+  }
+
+  return getInternalDraftById(draftId);
 }
 
 export async function listDraftCenters() {

@@ -68,6 +68,7 @@ export function getDefaultDraftFormState() {
     venueName: "",
     venueAddress1: "",
     venuePostalCode: "",
+    sourceReferenceUrl: "",
   };
 }
 

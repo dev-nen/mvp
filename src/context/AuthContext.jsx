@@ -294,6 +294,13 @@ export function AuthProvider({ children }) {
       ) {
         navigate("/perfil");
       }
+
+      if (
+        normalizedIntent.type === "open_publications" &&
+        location.pathname !== "/perfil/publicaciones"
+      ) {
+        navigate("/perfil/publicaciones");
+      }
     },
     [clearPendingIntent, location.pathname, navigate],
   );

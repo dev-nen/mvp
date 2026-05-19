@@ -31,6 +31,21 @@ Expectativas:
 
 Validar en live antes de considerar cerrado.
 
+## Phase 2 Core publication security
+
+- User publication operations use security-definer RPCs with explicit
+  `auth.uid()` ownership checks. Frontend guards are UX only.
+- `review_notes` and `internal_review_notes` are internal-only. Normal-user
+  RPCs may return only `user_feedback_summary`, `user_feedback_json`, status,
+  and sanitized publication/draft fields.
+- `unpublish_my_activity` must enforce `activities.owner_user_id = auth.uid()`
+  server-side. Users cannot republish directly.
+- User correction and edit flows create new `pending_review` drafts and do not
+  overwrite old drafts or update live activities directly.
+- Admin lifecycle RPCs continue to enforce `internal_tool_access`.
+- `source_reference_url` remains draft traceability/correction support and is
+  not added to the public activity catalog model in Phase 2 Core.
+
 ## Public read models
 
 - `catalog_activities_read`: catálogo público.
@@ -88,6 +103,14 @@ El hardening del 2026-05-14 documenta:
 
 Estado: implementado en repo, pendiente de aplicación/validación live donde corresponda.
 
+## Phase 2 Core non-exposure rules
+
+- Do not expose internal notes in `/perfil/publicaciones` or child routes.
+- Do not expose raw Supabase UUIDs to normal users.
+- Do not add normal-user direct publish, republish, approve, archive, or
+  cross-user management actions.
+- Do not rely on frontend-only checks for owner or internal permissions.
+
 ## Pending live validations
 
 - RLS anon/auth/internal.
@@ -97,4 +120,7 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Profile provisioning.
 - Internal Draft Inbox access.
 - Internal admin activity catalog RPCs: internal authorized smoke passed; anon/non-internal denial checks still pending.
+- Phase 2 Core SQL/RPCs: pending manual apply and live smoke. Validate
+  owner-only reads, owner-only despublicar, admin-only lifecycle actions,
+  internal note non-leakage, and negative anon/non-owner/non-internal calls.
 - `/api/internal/pvi` bearer token y noindex headers.

@@ -322,6 +322,10 @@ const ca = {
     noCity: "Sense ciutat associada",
     authError:
       "No hem pogut actualitzar la informació del teu compte ara mateix.",
+    publicationsTitle: "Les meves publicacions",
+    publicationsDescription:
+      "Consulta l'estat de les activitats que has enviat a NensGo.",
+    publicationsAction: "Les meves publicacions",
     internalDescription:
       "Si formes part de l'equip, pots obrir el Draft Inbox des d'aquí.",
     internalAction: "Obrir Draft Inbox",
@@ -332,6 +336,87 @@ const ca = {
       "Entra amb Google o amb el teu email per revisar les dades i recuperar les activitats guardades.",
     openEmailAccess: "Obrir accés amb email",
     returnHint: "Tornaràs aquí després de completar l'accés.",
+  },
+  userPublications: {
+    back: "Tornar al perfil",
+    eyebrow: "Publicacions",
+    title: "Les meves publicacions",
+    description:
+      "Consulta l'estat de les activitats que has enviat o editat per a NensGo.",
+    loadingEyebrow: "Publicacions",
+    loadingTitle: "Carregant les teves publicacions",
+    loadingDescription:
+      "Estem preparant l'estat de les teves activitats enviades.",
+    errorEyebrow: "Publicacions",
+    loadErrorTitle: "No hem pogut carregar les teves publicacions",
+    loadErrorDescription: "Torna-ho a provar d'aqui a uns segons.",
+    retry: "Torna-ho a provar",
+    emptyEyebrow: "Publicacions",
+    emptyTitle: "Encara no tens publicacions enviades",
+    emptyDescription:
+      "Encara no tens publicacions enviades. Quan enviis o editis una activitat, en podras seguir l'estat aqui.",
+    status: {
+      inReview: "En revisio",
+      needsChanges: "Necessita canvis",
+      published: "Publicada",
+      unpublished: "Despublicada",
+      rejected: "No aprovada",
+      archived: "Arxivada",
+    },
+    actions: {
+      correct: "Corregir",
+      edit: "Editar publicacio",
+      unpublish: "Despublicar",
+      unpublishing: "Despublicant...",
+      unpublishConfirm:
+        "Aquesta activitat deixara de veure's al cataleg public. Per tornar-la a publicar necessitara revisio de NensGo.",
+      unpublishSuccess: "Activitat despublicada.",
+      unpublishError: "No hem pogut despublicar aquesta activitat.",
+    },
+  },
+  userPublicationForm: {
+    back: "Tornar a les meves publicacions",
+    cancel: "Cancel-lar",
+    submitting: "Enviant...",
+    loadingEyebrow: "Publicacio",
+    loadingTitle: "Carregant formulari",
+    loadingDescription: "Estem preparant la publicacio i les seves opcions.",
+    errorEyebrow: "Publicacio",
+    loadErrorTitle: "No hem pogut carregar aquesta publicacio",
+    loadErrorDescription: "Torna-ho a provar d'aqui a uns segons.",
+    submitErrorDescription: "No hem pogut enviar la publicacio.",
+    noOptionsTitle: "No hem pogut preparar les opcions",
+    noOptionsDescription:
+      "El formulari necessita centres, categories i tipus disponibles abans d'enviar canvis.",
+    correction: {
+      eyebrow: "Correccio",
+      title: "Corregir publicacio",
+      description: "Revisa els canvis que ha demanat NensGo.",
+      submit: "Enviar correccio",
+      success:
+        "Correccio enviada. NensGo tornara a revisar la publicacio.",
+    },
+    edit: {
+      eyebrow: "Edicio",
+      title: "Editar publicacio",
+      description: "Prepara canvis per a revisio de NensGo.",
+      warning:
+        "Editar aquesta publicacio la traura temporalment del cataleg public fins que NensGo revisi els canvis.",
+      submit: "Enviar canvis",
+      success:
+        "Canvis enviats. L'activitat queda fora del cataleg public fins que NensGo els aprovi.",
+    },
+    validation: {
+      title: "El titol es obligatori.",
+      description: "La descripcio es obligatoria.",
+      center: "El centre es obligatori.",
+      category: "La categoria es obligatoria.",
+      type: "El tipus es obligatori.",
+      schedule: "L'horari es obligatori.",
+      ageRange: "La regla d'edat rang necessita edat minima i maxima.",
+      ageFrom: "La regla d'edat des de necessita edat minima.",
+      ageUntil: "La regla d'edat fins a necessita edat maxima.",
+    },
   },
   favorites: {
     title: "Les teves activitats guardades",

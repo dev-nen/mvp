@@ -8,6 +8,20 @@
 - The Phase 1 SQL migration and return-type hotfix migration are versioned in `supabase/sql` and were applied for the manual live smoke.
 - User submissions, contact option lifecycle, draft lifecycle expansion, expiration lifecycle, and Vercel configuration remain out of scope.
 
+### Phase 2 Core status update
+
+- Product status: `Partial`.
+- Implementation status remains `Partial` until manual Supabase SQL apply and
+  live smoke validation pass.
+- Phase 1 admin activity catalog is implemented and live-smoke validated for an
+  internal authorized user.
+- Phase 2 Core is being implemented in repo: expanded draft lifecycle,
+  ownership, user-facing feedback, `/perfil/publicaciones`, owner-only
+  despublicar, correction resubmission, and user edit requests.
+- Provider/center account ownership, contact option lifecycle, expiration
+  lifecycle, public anonymous submissions, `/sugerir-actividad`, admin
+  card/list toggle, and Vercel configuration remain out of scope.
+
 ## 2. Problem Statement
 
 The PO needs a practical internal activity management capability:
@@ -491,6 +505,59 @@ Recommended decisions:
 - UI copy does not confuse draft status with publication state.
 - Existing approved activity publish/unpublish behavior is preserved.
 - RLS/RPC checks prevent normal users from reading internal draft details.
+
+### Phase 2 Core contract update
+
+Phase 2 Core product decisions are now closed for implementation:
+
+- Draft statuses are `pending_review`, `needs_changes`, `approved`,
+  `rejected`, and `archived`.
+- Normal users see `En revision`, `Necesita cambios`, `Publicada`,
+  `Despublicada`, `No aprobada`, or `Archivada`.
+- Admins may save pending review, approve, request changes, reject/no aprobar,
+  and archive.
+- Internal admin notes are separate from user-visible feedback and must never
+  be returned by normal-user RPCs.
+- User feedback has a summary plus field-level correction items in
+  `user_feedback_json`; that JSON must be an array.
+- The submitting user is responsible for that publication. There are no
+  provider/center user entities in this phase.
+- Normal users can despublicar only their own published activity. They cannot
+  publish, republish, approve, archive, or manage another user's records.
+- Corrections create a new linked draft/version. The old draft is preserved.
+- Editing a published activity as a normal user creates a new pending review
+  draft and immediately despublica the current activity until admin approval.
+- Admins can manage all drafts and activities through existing internal access
+  patterns.
+
+Phase 2 Core uses nullable ownership so existing internal/manual records remain
+compatible:
+
+- `activity_drafts.submitted_by_user_id` points to the submitting app user when
+  a normal user owns the submission.
+- `activities.owner_user_id` points to the responsible app user when the
+  approved activity came from a user-submitted draft.
+- When `approve_activity_draft` approves a draft with
+  `submitted_by_user_id`, the created activity sets
+  `activities.owner_user_id = activity_drafts.submitted_by_user_id`.
+- Existing internal/manual drafts with `submitted_by_user_id null` may keep
+  `owner_user_id null`.
+- `owner_user_id null` means normal users cannot manage that activity; admins
+  still can.
+
+`/perfil/publicaciones` is a protected user route, not an internal route. It
+shows only the current user's own submissions/publications through sanitized
+RPCs. It may show public feedback and field-level correction messages, but it
+must never show `review_notes`, `internal_review_notes`, Supabase UUIDs, raw
+technical errors, or other users' records.
+
+Admin review may use reusable chips/templates for `needs_changes` and
+`rejected`. Chips generate field-level items with a form field, payload path,
+reason code, and user-friendly Spanish message. Admins can edit the generated
+summary before sending it.
+
+Phase 2 Core remains `Partial` until SQL is manually applied and live smoke
+validation passes.
 
 ## 9. Recommended Phase 3
 

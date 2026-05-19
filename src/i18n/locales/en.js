@@ -317,6 +317,10 @@ const en = {
     noCity: "No city linked",
     authError:
       "We could not update your account information right now.",
+    publicationsTitle: "My publications",
+    publicationsDescription:
+      "Check the status of activities you sent to NensGo.",
+    publicationsAction: "My publications",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",
@@ -327,6 +331,86 @@ const en = {
       "Enter with Google or email to review your details and recover your saved activities.",
     openEmailAccess: "Open email access",
     returnHint: "You will come back here after completing access.",
+  },
+  userPublications: {
+    back: "Back to profile",
+    eyebrow: "Publications",
+    title: "My publications",
+    description:
+      "Check the status of activities you sent or edited for NensGo.",
+    loadingEyebrow: "Publications",
+    loadingTitle: "Loading your publications",
+    loadingDescription:
+      "We are preparing the status of your submitted activities.",
+    errorEyebrow: "Publications",
+    loadErrorTitle: "We could not load your publications",
+    loadErrorDescription: "Try again in a few seconds.",
+    retry: "Try again",
+    emptyEyebrow: "Publications",
+    emptyTitle: "You have not sent any publications yet",
+    emptyDescription:
+      "You have not sent any publications yet. When you send or edit an activity, you will be able to track its status here.",
+    status: {
+      inReview: "In review",
+      needsChanges: "Needs changes",
+      published: "Published",
+      unpublished: "Unpublished",
+      rejected: "Not approved",
+      archived: "Archived",
+    },
+    actions: {
+      correct: "Correct",
+      edit: "Edit publication",
+      unpublish: "Unpublish",
+      unpublishing: "Unpublishing...",
+      unpublishConfirm:
+        "This activity will stop appearing in the public catalog. To publish it again, NensGo will need to review it.",
+      unpublishSuccess: "Activity unpublished.",
+      unpublishError: "We could not unpublish this activity.",
+    },
+  },
+  userPublicationForm: {
+    back: "Back to my publications",
+    cancel: "Cancel",
+    submitting: "Sending...",
+    loadingEyebrow: "Publication",
+    loadingTitle: "Loading form",
+    loadingDescription: "We are preparing the publication and its options.",
+    errorEyebrow: "Publication",
+    loadErrorTitle: "We could not load this publication",
+    loadErrorDescription: "Try again in a few seconds.",
+    submitErrorDescription: "We could not send the publication.",
+    noOptionsTitle: "We could not prepare the options",
+    noOptionsDescription:
+      "The form needs available centers, categories and types before sending changes.",
+    correction: {
+      eyebrow: "Correction",
+      title: "Correct publication",
+      description: "Review the changes requested by NensGo.",
+      submit: "Send correction",
+      success: "Correction sent. NensGo will review the publication again.",
+    },
+    edit: {
+      eyebrow: "Edit",
+      title: "Edit publication",
+      description: "Prepare changes for NensGo review.",
+      warning:
+        "Editing this publication will temporarily remove it from the public catalog until NensGo reviews the changes.",
+      submit: "Send changes",
+      success:
+        "Changes sent. The activity is out of the public catalog until NensGo approves them.",
+    },
+    validation: {
+      title: "The title is required.",
+      description: "The description is required.",
+      center: "The center is required.",
+      category: "The category is required.",
+      type: "The type is required.",
+      schedule: "The schedule is required.",
+      ageRange: "The age range rule needs minimum and maximum ages.",
+      ageFrom: "The age from rule needs a minimum age.",
+      ageUntil: "The age until rule needs a maximum age.",
+    },
   },
   favorites: {
     title: "Your saved activities",
