@@ -35,6 +35,38 @@ Estado general: `Partial`. Hay SQL versionado en `supabase/sql`; Phase 1 del cat
 | `republish_approved_activity`            | Republicar actividad                  | Internal RPC                     | Debe validarse contra catálogo público.                        |
 | `get_internal_pvi_report`                | Reporting interno                     | Service role                     | Sólo vía `/api/internal/pvi`.                                  |
 
+### Phase 2 Core resources
+
+Phase 2 Core adds or redefines these repo-level Supabase contracts. They remain
+`Partial` until the migration is applied manually and live RLS/RPC smoke checks
+pass.
+
+| Resource | Purpose | Access | Notes |
+| --- | --- | --- | --- |
+| `activity_drafts.submitted_by_user_id` | Owner of user-submitted draft | Auth/Internal via RPC | Nullable; users only access own records through sanitized RPCs. |
+| `activity_drafts.parent_draft_id` / `root_draft_id` / `revision_number` | Linked resubmission/versioning | Auth/Internal via RPC | Corrections create a new draft; old draft is preserved. |
+| `activity_drafts.user_feedback_summary` | User-visible feedback summary | Auth/Internal via RPC | Spanish public feedback; not internal notes. |
+| `activity_drafts.user_feedback_json` | Field-level correction feedback | Auth/Internal via RPC | JSON array for form highlights. |
+| `activity_drafts.internal_review_notes` | Admin-only review notes | Internal only | Must never be returned by normal-user RPCs. |
+| `activities.owner_user_id` | Responsible app user for activity | Auth/Internal via RPC | Nullable; `null` means no normal-user management. |
+| `request_activity_draft_changes` | Mark draft as needs changes | Internal RPC | Saves public feedback and internal notes separately. |
+| `reject_activity_draft_with_feedback` | No aprobar draft | Internal RPC | Strong rejection with public feedback and internal notes. |
+| `archive_activity_draft` | Archive draft | Internal RPC | Removes from daily queue, retains history. |
+| `list_my_activity_publications` | User publications inbox | Auth RPC | Sanitized; no `review_notes`, no `internal_review_notes`, no UUID display. |
+| `unpublish_my_activity` | Despublicar own activity | Auth RPC | Enforces `owner_user_id = auth.uid()` server-side. |
+| `get_my_activity_draft_for_correction` | Load own correction draft | Auth RPC | Only `needs_changes`, sanitized. |
+| `resubmit_my_activity_draft` | Submit linked correction | Auth RPC | Creates new linked `pending_review` draft. |
+| `get_my_activity_for_edit` | Load own published activity for edit | Auth RPC | Owner-only, sanitized. |
+| `create_my_activity_edit_draft` | Create edit request | Auth RPC | Unpublishes current activity and creates `pending_review` draft. |
+
+When `approve_activity_draft` approves a draft with
+`submitted_by_user_id`, the created `activities` row must set
+`owner_user_id = activity_drafts.submitted_by_user_id`. Existing internal/manual
+drafts with `submitted_by_user_id null` may keep `owner_user_id null`.
+
+`source_reference_url` remains draft traceability and user correction support.
+It is not part of the public activity catalog model in Phase 2 Core.
+
 ## Public read models
 
 ### `catalog_activities_read`
@@ -76,6 +108,17 @@ Vista de municipios para onboarding. Debe limitarse a municipios activos, `place
 - Bucket Storage `activities`: puede alojar portadas de drafts internos bajo paths seguros como `drafts/{draftId}/...`; la base de datos guarda sólo la referencia/path, no binarios ni base64.
 
 Estado: `Partial`. Phase 1 de `/internal/activities` está implementada y live-smoke validada para un usuario interno autorizado; permisos negativos anon/non-internal y otras áreas Supabase siguen necesitando evidencia específica.
+
+### Phase 2 Core RLS expectations
+
+- Normal users can list/read only their own publication rows.
+- Normal users can see `user_feedback_summary` and `user_feedback_json`.
+- Normal users cannot see `review_notes` or `internal_review_notes`.
+- Normal users cannot approve, archive, publish, republish, or manage another
+  user's records.
+- Owner-only unpublish is enforced by SQL/RPC ownership checks, not frontend
+  guards.
+- Admin/internal RPCs keep using `internal_tool_access`.
 
 ## RLS validation needed
 
