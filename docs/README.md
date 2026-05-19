@@ -14,6 +14,7 @@ La raíz de `docs/` se mantiene limpia: este `README.md` y subcarpetas numeradas
 | [01_PRODUCT/PRODUCT_OVERVIEW.md](./01_PRODUCT/PRODUCT_OVERVIEW.md) | PO, diseño, negocio | Entender concepto, usuarios y alcance MVP |
 | [01_PRODUCT/USER_FLOWS.md](./01_PRODUCT/USER_FLOWS.md) | PO, QA, producto | Revisar flujos de usuario esperados |
 | [01_PRODUCT/ROADMAP.md](./01_PRODUCT/ROADMAP.md) | PO, liderazgo técnico | Separar ahora, siguiente, luego y diferido |
+| [01_PRODUCT/ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md](./01_PRODUCT/ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md) | PO, producto, ingeniería | Especificar panel interno de actividades, publicación/despublicación y futuras sugerencias de usuarios |
 | [02_TECHNICAL/TECHNICAL_HANDOFF_FOR_REVIEW.md](./02_TECHNICAL/TECHNICAL_HANDOFF_FOR_REVIEW.md) | CTO, tech lead, DevOps | Documento principal para revisión técnica externa |
 | [02_TECHNICAL/TECHNICAL_OVERVIEW.md](./02_TECHNICAL/TECHNICAL_OVERVIEW.md) | PO, tech lead | Resumen técnico compartible |
 | [02_TECHNICAL/ARCHITECTURE.md](./02_TECHNICAL/ARCHITECTURE.md) | Ingeniería | Arquitectura y flujos principales |

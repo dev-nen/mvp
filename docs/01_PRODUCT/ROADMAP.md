@@ -22,6 +22,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
 - Fortalecer reporting interno y lectura de eventos.
 - Mejorar checklist de release y evidencias de validación.
+- Implementar la fase 1 de [Activity Admin Panel and User Submissions Spec](./ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md): catálogo interno de actividades con cards y acción segura de publicar/despublicar. La especificación está definida; la implementación no empezó en esa tarea.
 
 ## Luego
 
@@ -31,6 +32,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Mini-formularios o alta asistida para centros.
 - Backoffice asistido para publicación.
 - Scout Manual v0 para crear drafts desde fuentes simples.
+- Sugerencias de actividades por usuarios logueados como submissions/drafts revisables, nunca publicación directa.
 - Analytics/insights más fuertes para producto y operación.
 
 ## Diferido
