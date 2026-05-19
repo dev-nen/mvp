@@ -119,6 +119,14 @@ Check:
 - [ ] internal lifecycle RPCs enforce `internal_tool_access`.
 - [ ] `get_internal_pvi_report` is service_role only.
 
+Phase 1 admin activity catalog evidence recorded on 2026-05-19:
+
+- [x] authorized internal user loaded `/internal/activities`.
+- [x] `Todas`, `Publicadas`, and `Despublicadas` filters worked.
+- [x] `Despublicar` changed the card state and removed the activity from the public catalog.
+- [x] `Republicar` returned the activity to the public catalog.
+- [ ] anon/non-internal calls to the admin activity RPCs remain separate RLS checks.
+
 ## Pre-merge checklist
 
 - [ ] Docs updated for any changed behavior.

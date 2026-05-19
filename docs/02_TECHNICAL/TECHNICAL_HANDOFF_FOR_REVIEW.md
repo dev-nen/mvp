@@ -23,6 +23,7 @@ El proyecto está en fase MVP/validación. Hay una base real implementada, pero 
 - Legal/trust pages para OAuth y confianza pública.
 - Draft Inbox interno y ciclo de actividad aprobada implementados en repo.
 - Alta manual interna de nuevas actividades como `activity_drafts`, con descripciÃ³n `plain`/`markdown` y portada por referencia de Storage.
+- Catálogo interno `/internal/activities` implementado y smoke live validado para usuario interno autorizado; no cubre todavía validación negativa anon/non-internal.
 - `/api/internal/pvi` como API interna protegida por bearer token.
 
 ## 3. Stack

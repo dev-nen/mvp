@@ -12,7 +12,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Validar contacto por `activity_contact_options_read`.
 - Validar rutas legales/trust y configuración OAuth.
 - Validar Draft Inbox e internal approved activity lifecycle con usuario interno real.
-- Validar el nuevo `/internal/activities` y sus RPCs de catálogo interno/publicación en Supabase live.
+- Mantener registrada la evidencia de Phase 1: `/internal/activities` está implementado y live-smoke validado para catálogo interno y publicar/despublicar.
 - Mantener visible la deuda técnica y no presentar el proyecto como production-ready.
 
 ## Siguiente
@@ -23,7 +23,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
 - Fortalecer reporting interno y lectura de eventos.
 - Mejorar checklist de release y evidencias de validación.
-- Seguir con la fase 2 de [Activity Admin Panel and User Submissions Spec](./ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md): aclaración de lifecycle de drafts (`needs_changes`, rechazo, archivado y reglas de resubmission) después de validar live la fase 1.
+- Seguir con la fase 2 de [Activity Admin Panel and User Submissions Spec](./ACTIVITY_ADMIN_AND_SUBMISSIONS_SPEC.md): aclaración de lifecycle de drafts (`needs_changes`, rechazo, archivado y reglas de resubmission).
 
 ## Luego
 

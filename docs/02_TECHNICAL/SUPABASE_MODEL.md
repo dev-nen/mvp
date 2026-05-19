@@ -4,7 +4,7 @@
 
 Este documento resume los recursos Supabase relevantes para la revisión técnica. No sustituye una inspección live del proyecto Supabase.
 
-Estado general: `Partial`. Hay SQL versionado en `supabase/sql`, pero RLS, grants, datos y RPCs deben validarse en el entorno live.
+Estado general: `Partial`. Hay SQL versionado en `supabase/sql`; Phase 1 del catálogo interno de actividades tiene smoke live para usuario interno autorizado, pero RLS/grants/datos/RPCs amplios deben seguir validándose en el entorno live.
 
 ## Access table
 
@@ -70,11 +70,12 @@ Vista de municipios para onboarding. Debe limitarse a municipios activos, `place
 - `internal_tool_access`: permiso para herramientas internas.
 - `list_internal_admin_activities(...)`: read model interno para `/internal/activities`; incluye publicadas y despublicadas, excluye soft-deleted y no debe sustituir a `catalog_activities_read`.
 - `publish_internal_admin_activity(...)` / `unpublish_internal_admin_activity(...)`: RPCs internas por `activity_id`; actualizan la visibilidad técnica (`activities.is_active`) sin cambiar estados de draft.
+- `supabase/sql/2026-05-19_internal_activity_admin_catalog_type_hotfix.sql`: hotfix aplicado tras error PostgREST `42804`; las columnas devueltas por RPC deben castear exactamente a los tipos declarados en `RETURNS TABLE`.
 - RPCs de lifecycle: editar, despublicar y republicar actividades aprobadas.
 - `activities.description` + `activities.description_format`: fuente editorial canónica para descripción larga (`plain` o `markdown`).
 - Bucket Storage `activities`: puede alojar portadas de drafts internos bajo paths seguros como `drafts/{draftId}/...`; la base de datos guarda sólo la referencia/path, no binarios ni base64.
 
-Estado: `Partial`. Hay implementación en repo, pero requiere permisos reales, seeds y smoke live.
+Estado: `Partial`. Phase 1 de `/internal/activities` está implementada y live-smoke validada para un usuario interno autorizado; permisos negativos anon/non-internal y otras áreas Supabase siguen necesitando evidencia específica.
 
 ## RLS validation needed
 

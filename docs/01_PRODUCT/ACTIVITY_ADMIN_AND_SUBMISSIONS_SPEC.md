@@ -4,9 +4,9 @@
 
 - Product status: `En definición`.
 - Implementation status: `Partial`.
-- Phase 1 admin activity catalog is implemented in the repo behind `/internal/activities`.
-- The Phase 1 SQL migration is versioned in `supabase/sql`, but it has not been applied or validated against live Supabase in this task.
-- User submissions, contact option lifecycle, draft lifecycle expansion, expiration lifecycle, live Supabase state, and Vercel configuration remain out of scope.
+- Phase 1 admin activity catalog is implemented in the repo behind `/internal/activities` and live-smoke validated against Supabase.
+- The Phase 1 SQL migration and return-type hotfix migration are versioned in `supabase/sql` and were applied for the manual live smoke.
+- User submissions, contact option lifecycle, draft lifecycle expansion, expiration lifecycle, and Vercel configuration remain out of scope.
 
 ## 2. Problem Statement
 
@@ -192,6 +192,9 @@ Current SQL and read models:
 - `supabase/sql/2026-05-19_internal_activity_admin_catalog.sql` adds the
   internal admin catalog RPCs for listing, publishing, and unpublishing
   non-deleted activities by `activity_id`.
+- `supabase/sql/2026-05-19_internal_activity_admin_catalog_type_hotfix.sql`
+  replaces those RPC definitions with explicit output casts after live
+  Supabase returned PostgREST error `42804` for a return-type mismatch.
 
 Current RPCs related to activity lifecycle:
 
@@ -230,8 +233,10 @@ Current draft lifecycle:
 
 Remaining gaps:
 
-- `/internal/activities` and its RPC contracts are implemented in repo, but not
-  applied or smoke-tested live.
+- `/internal/activities` and its Phase 1 RPC contracts are implemented in repo
+  and live-smoke validated for an internal authorized user. Broader RLS
+  hardening checks for anon/non-internal users remain part of the reusable
+  validation checklist.
 - Existing approved activity RPCs are tied to Draft Inbox-managed activities via
   `activity_drafts.approved_activity_id`.
 - Activities that exist outside the Draft Inbox link can be published or
@@ -265,9 +270,12 @@ Repo implementation note: this phase now exists in the codebase as a partial
 implementation. It adds `/internal/activities`,
 `src/pages/InternalActivityCatalogPage.jsx`,
 `src/services/internalActivityCatalogService.js`, and
-`supabase/sql/2026-05-19_internal_activity_admin_catalog.sql`. It still needs
-the SQL migration applied and live RLS/RPC smoke-tested before it can be treated
-as validated.
+`supabase/sql/2026-05-19_internal_activity_admin_catalog.sql`. The follow-up
+`supabase/sql/2026-05-19_internal_activity_admin_catalog_type_hotfix.sql`
+fixes the live PostgREST `42804` return-type mismatch by casting returned
+values to the declared RPC contract. The internal authorized-user live smoke
+passed after applying the hotfix; anon/non-internal RLS checks remain reusable
+validation items, not automatically closed by this smoke.
 
 ### Objective
 
@@ -423,6 +431,40 @@ filters, not pure activity catalog visibility.
 
 Reason: route, service, SQL/RPC, RLS, card, and catalog read-model impact cross
 multiple ownership areas.
+
+## Phase 1 Live Validation
+
+Status: Phase 1 is implemented in repo and live-smoke validated for an
+authorized internal user.
+
+Branch and commits:
+
+- `feat/internal-activity-admin-catalog`
+- `737ed51 Add internal activity catalog with publish controls`
+- `79507c2 Fix internal activity catalog RPC return types`
+
+SQL involved:
+
+- `supabase/sql/2026-05-19_internal_activity_admin_catalog.sql`
+- `supabase/sql/2026-05-19_internal_activity_admin_catalog_type_hotfix.sql`
+
+The hotfix migration was required after live Supabase/PostgREST returned error
+`42804` from `list_internal_admin_activities`. The fix keeps the same RPC
+contracts and casts returned values to the exact `RETURNS TABLE` types.
+
+Manual live validation passed:
+
+- `/internal/activities` loads.
+- `Todas` shows activities.
+- `Publicadas` works.
+- `Despublicadas` works.
+- `Despublicar` changes the card state.
+- The despublicada activity disappears from the public catalog.
+- `Republicar` returns the activity to the public catalog.
+
+This validates Phase 1 only. It does not implement or validate user
+submissions, contact option lifecycle, draft lifecycle expansion, expiration
+lifecycle, provider self-service, or a `publication_status` field.
 
 ## 8. Recommended Phase 2
 
