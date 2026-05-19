@@ -12,6 +12,7 @@ import { HomePage } from "@/pages/HomePage";
 
 const OPEN_FAVORITES_INTENT = { type: "open_favorites" };
 const OPEN_PROFILE_INTENT = { type: "open_profile" };
+const OPEN_PUBLICATIONS_INTENT = { type: "open_publications" };
 
 function lazyNamedPage(importer, exportName) {
   return lazy(() =>
@@ -66,6 +67,10 @@ const ProfilePage = lazyNamedPage(
   () => import("@/pages/ProfilePage"),
   "ProfilePage",
 );
+const UserPublicationsPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationsPage"),
+  "UserPublicationsPage",
+);
 const TermsOfUsePage = lazyNamedPage(
   () => import("@/pages/TermsOfUsePage"),
   "TermsOfUsePage",
@@ -103,6 +108,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute intent={OPEN_PROFILE_INTENT}>
                 <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserPublicationsPage />
               </ProtectedRoute>
             }
           />

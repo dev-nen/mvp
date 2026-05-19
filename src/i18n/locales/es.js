@@ -323,6 +323,10 @@ const es = {
     noCity: "Sin ciudad asociada",
     authError:
       "No pudimos actualizar la información de tu cuenta ahora mismo.",
+    publicationsTitle: "Mis publicaciones",
+    publicationsDescription:
+      "Consulta el estado de las actividades que enviaste a NensGo.",
+    publicationsAction: "Mis publicaciones",
     internalDescription:
       "Si formas parte del equipo, puedes abrir el Draft Inbox desde aquí.",
     internalAction: "Abrir Draft Inbox",
@@ -333,6 +337,33 @@ const es = {
       "Entra con Google o con tu email para revisar tus datos y recuperar tus actividades guardadas.",
     openEmailAccess: "Abrir acceso con email",
     returnHint: "Volverás aquí después de completar el acceso.",
+  },
+  userPublications: {
+    back: "Volver al perfil",
+    eyebrow: "Publicaciones",
+    title: "Mis publicaciones",
+    description:
+      "Consulta el estado de las actividades que enviaste o editaste para NensGo.",
+    loadingEyebrow: "Publicaciones",
+    loadingTitle: "Cargando tus publicaciones",
+    loadingDescription:
+      "Estamos preparando el estado de tus actividades enviadas.",
+    errorEyebrow: "Publicaciones",
+    loadErrorTitle: "No pudimos cargar tus publicaciones",
+    loadErrorDescription: "Inténtalo de nuevo en unos segundos.",
+    retry: "Reintentar",
+    emptyEyebrow: "Publicaciones",
+    emptyTitle: "Todavía no tienes publicaciones enviadas",
+    emptyDescription:
+      "Todavía no tienes publicaciones enviadas. Cuando envíes o edites una actividad, podrás seguir su estado aquí.",
+    status: {
+      inReview: "En revisión",
+      needsChanges: "Necesita cambios",
+      published: "Publicada",
+      unpublished: "Despublicada",
+      rejected: "No aprobada",
+      archived: "Archivada",
+    },
   },
   favorites: {
     title: "Tus actividades guardadas",

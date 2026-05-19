@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   ArrowLeft,
+  ClipboardList,
   LoaderCircle,
   LogOut,
   Mail,
@@ -146,6 +147,26 @@ export function ProfilePage() {
                       {t("profile.authError")}
                     </p>
                   ) : null}
+
+                  <div className="profile-page__publication-tool">
+                    <div>
+                      <h3 className="profile-page__tool-title">
+                        {t("profile.publicationsTitle")}
+                      </h3>
+                      <p className="profile-page__tool-description">
+                        {t("profile.publicationsDescription")}
+                      </p>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="profile-page__action-button"
+                      onClick={() => navigate("/perfil/publicaciones")}
+                    >
+                      <ClipboardList />
+                      {t("profile.publicationsAction")}
+                    </Button>
+                  </div>
 
                   {hasDraftInboxAccess ? (
                     <div className="profile-page__internal-tool">

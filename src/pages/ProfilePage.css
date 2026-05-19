@@ -172,6 +172,27 @@
   color: var(--color-text);
 }
 
+.profile-page__publication-tool {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(62, 191, 157, 0.22);
+  background: rgba(62, 191, 157, 0.09);
+}
+
+.profile-page__tool-title {
+  color: var(--color-text);
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.profile-page__tool-description {
+  margin-top: 0.35rem;
+  color: var(--color-text-muted);
+}
+
 .profile-page__action-button {
   width: fit-content;
   min-width: 12rem;

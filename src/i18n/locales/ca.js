@@ -322,6 +322,10 @@ const ca = {
     noCity: "Sense ciutat associada",
     authError:
       "No hem pogut actualitzar la informació del teu compte ara mateix.",
+    publicationsTitle: "Les meves publicacions",
+    publicationsDescription:
+      "Consulta l'estat de les activitats que has enviat a NensGo.",
+    publicationsAction: "Les meves publicacions",
     internalDescription:
       "Si formes part de l'equip, pots obrir el Draft Inbox des d'aquí.",
     internalAction: "Obrir Draft Inbox",
@@ -332,6 +336,33 @@ const ca = {
       "Entra amb Google o amb el teu email per revisar les dades i recuperar les activitats guardades.",
     openEmailAccess: "Obrir accés amb email",
     returnHint: "Tornaràs aquí després de completar l'accés.",
+  },
+  userPublications: {
+    back: "Tornar al perfil",
+    eyebrow: "Publicacions",
+    title: "Les meves publicacions",
+    description:
+      "Consulta l'estat de les activitats que has enviat o editat per a NensGo.",
+    loadingEyebrow: "Publicacions",
+    loadingTitle: "Carregant les teves publicacions",
+    loadingDescription:
+      "Estem preparant l'estat de les teves activitats enviades.",
+    errorEyebrow: "Publicacions",
+    loadErrorTitle: "No hem pogut carregar les teves publicacions",
+    loadErrorDescription: "Torna-ho a provar d'aqui a uns segons.",
+    retry: "Torna-ho a provar",
+    emptyEyebrow: "Publicacions",
+    emptyTitle: "Encara no tens publicacions enviades",
+    emptyDescription:
+      "Encara no tens publicacions enviades. Quan enviis o editis una activitat, en podras seguir l'estat aqui.",
+    status: {
+      inReview: "En revisio",
+      needsChanges: "Necessita canvis",
+      published: "Publicada",
+      unpublished: "Despublicada",
+      rejected: "No aprovada",
+      archived: "Arxivada",
+    },
   },
   favorites: {
     title: "Les teves activitats guardades",

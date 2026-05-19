@@ -317,6 +317,10 @@ const en = {
     noCity: "No city linked",
     authError:
       "We could not update your account information right now.",
+    publicationsTitle: "My publications",
+    publicationsDescription:
+      "Check the status of activities you sent to NensGo.",
+    publicationsAction: "My publications",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",
@@ -327,6 +331,33 @@ const en = {
       "Enter with Google or email to review your details and recover your saved activities.",
     openEmailAccess: "Open email access",
     returnHint: "You will come back here after completing access.",
+  },
+  userPublications: {
+    back: "Back to profile",
+    eyebrow: "Publications",
+    title: "My publications",
+    description:
+      "Check the status of activities you sent or edited for NensGo.",
+    loadingEyebrow: "Publications",
+    loadingTitle: "Loading your publications",
+    loadingDescription:
+      "We are preparing the status of your submitted activities.",
+    errorEyebrow: "Publications",
+    loadErrorTitle: "We could not load your publications",
+    loadErrorDescription: "Try again in a few seconds.",
+    retry: "Try again",
+    emptyEyebrow: "Publications",
+    emptyTitle: "You have not sent any publications yet",
+    emptyDescription:
+      "You have not sent any publications yet. When you send or edit an activity, you will be able to track its status here.",
+    status: {
+      inReview: "In review",
+      needsChanges: "Needs changes",
+      published: "Published",
+      unpublished: "Unpublished",
+      rejected: "Not approved",
+      archived: "Archived",
+    },
   },
   favorites: {
     title: "Your saved activities",
