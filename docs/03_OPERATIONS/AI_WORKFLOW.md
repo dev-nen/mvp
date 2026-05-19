@@ -45,6 +45,21 @@ The source of truth is:
 Do not trust chat memory over the current repo. If historical docs conflict
 with the active branch, the active branch wins.
 
+## Tooling Lanes
+
+Use the lightest Codex surface that matches the task risk.
+
+- Codex app or VS Code Codex is the default lane for `XS` and most `S` tasks.
+- Codex CLI is the heavier lane for `M`/`L` tasks when the work benefits from
+  explicit terminal context, long-running discovery, review passes, MCP checks,
+  or careful command validation.
+- CodeGraph is optional and not part of the default workflow. Until it is
+  explicitly piloted and adopted, do not assume it is installed, configured, or
+  available to any Codex surface.
+
+Tool choice does not change the source of truth: the active branch, current
+repo files, current docs, real diff, and executed validations still decide.
+
 ## Task Sizes
 
 ### XS
@@ -82,8 +97,12 @@ Examples:
 Process:
 
 ```txt
-brief diagnosis -> surgical change -> validation -> commit -> no push
+brief diagnosis + intended files -> surgical change -> validation -> commit -> no push
 ```
+
+The brief diagnosis is the `S`-level plan. It should name branch context,
+intended files, validation, and why the task stays `S`. It does not need the
+full `PLANS.md` template unless risk grows.
 
 ### M
 
@@ -102,7 +121,7 @@ Examples:
 Process:
 
 ```txt
-discovery read-only -> short plan -> implementation -> validation -> commit -> no push
+discovery read-only -> short written plan -> implementation -> validation -> commit -> no push
 ```
 
 ### L
@@ -165,7 +184,13 @@ Do not mix implementation and review in the same prompt unless explicitly reques
 
 ## Validation Expectations
 
-Default Windows-safe validation:
+Start and end meaningful work by inspecting:
+
+```powershell
+git status --short --branch
+```
+
+Default Windows-safe validation for code/runtime changes:
 
 ```powershell
 npm.cmd run check
@@ -180,6 +205,10 @@ Notes:
   but `npm.cmd run build` may still be run explicitly for clarity.
 - Plain `npm run ...` can be blocked by PowerShell execution policy on Windows.
   Prefer `npm.cmd` when needed.
+- For docs-only changes, `git diff --check` plus a final `git status` can be
+  enough when no runtime behavior, scripts, package files, or generated assets
+  changed. Say explicitly if `npm.cmd run check` / `npm.cmd run build` were not
+  run because the task was documentation-only.
 - For UI tasks, add manual/static checks that match the changed surface.
 - For Supabase/auth/data tasks, repo checks are not enough; document any live
   validation that remains pending.

@@ -4,6 +4,14 @@ These templates are reusable prompts for NensGo. Pick the smallest mode that
 matches the task risk. Do not paste every section if a task is XS/S and the
 context is already clear.
 
+Tooling lane:
+
+- Use Codex app or VS Code Codex for `XS` and most `S` tasks.
+- Use Codex CLI when `M`/`L` work benefits from terminal context, long-running
+  discovery, review, command validation, or MCP checks.
+- Do not assume CodeGraph is installed or configured. Treat it as an optional
+  future pilot unless the prompt explicitly says it is available.
+
 ## DISCOVERY READ-ONLY
 
 ```txt
@@ -31,7 +39,9 @@ REQUIRED READING
 - docs/README.md
 - docs/00_START/PROJECT_BRIEF.md
 - docs/02_TECHNICAL/ARCHITECTURE.md
+- docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md
 - docs/03_OPERATIONS/AI_WORKFLOW.md
+- docs/03_OPERATIONS/VALIDATION_CHECKLIST.md
 - [feature-specific docs]
 
 QUESTIONS TO ANSWER
@@ -64,6 +74,12 @@ Implementation task.
 Use the task size process from docs/03_OPERATIONS/AI_WORKFLOW.md.
 Do not refactor unrelated code.
 Do not push.
+
+FIRST
+- Confirm current branch and git status.
+- For `S`, provide brief diagnosis, intended files, validation, and why it
+  stays `S`.
+- For `M`/`L`, provide the required written plan before editing.
 
 OBJECTIVE
 [What must change.]

@@ -2,7 +2,13 @@
 
 ## When To Use This
 
-Use this structure for any long-running or non-trivial implementation task.
+Use this structure for `M`/`L`, long-running, or high-risk implementation
+tasks.
+
+For `S` tasks, use the lighter ceremony from
+`docs/03_OPERATIONS/AI_WORKFLOW.md`: brief diagnosis, intended files,
+validation, and why the task stays `S`. Do not use the full template unless
+the task grows beyond `S`.
 
 ## Plan Rules
 
@@ -10,6 +16,8 @@ Use this structure for any long-running or non-trivial implementation task.
 - If the user does not specify a branch, base the plan on the branch currently checked out in git.
 - Do not assume `main` is always the active implementation branch.
 - Use `main` as a comparison baseline only when the task explicitly requires it.
+- Name whether the task is `M` or `L`; if it was initially thought to be `S`,
+  state what made it grow.
 - Separate current state, target change, and later roadmap.
 - Name touched files explicitly.
 - Name out-of-scope files or systems explicitly.

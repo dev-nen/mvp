@@ -36,8 +36,16 @@ If the task affects a specific feature, also read that feature's docs in `docs/`
 
 ## Planning Discipline
 
-- Use Plan Mode or an explicit written plan for non-trivial work.
-- Treat any task touching multiple files, UX, data, auth, detail, catalog, favorites, profile, branding, or Supabase as non-trivial.
+- Classify the task first with `docs/03_OPERATIONS/AI_WORKFLOW.md`.
+- `XS` tasks may proceed directly after branch/context checks.
+- `S` tasks require a brief diagnosis before editing: branch context, intended files,
+  validation, and why the task stays `S`. They do not require the full
+  `PLANS.md` template unless risk grows.
+- `M` and `L` tasks require an explicit written plan before implementation.
+- Treat any task touching multiple files, UX, data, auth, detail, catalog,
+  favorites, profile, branding, or Supabase as potentially non-trivial; if it
+  remains `S`, state why it does not change rules, routes, data, auth,
+  Supabase, protected intent, or shared contracts.
 - Do not start implementation from intuition alone.
 - Make branch context explicit in the plan.
 - Use `docs/03_OPERATIONS/AI_WORKFLOW.md` to choose task size and ceremony.
@@ -50,7 +58,7 @@ The size of a task is defined by real risk, not by the name of the component.
 - `S`: localized UI/UX adjustment or small bug fix that does not change rules,
   auth, data, routes, Supabase, protected intent, or shared contracts.
 - `M`: several files or shared logic with controlled risk; discovery read-only
-  and a short plan are expected.
+  and a short written plan are expected.
 - `L`: data, auth, Supabase, RLS, important routing, protected intent, central
   UX, backoffice, SEO/public route posture, or architecture; use discovery,
   SDD/scope, implementation, read-only review, and fix pack.
@@ -63,6 +71,15 @@ protected intent, or favorites logic.
 
 - Workflow contract: `docs/03_OPERATIONS/AI_WORKFLOW.md`
 - Prompt templates: `docs/03_OPERATIONS/DISKETNEN_TEMPLATES.md`
+
+## Codex Tooling Lanes
+
+- Codex app and VS Code Codex are the default surfaces for `XS` and most `S`
+  work.
+- Codex CLI is an optional heavier lane for `M`/`L` discovery, implementation,
+  review, long-running sessions, or MCP experiments.
+- CodeGraph is not part of the default workflow until explicitly piloted and
+  adopted. Do not assume it is installed or configured.
 
 ## Scope Rules
 
