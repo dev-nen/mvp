@@ -71,6 +71,14 @@ const UserPublicationsPage = lazyNamedPage(
   () => import("@/pages/UserPublicationsPage"),
   "UserPublicationsPage",
 );
+const UserPublicationCorrectionPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationDraftFormPage"),
+  "UserPublicationCorrectionPage",
+);
+const UserActivityEditRequestPage = lazyNamedPage(
+  () => import("@/pages/UserPublicationDraftFormPage"),
+  "UserActivityEditRequestPage",
+);
 const TermsOfUsePage = lazyNamedPage(
   () => import("@/pages/TermsOfUsePage"),
   "TermsOfUsePage",
@@ -116,6 +124,22 @@ function AppRoutes() {
             element={
               <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
                 <UserPublicationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones/:draftId/corregir"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserPublicationCorrectionPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/publicaciones/actividad/:activityId/editar"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <UserActivityEditRequestPage />
               </ProtectedRoute>
             }
           />

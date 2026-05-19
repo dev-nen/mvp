@@ -31,16 +31,30 @@ export function ScoutDraftReviewForm({
   categoryChoices,
   centerChoices,
   formState,
+  highlightedFields = [],
   imagePreviewSrc = "",
   isImageUploadEnabled = false,
   isReadOnly = false,
   onFieldChange,
   onImageFileChange,
   showImageUrlField = true,
+  showSourceReferenceUrlField = false,
   typeChoices,
 }) {
   const descriptionRef = useRef(null);
   const isMarkdownDescription = formState.descriptionFormat === "markdown";
+  const highlightedFieldSet = new Set(highlightedFields);
+
+  const getFieldClassName = (fieldName, extraClassName = "") =>
+    [
+      "scout-draft-review-form__field",
+      extraClassName,
+      highlightedFieldSet.has(fieldName)
+        ? "scout-draft-review-form__field--highlighted"
+        : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
 
   const applyMarkdownSnippet = (kind) => {
     if (isReadOnly || !isMarkdownDescription) {
@@ -79,7 +93,7 @@ export function ScoutDraftReviewForm({
   return (
     <div className="scout-draft-review-form">
       <div className="scout-draft-review-form__grid">
-        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+        <div className={getFieldClassName("title", "scout-draft-review-form__field--full")}>
           <label htmlFor="draft-title">Título</label>
           <Input
             id="draft-title"
@@ -90,7 +104,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("descriptionFormat")}>
           <label htmlFor="draft-description-format">Formato de descripción</label>
           <select
             id="draft-description-format"
@@ -104,7 +118,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+        <div className={getFieldClassName("description", "scout-draft-review-form__field--full")}>
           <div className="scout-draft-review-form__label-row">
             <label htmlFor="draft-description">Descripción larga</label>
             {isMarkdownDescription ? (
@@ -190,7 +204,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         {isImageUploadEnabled ? (
-          <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+          <div className={getFieldClassName("imageUrl", "scout-draft-review-form__field--full")}>
             <label htmlFor="draft-cover-image">Imagen principal</label>
             <label className="scout-draft-review-form__file-drop" htmlFor="draft-cover-image">
               <ImagePlus />
@@ -207,7 +221,7 @@ export function ScoutDraftReviewForm({
         ) : null}
 
         {showImageUrlField ? (
-          <div className="scout-draft-review-form__field">
+          <div className={getFieldClassName("imageUrl")}>
             <label htmlFor="draft-image-url">Referencia de imagen</label>
             <Input
               id="draft-image-url"
@@ -222,6 +236,21 @@ export function ScoutDraftReviewForm({
           </div>
         ) : null}
 
+        {showSourceReferenceUrlField ? (
+          <div className={getFieldClassName("sourceReferenceUrl")}>
+            <label htmlFor="draft-source-reference-url">Enlace de referencia</label>
+            <Input
+              id="draft-source-reference-url"
+              className="scout-draft-review-form__input"
+              value={formState.sourceReferenceUrl || ""}
+              onChange={(event) =>
+                onFieldChange("sourceReferenceUrl", event.target.value)
+              }
+              disabled={isReadOnly}
+            />
+          </div>
+        ) : null}
+
         {imagePreviewSrc ? (
           <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
             <span className="scout-draft-review-form__preview-label">
@@ -233,7 +262,7 @@ export function ScoutDraftReviewForm({
           </div>
         ) : null}
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("centerId")}>
           <label htmlFor="draft-center-id">Centro</label>
           <select
             id="draft-center-id"
@@ -251,7 +280,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("categoryId")}>
           <label htmlFor="draft-category-id">Categoría</label>
           <select
             id="draft-category-id"
@@ -269,7 +298,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("typeId")}>
           <label htmlFor="draft-type-id">Tipo</label>
           <select
             id="draft-type-id"
@@ -287,7 +316,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("ageRuleType")}>
           <label htmlFor="draft-age-rule-type">Regla de edad</label>
           <select
             id="draft-age-rule-type"
@@ -303,7 +332,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("ageMin")}>
           <label htmlFor="draft-age-min">Edad mínima</label>
           <Input
             id="draft-age-min"
@@ -315,7 +344,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("ageMax")}>
           <label htmlFor="draft-age-max">Edad máxima</label>
           <Input
             id="draft-age-max"
@@ -327,7 +356,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("priceLabel")}>
           <label htmlFor="draft-price-label">Texto de precio</label>
           <Input
             id="draft-price-label"
@@ -338,7 +367,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("isFree")}>
           <label htmlFor="draft-is-free">Gratuidad</label>
           <select
             id="draft-is-free"
@@ -352,7 +381,7 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+        <div className={getFieldClassName("scheduleLabel", "scout-draft-review-form__field--full")}>
           <label htmlFor="draft-schedule-label">Horario</label>
           <Input
             id="draft-schedule-label"
@@ -363,7 +392,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("venueName")}>
           <label htmlFor="draft-venue-name">Nombre del lugar</label>
           <Input
             id="draft-venue-name"
@@ -374,7 +403,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field">
+        <div className={getFieldClassName("venuePostalCode")}>
           <label htmlFor="draft-venue-postal-code">Código postal</label>
           <Input
             id="draft-venue-postal-code"
@@ -385,7 +414,7 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+        <div className={getFieldClassName("venueAddress1", "scout-draft-review-form__field--full")}>
           <label htmlFor="draft-venue-address-1">Dirección</label>
           <Input
             id="draft-venue-address-1"

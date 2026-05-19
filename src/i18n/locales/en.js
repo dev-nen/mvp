@@ -359,12 +359,57 @@ const en = {
       archived: "Archived",
     },
     actions: {
+      correct: "Correct",
+      edit: "Edit publication",
       unpublish: "Unpublish",
       unpublishing: "Unpublishing...",
       unpublishConfirm:
         "This activity will stop appearing in the public catalog. To publish it again, NensGo will need to review it.",
       unpublishSuccess: "Activity unpublished.",
       unpublishError: "We could not unpublish this activity.",
+    },
+  },
+  userPublicationForm: {
+    back: "Back to my publications",
+    cancel: "Cancel",
+    submitting: "Sending...",
+    loadingEyebrow: "Publication",
+    loadingTitle: "Loading form",
+    loadingDescription: "We are preparing the publication and its options.",
+    errorEyebrow: "Publication",
+    loadErrorTitle: "We could not load this publication",
+    loadErrorDescription: "Try again in a few seconds.",
+    submitErrorDescription: "We could not send the publication.",
+    noOptionsTitle: "We could not prepare the options",
+    noOptionsDescription:
+      "The form needs available centers, categories and types before sending changes.",
+    correction: {
+      eyebrow: "Correction",
+      title: "Correct publication",
+      description: "Review the changes requested by NensGo.",
+      submit: "Send correction",
+      success: "Correction sent. NensGo will review the publication again.",
+    },
+    edit: {
+      eyebrow: "Edit",
+      title: "Edit publication",
+      description: "Prepare changes for NensGo review.",
+      warning:
+        "Editing this publication will temporarily remove it from the public catalog until NensGo reviews the changes.",
+      submit: "Send changes",
+      success:
+        "Changes sent. The activity is out of the public catalog until NensGo approves them.",
+    },
+    validation: {
+      title: "The title is required.",
+      description: "The description is required.",
+      center: "The center is required.",
+      category: "The category is required.",
+      type: "The type is required.",
+      schedule: "The schedule is required.",
+      ageRange: "The age range rule needs minimum and maximum ages.",
+      ageFrom: "The age from rule needs a minimum age.",
+      ageUntil: "The age until rule needs a maximum age.",
     },
   },
   favorites: {

@@ -365,12 +365,58 @@ const es = {
       archived: "Archivada",
     },
     actions: {
+      correct: "Corregir",
+      edit: "Editar publicación",
       unpublish: "Despublicar",
       unpublishing: "Despublicando...",
       unpublishConfirm:
         "Esta actividad dejará de verse en el catálogo público. Para volver a publicarla necesitará revisión de NensGo.",
       unpublishSuccess: "Actividad despublicada.",
       unpublishError: "No pudimos despublicar esta actividad.",
+    },
+  },
+  userPublicationForm: {
+    back: "Volver a mis publicaciones",
+    cancel: "Cancelar",
+    submitting: "Enviando...",
+    loadingEyebrow: "Publicación",
+    loadingTitle: "Cargando formulario",
+    loadingDescription: "Estamos preparando la publicación y sus opciones.",
+    errorEyebrow: "Publicación",
+    loadErrorTitle: "No pudimos cargar esta publicación",
+    loadErrorDescription: "Inténtalo de nuevo en unos segundos.",
+    submitErrorDescription: "No pudimos enviar la publicación.",
+    noOptionsTitle: "No pudimos preparar las opciones",
+    noOptionsDescription:
+      "El formulario necesita centros, categorías y tipos disponibles antes de enviar cambios.",
+    correction: {
+      eyebrow: "Corrección",
+      title: "Corregir publicación",
+      description: "Revisa los cambios pedidos por NensGo.",
+      submit: "Enviar corrección",
+      success:
+        "Corrección enviada. NensGo volverá a revisar la publicación.",
+    },
+    edit: {
+      eyebrow: "Edición",
+      title: "Editar publicación",
+      description: "Prepara cambios para revisión de NensGo.",
+      warning:
+        "Editar esta publicación la quitará temporalmente del catálogo público hasta que NensGo revise los cambios.",
+      submit: "Enviar cambios",
+      success:
+        "Cambios enviados. La actividad queda fuera del catálogo público hasta que NensGo los apruebe.",
+    },
+    validation: {
+      title: "El título es obligatorio.",
+      description: "La descripción es obligatoria.",
+      center: "El centro es obligatorio.",
+      category: "La categoría es obligatoria.",
+      type: "El tipo es obligatorio.",
+      schedule: "El horario es obligatorio.",
+      ageRange: "La regla de edad rango necesita edad mínima y máxima.",
+      ageFrom: "La regla de edad desde necesita edad mínima.",
+      ageUntil: "La regla de edad hasta necesita edad máxima.",
     },
   },
   favorites: {

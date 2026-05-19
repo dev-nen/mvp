@@ -1,0 +1,122 @@
+.user-publication-draft-form-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #fffdf9 0%, #f7f8fb 100%);
+}
+
+.user-publication-draft-form-page__main {
+  flex: 1;
+  padding: var(--space-6) 0 var(--space-8);
+}
+
+.user-publication-draft-form-page__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.user-publication-draft-form-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.user-publication-draft-form-page__back-button {
+  align-self: flex-start;
+  padding-left: 0;
+}
+
+.user-publication-draft-form-page__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 44rem;
+}
+
+.user-publication-draft-form-page__eyebrow {
+  color: var(--color-secondary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.user-publication-draft-form-page__title {
+  color: var(--color-text);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.user-publication-draft-form-page__description {
+  max-width: 38rem;
+  color: var(--color-text-muted);
+}
+
+.user-publication-draft-form-page__panel {
+  border-color: rgba(75, 143, 231, 0.14);
+}
+
+.user-publication-draft-form-page__panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.user-publication-draft-form-page__feedback-box,
+.user-publication-draft-form-page__warning,
+.user-publication-draft-form-page__message {
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+}
+
+.user-publication-draft-form-page__feedback-box {
+  color: var(--color-text);
+  background: rgba(236, 163, 65, 0.12);
+  border: 1px solid rgba(236, 163, 65, 0.28);
+}
+
+.user-publication-draft-form-page__feedback-box ul {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-left: 1.2rem;
+  font-weight: 600;
+}
+
+.user-publication-draft-form-page__warning {
+  color: #7a4a12;
+  background: rgba(236, 163, 65, 0.14);
+  border: 1px solid rgba(236, 163, 65, 0.3);
+}
+
+.user-publication-draft-form-page__message--success {
+  color: #206549;
+  background: rgba(74, 184, 128, 0.12);
+  border: 1px solid rgba(74, 184, 128, 0.22);
+}
+
+.user-publication-draft-form-page__message--error {
+  color: #8c3b2d;
+  background: rgba(242, 106, 75, 0.12);
+  border: 1px solid rgba(242, 106, 75, 0.22);
+}
+
+.user-publication-draft-form-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.user-publication-draft-form-page__actions svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (min-width: 56rem) {
+  .user-publication-draft-form-page__title {
+    font-size: 3rem;
+  }
+}

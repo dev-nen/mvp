@@ -364,12 +364,58 @@ const ca = {
       archived: "Arxivada",
     },
     actions: {
+      correct: "Corregir",
+      edit: "Editar publicacio",
       unpublish: "Despublicar",
       unpublishing: "Despublicant...",
       unpublishConfirm:
         "Aquesta activitat deixara de veure's al cataleg public. Per tornar-la a publicar necessitara revisio de NensGo.",
       unpublishSuccess: "Activitat despublicada.",
       unpublishError: "No hem pogut despublicar aquesta activitat.",
+    },
+  },
+  userPublicationForm: {
+    back: "Tornar a les meves publicacions",
+    cancel: "Cancel-lar",
+    submitting: "Enviant...",
+    loadingEyebrow: "Publicacio",
+    loadingTitle: "Carregant formulari",
+    loadingDescription: "Estem preparant la publicacio i les seves opcions.",
+    errorEyebrow: "Publicacio",
+    loadErrorTitle: "No hem pogut carregar aquesta publicacio",
+    loadErrorDescription: "Torna-ho a provar d'aqui a uns segons.",
+    submitErrorDescription: "No hem pogut enviar la publicacio.",
+    noOptionsTitle: "No hem pogut preparar les opcions",
+    noOptionsDescription:
+      "El formulari necessita centres, categories i tipus disponibles abans d'enviar canvis.",
+    correction: {
+      eyebrow: "Correccio",
+      title: "Corregir publicacio",
+      description: "Revisa els canvis que ha demanat NensGo.",
+      submit: "Enviar correccio",
+      success:
+        "Correccio enviada. NensGo tornara a revisar la publicacio.",
+    },
+    edit: {
+      eyebrow: "Edicio",
+      title: "Editar publicacio",
+      description: "Prepara canvis per a revisio de NensGo.",
+      warning:
+        "Editar aquesta publicacio la traura temporalment del cataleg public fins que NensGo revisi els canvis.",
+      submit: "Enviar canvis",
+      success:
+        "Canvis enviats. L'activitat queda fora del cataleg public fins que NensGo els aprovi.",
+    },
+    validation: {
+      title: "El titol es obligatori.",
+      description: "La descripcio es obligatoria.",
+      center: "El centre es obligatori.",
+      category: "La categoria es obligatoria.",
+      type: "El tipus es obligatori.",
+      schedule: "L'horari es obligatori.",
+      ageRange: "La regla d'edat rang necessita edat minima i maxima.",
+      ageFrom: "La regla d'edat des de necessita edat minima.",
+      ageUntil: "La regla d'edat fins a necessita edat maxima.",
     },
   },
   favorites: {

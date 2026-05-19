@@ -4,10 +4,12 @@ import {
   ClipboardList,
   EyeOff,
   LoaderCircle,
+  Pencil,
+  RotateCcw,
   SearchX,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
@@ -61,6 +63,7 @@ function getPublicationStatusLabel(userStatus, t) {
 
 export function UserPublicationsPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useI18n();
   const [publications, setPublications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,6 +111,17 @@ export function UserPublicationsPage() {
       isMounted = false;
     };
   }, [t]);
+
+  useEffect(() => {
+    const message = location.state?.userPublicationsMessage;
+
+    if (!message) {
+      return;
+    }
+
+    setActionMessage(message);
+    navigate(location.pathname, { replace: true, state: null });
+  }, [location.pathname, location.state, navigate]);
 
   const handleUnpublish = async (publication) => {
     if (!publication.canUnpublish || !publication.activityId) {
@@ -235,6 +249,14 @@ export function UserPublicationsPage() {
                 const key = `${publication.itemKind}-${publication.draftId ?? publication.activityId}`;
                 const unpublishActionKey = `${publication.itemKind}-${publication.activityId}-unpublish`;
                 const isUnpublishing = pendingActionKey === unpublishActionKey;
+                const canCorrect =
+                  publication.canCorrect && publication.draftId !== null;
+                const canRequestEdit =
+                  publication.canRequestEdit &&
+                  publication.activityId !== null &&
+                  publication.userStatus === "published";
+                const hasActions =
+                  publication.canUnpublish || canCorrect || canRequestEdit;
 
                 return (
                   <Card key={key} className="user-publications-page__card">
@@ -273,22 +295,56 @@ export function UserPublicationsPage() {
                         </ul>
                       ) : null}
 
-                      {publication.canUnpublish ? (
+                      {hasActions ? (
                         <div className="user-publications-page__actions">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="user-publications-page__action-button"
-                            onClick={() => {
-                              void handleUnpublish(publication);
-                            }}
-                            disabled={isUnpublishing}
-                          >
-                            {isUnpublishing ? <LoaderCircle /> : <EyeOff />}
-                            {isUnpublishing
-                              ? t("userPublications.actions.unpublishing")
-                              : t("userPublications.actions.unpublish")}
-                          </Button>
+                          {canCorrect ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="user-publications-page__action-button"
+                              onClick={() =>
+                                navigate(
+                                  `/perfil/publicaciones/${publication.draftId}/corregir`,
+                                )
+                              }
+                            >
+                              <RotateCcw />
+                              {t("userPublications.actions.correct")}
+                            </Button>
+                          ) : null}
+
+                          {canRequestEdit ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="user-publications-page__action-button"
+                              onClick={() =>
+                                navigate(
+                                  `/perfil/publicaciones/actividad/${publication.activityId}/editar`,
+                                )
+                              }
+                            >
+                              <Pencil />
+                              {t("userPublications.actions.edit")}
+                            </Button>
+                          ) : null}
+
+                          {publication.canUnpublish ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="user-publications-page__action-button"
+                              onClick={() => {
+                                void handleUnpublish(publication);
+                              }}
+                              disabled={isUnpublishing}
+                            >
+                              {isUnpublishing ? <LoaderCircle /> : <EyeOff />}
+                              {isUnpublishing
+                                ? t("userPublications.actions.unpublishing")
+                                : t("userPublications.actions.unpublish")}
+                            </Button>
+                          ) : null}
                         </div>
                       ) : null}
                     </CardContent>
