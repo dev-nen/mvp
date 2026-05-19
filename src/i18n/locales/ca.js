@@ -363,6 +363,14 @@ const ca = {
       rejected: "No aprovada",
       archived: "Arxivada",
     },
+    actions: {
+      unpublish: "Despublicar",
+      unpublishing: "Despublicant...",
+      unpublishConfirm:
+        "Aquesta activitat deixara de veure's al cataleg public. Per tornar-la a publicar necessitara revisio de NensGo.",
+      unpublishSuccess: "Activitat despublicada.",
+      unpublishError: "No hem pogut despublicar aquesta activitat.",
+    },
   },
   favorites: {
     title: "Les teves activitats guardades",

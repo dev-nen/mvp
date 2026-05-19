@@ -55,3 +55,28 @@ export async function listMyActivityPublications() {
 
   return (data ?? []).map(normalizePublicationRow);
 }
+
+export async function unpublishMyActivity(activityId) {
+  const numericActivityId = Number(activityId);
+
+  if (!Number.isFinite(numericActivityId) || numericActivityId <= 0) {
+    throw new Error("No pudimos identificar la actividad.");
+  }
+
+  const supabase = getSupabaseOrThrow();
+  const { data, error } = await supabase.rpc("unpublish_my_activity", {
+    p_activity_id: numericActivityId,
+  });
+
+  if (error) {
+    throw new Error("No pudimos despublicar esta actividad.");
+  }
+
+  const [row] = Array.isArray(data) ? data : [];
+
+  return {
+    activityId: row?.activity_id ?? numericActivityId,
+    isPublished: row?.is_published === true,
+    updatedAt: row?.activity_updated_at ?? new Date().toISOString(),
+  };
+}

@@ -364,6 +364,14 @@ const es = {
       rejected: "No aprobada",
       archived: "Archivada",
     },
+    actions: {
+      unpublish: "Despublicar",
+      unpublishing: "Despublicando...",
+      unpublishConfirm:
+        "Esta actividad dejará de verse en el catálogo público. Para volver a publicarla necesitará revisión de NensGo.",
+      unpublishSuccess: "Actividad despublicada.",
+      unpublishError: "No pudimos despublicar esta actividad.",
+    },
   },
   favorites: {
     title: "Tus actividades guardadas",

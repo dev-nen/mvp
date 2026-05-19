@@ -358,6 +358,14 @@ const en = {
       rejected: "Not approved",
       archived: "Archived",
     },
+    actions: {
+      unpublish: "Unpublish",
+      unpublishing: "Unpublishing...",
+      unpublishConfirm:
+        "This activity will stop appearing in the public catalog. To publish it again, NensGo will need to review it.",
+      unpublishSuccess: "Activity unpublished.",
+      unpublishError: "We could not unpublish this activity.",
+    },
   },
   favorites: {
     title: "Your saved activities",
