@@ -110,6 +110,9 @@ Check:
 - [ ] authenticated can execute `ensure_my_profile`.
 - [ ] non-internal authenticated user cannot read Draft Inbox.
 - [ ] internal authorized user can read Draft Inbox.
+- [ ] non-internal authenticated user cannot call `list_internal_admin_activities`, `publish_internal_admin_activity`, or `unpublish_internal_admin_activity`.
+- [ ] internal authorized user can list non-deleted activities, including despublicadas, from `/internal/activities`.
+- [ ] internal authorized user can despublicar/republicar by RPC and public `catalog_activities_read` keeps filtering despublicadas.
 - [ ] internal authorized user can create an activity draft from `/internal/drafts/new`.
 - [ ] non-internal authenticated user cannot insert `activity_drafts`.
 - [ ] draft cover upload requires internal access, accepts JPG/PNG/WebP, rejects SVG, and stores only a path/reference.

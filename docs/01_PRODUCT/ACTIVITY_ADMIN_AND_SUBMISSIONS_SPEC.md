@@ -3,9 +3,10 @@
 ## 1. Status
 
 - Product status: `En definición`.
-- Implementation status: `Planned`.
-- This task produced discovery and documentation only.
-- No runtime code, Supabase SQL, live Supabase state, or Vercel configuration was changed.
+- Implementation status: `Partial`.
+- Phase 1 admin activity catalog is implemented in the repo behind `/internal/activities`.
+- The Phase 1 SQL migration is versioned in `supabase/sql`, but it has not been applied or validated against live Supabase in this task.
+- User submissions, contact option lifecycle, draft lifecycle expansion, expiration lifecycle, live Supabase state, and Vercel configuration remain out of scope.
 
 ## 2. Problem Statement
 
@@ -126,6 +127,7 @@ Current internal routes in `src/App.jsx`:
 - `/internal/drafts`
 - `/internal/drafts/new`
 - `/internal/drafts/:draftId`
+- `/internal/activities`
 - `/internal/activities/:activityId`
 
 Current internal access boundary:
@@ -150,6 +152,7 @@ Current internal services:
 
 - `src/services/internalDraftsService.js`
 - `src/services/draftApprovalService.js`
+- `src/services/internalActivityCatalogService.js`
 - `src/services/internalApprovedActivitiesService.js`
 - `src/services/internalDraftCoverImageService.js`
 
@@ -186,9 +189,15 @@ Current SQL and read models:
 - `supabase/sql/2026-05-15_internal_draft_create_markdown_cover.sql` extends
   internal manual draft creation, cover handling, markdown description fields,
   and redefines current catalog/approval/update contracts.
+- `supabase/sql/2026-05-19_internal_activity_admin_catalog.sql` adds the
+  internal admin catalog RPCs for listing, publishing, and unpublishing
+  non-deleted activities by `activity_id`.
 
 Current RPCs related to activity lifecycle:
 
+- `list_internal_admin_activities(p_publication_filter text)`
+- `publish_internal_admin_activity(p_activity_id bigint, p_review_notes text)`
+- `unpublish_internal_admin_activity(p_activity_id bigint, p_review_notes text)`
 - `approve_activity_draft(p_draft_id bigint)`
 - `list_internal_approved_activity_states(p_draft_ids bigint[])`
 - `get_internal_approved_activity(p_activity_id bigint)`
@@ -205,6 +214,9 @@ Current publication mechanism:
 - `republish_approved_activity` sets `is_active = true`,
   `is_deleted = false`, `updated_at = now()`, and
   `updated_by = 'draft.republish_approved_activity'`.
+- `publish_internal_admin_activity` and
+  `unpublish_internal_admin_activity` perform the same visibility toggle by
+  `activity_id` for the broader admin catalog without changing draft status.
 - Internal read RPCs expose `is_published` as
   `activities.is_active = true and activities.is_deleted = false`.
 
@@ -216,15 +228,15 @@ Current draft lifecycle:
 - There is no `needs_changes`, `archived`, user-facing reason, or resubmission
   model in the current repo.
 
-Current gaps:
+Remaining gaps:
 
-- There is no `/internal/activities` list page.
-- There is no complete admin catalog read model/RPC that lists all non-deleted
-  activities, including `is_active = false`.
+- `/internal/activities` and its RPC contracts are implemented in repo, but not
+  applied or smoke-tested live.
 - Existing approved activity RPCs are tied to Draft Inbox-managed activities via
   `activity_drafts.approved_activity_id`.
-- Activities that exist outside the Draft Inbox link may not be manageable by
-  the current `get_internal_approved_activity`/unpublish/republish RPCs.
+- Activities that exist outside the Draft Inbox link can be published or
+  unpublished from the admin catalog, but they do not have an editable approved
+  activity detail page until a separate edit flow exists.
 - Contact option editing/publication is not part of the current approved
   activity lifecycle.
 
@@ -248,6 +260,14 @@ Phase 1 needs a new internal read model or RPC that includes
 `activities.is_active = false` while excluding soft-deleted rows by default.
 
 ## 7. Recommended Phase 1
+
+Repo implementation note: this phase now exists in the codebase as a partial
+implementation. It adds `/internal/activities`,
+`src/pages/InternalActivityCatalogPage.jsx`,
+`src/services/internalActivityCatalogService.js`, and
+`supabase/sql/2026-05-19_internal_activity_admin_catalog.sql`. It still needs
+the SQL migration applied and live RLS/RPC smoke-tested before it can be treated
+as validated.
 
 ### Objective
 

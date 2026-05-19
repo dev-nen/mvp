@@ -96,4 +96,5 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Contact read view.
 - Profile provisioning.
 - Internal Draft Inbox access.
+- Internal admin activity catalog RPCs and publish/unpublish permissions.
 - `/api/internal/pvi` bearer token y noindex headers.

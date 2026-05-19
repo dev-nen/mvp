@@ -25,6 +25,9 @@ Estado general: `Partial`. Hay SQL versionado en `supabase/sql`, pero RLS, grant
 | `internal_tool_access`                   | Autorización de herramientas internas | Internal/Auth self-check         | No sustituye RLS/RPC checks.                                   |
 | `ensure_my_profile`                      | Provisioning de perfil app            | Auth RPC                         | Debe validar municipio ES DIR3 activo.                         |
 | `approve_activity_draft`                 | Publicación desde draft               | Internal RPC                     | Authenticated + check interno.                                 |
+| `list_internal_admin_activities`         | Catálogo interno completo             | Internal RPC                     | Lista actividades no eliminadas, incluidas despublicadas.      |
+| `publish_internal_admin_activity`        | Republicar actividad por id           | Internal RPC                     | Toggle seguro por `activity_id`; no cambia drafts.             |
+| `unpublish_internal_admin_activity`      | Despublicar actividad por id          | Internal RPC                     | Toggle seguro por `activity_id`; no cambia drafts.             |
 | `list_internal_approved_activity_states` | Estados internos de actividades       | Internal RPC                     | Para lifecycle interno.                                        |
 | `get_internal_approved_activity`         | Read interno de actividad aprobada    | Internal RPC                     | Para pantalla interna.                                         |
 | `update_approved_activity_from_draft`    | Edición interna                       | Internal RPC                     | No cubre publicación de contactos.                             |
@@ -65,6 +68,8 @@ Vista de municipios para onboarding. Debe limitarse a municipios activos, `place
 
 - `activity_drafts`: revisión editorial y alta manual interna de nuevas actividades.
 - `internal_tool_access`: permiso para herramientas internas.
+- `list_internal_admin_activities(...)`: read model interno para `/internal/activities`; incluye publicadas y despublicadas, excluye soft-deleted y no debe sustituir a `catalog_activities_read`.
+- `publish_internal_admin_activity(...)` / `unpublish_internal_admin_activity(...)`: RPCs internas por `activity_id`; actualizan la visibilidad técnica (`activities.is_active`) sin cambiar estados de draft.
 - RPCs de lifecycle: editar, despublicar y republicar actividades aprobadas.
 - `activities.description` + `activities.description_format`: fuente editorial canónica para descripción larga (`plain` o `markdown`).
 - Bucket Storage `activities`: puede alojar portadas de drafts internos bajo paths seguros como `drafts/{draftId}/...`; la base de datos guarda sólo la referencia/path, no binarios ni base64.

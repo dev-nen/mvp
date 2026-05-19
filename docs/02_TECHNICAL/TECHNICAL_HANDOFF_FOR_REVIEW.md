@@ -11,7 +11,7 @@ El proyecto está en fase MVP/validación. Hay una base real implementada, pero 
 - Catálogo público desde `catalog_activities_read`.
 - Rutas públicas: `/`, `/sobre-nensgo`, `/para-centros`, `/privacidad`, `/terminos`.
 - Rutas protegidas: `/perfil`, `/favoritos`, `/favoritos/:activityId`.
-- Rutas internas: `/internal/drafts`, `/internal/drafts/:draftId`, `/internal/activities/:activityId`.
+- Rutas internas: `/internal/drafts`, `/internal/drafts/:draftId`, `/internal/activities`, `/internal/activities/:activityId`.
 - Auth con Google y email/password.
 - Estado de email verification y onboarding requerido.
 - Perfil app en `user_profiles`.

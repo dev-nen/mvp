@@ -14,7 +14,7 @@
 - `PrivacyPolicyPage`, `TermsOfUsePage`, `LegalPage`: legales.
 - `ProfilePage`: perfil protegido.
 - `FavoritesPage`, `FavoriteActivityDetailPage`: favoritos.
-- `InternalDraftInboxPage`, `InternalDraftCreatePage`, `InternalDraftDetailPage`, `InternalApprovedActivityPage`: interno.
+- `InternalDraftInboxPage`, `InternalDraftCreatePage`, `InternalDraftDetailPage`, `InternalActivityCatalogPage`, `InternalApprovedActivityPage`: interno.
 
 ## Components
 
@@ -42,7 +42,7 @@
 - `appUsersService.js`: `user_profiles` y `ensure_my_profile`.
 - `activityContactOptionsService.js`: `activity_contact_options_read`.
 - `activityEventsService.js`: eventos vista/contacto.
-- Servicios internos: Draft Inbox, approved activities, access y subida de portada interna.
+- Servicios internos: Draft Inbox, admin activity catalog, approved activities, access y subida de portada interna.
 
 ## Helpers
 

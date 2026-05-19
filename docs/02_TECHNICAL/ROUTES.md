@@ -16,6 +16,7 @@
 | `/internal/drafts` | Interna | Bloqueada por robots | Partial | Draft Inbox list. |
 | `/internal/drafts/new` | Interna | Bloqueada por robots | Partial | Alta manual interna de actividad como `activity_draft`; no publica directo. |
 | `/internal/drafts/:draftId` | Interna | Bloqueada por robots | Partial | Draft detail/review. |
+| `/internal/activities` | Interna | Bloqueada por robots | Partial | Catálogo interno de actividades publicadas/despublicadas con toggle seguro por RPC. |
 | `/internal/activities/:activityId` | Interna | Bloqueada por robots | Partial | Edit/unpublish/republish interno. |
 | `/api/internal/pvi` | API interna | Noindex headers | Partial | Reporting interno con bearer token. |
 

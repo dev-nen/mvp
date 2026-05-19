@@ -36,6 +36,7 @@ Estado técnico actual: `Partial`. La implementación está en repo, pero parte 
 | Contacto | `activity_contact_options_read` |
 | Eventos | `activity_view_events`, `activity_contact_events` |
 | Draft Inbox | `activity_drafts`, `internal_tool_access`, RPCs internas |
+| Admin activity catalog | `list_internal_admin_activities`, `publish_internal_admin_activity`, `unpublish_internal_admin_activity` |
 
 ## Environment variables
 

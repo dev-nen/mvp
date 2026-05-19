@@ -34,6 +34,10 @@ const InternalApprovedActivityPage = lazyNamedPage(
   () => import("@/pages/InternalApprovedActivityPage"),
   "InternalApprovedActivityPage",
 );
+const InternalActivityCatalogPage = lazyNamedPage(
+  () => import("@/pages/InternalActivityCatalogPage"),
+  "InternalActivityCatalogPage",
+);
 const InternalDraftDetailPage = lazyNamedPage(
   () => import("@/pages/InternalDraftDetailPage"),
   "InternalDraftDetailPage",
@@ -149,6 +153,14 @@ function AppRoutes() {
           element={withRouteLoadingFallback(
             <InternalToolRoute>
               <InternalDraftDetailPage />
+            </InternalToolRoute>,
+          )}
+        />
+        <Route
+          path="/internal/activities"
+          element={withRouteLoadingFallback(
+            <InternalToolRoute>
+              <InternalActivityCatalogPage />
             </InternalToolRoute>,
           )}
         />

@@ -1,4 +1,10 @@
-import { ArrowLeft, LoaderCircle, Plus, SearchX } from "lucide-react";
+import {
+  ArrowLeft,
+  LayoutGrid,
+  LoaderCircle,
+  Plus,
+  SearchX,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
@@ -131,6 +137,13 @@ export function InternalDraftInboxPage() {
                     {drafts.length} drafts visibles
                   </p>
                 ) : null}
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/internal/activities")}
+                >
+                  <LayoutGrid />
+                  Panel de actividades
+                </Button>
                 <Button onClick={() => navigate("/internal/drafts/new")}>
                   <Plus />
                   Nueva actividad
