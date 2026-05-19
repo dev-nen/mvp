@@ -10,6 +10,14 @@
 - [ ] Search for stale claims about legacy local favorites, mock catalog truth, missing auth, or missing i18n.
 - [ ] Search for fake legal/company placeholder markers from the review task list.
 
+## CodeGraph / local index hygiene
+
+- [ ] `.codegraph/` remains ignored.
+- [ ] Generated CodeGraph DB/index/cache files are not committed.
+- [ ] CodeGraph findings are verified with direct file reads before edits.
+- [ ] For `M`/`L` tasks using CodeGraph, the final report mentions whether
+  CodeGraph was used and any relevant limitations.
+
 ## Manual public route checks
 
 - [ ] `/`

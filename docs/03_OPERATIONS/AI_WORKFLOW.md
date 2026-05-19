@@ -53,12 +53,81 @@ Use the lightest Codex surface that matches the task risk.
 - Codex CLI is the heavier lane for `M`/`L` tasks when the work benefits from
   explicit terminal context, long-running discovery, review passes, MCP checks,
   or careful command validation.
-- CodeGraph is optional and not part of the default workflow. Until it is
-  explicitly piloted and adopted, do not assume it is installed, configured, or
-  available to any Codex surface.
+- CodeGraph is optional tooling for `M`/`L` discovery and impact analysis when
+  a task explicitly enables it and it is available through Codex CLI/MCP.
 
 Tool choice does not change the source of truth: the active branch, current
 repo files, current docs, real diff, and executed validations still decide.
+
+## CodeGraph Usage
+
+CodeGraph can be enabled per task with:
+
+```txt
+CODEGRAPH: true
+```
+
+or disabled with:
+
+```txt
+CODEGRAPH: false
+```
+
+Default by task size:
+
+- `XS`: `CODEGRAPH: false`.
+- `S`: `CODEGRAPH: false` by default. Use `true` only if the relevant
+  component or files cannot be located quickly through normal repo inspection.
+- `M`: evaluate `CODEGRAPH: true` during discovery when the task touches
+  several files, shared logic, routes, hooks, helpers, or cross-component
+  impact.
+- `L`: `CODEGRAPH: true` is recommended for discovery/review when available,
+  especially for impact analysis.
+
+Golden rule:
+
+```txt
+CodeGraph orients. It does not decide.
+```
+
+CodeGraph is useful for finding entry points, locating symbols, tracing
+imports, discovering related files, estimating impact before editing, and
+supporting read-only review for `M`/`L` tasks.
+
+CodeGraph is not reliable enough to be the only source of truth. It does not
+replace reading the real files, `rg`, tests, build checks, SQL/RLS review,
+Supabase live validation, OAuth/Vercel validation, visual QA, or human product
+judgment.
+
+When `CODEGRAPH: true`:
+
+- start with `codegraph_status`;
+- prefer the default/current project context;
+- avoid explicit Windows `projectPath` unless necessary;
+- use CodeGraph only as a read-only first pass for discovery or impact;
+- verify important findings by opening and reading the actual files;
+- do not edit based only on CodeGraph output.
+
+Current pilot result:
+
+- CodeGraph is available in Codex CLI through MCP.
+- `codegraph_status`, `codegraph_context`, `codegraph_node`, and
+  `codegraph_search` worked.
+- It helped locate navbar, favorites, and profile entry points.
+- It remains optional for `M`/`L` tasks.
+- It is not default for `XS`/`S` tasks.
+
+Known pilot limitations:
+
+- explicit Windows `projectPath` returned `database is locked`; omit it and use
+  current project context when possible;
+- CSS files may not be indexed as graph files, although imports may point to
+  companion CSS;
+- some nested/local helpers may not be searchable as symbols;
+- caller/callee results may miss some callsites;
+- the current wasm backend is usable but slower than a native backend;
+- CodeGraph does not validate runtime behavior, Supabase, RLS, OAuth, Vercel
+  config, or visual QA.
 
 ## Task Sizes
 

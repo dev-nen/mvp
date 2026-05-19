@@ -78,8 +78,17 @@ protected intent, or favorites logic.
   work.
 - Codex CLI is an optional heavier lane for `M`/`L` discovery, implementation,
   review, long-running sessions, or MCP experiments.
-- CodeGraph is not part of the default workflow until explicitly piloted and
-  adopted. Do not assume it is installed or configured.
+
+### CodeGraph
+
+CodeGraph is optional tooling for `M`/`L` discovery and impact analysis when
+available through Codex CLI/MCP. It is not required for `XS`/`S` tasks and must
+not be assumed for every agent/session.
+
+When used, start with `codegraph_status`, prefer the current project context,
+and verify important findings by reading the real files. Do not commit
+`.codegraph/`. Do not treat CodeGraph as a replacement for tests, direct file
+review, SQL/RLS validation, or product judgment.
 
 ## Scope Rules
 

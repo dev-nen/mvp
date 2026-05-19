@@ -9,13 +9,30 @@ Tooling lane:
 - Use Codex app or VS Code Codex for `XS` and most `S` tasks.
 - Use Codex CLI when `M`/`L` work benefits from terminal context, long-running
   discovery, review, command validation, or MCP checks.
-- Do not assume CodeGraph is installed or configured. Treat it as an optional
-  future pilot unless the prompt explicitly says it is available.
+- Each task may declare:
+
+```txt
+TASK SIZE: XS | S | M | L
+TOOLING LANE: Codex app | VS Code Codex | Codex CLI
+CODEGRAPH: true | false
+```
+
+- Use `CODEGRAPH: false` for `XS` and most `S` tasks.
+- Evaluate `CODEGRAPH: true` for `M`; prefer it for `L` discovery/review when
+  available.
+- Humans decide `CODEGRAPH: true` or `CODEGRAPH: false` during task
+  classification. Codex must not assume CodeGraph for every task.
+- When CodeGraph is used, treat it as a read-only first pass. Verify important
+  findings by reading files directly before planning, editing, or reporting.
 
 ## DISCOVERY READ-ONLY
 
 ```txt
 DISKETNEN [M/L] - DISCOVERY READ-ONLY - [TASK NAME]
+
+TASK SIZE: XS | S | M | L
+TOOLING LANE: Codex app | VS Code Codex | Codex CLI
+CODEGRAPH: true | false
 
 MODE
 Read-only discovery.
@@ -44,6 +61,14 @@ REQUIRED READING
 - docs/03_OPERATIONS/VALIDATION_CHECKLIST.md
 - [feature-specific docs]
 
+CODEGRAPH
+If CODEGRAPH: true:
+- Confirm CodeGraph availability with `codegraph_status`.
+- Use CodeGraph as a read-only first pass only.
+- Prefer the current/default project context.
+- Do not pass explicit `projectPath` unless necessary.
+- Verify key findings by reading files directly.
+
 QUESTIONS TO ANSWER
 - What is true today in the active branch?
 - Which files/contracts are relevant?
@@ -69,6 +94,10 @@ OUTPUT FORMAT
 ```txt
 DISKETNEN [XS/S/M/L] - IMPLEMENT - [TASK NAME]
 
+TASK SIZE: XS | S | M | L
+TOOLING LANE: Codex app | VS Code Codex | Codex CLI
+CODEGRAPH: true | false
+
 MODE
 Implementation task.
 Use the task size process from docs/03_OPERATIONS/AI_WORKFLOW.md.
@@ -80,6 +109,9 @@ FIRST
 - For `S`, provide brief diagnosis, intended files, validation, and why it
   stays `S`.
 - For `M`/`L`, provide the required written plan before editing.
+- If CODEGRAPH: true, CodeGraph may be used before editing to identify
+  candidate files and impact. Do not edit solely from CodeGraph output. Read
+  the actual files before changing them.
 
 OBJECTIVE
 [What must change.]
@@ -142,6 +174,10 @@ EXPECTED OUTPUT
 ```txt
 DISKETNEN [M/L] - REVIEW READ-ONLY - [TASK NAME]
 
+TASK SIZE: XS | S | M | L
+TOOLING LANE: Codex app | VS Code Codex | Codex CLI
+CODEGRAPH: true | false
+
 MODE
 Review only.
 Do not edit files.
@@ -164,6 +200,13 @@ REVIEW FOCUS
 - UI/UX regressions if relevant;
 - stale docs or status language.
 
+CODEGRAPH
+If CODEGRAPH: true:
+- Use CodeGraph to check related symbols, imports, callers, or impact where
+  useful.
+- Verify findings directly in files.
+- Report CodeGraph limitations if they affect confidence.
+
 SEVERITY LEVELS
 P0 - blocking correctness/security/data-loss issue.
 P1 - high-risk regression or broken promised behavior.
@@ -183,10 +226,18 @@ OUTPUT FORMAT
 ```txt
 DISKETNEN [S/M/L] - FIX PACK - [TASK NAME]
 
+TASK SIZE: XS | S | M | L
+TOOLING LANE: Codex app | VS Code Codex | Codex CLI
+CODEGRAPH: false
+
 MODE
 Fix only known findings.
 Do not broaden scope.
 Do not push.
+
+CODEGRAPH
+CODEGRAPH: false by default. Set CODEGRAPH: true only if the known finding
+requires tracing shared logic or impact.
 
 KNOWN FINDINGS
 1. [Finding id/severity/title]
