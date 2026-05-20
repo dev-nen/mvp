@@ -181,7 +181,9 @@ const es = {
       close: "Cerrar opciones de contacto",
       back: "Volver",
       form: "Formulario",
+      instagram: "Instagram",
       phone: "Llamar",
+      website: "Web",
     },
   },
   auth: {

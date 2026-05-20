@@ -178,7 +178,9 @@ const en = {
       close: "Close contact options",
       back: "Back",
       form: "Form",
+      instagram: "Instagram",
       phone: "Call",
+      website: "Website",
     },
   },
   auth: {

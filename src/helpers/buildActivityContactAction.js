@@ -1,3 +1,5 @@
+import { normalizeInstagramContact } from "./contactOptions.js";
+
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -56,11 +58,21 @@ function buildWebUrl(contactValue) {
     return "";
   }
 
+  if (/^[a-z][a-z0-9+.-]*:/i.test(normalizedUrl) && !/^https?:\/\//i.test(normalizedUrl)) {
+    return "";
+  }
+
   if (/^https?:\/\//i.test(normalizedUrl)) {
     return normalizedUrl;
   }
 
   return `https://${normalizedUrl}`;
+}
+
+function buildInstagramUrl(contactValue) {
+  const instagramContact = normalizeInstagramContact(contactValue);
+
+  return instagramContact.error ? "" : instagramContact.url;
 }
 
 export function buildActivityContactActionUrl(
@@ -87,8 +99,12 @@ export function buildActivityContactActionUrl(
     return buildPhoneUrl(contactValue);
   }
 
-  if (contactMethod === "form" || contactMethod === "web") {
+  if (contactMethod === "form" || contactMethod === "web" || contactMethod === "website") {
     return buildWebUrl(contactValue);
+  }
+
+  if (contactMethod === "instagram") {
+    return buildInstagramUrl(contactValue);
   }
 
   return "";
@@ -113,8 +129,12 @@ export function getActivityContactOptionLabel(contactOption) {
     return "Abrir formulario";
   }
 
-  if (contactMethod === "web") {
+  if (contactMethod === "web" || contactMethod === "website") {
     return "Abrir web";
+  }
+
+  if (contactMethod === "instagram") {
+    return "Abrir Instagram";
   }
 
   return "Abrir contacto";

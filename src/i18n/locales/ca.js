@@ -180,7 +180,9 @@ const ca = {
       close: "Tancar opcions de contacte",
       back: "Tornar",
       form: "Formulari",
+      instagram: "Instagram",
       phone: "Trucar",
+      website: "Web",
     },
   },
   auth: {
