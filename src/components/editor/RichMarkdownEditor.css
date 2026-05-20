@@ -1,0 +1,77 @@
+.rich-markdown-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rich-markdown-editor__label {
+  color: var(--color-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.rich-markdown-editor__surface {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.96);
+}
+
+.rich-markdown-editor__surface .mdxeditor-toolbar {
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(248, 250, 252, 0.96);
+}
+
+.rich-markdown-editor__surface .mdxeditor-toolbar button,
+.rich-markdown-editor__surface .mdxeditor-toolbar [role="button"] {
+  border-radius: var(--radius-md);
+}
+
+.rich-markdown-editor__content {
+  min-height: 11rem;
+  padding: var(--space-4);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.6;
+}
+
+.rich-markdown-editor__content:focus {
+  outline: 3px solid rgba(75, 143, 231, 0.2);
+  outline-offset: -3px;
+}
+
+.rich-markdown-editor__content p {
+  margin: 0 0 0.9rem;
+}
+
+.rich-markdown-editor__content h2,
+.rich-markdown-editor__content h3 {
+  margin: 1rem 0 0.5rem;
+  color: var(--color-text);
+  line-height: 1.25;
+}
+
+.rich-markdown-editor__content h2 {
+  font-size: 1.3rem;
+}
+
+.rich-markdown-editor__content h3 {
+  font-size: 1.12rem;
+}
+
+.rich-markdown-editor__content ul,
+.rich-markdown-editor__content ol {
+  margin: 0 0 0.9rem;
+  padding-left: 1.4rem;
+}
+
+.rich-markdown-editor__content a {
+  color: var(--color-primary-strong);
+  font-weight: 700;
+}
+
+.rich-markdown-editor__surface [contenteditable="false"] {
+  opacity: 0.74;
+}
