@@ -383,6 +383,14 @@ const en = {
     noOptionsTitle: "We could not prepare the options",
     noOptionsDescription:
       "The form needs available centers, categories and types before sending changes.",
+    new: {
+      eyebrow: "Send activity",
+      title: "Send activity",
+      description:
+        "Complete the activity information so NensGo can review it.",
+      submit: "Send activity",
+      success: "Activity sent. NensGo will review it before publishing.",
+    },
     correction: {
       eyebrow: "Correction",
       title: "Correct publication",

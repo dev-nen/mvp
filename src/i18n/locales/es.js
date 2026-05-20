@@ -389,6 +389,14 @@ const es = {
     noOptionsTitle: "No pudimos preparar las opciones",
     noOptionsDescription:
       "El formulario necesita centros, categorías y tipos disponibles antes de enviar cambios.",
+    new: {
+      eyebrow: "Enviar actividad",
+      title: "Enviar actividad",
+      description:
+        "Completa la información de la actividad para que podamos revisarla.",
+      submit: "Enviar actividad",
+      success: "Actividad enviada. NensGo la revisará antes de publicarla.",
+    },
     correction: {
       eyebrow: "Corrección",
       title: "Corregir publicación",

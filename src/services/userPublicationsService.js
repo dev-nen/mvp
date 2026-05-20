@@ -140,6 +140,24 @@ export async function listMyPublicationFormOptions() {
   return normalizeFormOptions(data ?? []);
 }
 
+export async function createMyActivitySubmission({
+  reviewedPayload,
+  sourceReferenceUrl,
+}) {
+  const supabase = getSupabaseOrThrow();
+  const { data, error } = await supabase.rpc("create_my_activity_submission", {
+    p_reviewed_payload: reviewedPayload,
+    p_source_reference_url:
+      typeof sourceReferenceUrl === "string" ? sourceReferenceUrl : null,
+  });
+
+  if (error) {
+    throw new Error("No pudimos enviar la actividad.");
+  }
+
+  return data;
+}
+
 export async function unpublishMyActivity(activityId) {
   const numericActivityId = Number(activityId);
 

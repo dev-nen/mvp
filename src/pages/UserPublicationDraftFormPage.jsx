@@ -17,6 +17,7 @@ import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload
 import { useI18n } from "@/i18n/useI18n";
 import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
 import {
+  createMyActivitySubmission,
   createMyActivityEditDraft,
   getMyActivityDraftForCorrection,
   getMyActivityForEdit,
@@ -108,7 +109,16 @@ function FieldFeedbackList({ feedbackItems, summary }) {
 }
 
 function UserPublicationDraftFormPage({ mode }) {
+  const isNewSubmission = mode === "new";
   const isCorrection = mode === "correction";
+  let modeCopyKey = "edit";
+
+  if (isNewSubmission) {
+    modeCopyKey = "new";
+  } else if (isCorrection) {
+    modeCopyKey = "correction";
+  }
+
   const navigate = useNavigate();
   const { activityId, draftId } = useParams();
   const { t } = useI18n();
@@ -134,27 +144,42 @@ function UserPublicationDraftFormPage({ mode }) {
       setFormMessage("");
 
       try {
-        const [record, options] = await Promise.all([
-          isCorrection
+        let recordPromise = Promise.resolve(null);
+
+        if (!isNewSubmission) {
+          recordPromise = isCorrection
             ? getMyActivityDraftForCorrection(draftId)
-            : getMyActivityForEdit(activityId),
+            : getMyActivityForEdit(activityId);
+        }
+
+        const [record, options] = await Promise.all([
+          recordPromise,
           listMyPublicationFormOptions(),
         ]);
-        const nextPayload = isCorrection
-          ? record.reviewedPayload
-          : record.activityPayload;
 
         if (!isMounted) {
           return;
         }
 
-        setRecordTitle(record.title);
-        setFormState({
-          ...mapDraftPayloadToFormState(nextPayload),
-          sourceReferenceUrl: record.sourceReferenceUrl || "",
-        });
-        setFeedbackSummary(isCorrection ? record.userFeedbackSummary : "");
-        setFeedbackItems(isCorrection ? record.userFeedbackJson : []);
+        if (isNewSubmission) {
+          setRecordTitle("");
+          setFormState(mapDraftPayloadToFormState({}));
+          setFeedbackSummary("");
+          setFeedbackItems([]);
+        } else {
+          const nextPayload = isCorrection
+            ? record.reviewedPayload
+            : record.activityPayload;
+
+          setRecordTitle(record.title);
+          setFormState({
+            ...mapDraftPayloadToFormState(nextPayload),
+            sourceReferenceUrl: record.sourceReferenceUrl || "",
+          });
+          setFeedbackSummary(isCorrection ? record.userFeedbackSummary : "");
+          setFeedbackItems(isCorrection ? record.userFeedbackJson : []);
+        }
+
         setCenterChoices(options.centerChoices);
         setCategoryChoices(options.categoryChoices);
         setTypeChoices(options.typeChoices);
@@ -180,7 +205,7 @@ function UserPublicationDraftFormPage({ mode }) {
     return () => {
       isMounted = false;
     };
-  }, [activityId, draftId, isCorrection, t]);
+  }, [activityId, draftId, isCorrection, isNewSubmission, t]);
 
   const highlightedFields = useMemo(
     () => getFeedbackFieldKeys(feedbackItems),
@@ -209,6 +234,19 @@ function UserPublicationDraftFormPage({ mode }) {
 
     try {
       const reviewedPayload = mapFormStateToDraftPayload(formState);
+
+      if (isNewSubmission) {
+        await createMyActivitySubmission({
+          reviewedPayload,
+          sourceReferenceUrl: formState.sourceReferenceUrl,
+        });
+        navigate("/perfil/publicaciones", {
+          state: {
+            userPublicationsMessage: t("userPublicationForm.new.success"),
+          },
+        });
+        return;
+      }
 
       if (isCorrection) {
         await resubmitMyActivityDraft({
@@ -265,20 +303,14 @@ function UserPublicationDraftFormPage({ mode }) {
 
             <div className="user-publication-draft-form-page__intro">
               <p className="user-publication-draft-form-page__eyebrow">
-                {isCorrection
-                  ? t("userPublicationForm.correction.eyebrow")
-                  : t("userPublicationForm.edit.eyebrow")}
+                {t(`userPublicationForm.${modeCopyKey}.eyebrow`)}
               </p>
               <h1 className="user-publication-draft-form-page__title">
-                {isCorrection
-                  ? t("userPublicationForm.correction.title")
-                  : t("userPublicationForm.edit.title")}
+                {t(`userPublicationForm.${modeCopyKey}.title`)}
               </h1>
               <p className="user-publication-draft-form-page__description">
                 {recordTitle ||
-                  (isCorrection
-                    ? t("userPublicationForm.correction.description")
-                    : t("userPublicationForm.edit.description"))}
+                  t(`userPublicationForm.${modeCopyKey}.description`)}
               </p>
             </div>
           </header>
@@ -316,7 +348,7 @@ function UserPublicationDraftFormPage({ mode }) {
                     feedbackItems={feedbackItems}
                     summary={feedbackSummary}
                   />
-                ) : (
+                ) : isNewSubmission ? null : (
                   <p className="user-publication-draft-form-page__warning">
                     {t("userPublicationForm.edit.warning")}
                   </p>
@@ -363,9 +395,7 @@ function UserPublicationDraftFormPage({ mode }) {
                     ) : (
                       <>
                         <Save />
-                        {isCorrection
-                          ? t("userPublicationForm.correction.submit")
-                          : t("userPublicationForm.edit.submit")}
+                        {t(`userPublicationForm.${modeCopyKey}.submit`)}
                       </>
                     )}
                   </Button>
@@ -379,6 +409,10 @@ function UserPublicationDraftFormPage({ mode }) {
       <Footer />
     </div>
   );
+}
+
+export function UserActivitySubmissionPage() {
+  return <UserPublicationDraftFormPage mode="new" />;
 }
 
 export function UserPublicationCorrectionPage() {

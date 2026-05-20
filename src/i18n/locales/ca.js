@@ -388,6 +388,14 @@ const ca = {
     noOptionsTitle: "No hem pogut preparar les opcions",
     noOptionsDescription:
       "El formulari necessita centres, categories i tipus disponibles abans d'enviar canvis.",
+    new: {
+      eyebrow: "Enviar activitat",
+      title: "Enviar activitat",
+      description:
+        "Completa la informacio de l'activitat perque la puguem revisar.",
+      submit: "Enviar activitat",
+      success: "Activitat enviada. NensGo la revisara abans de publicar-la.",
+    },
     correction: {
       eyebrow: "Correccio",
       title: "Corregir publicacio",
