@@ -1,16 +1,5 @@
-import { useRef } from "react";
-import {
-  Bold,
-  Heading3,
-  ImagePlus,
-  Italic,
-  Link,
-  List,
-  ListOrdered,
-  Plus,
-  Trash2,
-} from "lucide-react";
-import { SafeMarkdown } from "@/components/ui/SafeMarkdown";
+import { ImagePlus, Plus, Trash2 } from "lucide-react";
+import { RichMarkdownEditor } from "@/components/editor/RichMarkdownEditor";
 import { Input } from "@/components/ui/input";
 import {
   CONTACT_OPTION_TYPE_CHOICES,
@@ -18,29 +7,6 @@ import {
   normalizeContactOptionForPayload,
 } from "@/helpers/contactOptions";
 import "./ScoutDraftReviewForm.css";
-
-function getTextSelection(textareaElement) {
-  if (!textareaElement) {
-    return {
-      end: 0,
-      selectedText: "",
-      start: 0,
-    };
-  }
-
-  const start = textareaElement.selectionStart ?? 0;
-  const end = textareaElement.selectionEnd ?? start;
-
-  return {
-    end,
-    selectedText: textareaElement.value.slice(start, end),
-    start,
-  };
-}
-
-function replaceSelection(value, start, end, nextText) {
-  return `${value.slice(0, start)}${nextText}${value.slice(end)}`;
-}
 
 export function ScoutDraftReviewForm({
   categoryChoices,
@@ -57,8 +23,6 @@ export function ScoutDraftReviewForm({
   showSourceReferenceUrlField = false,
   typeChoices,
 }) {
-  const descriptionRef = useRef(null);
-  const isMarkdownDescription = formState.descriptionFormat === "markdown";
   const highlightedFieldSet = new Set(highlightedFields);
   const contactOptions = Array.isArray(formState.contactOptions)
     ? formState.contactOptions
@@ -75,38 +39,12 @@ export function ScoutDraftReviewForm({
       .filter(Boolean)
       .join(" ");
 
-  const applyMarkdownSnippet = (kind) => {
-    if (isReadOnly || !isMarkdownDescription) {
-      return;
+  const handleDescriptionChange = (nextDescription) => {
+    if (formState.descriptionFormat !== "markdown") {
+      onFieldChange("descriptionFormat", "markdown");
     }
 
-    const textareaElement = descriptionRef.current;
-    const { end, selectedText, start } = getTextSelection(textareaElement);
-    const currentValue = formState.description || "";
-    const fallbackText = selectedText || "texto";
-    let nextText = fallbackText;
-
-    if (kind === "bold") {
-      nextText = `**${fallbackText}**`;
-    } else if (kind === "italic") {
-      nextText = `*${fallbackText}*`;
-    } else if (kind === "heading") {
-      nextText = `### ${selectedText || "Título"}`;
-    } else if (kind === "bullets") {
-      nextText = (selectedText || "Elemento")
-        .split("\n")
-        .map((line) => `- ${line || "Elemento"}`)
-        .join("\n");
-    } else if (kind === "numbers") {
-      nextText = (selectedText || "Elemento")
-        .split("\n")
-        .map((line, index) => `${index + 1}. ${line || "Elemento"}`)
-        .join("\n");
-    } else if (kind === "link") {
-      nextText = `[${fallbackText}](https://)`;
-    }
-
-    onFieldChange("description", replaceSelection(currentValue, start, end, nextText));
+    onFieldChange("description", nextDescription);
   };
 
   const handleAddContactOption = () => {
@@ -166,103 +104,20 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className={getFieldClassName("descriptionFormat")}>
-          <label htmlFor="draft-description-format">Formato de descripción</label>
-          <select
-            id="draft-description-format"
-            className="scout-draft-review-form__select"
-            value={formState.descriptionFormat}
-            onChange={(event) => onFieldChange("descriptionFormat", event.target.value)}
-            disabled={isReadOnly}
-          >
-            <option value="markdown">Markdown</option>
-            <option value="plain">Texto plano</option>
-          </select>
-        </div>
-
         <div className={getFieldClassName("description", "scout-draft-review-form__field--full")}>
-          <div className="scout-draft-review-form__label-row">
-            <label htmlFor="draft-description">Descripción larga</label>
-            {isMarkdownDescription ? (
-              <div
-                className="scout-draft-review-form__toolbar"
-                aria-label="Formato Markdown"
-              >
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("bold")}
-                  disabled={isReadOnly}
-                  aria-label="Negrita"
-                >
-                  <Bold />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("italic")}
-                  disabled={isReadOnly}
-                  aria-label="Cursiva"
-                >
-                  <Italic />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("heading")}
-                  disabled={isReadOnly}
-                  aria-label="Encabezado"
-                >
-                  <Heading3 />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("bullets")}
-                  disabled={isReadOnly}
-                  aria-label="Lista"
-                >
-                  <List />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("numbers")}
-                  disabled={isReadOnly}
-                  aria-label="Lista numerada"
-                >
-                  <ListOrdered />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => applyMarkdownSnippet("link")}
-                  disabled={isReadOnly}
-                  aria-label="Enlace"
-                >
-                  <Link />
-                </button>
-              </div>
-            ) : null}
-          </div>
-          <textarea
-            ref={descriptionRef}
+          <RichMarkdownEditor
             id="draft-description"
-            className="scout-draft-review-form__textarea"
+            label="Descripción"
             value={formState.description}
-            onChange={(event) => onFieldChange("description", event.target.value)}
             disabled={isReadOnly}
+            onChange={handleDescriptionChange}
+            placeholder="Describe la actividad con la información que necesita una familia."
+            describedBy="draft-description-hint"
           />
-          <p className="scout-draft-review-form__hint">
-            Puedes usar formato simple en la descripción: negrita, listas y enlaces.
+          <p id="draft-description-hint" className="scout-draft-review-form__hint">
+            Describe la actividad con la información que necesita una familia.
+            Puedes usar negrita, listas y enlaces.
           </p>
-        </div>
-
-        <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
-          <span className="scout-draft-review-form__preview-label">
-            Preview de descripción
-          </span>
-          <div className="scout-draft-review-form__description-preview">
-            {isMarkdownDescription ? (
-              <SafeMarkdown content={formState.description} />
-            ) : (
-              <p>{formState.description || "Sin descripción todavía."}</p>
-            )}
-          </div>
         </div>
 
         {isImageUploadEnabled ? (
@@ -342,7 +197,7 @@ export function ScoutDraftReviewForm({
                 disabled={isReadOnly}
               >
                 <Plus />
-                Anadir contacto
+                Añadir contacto
               </button>
             </div>
 
@@ -404,7 +259,7 @@ export function ScoutDraftReviewForm({
                             placeholder={
                               contactOption.type === "instagram"
                                 ? "@usuario o URL de Instagram"
-                                : "Telefono, email o enlace"
+                                : "Teléfono, email o enlace"
                             }
                           />
                         </label>

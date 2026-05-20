@@ -1,4 +1,3 @@
-import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
 import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 
 function getTrimmedText(value) {
@@ -46,9 +45,7 @@ export function mapFormStateToDraftPayload(formState) {
     activity: {
       title: getTrimmedText(formState?.title),
       description: getTrimmedText(formState?.description),
-      description_format: normalizeDescriptionFormat(
-        formState?.descriptionFormat,
-      ),
+      description_format: "markdown",
       center_id: normalizeIntegerValue(formState?.centerId),
       category_id: normalizeIntegerValue(formState?.categoryId),
       type_id: normalizeIntegerValue(formState?.typeId),
