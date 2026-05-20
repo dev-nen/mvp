@@ -10,6 +10,9 @@ const STRING_FIELDS = [
   "title",
   "description",
   "centerId",
+  "centerSearchQuery",
+  "centerProposalName",
+  "centerProposalNotes",
   "categoryId",
   "typeId",
   "imageUrl",
@@ -25,6 +28,7 @@ const STRING_FIELDS = [
 
 const DESCRIPTION_FORMATS = ["markdown", "plain"];
 const AGE_RULE_TYPES = ["all", "range", "from", "until"];
+const CENTER_MODES = ["existing", "proposed_new", "not_applicable"];
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -110,6 +114,11 @@ export function sanitizeInternalDraftCreateFormState(formState) {
     AGE_RULE_TYPES,
     "all",
   );
+  nextFormState.centerMode = normalizeChoice(
+    formState.centerMode,
+    CENTER_MODES,
+    "existing",
+  );
   nextFormState.isFree =
     formState.isFree === "true" || formState.isFree === true ? "true" : "false";
   nextFormState.contactOptions = sanitizeContactOptions(
@@ -127,6 +136,10 @@ function hasMeaningfulLocalDraft(formState, hadCoverFile) {
   }
 
   if (formState.isFree === "true" || formState.ageRuleType !== "all") {
+    return true;
+  }
+
+  if (formState.centerMode !== "existing") {
     return true;
   }
 

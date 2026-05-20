@@ -1,10 +1,11 @@
-import { AlertTriangle, ArrowLeft, LoaderCircle, Save, SearchX } from "lucide-react";
+import { AlertTriangle, ArrowLeft, LoaderCircle, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CenterDraftModeField } from "@/features/scout-drafts/CenterDraftModeField";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
 import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import {
@@ -32,6 +33,14 @@ function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getCenterMode(value) {
+  const normalizedValue = getTrimmedText(value);
+
+  return ["existing", "proposed_new", "not_applicable"].includes(normalizedValue)
+    ? normalizedValue
+    : "existing";
+}
+
 function validateCreateDraftForm(formState) {
   if (!getTrimmedText(formState.title)) {
     return "El título es obligatorio.";
@@ -41,8 +50,17 @@ function validateCreateDraftForm(formState) {
     return "La descripción larga es obligatoria.";
   }
 
-  if (!getTrimmedText(formState.centerId)) {
+  const centerMode = getCenterMode(formState.centerMode);
+
+  if (centerMode === "existing" && !getTrimmedText(formState.centerId)) {
     return "El centro es obligatorio.";
+  }
+
+  if (
+    centerMode === "proposed_new" &&
+    !getTrimmedText(formState.centerProposalName)
+  ) {
+    return "El nombre del centro propuesto es obligatorio.";
   }
 
   if (!getTrimmedText(formState.categoryId)) {
@@ -316,15 +334,6 @@ export function InternalDraftCreatePage() {
               actionLabel="Volver al inbox"
               onAction={() => navigate("/internal/drafts")}
             />
-          ) : centerChoices.length === 0 ? (
-            <CatalogState
-              icon={SearchX}
-              eyebrow="Sin centros"
-              title="No hay centros disponibles"
-              description="El alta interna necesita elegir un centro activo antes de crear un draft publicable."
-              actionLabel="Volver al inbox"
-              onAction={() => navigate("/internal/drafts")}
-            />
           ) : (
             <Card className="internal-draft-create-page__panel">
               <CardContent className="internal-draft-create-page__panel-content">
@@ -363,6 +372,15 @@ export function InternalDraftCreatePage() {
                   isImageUploadEnabled
                   onFieldChange={handleFieldChange}
                   onImageFileChange={handleImageFileChange}
+                  centerFieldSlot={
+                    <CenterDraftModeField
+                      centerChoices={centerChoices}
+                      formState={formState}
+                      idPrefix="internal-draft-center"
+                      onFieldChange={handleFieldChange}
+                    />
+                  }
+                  showCenterField={false}
                   showImageUrlField={false}
                 />
 
