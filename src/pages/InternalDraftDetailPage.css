@@ -82,6 +82,28 @@
   font-size: 1.2rem;
 }
 
+.internal-draft-detail-page__center-notice {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.875rem 1rem;
+  color: #7a4a12;
+  background: rgba(236, 163, 65, 0.14);
+  border: 1px solid rgba(236, 163, 65, 0.3);
+  border-radius: var(--radius-lg);
+}
+
+.internal-draft-detail-page__center-notice p {
+  margin: 0;
+  font-weight: 850;
+}
+
+.internal-draft-detail-page__center-notice span,
+.internal-draft-detail-page__center-notice small {
+  color: var(--color-text);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
 .internal-draft-detail-page__metadata-grid {
   display: grid;
   gap: var(--space-3);

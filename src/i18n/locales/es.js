@@ -410,7 +410,7 @@ const es = {
     submitErrorDescription: "No pudimos enviar la publicación.",
     noOptionsTitle: "No pudimos preparar las opciones",
     noOptionsDescription:
-      "El formulario necesita centros, categorías y tipos disponibles antes de enviar cambios.",
+      "El formulario necesita categorías y tipos disponibles antes de enviar cambios.",
     new: {
       eyebrow: "Enviar actividad",
       title: "Enviar actividad",
@@ -441,6 +441,7 @@ const es = {
       title: "El título es obligatorio.",
       description: "La descripción es obligatoria.",
       center: "El centro es obligatorio.",
+      proposedCenterName: "Indica el nombre del centro propuesto.",
       category: "La categoría es obligatoria.",
       type: "El tipo es obligatorio.",
       schedule: "El horario es obligatorio.",

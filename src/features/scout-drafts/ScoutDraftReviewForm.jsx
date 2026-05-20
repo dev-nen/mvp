@@ -19,6 +19,7 @@ export function ScoutDraftReviewForm({
   onFieldChange,
   onImageFileChange,
   priceMode = "admin",
+  showCenterField = true,
   showContactOptionsField = true,
   showImageUrlField = true,
   showSourceReferenceUrlField = false,
@@ -336,23 +337,31 @@ export function ScoutDraftReviewForm({
           </div>
         ) : null}
 
-        <div className={getFieldClassName("centerId")}>
-          <label htmlFor="draft-center-id">Centro</label>
-          <select
-            id="draft-center-id"
-            className="scout-draft-review-form__select"
-            value={formState.centerId}
-            onChange={(event) => onFieldChange("centerId", event.target.value)}
-            disabled={isReadOnly}
-          >
-            <option value="">Selecciona un centro</option>
-            {centerChoices.map((centerChoice) => (
-              <option key={centerChoice.id} value={centerChoice.id}>
-                {centerChoice.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        {showCenterField ? (
+          <div className={getFieldClassName("centerId")}>
+            <label htmlFor="draft-center-id">Centro</label>
+            <select
+              id="draft-center-id"
+              className="scout-draft-review-form__select"
+              value={formState.centerId}
+              onChange={(event) => {
+                onFieldChange("centerId", event.target.value);
+
+                if (event.target.value) {
+                  onFieldChange("centerMode", "existing");
+                }
+              }}
+              disabled={isReadOnly}
+            >
+              <option value="">Selecciona un centro</option>
+              {centerChoices.map((centerChoice) => (
+                <option key={centerChoice.id} value={centerChoice.id}>
+                  {centerChoice.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
 
         <div className={getFieldClassName("categoryId")}>
           <label htmlFor="draft-category-id">Categoría</label>

@@ -30,8 +30,21 @@ function normalizeAgeRuleType(value) {
   return "all";
 }
 
+function normalizeCenterMode(value) {
+  const normalizedValue = getTrimmedText(value).toLowerCase();
+
+  if (["existing", "proposed_new", "not_applicable"].includes(normalizedValue)) {
+    return normalizedValue;
+  }
+
+  return "existing";
+}
+
 export function mapFormStateToDraftPayload(formState) {
   const ageRuleType = normalizeAgeRuleType(formState?.ageRuleType);
+  const centerMode = normalizeCenterMode(formState?.centerMode);
+  const centerId =
+    centerMode === "existing" ? normalizeIntegerValue(formState?.centerId) : null;
   const ageMin = normalizeIntegerValue(formState?.ageMin);
   const ageMax = normalizeIntegerValue(formState?.ageMax);
   const { contactOptions } = normalizeContactOptionsForPayload(
@@ -46,7 +59,7 @@ export function mapFormStateToDraftPayload(formState) {
       title: getTrimmedText(formState?.title),
       description: getTrimmedText(formState?.description),
       description_format: "markdown",
-      center_id: normalizeIntegerValue(formState?.centerId),
+      center_id: centerId,
       category_id: normalizeIntegerValue(formState?.categoryId),
       type_id: normalizeIntegerValue(formState?.typeId),
       image_url: getTrimmedText(formState?.imageUrl),
@@ -61,6 +74,22 @@ export function mapFormStateToDraftPayload(formState) {
       venue_address_1: getTrimmedText(formState?.venueAddress1),
       venue_postal_code: getTrimmedText(formState?.venuePostalCode),
     },
+    center:
+      centerMode === "existing"
+        ? {
+            mode: "existing",
+            center_id: centerId,
+          }
+        : centerMode === "proposed_new"
+          ? {
+              mode: "proposed_new",
+              name: getTrimmedText(formState?.centerProposalName),
+              notes: getTrimmedText(formState?.centerProposalNotes),
+            }
+          : {
+              mode: "not_applicable",
+              notes: getTrimmedText(formState?.centerProposalNotes),
+            },
   };
 
   if (shouldIncludeContactOptions) {

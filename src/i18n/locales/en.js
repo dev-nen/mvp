@@ -404,7 +404,7 @@ const en = {
     submitErrorDescription: "We could not send the publication.",
     noOptionsTitle: "We could not prepare the options",
     noOptionsDescription:
-      "The form needs available centers, categories and types before sending changes.",
+      "The form needs available categories and types before sending changes.",
     new: {
       eyebrow: "Send activity",
       title: "Send activity",
@@ -434,6 +434,7 @@ const en = {
       title: "The title is required.",
       description: "The description is required.",
       center: "The center is required.",
+      proposedCenterName: "Enter the proposed center name.",
       category: "The category is required.",
       type: "The type is required.",
       schedule: "The schedule is required.",

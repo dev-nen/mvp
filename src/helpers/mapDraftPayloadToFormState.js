@@ -51,6 +51,24 @@ function getActivityPayload(payload) {
     : {};
 }
 
+function getCenterPayload(payload) {
+  return payload && typeof payload === "object" && !Array.isArray(payload)
+    ? payload.center && typeof payload.center === "object" && !Array.isArray(payload.center)
+      ? payload.center
+      : {}
+    : {};
+}
+
+function normalizeCenterMode(value) {
+  const normalizedValue = getTrimmedText(value).toLowerCase();
+
+  if (["existing", "proposed_new", "not_applicable"].includes(normalizedValue)) {
+    return normalizedValue;
+  }
+
+  return "existing";
+}
+
 function hasContactOptionsPayload(payload) {
   return Boolean(
     payload &&
@@ -65,7 +83,11 @@ export function getDefaultDraftFormState() {
     title: "",
     description: "",
     descriptionFormat: "markdown",
+    centerMode: "existing",
     centerId: "",
+    centerSearchQuery: "",
+    centerProposalName: "",
+    centerProposalNotes: "",
     categoryId: "",
     typeId: "",
     imageUrl: "",
@@ -88,6 +110,9 @@ export function getDefaultDraftFormState() {
 export function mapDraftPayloadToFormState(payload) {
   const defaultState = getDefaultDraftFormState();
   const activityPayload = getActivityPayload(payload);
+  const centerPayload = getCenterPayload(payload);
+  const centerMode = normalizeCenterMode(centerPayload.mode);
+  const centerId = normalizeIdValue(activityPayload.center_id || centerPayload.center_id);
 
   return {
     ...defaultState,
@@ -96,7 +121,11 @@ export function mapDraftPayloadToFormState(payload) {
     descriptionFormat: normalizeDescriptionFormat(
       activityPayload.description_format,
     ),
-    centerId: normalizeIdValue(activityPayload.center_id),
+    centerMode,
+    centerId,
+    centerSearchQuery: "",
+    centerProposalName: getTrimmedText(centerPayload.name),
+    centerProposalNotes: getTrimmedText(centerPayload.notes),
     categoryId: normalizeIdValue(activityPayload.category_id),
     typeId: normalizeIdValue(activityPayload.type_id),
     imageUrl: getTrimmedText(activityPayload.image_url),

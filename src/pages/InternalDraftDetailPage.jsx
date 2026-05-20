@@ -330,10 +330,22 @@ export function InternalDraftDetailPage() {
   };
 
   const handleFieldChange = (fieldName, nextValue) => {
-    setFormState((currentFormState) => ({
-      ...currentFormState,
-      [fieldName]: nextValue,
-    }));
+    setFormState((currentFormState) => {
+      if (fieldName === "centerId" && getTrimmedText(nextValue)) {
+        return {
+          ...currentFormState,
+          centerId: nextValue,
+          centerMode: "existing",
+          centerProposalName: "",
+          centerProposalNotes: "",
+        };
+      }
+
+      return {
+        ...currentFormState,
+        [fieldName]: nextValue,
+      };
+    });
   };
 
   const handleFeedbackTargetChange = (nextTargetStatus) => {
@@ -650,6 +662,31 @@ export function InternalDraftDetailPage() {
                       <h2 className="internal-draft-detail-page__panel-title">
                         Payload revisado
                       </h2>
+
+                      {formState.centerMode === "proposed_new" ? (
+                        <div className="internal-draft-detail-page__center-notice">
+                          <p>
+                            Centro nuevo propuesto: revisar y dar de alta antes de publicar.
+                          </p>
+                          {formState.centerProposalName ? (
+                            <span>{formState.centerProposalName}</span>
+                          ) : null}
+                          {formState.centerProposalNotes ? (
+                            <small>{formState.centerProposalNotes}</small>
+                          ) : null}
+                        </div>
+                      ) : null}
+
+                      {formState.centerMode === "not_applicable" ? (
+                        <div className="internal-draft-detail-page__center-notice">
+                          <p>
+                            Actividad marcada sin centro formal / no aplica.
+                          </p>
+                          {formState.centerProposalNotes ? (
+                            <small>{formState.centerProposalNotes}</small>
+                          ) : null}
+                        </div>
+                      ) : null}
 
                       <ScoutDraftReviewForm
                         centerChoices={centerChoices}

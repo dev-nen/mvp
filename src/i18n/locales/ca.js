@@ -409,7 +409,7 @@ const ca = {
     submitErrorDescription: "No hem pogut enviar la publicacio.",
     noOptionsTitle: "No hem pogut preparar les opcions",
     noOptionsDescription:
-      "El formulari necessita centres, categories i tipus disponibles abans d'enviar canvis.",
+      "El formulari necessita categories i tipus disponibles abans d'enviar canvis.",
     new: {
       eyebrow: "Enviar activitat",
       title: "Enviar activitat",
@@ -440,6 +440,7 @@ const ca = {
       title: "El titol es obligatori.",
       description: "La descripcio es obligatoria.",
       center: "El centre es obligatori.",
+      proposedCenterName: "Indica el nom del centre proposat.",
       category: "La categoria es obligatoria.",
       type: "El tipus es obligatori.",
       schedule: "L'horari es obligatori.",
