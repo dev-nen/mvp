@@ -6,6 +6,7 @@ import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { getDefaultDraftFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
 import { useAuth } from "@/hooks/useAuth";
@@ -64,6 +65,12 @@ function validateCreateDraftForm(formState) {
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
     return "La regla de edad hasta necesita edad máxima.";
+  }
+
+  const { errors } = normalizeContactOptionsForPayload(formState.contactOptions);
+
+  if (errors.length > 0) {
+    return errors[0].message;
   }
 
   return "";

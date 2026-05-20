@@ -1,7 +1,22 @@
 import { useRef } from "react";
-import { Bold, Heading3, ImagePlus, Italic, Link, List, ListOrdered } from "lucide-react";
+import {
+  Bold,
+  Heading3,
+  ImagePlus,
+  Italic,
+  Link,
+  List,
+  ListOrdered,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { SafeMarkdown } from "@/components/ui/SafeMarkdown";
 import { Input } from "@/components/ui/input";
+import {
+  CONTACT_OPTION_TYPE_CHOICES,
+  createEmptyContactOption,
+  normalizeContactOptionForPayload,
+} from "@/helpers/contactOptions";
 import "./ScoutDraftReviewForm.css";
 
 function getTextSelection(textareaElement) {
@@ -37,6 +52,7 @@ export function ScoutDraftReviewForm({
   isReadOnly = false,
   onFieldChange,
   onImageFileChange,
+  showContactOptionsField = true,
   showImageUrlField = true,
   showSourceReferenceUrlField = false,
   typeChoices,
@@ -44,6 +60,9 @@ export function ScoutDraftReviewForm({
   const descriptionRef = useRef(null);
   const isMarkdownDescription = formState.descriptionFormat === "markdown";
   const highlightedFieldSet = new Set(highlightedFields);
+  const contactOptions = Array.isArray(formState.contactOptions)
+    ? formState.contactOptions
+    : [];
 
   const getFieldClassName = (fieldName, extraClassName = "") =>
     [
@@ -88,6 +107,46 @@ export function ScoutDraftReviewForm({
     }
 
     onFieldChange("description", replaceSelection(currentValue, start, end, nextText));
+  };
+
+  const handleAddContactOption = () => {
+    if (isReadOnly) {
+      return;
+    }
+
+    onFieldChange("contactOptions", [
+      ...contactOptions,
+      createEmptyContactOption(),
+    ]);
+  };
+
+  const handleRemoveContactOption = (index) => {
+    if (isReadOnly) {
+      return;
+    }
+
+    onFieldChange(
+      "contactOptions",
+      contactOptions.filter((_, optionIndex) => optionIndex !== index),
+    );
+  };
+
+  const handleContactOptionChange = (index, fieldName, nextValue) => {
+    if (isReadOnly) {
+      return;
+    }
+
+    onFieldChange(
+      "contactOptions",
+      contactOptions.map((contactOption, optionIndex) =>
+        optionIndex === index
+          ? {
+              ...contactOption,
+              [fieldName]: nextValue,
+            }
+          : contactOption,
+      ),
+    );
   };
 
   return (
@@ -259,6 +318,154 @@ export function ScoutDraftReviewForm({
             <div className="scout-draft-review-form__image-preview">
               <img src={imagePreviewSrc} alt="Preview de imagen principal" />
             </div>
+          </div>
+        ) : null}
+
+        {showContactOptionsField ? (
+          <div className={getFieldClassName("contactOptions", "scout-draft-review-form__field--full")}>
+            <div className="scout-draft-review-form__contact-header">
+              <div>
+                <span className="scout-draft-review-form__preview-label">
+                  Opciones de contacto
+                </span>
+                <p className="scout-draft-review-form__hint">
+                  Estos contactos se revisan antes de publicarse.
+                </p>
+              </div>
+              <button
+                type="button"
+                className="scout-draft-review-form__contact-add"
+                onClick={handleAddContactOption}
+                disabled={isReadOnly}
+              >
+                <Plus />
+                Anadir contacto
+              </button>
+            </div>
+
+            {contactOptions.length === 0 ? (
+              <p className="scout-draft-review-form__contact-empty">
+                Sin contactos en este draft.
+              </p>
+            ) : (
+              <div className="scout-draft-review-form__contact-list">
+                {contactOptions.map((contactOption, index) => {
+                  const normalizedContact =
+                    normalizeContactOptionForPayload(contactOption);
+                  const contactError =
+                    contactOption.value || contactOption.label
+                      ? normalizedContact.error
+                      : "";
+
+                  return (
+                    <div
+                      key={`contact-option-${index}`}
+                      className="scout-draft-review-form__contact-row"
+                    >
+                      <div className="scout-draft-review-form__contact-grid">
+                        <label>
+                          Tipo
+                          <select
+                            className="scout-draft-review-form__select"
+                            value={contactOption.type || "whatsapp"}
+                            onChange={(event) =>
+                              handleContactOptionChange(
+                                index,
+                                "type",
+                                event.target.value,
+                              )
+                            }
+                            disabled={isReadOnly}
+                          >
+                            {CONTACT_OPTION_TYPE_CHOICES.map((choice) => (
+                              <option key={choice.value} value={choice.value}>
+                                {choice.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        <label>
+                          Valor
+                          <Input
+                            className="scout-draft-review-form__input"
+                            value={contactOption.value || ""}
+                            onChange={(event) =>
+                              handleContactOptionChange(
+                                index,
+                                "value",
+                                event.target.value,
+                              )
+                            }
+                            disabled={isReadOnly}
+                            placeholder={
+                              contactOption.type === "instagram"
+                                ? "@usuario o URL de Instagram"
+                                : "Telefono, email o enlace"
+                            }
+                          />
+                        </label>
+
+                        <label>
+                          Etiqueta
+                          <Input
+                            className="scout-draft-review-form__input"
+                            value={contactOption.label || ""}
+                            onChange={(event) =>
+                              handleContactOptionChange(
+                                index,
+                                "label",
+                                event.target.value,
+                              )
+                            }
+                            disabled={isReadOnly}
+                            placeholder="Opcional"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="scout-draft-review-form__contact-footer">
+                        <label className="scout-draft-review-form__contact-primary">
+                          <input
+                            type="checkbox"
+                            checked={contactOption.isPrimary === true}
+                            onChange={(event) =>
+                              handleContactOptionChange(
+                                index,
+                                "isPrimary",
+                                event.target.checked,
+                              )
+                            }
+                            disabled={isReadOnly}
+                          />
+                          Principal
+                        </label>
+
+                        {contactError ? (
+                          <p className="scout-draft-review-form__contact-error">
+                            {contactError}
+                          </p>
+                        ) : normalizedContact.contactOption ? (
+                          <p className="scout-draft-review-form__contact-preview">
+                            {normalizedContact.contactOption.url}
+                          </p>
+                        ) : null}
+
+                        <button
+                          type="button"
+                          className="scout-draft-review-form__contact-remove"
+                          onClick={() => handleRemoveContactOption(index)}
+                          disabled={isReadOnly}
+                          aria-label="Quitar contacto"
+                        >
+                          <Trash2 />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         ) : null}
 

@@ -15,6 +15,7 @@ import {
   getDraftReviewFeedbackOptions,
 } from "@/features/scout-drafts/draftReviewFeedbackOptions";
 import { useAuth } from "@/hooks/useAuth";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
 import { getInternalApprovedActivity } from "@/services/internalApprovedActivitiesService";
@@ -115,6 +116,12 @@ function validateDraftForApproval(formState) {
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
     return "La regla de edad hasta necesita edad máxima.";
+  }
+
+  const { errors } = normalizeContactOptionsForPayload(formState.contactOptions);
+
+  if (errors.length > 0) {
+    return errors[0].message;
   }
 
   return "";

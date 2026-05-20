@@ -12,6 +12,7 @@ import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
 import { useI18n } from "@/i18n/useI18n";
@@ -82,6 +83,12 @@ function validatePublicationForm(formState, t) {
 
   if (formState.ageRuleType === "until" && !getTrimmedText(formState.ageMax)) {
     return t("userPublicationForm.validation.ageUntil");
+  }
+
+  const { errors } = normalizeContactOptionsForPayload(formState.contactOptions);
+
+  if (errors.length > 0) {
+    return errors[0].message;
   }
 
   return "";
