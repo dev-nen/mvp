@@ -706,8 +706,9 @@ smoke validated.
 - `website`
 - `instagram`
 
-Instagram is first-class. It can be entered as `@usuario`, `usuario`, or an
-Instagram profile URL. The reviewed/published value is normalized to:
+Instagram is a supported contact type. It can be entered as `@usuario`,
+`usuario`, or an Instagram profile URL. The reviewed/published value is
+normalized to:
 
 ```txt
 https://www.instagram.com/{handle}/

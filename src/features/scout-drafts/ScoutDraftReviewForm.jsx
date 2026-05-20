@@ -114,6 +114,7 @@ export function ScoutDraftReviewForm({
       return;
     }
 
+    onFieldChange("contactOptionsTouched", true);
     onFieldChange("contactOptions", [
       ...contactOptions,
       createEmptyContactOption(),
@@ -125,6 +126,7 @@ export function ScoutDraftReviewForm({
       return;
     }
 
+    onFieldChange("contactOptionsTouched", true);
     onFieldChange(
       "contactOptions",
       contactOptions.filter((_, optionIndex) => optionIndex !== index),
@@ -136,6 +138,7 @@ export function ScoutDraftReviewForm({
       return;
     }
 
+    onFieldChange("contactOptionsTouched", true);
     onFieldChange(
       "contactOptions",
       contactOptions.map((contactOption, optionIndex) =>

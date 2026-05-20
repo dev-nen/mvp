@@ -82,6 +82,7 @@ export function InternalDraftCreatePage() {
   const [formState, setFormState] = useState(() => ({
     ...getDefaultDraftFormState(),
     descriptionFormat: "markdown",
+    hasContactOptionsPayload: true,
   }));
   const [centerChoices, setCenterChoices] = useState([]);
   const [categoryChoices, setCategoryChoices] = useState([]);

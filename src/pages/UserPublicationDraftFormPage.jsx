@@ -170,7 +170,10 @@ function UserPublicationDraftFormPage({ mode }) {
 
         if (isNewSubmission) {
           setRecordTitle("");
-          setFormState(mapDraftPayloadToFormState({}));
+          setFormState({
+            ...mapDraftPayloadToFormState({}),
+            hasContactOptionsPayload: true,
+          });
           setFeedbackSummary("");
           setFeedbackItems([]);
         } else {

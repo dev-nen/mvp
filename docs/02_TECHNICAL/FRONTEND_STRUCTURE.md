@@ -85,7 +85,7 @@
   live `activity_contact_options`.
 - Public detail keeps the main CTA label as `Contactar`. One contact option
   opens directly; multiple contact options open the chooser.
-- Instagram is a first-class contact option and opens the normalized Instagram
+- Instagram is a supported contact option and opens the normalized Instagram
   profile URL.
 
 ## Helpers

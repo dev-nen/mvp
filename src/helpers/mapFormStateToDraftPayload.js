@@ -38,8 +38,11 @@ export function mapFormStateToDraftPayload(formState) {
   const { contactOptions } = normalizeContactOptionsForPayload(
     formState?.contactOptions,
   );
+  const shouldIncludeContactOptions =
+    formState?.hasContactOptionsPayload === true ||
+    formState?.contactOptionsTouched === true;
 
-  return {
+  const payload = {
     activity: {
       title: getTrimmedText(formState?.title),
       description: getTrimmedText(formState?.description),
@@ -60,6 +63,11 @@ export function mapFormStateToDraftPayload(formState) {
       venue_address_1: getTrimmedText(formState?.venueAddress1),
       venue_postal_code: getTrimmedText(formState?.venuePostalCode),
     },
-    contact_options: contactOptions,
   };
+
+  if (shouldIncludeContactOptions) {
+    payload.contact_options = contactOptions;
+  }
+
+  return payload;
 }

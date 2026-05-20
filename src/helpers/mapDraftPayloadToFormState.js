@@ -51,6 +51,15 @@ function getActivityPayload(payload) {
     : {};
 }
 
+function hasContactOptionsPayload(payload) {
+  return Boolean(
+    payload &&
+      typeof payload === "object" &&
+      !Array.isArray(payload) &&
+      Object.prototype.hasOwnProperty.call(payload, "contact_options"),
+  );
+}
+
 export function getDefaultDraftFormState() {
   return {
     title: "",
@@ -71,6 +80,8 @@ export function getDefaultDraftFormState() {
     venuePostalCode: "",
     sourceReferenceUrl: "",
     contactOptions: [],
+    contactOptionsTouched: false,
+    hasContactOptionsPayload: false,
   };
 }
 
@@ -99,5 +110,7 @@ export function mapDraftPayloadToFormState(payload) {
     venueAddress1: getTrimmedText(activityPayload.venue_address_1),
     venuePostalCode: getTrimmedText(activityPayload.venue_postal_code),
     contactOptions: mapPayloadContactOptionsToFormState(payload),
+    contactOptionsTouched: false,
+    hasContactOptionsPayload: hasContactOptionsPayload(payload),
   };
 }

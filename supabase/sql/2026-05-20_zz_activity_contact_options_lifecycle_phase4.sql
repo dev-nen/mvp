@@ -1534,6 +1534,8 @@ begin
 end;
 $$;
 
+drop function if exists public.resubmit_my_activity_draft(bigint, jsonb);
+
 revoke all on function public.normalize_activity_contact_options(jsonb) from public;
 revoke all on function public.normalize_activity_contact_options(jsonb) from anon;
 revoke all on function public.normalize_activity_contact_options(jsonb) from authenticated;
