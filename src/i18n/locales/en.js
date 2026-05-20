@@ -319,8 +319,9 @@ const en = {
       "We could not update your account information right now.",
     publicationsTitle: "My publications",
     publicationsDescription:
-      "Check the status of activities you sent to NensGo.",
+      "Check your publication status or send an activity for NensGo to review.",
     publicationsAction: "My publications",
+    submitActivityAction: "Send activity",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",
@@ -349,7 +350,7 @@ const en = {
     emptyEyebrow: "Publications",
     emptyTitle: "You have not sent any publications yet",
     emptyDescription:
-      "You have not sent any publications yet. When you send or edit an activity, you will be able to track its status here.",
+      "You have not sent any publications yet. You can send an activity for NensGo to review.",
     status: {
       inReview: "In review",
       needsChanges: "Needs changes",
@@ -359,6 +360,7 @@ const en = {
       archived: "Archived",
     },
     actions: {
+      submit: "Send activity",
       correct: "Correct",
       edit: "Edit publication",
       unpublish: "Unpublish",

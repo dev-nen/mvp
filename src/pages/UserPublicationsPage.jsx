@@ -5,6 +5,7 @@ import {
   EyeOff,
   LoaderCircle,
   Pencil,
+  Plus,
   RotateCcw,
   SearchX,
 } from "lucide-react";
@@ -185,16 +186,27 @@ export function UserPublicationsPage() {
               {t("userPublications.back")}
             </Button>
 
-            <div className="user-publications-page__intro">
-              <p className="user-publications-page__eyebrow">
-                {t("userPublications.eyebrow")}
-              </p>
-              <h1 className="user-publications-page__title">
-                {t("userPublications.title")}
-              </h1>
-              <p className="user-publications-page__description">
-                {t("userPublications.description")}
-              </p>
+            <div className="user-publications-page__intro-row">
+              <div className="user-publications-page__intro">
+                <p className="user-publications-page__eyebrow">
+                  {t("userPublications.eyebrow")}
+                </p>
+                <h1 className="user-publications-page__title">
+                  {t("userPublications.title")}
+                </h1>
+                <p className="user-publications-page__description">
+                  {t("userPublications.description")}
+                </p>
+              </div>
+
+              <Button
+                type="button"
+                className="user-publications-page__submit-button"
+                onClick={() => navigate("/perfil/publicaciones/nueva")}
+              >
+                <Plus />
+                {t("userPublications.actions.submit")}
+              </Button>
             </div>
           </header>
 
@@ -220,6 +232,8 @@ export function UserPublicationsPage() {
               eyebrow={t("userPublications.emptyEyebrow")}
               title={t("userPublications.emptyTitle")}
               description={t("userPublications.emptyDescription")}
+              actionLabel={t("userPublications.actions.submit")}
+              onAction={() => navigate("/perfil/publicaciones/nueva")}
             />
           ) : (
             <section className="user-publications-page__list" aria-live="polite">

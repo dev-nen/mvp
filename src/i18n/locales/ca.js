@@ -324,8 +324,9 @@ const ca = {
       "No hem pogut actualitzar la informació del teu compte ara mateix.",
     publicationsTitle: "Les meves publicacions",
     publicationsDescription:
-      "Consulta l'estat de les activitats que has enviat a NensGo.",
+      "Consulta l'estat de les teves publicacions o envia una activitat perque NensGo la revisi.",
     publicationsAction: "Les meves publicacions",
+    submitActivityAction: "Enviar activitat",
     internalDescription:
       "Si formes part de l'equip, pots obrir el Draft Inbox des d'aquí.",
     internalAction: "Obrir Draft Inbox",
@@ -354,7 +355,7 @@ const ca = {
     emptyEyebrow: "Publicacions",
     emptyTitle: "Encara no tens publicacions enviades",
     emptyDescription:
-      "Encara no tens publicacions enviades. Quan enviis o editis una activitat, en podras seguir l'estat aqui.",
+      "Encara no tens publicacions enviades. Pots enviar una activitat perque NensGo la revisi.",
     status: {
       inReview: "En revisio",
       needsChanges: "Necessita canvis",
@@ -364,6 +365,7 @@ const ca = {
       archived: "Arxivada",
     },
     actions: {
+      submit: "Enviar activitat",
       correct: "Corregir",
       edit: "Editar publicacio",
       unpublish: "Despublicar",

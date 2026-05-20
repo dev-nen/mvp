@@ -325,8 +325,9 @@ const es = {
       "No pudimos actualizar la información de tu cuenta ahora mismo.",
     publicationsTitle: "Mis publicaciones",
     publicationsDescription:
-      "Consulta el estado de las actividades que enviaste a NensGo.",
+      "Consulta el estado de tus publicaciones o envía una actividad para que NensGo la revise.",
     publicationsAction: "Mis publicaciones",
+    submitActivityAction: "Enviar actividad",
     internalDescription:
       "Si formas parte del equipo, puedes abrir el Draft Inbox desde aquí.",
     internalAction: "Abrir Draft Inbox",
@@ -355,7 +356,7 @@ const es = {
     emptyEyebrow: "Publicaciones",
     emptyTitle: "Todavía no tienes publicaciones enviadas",
     emptyDescription:
-      "Todavía no tienes publicaciones enviadas. Cuando envíes o edites una actividad, podrás seguir su estado aquí.",
+      "Todavía no tienes publicaciones enviadas. Puedes enviar una actividad para que NensGo la revise.",
     status: {
       inReview: "En revisión",
       needsChanges: "Necesita cambios",
@@ -365,6 +366,7 @@ const es = {
       archived: "Archivada",
     },
     actions: {
+      submit: "Enviar actividad",
       correct: "Corregir",
       edit: "Editar publicación",
       unpublish: "Despublicar",
