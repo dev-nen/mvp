@@ -1,4 +1,5 @@
 import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
+import { mapPayloadContactOptionsToFormState } from "@/helpers/contactOptions";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -69,6 +70,7 @@ export function getDefaultDraftFormState() {
     venueAddress1: "",
     venuePostalCode: "",
     sourceReferenceUrl: "",
+    contactOptions: [],
   };
 }
 
@@ -96,5 +98,6 @@ export function mapDraftPayloadToFormState(payload) {
     venueName: getTrimmedText(activityPayload.venue_name),
     venueAddress1: getTrimmedText(activityPayload.venue_address_1),
     venuePostalCode: getTrimmedText(activityPayload.venue_postal_code),
+    contactOptions: mapPayloadContactOptionsToFormState(payload),
   };
 }

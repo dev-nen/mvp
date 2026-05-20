@@ -1,4 +1,5 @@
 import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -34,6 +35,9 @@ export function mapFormStateToDraftPayload(formState) {
   const ageRuleType = normalizeAgeRuleType(formState?.ageRuleType);
   const ageMin = normalizeIntegerValue(formState?.ageMin);
   const ageMax = normalizeIntegerValue(formState?.ageMax);
+  const { contactOptions } = normalizeContactOptionsForPayload(
+    formState?.contactOptions,
+  );
 
   return {
     activity: {
@@ -56,5 +60,6 @@ export function mapFormStateToDraftPayload(formState) {
       venue_address_1: getTrimmedText(formState?.venueAddress1),
       venue_postal_code: getTrimmedText(formState?.venuePostalCode),
     },
+    contact_options: contactOptions,
   };
 }
