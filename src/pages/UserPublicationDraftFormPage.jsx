@@ -635,13 +635,6 @@ function UserPublicationDraftFormPage({ mode }) {
                   </p>
                 )}
 
-                <UserCenterDraftModeField
-                  centerChoices={centerChoices}
-                  formState={formState}
-                  highlightedFields={highlightedFields}
-                  onFieldChange={handleFieldChange}
-                />
-
                 <ScoutDraftReviewForm
                   centerChoices={centerChoices}
                   categoryChoices={categoryChoices}
@@ -656,9 +649,16 @@ function UserPublicationDraftFormPage({ mode }) {
                   onFieldChange={handleFieldChange}
                   onImageFileChange={handleImageFileChange}
                   priceMode="user"
+                  centerFieldSlot={
+                    <UserCenterDraftModeField
+                      centerChoices={centerChoices}
+                      formState={formState}
+                      highlightedFields={highlightedFields}
+                      onFieldChange={handleFieldChange}
+                    />
+                  }
                   showCenterField={false}
                   showImageUrlField={false}
-                  showSourceReferenceUrlField
                 />
 
                 {formMessage ? (

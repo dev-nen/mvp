@@ -16,6 +16,7 @@ export function ScoutDraftReviewForm({
   imagePreviewSrc = "",
   isImageUploadEnabled = false,
   isReadOnly = false,
+  centerFieldSlot = null,
   onFieldChange,
   onImageFileChange,
   priceMode = "admin",
@@ -337,7 +338,11 @@ export function ScoutDraftReviewForm({
           </div>
         ) : null}
 
-        {showCenterField ? (
+        {centerFieldSlot ? (
+          <div className="scout-draft-review-form__field scout-draft-review-form__field--full">
+            {centerFieldSlot}
+          </div>
+        ) : showCenterField ? (
           <div className={getFieldClassName("centerId")}>
             <label htmlFor="draft-center-id">Centro</label>
             <select
