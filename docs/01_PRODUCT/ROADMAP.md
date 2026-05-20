@@ -62,6 +62,27 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Mantener Phase 3 como `Partial` hasta aplicar la migracion SQL y completar
   smoke Supabase/RLS.
 
+### Phase 4 Core: contact options lifecycle
+
+- Integrar opciones de contacto en el mismo ciclo de draft, revision,
+  aprobacion y publicacion que la actividad.
+- Soportar `whatsapp`, `phone`, `email`, `website` e `instagram` como tipos de
+  contacto revisables.
+- Mantener el CTA publico principal como `Contactar` siempre: una opcion abre
+  directo y varias opciones abren selector/modal sin renombrar el CTA.
+- Guardar contactos enviados por usuarios en `reviewed_payload_json` bajo
+  `contact_options`; no se publican hasta aprobacion interna.
+- Publicar/actualizar `activity_contact_options` desde `approve_activity_draft`
+  y `update_approved_activity_from_draft` cuando el payload revisado incluye
+  `contact_options`.
+- Normalizar Instagram a URL real `https://www.instagram.com/{handle}/`; no se
+  guarda como texto suelto en la descripcion.
+- Mantener fuera de alcance: cuentas provider/centro, creacion de centro por
+  usuario, submissions anonimas, analitica de contactos, API/OAuth de
+  Instagram y uploads de imagen por usuarios normales.
+- Mantener Phase 4 como `Partial` hasta aplicar la migracion SQL y completar
+  smoke Supabase/RLS/UI.
+
 ## Luego
 
 - Modelo de expiración de actividades.

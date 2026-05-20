@@ -677,30 +677,77 @@ capture, or provider-assisted flows only after separate product decisions.
 - avoid file upload until storage policy, moderation, malware/content handling,
   and quota strategy are explicit.
 
-## 11. Recommended Phase 4
+## 11. Phase 4 Contact Options Lifecycle
 
-### Contact Options Lifecycle
+Status: `Partial` in repo until the Phase 4 SQL is manually applied and live
+smoke validated.
 
-Current gap:
+### Product Contract
 
-- public contact reads use `activity_contact_options_read`;
-- contact options are filtered by active option, active activity, and active
-  center;
-- the current internal approved activity lifecycle does not create/edit/publish
-  `activity_contact_options` end to end.
+- The public CTA always says `Contactar`.
+- If an activity has exactly one contact option, clicking `Contactar` opens it
+  directly.
+- If an activity has multiple contact options, clicking `Contactar` opens the
+  chooser/modal; the CTA label still says `Contactar`.
+- Contact options are reviewed before publication.
+- User-submitted contact options live first in `activity_drafts`.
+- Approval publishes/updates `activity_contact_options` together with the
+  activity.
+- Normal users never write directly to live `activity_contact_options`.
+- Admin/internal users can review and edit contact options as part of Draft
+  Inbox and approved activity workflows.
+- `source_reference_url` remains traceability only and is not a contact option.
 
-Do not include contact option editing in Phase 1 because it changes a separate
-public contact contract and broadens RLS/data-quality risk.
+### Supported Contact Types
 
-Future requirements:
+- `whatsapp`
+- `phone`
+- `email`
+- `website`
+- `instagram`
 
-- internal form for contact methods and values;
-- validation for WhatsApp/phone/email/web URL as applicable;
-- admin-only raw contact writes;
-- public read model keeps hiding unsafe/inactive contacts;
-- contact events continue to snapshot the chosen public contact option;
-- user submissions can store contact/link data as internal reference until
-  reviewed and published through the contact lifecycle.
+Instagram is first-class. It can be entered as `@usuario`, `usuario`, or an
+Instagram profile URL. The reviewed/published value is normalized to:
+
+```txt
+https://www.instagram.com/{handle}/
+```
+
+Invalid handles, unrelated protocols, `javascript:`, `data:` and
+mailto-as-instagram are rejected.
+
+### Draft Payload
+
+Contact options are stored in the reviewed payload:
+
+```json
+{
+  "activity": {},
+  "contact_options": [
+    {
+      "type": "instagram",
+      "label": "Instagram",
+      "raw_value": "@usuario",
+      "normalized_value": "usuario",
+      "url": "https://www.instagram.com/usuario/",
+      "is_primary": false
+    }
+  ]
+}
+```
+
+Missing `contact_options` means preserve existing live contact options during
+approved activity update. An explicit empty array means the reviewed activity
+has no published contact options after approval/update.
+
+### Security Boundary
+
+- User forms can create only draft payloads.
+- Internal RPCs enforce `internal_tool_access`.
+- Public reads continue through `activity_contact_options_read`.
+- Raw `activity_contact_options` remains non-public and not writable by normal
+  users.
+- Contact events keep snapshotting the selected public contact method/value.
 
 ## 12. Recommended Phase 5
 

@@ -74,9 +74,25 @@
 - The route depends on the Phase 3 SQL migration being manually applied in
   Supabase before live runtime smoke can pass.
 
+## Phase 4 Core contact UI boundaries
+
+- `ScoutDraftReviewForm` owns the shared contact option editor used by
+  internal drafts, approved activity edits, user submissions, corrections and
+  edit requests.
+- Form helpers map `reviewed_payload_json.contact_options` to/from frontend
+  form state.
+- User forms may edit contact options only as draft data; they do not write
+  live `activity_contact_options`.
+- Public detail keeps the main CTA label as `Contactar`. One contact option
+  opens directly; multiple contact options open the chooser.
+- Instagram is a first-class contact option and opens the normalized Instagram
+  profile URL.
+
 ## Helpers
 
-Helpers de presentación, excerpts plain-text desde `description`, filtros, búsqueda, slugs, normalización, mensajes de contacto y mapeo de drafts viven en `src/helpers`.
+Helpers de presentación, excerpts plain-text desde `description`, filtros,
+búsqueda, slugs, normalización, mensajes de contacto, contact options y mapeo
+de drafts viven en `src/helpers`.
 
 ## i18n
 

@@ -39,10 +39,20 @@
   Supabase UUIDs, direct publish/republish controls, or other users' records.
 - `/perfil/publicaciones/nueva` calls `create_my_activity_submission` and
   creates only `activity_drafts` with `source_type = 'user_submission'`.
-- Phase 3 does not add `/sugerir-actividad`, anonymous submissions, center
-  creation, contact options, or normal-user image upload.
+- Phase 4 allows contact options inside the draft payload on user publication
+  routes, but still does not allow direct normal-user writes to live
+  `activity_contact_options`.
+- Phase 3/4 do not add `/sugerir-actividad`, anonymous submissions, center
+  creation, or normal-user image upload.
 - Internal routes keep using `InternalToolRoute` and existing
   `internal_tool_access` checks.
+
+## Contact route behavior
+
+- No new public route is added for contact options.
+- Public detail still reads contacts through `activity_contact_options_read`.
+- The public CTA label remains `Contactar` for one or many contact options.
+- One option opens directly; multiple options open the chooser/modal.
 
 ## Notas
 
