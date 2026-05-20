@@ -11,6 +11,7 @@
 | `/terminos` | Pública | Indexable | Partial | Trust/legal page para términos. |
 | `/perfil` | Protegida | Bloqueada por robots | Partial | Perfil app; requiere auth y onboarding. |
 | `/perfil/publicaciones` | Protegida | Bloqueada por robots | Partial | Inbox de publicaciones propias; solo datos sanitizados del usuario autenticado. |
+| `/perfil/publicaciones/nueva` | Protegida | Bloqueada por robots | Partial | Phase 3 MVP para enviar una actividad nueva como `activity_draft`; no publica directo. |
 | `/perfil/publicaciones/:draftId/corregir` | Protegida | Bloqueada por robots | Partial | Correccion de draft propio en `needs_changes`; crea nueva version al enviar. |
 | `/perfil/publicaciones/actividad/:activityId/editar` | Protegida | Bloqueada por robots | Partial | Solicitud de edicion de actividad propia; despublica y crea draft pendiente. |
 | `/favoritos` | Protegida | Bloqueada por robots | Partial | Favoritos remotos. |
@@ -36,6 +37,10 @@
 - User publication routes must call sanitized owner-checking RPCs only.
 - User routes must not expose `review_notes`, `internal_review_notes`, raw
   Supabase UUIDs, direct publish/republish controls, or other users' records.
+- `/perfil/publicaciones/nueva` calls `create_my_activity_submission` and
+  creates only `activity_drafts` with `source_type = 'user_submission'`.
+- Phase 3 does not add `/sugerir-actividad`, anonymous submissions, center
+  creation, contact options, or normal-user image upload.
 - Internal routes keep using `InternalToolRoute` and existing
   `internal_tool_access` checks.
 

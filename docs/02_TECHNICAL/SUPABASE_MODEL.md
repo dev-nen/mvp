@@ -58,6 +58,7 @@ pass.
 | `resubmit_my_activity_draft` | Submit linked correction | Auth RPC | Creates new linked `pending_review` draft. |
 | `get_my_activity_for_edit` | Load own published activity for edit | Auth RPC | Owner-only, sanitized. |
 | `create_my_activity_edit_draft` | Create edit request | Auth RPC | Unpublishes current activity and creates `pending_review` draft. |
+| `create_my_activity_submission` | New user activity submission | Auth RPC | Creates `activity_drafts` only with `source_type = 'user_submission'`; no direct `activities` write. |
 
 When `approve_activity_draft` approves a draft with
 `submitted_by_user_id`, the created `activities` row must set
@@ -66,6 +67,23 @@ drafts with `submitted_by_user_id null` may keep `owner_user_id null`.
 
 `source_reference_url` remains draft traceability and user correction support.
 It is not part of the public activity catalog model in Phase 2 Core.
+
+### Phase 3 Core user submission resources
+
+Phase 3 adds the first authenticated normal-user flow for submitting a new
+activity from scratch. These contracts are repo-versioned only until the SQL is
+applied manually and live smoke validation passes.
+
+| Resource | Purpose | Access | Notes |
+| --- | --- | --- | --- |
+| `create_my_activity_submission` | Create a new user-submitted draft | Auth RPC | Requires `auth.uid()`, validates canonical activity fields, inserts only into `activity_drafts`, and returns the new draft id. |
+| `activity_drafts.source_type = 'user_submission'` | Marks Phase 3 user-originated submissions | Auth/Internal via RPC | No separate public submission table in Phase 3. |
+| `activity_drafts.source_reference_url` | Optional traceability/reference URL | Auth/Internal via RPC | Empty strings normalize to null; not copied into public catalog data. |
+
+The RPC must not insert or update `public.activities`, approve a draft, publish
+an activity, create centers, create contact options, or upload images. Existing
+admins review Phase 3 drafts through `/internal/drafts` and the Phase 2
+lifecycle.
 
 ## Public read models
 

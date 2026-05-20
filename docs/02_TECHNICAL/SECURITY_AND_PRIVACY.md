@@ -46,6 +46,19 @@ Validar en live antes de considerar cerrado.
 - `source_reference_url` remains draft traceability/correction support and is
   not added to the public activity catalog model in Phase 2 Core.
 
+## Phase 3 Core submission security
+
+- `create_my_activity_submission` is the only Phase 3 normal-user write path.
+- The RPC requires `auth.uid()`, runs as `security definer`, and creates only
+  the caller's `activity_drafts` row.
+- Normal users do not insert/update `public.activities`, publish directly,
+  approve, reject, archive, republish, create centers, create contact options,
+  or upload images in Phase 3.
+- `/perfil/publicaciones/nueva` is protected by `ProtectedRoute`, but the SQL
+  RPC remains the security boundary.
+- `source_reference_url` is optional draft traceability only and is not public
+  catalog data.
+
 ## Public read models
 
 - `catalog_activities_read`: catálogo público.
@@ -123,4 +136,7 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Phase 2 Core SQL/RPCs: pending manual apply and live smoke. Validate
   owner-only reads, owner-only despublicar, admin-only lifecycle actions,
   internal note non-leakage, and negative anon/non-owner/non-internal calls.
+- Phase 3 Core SQL/RPC: pending manual apply and live smoke. Validate
+  authenticated-only draft creation, draft-only writes, `source_type =
+  'user_submission'`, and no direct `public.activities` write.
 - `/api/internal/pvi` bearer token y noindex headers.

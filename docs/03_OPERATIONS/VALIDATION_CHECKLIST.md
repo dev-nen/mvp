@@ -158,6 +158,52 @@ Negative:
 - [ ] public catalog still reads `catalog_activities_read`.
 - [ ] inactive/deleted activities remain hidden from public catalog.
 
+## Phase 3 Core smoke checklist
+
+Apply the Phase 3 SQL manually before these checks. Do not mark Phase 3 Core
+live validated until these pass.
+
+Preflight:
+
+- [ ] `create_my_activity_submission` exists.
+- [ ] `create_my_activity_submission` is `security definer`.
+- [ ] authenticated users have execute grant.
+- [ ] anon cannot execute the RPC.
+
+Positive:
+
+- [ ] normal user calls `create_my_activity_submission` with valid payload.
+- [ ] one `activity_drafts` row is created.
+- [ ] `review_status = 'pending_review'`.
+- [ ] `source_type = 'user_submission'`.
+- [ ] `submitted_by_user_id = auth.uid()`.
+- [ ] `approved_activity_id is null`.
+- [ ] no `public.activities` row is created.
+- [ ] `list_my_activity_publications` returns the new draft as `En revision`.
+- [ ] admin Draft Inbox sees the draft.
+
+Negative:
+
+- [ ] anon cannot call `create_my_activity_submission`.
+- [ ] missing title fails.
+- [ ] invalid `center_id` fails.
+- [ ] invalid `category_id` fails.
+- [ ] invalid `type_id` fails.
+- [ ] invalid age range fails.
+- [ ] user cannot publish directly.
+- [ ] user cannot approve/archive.
+
+UI smoke:
+
+- [ ] login as a normal user.
+- [ ] open `/perfil/publicaciones`.
+- [ ] click `Enviar actividad`.
+- [ ] fill a valid form.
+- [ ] submit.
+- [ ] user is redirected to `/perfil/publicaciones`.
+- [ ] item appears as `En revision` after SQL is applied.
+- [ ] admin sees it in `/internal/drafts`.
+
 Phase 1 admin activity catalog evidence recorded on 2026-05-19:
 
 - [x] authorized internal user loaded `/internal/activities`.

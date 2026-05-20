@@ -12,6 +12,9 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Validar contacto por `activity_contact_options_read`.
 - Validar rutas legales/trust y configuración OAuth.
 - Validar Draft Inbox e internal approved activity lifecycle con usuario interno real.
+- Documentar Phase 3 como implementada en repo cuando exista la migracion SQL
+  y la ruta `/perfil/publicaciones/nueva`, pero no live-validada hasta aplicar
+  SQL manualmente.
 - Mantener registrada la evidencia de Phase 1: `/internal/activities` está implementado y live-smoke validado para catálogo interno y publicar/despublicar.
 - Mantener visible la deuda técnica y no presentar el proyecto como production-ready.
 
@@ -43,6 +46,22 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - No marcar Phase 2 Core como validado live hasta comprobar permisos negativos
   anon/no-owner/no-internal y flujos positivos admin/user.
 
+### Phase 3 Core: user activity submissions
+
+- Implementar el MVP visible para usuarios autenticados:
+  `/perfil/publicaciones` -> `Enviar actividad` ->
+  `/perfil/publicaciones/nueva`.
+- La submission crea solo `activity_drafts` mediante
+  `create_my_activity_submission`; no publica directo y no escribe en
+  `public.activities`.
+- Usar `source_type = 'user_submission'` y
+  `submitted_by_user_id = auth.uid()` para que el inbox muestre `En revision`.
+- Mantener fuera de alcance: `/sugerir-actividad`, anonimo/publico,
+  provider/center ownership, creacion de centro, contact options e imagenes
+  subidas por usuarios normales.
+- Mantener Phase 3 como `Partial` hasta aplicar la migracion SQL y completar
+  smoke Supabase/RLS.
+
 ## Luego
 
 - Modelo de expiración de actividades.
@@ -51,7 +70,9 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Mini-formularios o alta asistida para centros.
 - Backoffice asistido para publicación.
 - Scout Manual v0 para crear drafts desde fuentes simples.
-- Sugerencias de actividades por usuarios logueados como submissions/drafts revisables, nunca publicación directa.
+- Extensiones futuras a submissions de usuarios logueados despues del MVP:
+  mas trazabilidad, entrada publica si se decide, o integracion con ownership
+  provider/center.
 - Analytics/insights más fuertes para producto y operación.
 
 ## Diferido
