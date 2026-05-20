@@ -210,6 +210,24 @@ const ca = {
       signIn: "Iniciar sessió",
       createAccount: "Crear compte",
     },
+    trust: {
+      title: "La teva confiança és important per a nosaltres",
+      data: {
+        title: "Només et demanem l'email i la localitat",
+        description:
+          "per ajudar-te a trobar activitats a prop teu i personalitzar els missatges quan contactis.",
+      },
+      privacy: {
+        title: "No demanem dades personals",
+        description:
+          "i mai les vendrem ni les compartirem.\nLa teva informació està segura amb nosaltres.",
+      },
+      account: {
+        title: "Amb el teu compte podràs",
+        description:
+          "guardar les teves activitats favorites i compartir-les fàcilment amb amics i família.",
+      },
+    },
     anonymous: {
       welcome: "Benvingut",
       createTitle: "Crea el teu compte",

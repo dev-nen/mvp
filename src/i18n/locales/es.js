@@ -211,6 +211,24 @@ const es = {
       signIn: "Iniciar sesión",
       createAccount: "Crear cuenta",
     },
+    trust: {
+      title: "Tu confianza es importante para nosotros",
+      data: {
+        title: "Solo te pedimos tu email y tu localidad",
+        description:
+          "para ayudarte a encontrar actividades cerca de ti y personalizar los mensajes cuando contactes.",
+      },
+      privacy: {
+        title: "No solicitamos datos personales",
+        description:
+          "y nunca los venderemos ni los compartiremos.\nTu información está segura con nosotros.",
+      },
+      account: {
+        title: "Con tu cuenta podrás",
+        description:
+          "guardar tus actividades favoritas y compartirlas fácilmente con amigos y familia.",
+      },
+    },
     anonymous: {
       welcome: "Bienvenido",
       createTitle: "Crea tu cuenta",

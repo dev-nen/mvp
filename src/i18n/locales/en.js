@@ -208,6 +208,24 @@ const en = {
       signIn: "Sign in",
       createAccount: "Create account",
     },
+    trust: {
+      title: "Your trust matters to us",
+      data: {
+        title: "We only ask for your email and locality",
+        description:
+          "to help you find activities near you and personalize messages when you make contact.",
+      },
+      privacy: {
+        title: "We do not request personal data",
+        description:
+          "and we will never sell or share it.\nYour information is safe with us.",
+      },
+      account: {
+        title: "With your account you can",
+        description:
+          "save your favorite activities and easily share them with friends and family.",
+      },
+    },
     anonymous: {
       welcome: "Welcome",
       createTitle: "Create your account",

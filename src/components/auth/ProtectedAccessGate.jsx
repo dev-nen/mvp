@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Eye,
   EyeOff,
+  Heart,
   LoaderCircle,
   Lock,
   Mail,
@@ -365,6 +366,56 @@ export function ProtectedAccessGate() {
                     : t("auth.anonymous.signInDescription")}
                 </p>
               </header>
+
+              <section
+                className="protected-access-gate__trust"
+                aria-labelledby="protected-access-gate-trust-title"
+              >
+                <h3
+                  id="protected-access-gate-trust-title"
+                  className="protected-access-gate__trust-title"
+                >
+                  {t("auth.trust.title")}
+                </h3>
+                <div className="protected-access-gate__trust-list">
+                  <div className="protected-access-gate__trust-item">
+                    <span
+                      className="protected-access-gate__trust-icon"
+                      aria-hidden="true"
+                    >
+                      <MapPin />
+                    </span>
+                    <span className="protected-access-gate__trust-copy">
+                      <strong>{t("auth.trust.data.title")}</strong>
+                      <span>{t("auth.trust.data.description")}</span>
+                    </span>
+                  </div>
+                  <div className="protected-access-gate__trust-item">
+                    <span
+                      className="protected-access-gate__trust-icon"
+                      aria-hidden="true"
+                    >
+                      <ShieldCheck />
+                    </span>
+                    <span className="protected-access-gate__trust-copy">
+                      <strong>{t("auth.trust.privacy.title")}</strong>
+                      <span>{t("auth.trust.privacy.description")}</span>
+                    </span>
+                  </div>
+                  <div className="protected-access-gate__trust-item">
+                    <span
+                      className="protected-access-gate__trust-icon"
+                      aria-hidden="true"
+                    >
+                      <Heart />
+                    </span>
+                    <span className="protected-access-gate__trust-copy">
+                      <strong>{t("auth.trust.account.title")}</strong>
+                      <span>{t("auth.trust.account.description")}</span>
+                    </span>
+                  </div>
+                </div>
+              </section>
 
               {feedbackMessage ? (
                 <p
