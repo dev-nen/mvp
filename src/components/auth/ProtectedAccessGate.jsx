@@ -360,11 +360,6 @@ export function ProtectedAccessGate() {
                     ? t("auth.anonymous.createTitle")
                     : t("auth.anonymous.welcome")}
                 </h2>
-                <p className="protected-access-gate__description">
-                  {authMode === "sign_up"
-                    ? t("auth.anonymous.signUpDescription")
-                    : t("auth.anonymous.signInDescription")}
-                </p>
               </header>
 
               <section
