@@ -15,8 +15,13 @@ import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewFo
 import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
+import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/i18n/useI18n";
-import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
+import {
+  resolveActivityImagePreviewUrl,
+  uploadUserSubmissionCoverImage,
+  validateDraftCoverImageFile,
+} from "@/services/internalDraftCoverImageService";
 import {
   createMyActivitySubmission,
   createMyActivityEditDraft,
@@ -128,6 +133,7 @@ function UserPublicationDraftFormPage({ mode }) {
 
   const navigate = useNavigate();
   const { activityId, draftId } = useParams();
+  const { user } = useAuth();
   const { t } = useI18n();
   const [recordTitle, setRecordTitle] = useState("");
   const [formState, setFormState] = useState(() => mapDraftPayloadToFormState({}));
@@ -138,6 +144,8 @@ function UserPublicationDraftFormPage({ mode }) {
   const [typeChoices, setTypeChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [coverFile, setCoverFile] = useState(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
   const [error, setError] = useState("");
   const [formMessage, setFormMessage] = useState("");
   const [formMessageTone, setFormMessageTone] = useState("success");
@@ -217,6 +225,20 @@ function UserPublicationDraftFormPage({ mode }) {
     };
   }, [activityId, draftId, isCorrection, isNewSubmission, t]);
 
+  useEffect(() => {
+    if (!coverFile) {
+      setCoverPreviewUrl("");
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(coverFile);
+    setCoverPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [coverFile]);
+
   const highlightedFields = useMemo(
     () => getFeedbackFieldKeys(feedbackItems),
     [feedbackItems],
@@ -227,6 +249,26 @@ function UserPublicationDraftFormPage({ mode }) {
       ...currentFormState,
       [fieldName]: nextValue,
     }));
+  };
+
+  const handleImageFileChange = (nextFile) => {
+    setFormMessage("");
+
+    if (!nextFile) {
+      setCoverFile(null);
+      return;
+    }
+
+    const validationError = validateDraftCoverImageFile(nextFile);
+
+    if (validationError) {
+      setCoverFile(null);
+      setFormMessageTone("error");
+      setFormMessage(validationError);
+      return;
+    }
+
+    setCoverFile(nextFile);
   };
 
   const handleSubmit = async () => {
@@ -243,7 +285,20 @@ function UserPublicationDraftFormPage({ mode }) {
     setError("");
 
     try {
-      const reviewedPayload = mapFormStateToDraftPayload(formState);
+      let nextFormState = formState;
+
+      if (coverFile) {
+        const imagePath = await uploadUserSubmissionCoverImage({
+          userId: user?.id,
+          file: coverFile,
+        });
+        nextFormState = {
+          ...formState,
+          imageUrl: imagePath,
+        };
+      }
+
+      const reviewedPayload = mapFormStateToDraftPayload(nextFormState);
 
       if (isNewSubmission) {
         await createMyActivitySubmission({
@@ -370,10 +425,15 @@ function UserPublicationDraftFormPage({ mode }) {
                   typeChoices={typeChoices}
                   formState={formState}
                   highlightedFields={highlightedFields}
-                  imagePreviewSrc={resolveActivityImagePreviewUrl(
-                    formState.imageUrl,
-                  )}
+                  imagePreviewSrc={
+                    coverPreviewUrl ||
+                    resolveActivityImagePreviewUrl(formState.imageUrl)
+                  }
+                  isImageUploadEnabled
                   onFieldChange={handleFieldChange}
+                  onImageFileChange={handleImageFileChange}
+                  priceMode="user"
+                  showImageUrlField={false}
                   showSourceReferenceUrlField
                 />
 

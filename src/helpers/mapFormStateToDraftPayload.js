@@ -53,7 +53,8 @@ export function mapFormStateToDraftPayload(formState) {
       age_rule_type: ageRuleType,
       age_min: ageRuleType === "range" || ageRuleType === "from" ? ageMin : null,
       age_max: ageRuleType === "range" || ageRuleType === "until" ? ageMax : null,
-      price_label: getTrimmedText(formState?.priceLabel),
+      price_label:
+        formState?.isFree === "true" ? "" : getTrimmedText(formState?.priceLabel),
       is_free: formState?.isFree === "true",
       schedule_label: getTrimmedText(formState?.scheduleLabel),
       venue_name: getTrimmedText(formState?.venueName),

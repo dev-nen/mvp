@@ -18,6 +18,7 @@ export function ScoutDraftReviewForm({
   isReadOnly = false,
   onFieldChange,
   onImageFileChange,
+  priceMode = "admin",
   showContactOptionsField = true,
   showImageUrlField = true,
   showSourceReferenceUrlField = false,
@@ -45,6 +46,14 @@ export function ScoutDraftReviewForm({
     }
 
     onFieldChange("description", nextDescription);
+  };
+
+  const handleIsFreeChange = (nextValue) => {
+    onFieldChange("isFree", nextValue);
+
+    if (priceMode === "user" && nextValue === "true") {
+      onFieldChange("priceLabel", "");
+    }
   };
 
   const handleAddContactOption = () => {
@@ -421,30 +430,46 @@ export function ScoutDraftReviewForm({
           />
         </div>
 
-        <div className={getFieldClassName("priceLabel")}>
-          <label htmlFor="draft-price-label">Texto de precio</label>
-          <Input
-            id="draft-price-label"
-            className="scout-draft-review-form__input"
-            value={formState.priceLabel}
-            onChange={(event) => onFieldChange("priceLabel", event.target.value)}
-            disabled={isReadOnly}
-          />
-        </div>
-
         <div className={getFieldClassName("isFree")}>
-          <label htmlFor="draft-is-free">Gratuidad</label>
+          <label htmlFor="draft-is-free">
+            {priceMode === "user" ? "Precio" : "Gratuidad"}
+          </label>
           <select
             id="draft-is-free"
             className="scout-draft-review-form__select"
             value={formState.isFree}
-            onChange={(event) => onFieldChange("isFree", event.target.value)}
+            onChange={(event) => handleIsFreeChange(event.target.value)}
             disabled={isReadOnly}
           >
-            <option value="false">De pago o sin confirmar</option>
-            <option value="true">Gratuita</option>
+            <option value="true">Gratis</option>
+            <option value="false">De pago</option>
           </select>
         </div>
+
+        {priceMode === "user" && formState.isFree === "true" ? null : (
+          <div className={getFieldClassName("priceLabel")}>
+            <label htmlFor="draft-price-label">
+              {priceMode === "user" ? "Precio orientativo" : "Texto de precio"}
+            </label>
+            <Input
+              id="draft-price-label"
+              className="scout-draft-review-form__input"
+              value={formState.priceLabel}
+              onChange={(event) => onFieldChange("priceLabel", event.target.value)}
+              disabled={isReadOnly}
+              placeholder={
+                priceMode === "user"
+                  ? "Ej. 15 €, consultar con el centro, desde 20 €"
+                  : undefined
+              }
+            />
+            {priceMode === "user" ? (
+              <p className="scout-draft-review-form__hint">
+                Opcional. Si no lo sabes, puedes dejarlo en blanco.
+              </p>
+            ) : null}
+          </div>
+        )}
 
         <div className={getFieldClassName("scheduleLabel", "scout-draft-review-form__field--full")}>
           <label htmlFor="draft-schedule-label">Horario</label>
