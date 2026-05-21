@@ -316,8 +316,6 @@ export function ActivityDetailModal({
                       <LoaderCircle className="animate-spin" />
                       {t("catalog.detail.loadingContact")}
                     </>
-                  ) : hasMultipleContactOptions ? (
-                    t("catalog.detail.chooseContact")
                   ) : (
                     t("catalog.detail.contactAction")
                   )}

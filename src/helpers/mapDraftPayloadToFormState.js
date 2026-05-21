@@ -1,4 +1,5 @@
 import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
+import { mapPayloadContactOptionsToFormState } from "@/helpers/contactOptions";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -50,12 +51,43 @@ function getActivityPayload(payload) {
     : {};
 }
 
+function getCenterPayload(payload) {
+  return payload && typeof payload === "object" && !Array.isArray(payload)
+    ? payload.center && typeof payload.center === "object" && !Array.isArray(payload.center)
+      ? payload.center
+      : {}
+    : {};
+}
+
+function normalizeCenterMode(value) {
+  const normalizedValue = getTrimmedText(value).toLowerCase();
+
+  if (["existing", "proposed_new", "not_applicable"].includes(normalizedValue)) {
+    return normalizedValue;
+  }
+
+  return "existing";
+}
+
+function hasContactOptionsPayload(payload) {
+  return Boolean(
+    payload &&
+      typeof payload === "object" &&
+      !Array.isArray(payload) &&
+      Object.prototype.hasOwnProperty.call(payload, "contact_options"),
+  );
+}
+
 export function getDefaultDraftFormState() {
   return {
     title: "",
     description: "",
     descriptionFormat: "markdown",
+    centerMode: "existing",
     centerId: "",
+    centerSearchQuery: "",
+    centerProposalName: "",
+    centerProposalNotes: "",
     categoryId: "",
     typeId: "",
     imageUrl: "",
@@ -69,12 +101,18 @@ export function getDefaultDraftFormState() {
     venueAddress1: "",
     venuePostalCode: "",
     sourceReferenceUrl: "",
+    contactOptions: [],
+    contactOptionsTouched: false,
+    hasContactOptionsPayload: false,
   };
 }
 
 export function mapDraftPayloadToFormState(payload) {
   const defaultState = getDefaultDraftFormState();
   const activityPayload = getActivityPayload(payload);
+  const centerPayload = getCenterPayload(payload);
+  const centerMode = normalizeCenterMode(centerPayload.mode);
+  const centerId = normalizeIdValue(activityPayload.center_id || centerPayload.center_id);
 
   return {
     ...defaultState,
@@ -83,7 +121,11 @@ export function mapDraftPayloadToFormState(payload) {
     descriptionFormat: normalizeDescriptionFormat(
       activityPayload.description_format,
     ),
-    centerId: normalizeIdValue(activityPayload.center_id),
+    centerMode,
+    centerId,
+    centerSearchQuery: "",
+    centerProposalName: getTrimmedText(centerPayload.name),
+    centerProposalNotes: getTrimmedText(centerPayload.notes),
     categoryId: normalizeIdValue(activityPayload.category_id),
     typeId: normalizeIdValue(activityPayload.type_id),
     imageUrl: getTrimmedText(activityPayload.image_url),
@@ -96,5 +138,8 @@ export function mapDraftPayloadToFormState(payload) {
     venueName: getTrimmedText(activityPayload.venue_name),
     venueAddress1: getTrimmedText(activityPayload.venue_address_1),
     venuePostalCode: getTrimmedText(activityPayload.venue_postal_code),
+    contactOptions: mapPayloadContactOptionsToFormState(payload),
+    contactOptionsTouched: false,
+    hasContactOptionsPayload: hasContactOptionsPayload(payload),
   };
 }

@@ -27,46 +27,8 @@
   font-weight: 700;
 }
 
-.scout-draft-review-form__label-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.scout-draft-review-form__toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-}
-
-.scout-draft-review-form__toolbar button {
-  display: inline-flex;
-  width: 2rem;
-  height: 2rem;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.94);
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-.scout-draft-review-form__toolbar button:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
-}
-
-.scout-draft-review-form__toolbar svg {
-  width: 1rem;
-  height: 1rem;
-}
-
 .scout-draft-review-form__input,
-.scout-draft-review-form__select,
-.scout-draft-review-form__textarea {
+.scout-draft-review-form__select {
   width: 100%;
   min-height: 2.875rem;
   padding: 0.85rem 1rem;
@@ -75,11 +37,6 @@
   background: rgba(255, 255, 255, 0.96);
   color: var(--color-text);
   font: inherit;
-}
-
-.scout-draft-review-form__textarea {
-  min-height: 7.5rem;
-  resize: vertical;
 }
 
 .scout-draft-review-form__hint {
@@ -91,19 +48,6 @@
   color: var(--color-text);
   font-size: 0.875rem;
   font-weight: 700;
-}
-
-.scout-draft-review-form__description-preview {
-  min-height: 6rem;
-  padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.88);
-  color: var(--color-text-muted);
-}
-
-.scout-draft-review-form__description-preview p {
-  margin: 0;
 }
 
 .scout-draft-review-form__file-drop {
@@ -152,6 +96,119 @@
   object-fit: cover;
 }
 
+.scout-draft-review-form__contact-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.scout-draft-review-form__contact-add,
+.scout-draft-review-form__contact-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.scout-draft-review-form__contact-add {
+  min-height: 2.5rem;
+  padding: 0.65rem 0.9rem;
+}
+
+.scout-draft-review-form__contact-add:disabled,
+.scout-draft-review-form__contact-remove:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.scout-draft-review-form__contact-add svg,
+.scout-draft-review-form__contact-remove svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.scout-draft-review-form__contact-empty {
+  padding: var(--space-3);
+  color: var(--color-text-muted);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.scout-draft-review-form__contact-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.scout-draft-review-form__contact-row {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.scout-draft-review-form__contact-grid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.scout-draft-review-form__contact-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.scout-draft-review-form__contact-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.scout-draft-review-form__contact-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.scout-draft-review-form__contact-preview,
+.scout-draft-review-form__contact-error {
+  flex: 1 1 14rem;
+  min-width: 0;
+  margin: 0;
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.scout-draft-review-form__contact-preview {
+  color: var(--color-text-muted);
+}
+
+.scout-draft-review-form__contact-error {
+  color: var(--color-danger, #b42318);
+  font-weight: 700;
+}
+
+.scout-draft-review-form__contact-remove {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-left: auto;
+  color: var(--color-text-muted);
+}
+
 @media (min-width: 64rem) {
   .scout-draft-review-form__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -159,5 +216,9 @@
 
   .scout-draft-review-form__field--full {
     grid-column: 1 / -1;
+  }
+
+  .scout-draft-review-form__contact-grid {
+    grid-template-columns: 0.8fr minmax(0, 1.4fr) minmax(0, 1fr);
   }
 }

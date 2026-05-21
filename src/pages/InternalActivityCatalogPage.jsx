@@ -2,6 +2,8 @@ import {
   AlertTriangle,
   ArrowLeft,
   FileText,
+  LayoutGrid,
+  List,
   LoaderCircle,
   SearchX,
 } from "lucide-react";
@@ -39,6 +41,19 @@ const FILTER_OPTIONS = [
   {
     label: "Despublicadas",
     value: INTERNAL_ACTIVITY_CATALOG_FILTERS.UNPUBLISHED,
+  },
+];
+
+const VIEW_MODE_OPTIONS = [
+  {
+    label: "Tarjetas",
+    value: "cards",
+    icon: LayoutGrid,
+  },
+  {
+    label: "Lista",
+    value: "list",
+    icon: List,
   },
 ];
 
@@ -92,6 +107,7 @@ function getActionLabel(activity, isPending) {
 export function InternalActivityCatalogPage() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState(INTERNAL_ACTIVITY_CATALOG_FILTERS.ALL);
+  const [viewMode, setViewMode] = useState("cards");
   const [activities, setActivities] = useState([]);
   const [reloadKey, setReloadKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -178,6 +194,223 @@ export function InternalActivityCatalogPage() {
     }
   };
 
+  const renderActivityCard = (activity) => {
+    const imageSrc =
+      getTrimmedText(activity.image_url) || ADMIN_ACTIVITY_PLACEHOLDER_SRC;
+    const isPlaceholderImage = imageSrc === ADMIN_ACTIVITY_PLACEHOLDER_SRC;
+    const isPending = pendingActivityId === activity.activityId;
+    const taxonomyLabel = joinLabels([
+      activity.category_label,
+      activity.type_label,
+    ]);
+
+    return (
+      <Card
+        key={activity.activityId}
+        className={`internal-activity-catalog-page__card ${
+          activity.isPublished
+            ? "internal-activity-catalog-page__card--published"
+            : "internal-activity-catalog-page__card--unpublished"
+        }`}
+      >
+        <div className="internal-activity-catalog-page__card-media">
+          <img
+            src={imageSrc}
+            alt={activity.title}
+            className="internal-activity-catalog-page__card-image"
+            data-placeholder-applied={isPlaceholderImage ? "true" : "false"}
+            onError={handleAdminActivityImageError}
+          />
+        </div>
+
+        <CardContent className="internal-activity-catalog-page__card-content">
+          <div className="internal-activity-catalog-page__card-topline">
+            <ActivityPublicationBadge
+              isPublished={activity.isPublished}
+              unpublishedLabel="Despublicada"
+            />
+            <span className="internal-activity-catalog-page__card-id">
+              Actividad #{activity.activityId}
+            </span>
+          </div>
+
+          <div className="internal-activity-catalog-page__card-heading">
+            {taxonomyLabel ? (
+              <p className="internal-activity-catalog-page__card-category">
+                {taxonomyLabel}
+              </p>
+            ) : null}
+            <h2 className="internal-activity-catalog-page__card-title">
+              {activity.title}
+            </h2>
+          </div>
+
+          <div className="internal-activity-catalog-page__facts">
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Ubicacion
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {formatActivityLocationLabel(activity, {
+                  consultLocation: "Consulta la ubicacion",
+                })}
+              </span>
+            </div>
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Centro
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {activity.center_name || "Centro no informado"}
+              </span>
+            </div>
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Edad
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {formatActivityAgeLabel(activity)}
+              </span>
+            </div>
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Horario
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {getScheduleLabel(activity)}
+              </span>
+            </div>
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Precio
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {getPriceLabel(activity)}
+              </span>
+            </div>
+            <div className="internal-activity-catalog-page__fact">
+              <span className="internal-activity-catalog-page__fact-label">
+                Trazabilidad
+              </span>
+              <span className="internal-activity-catalog-page__fact-value">
+                {getDraftReference(activity)}
+              </span>
+            </div>
+          </div>
+
+          <div className="internal-activity-catalog-page__card-actions">
+            {activity.draftId ? (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  navigate(`/internal/activities/${activity.activityId}`)
+                }
+              >
+                Abrir detalle
+              </Button>
+            ) : (
+              <span className="internal-activity-catalog-page__no-detail">
+                Sin detalle editable
+              </span>
+            )}
+            <Button
+              type="button"
+              onClick={() => handleTogglePublication(activity)}
+              disabled={Boolean(pendingActivityId)}
+            >
+              {getActionLabel(activity, isPending)}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
+  const renderActivityListRow = (activity) => {
+    const isPending = pendingActivityId === activity.activityId;
+    const taxonomyLabel =
+      joinLabels([activity.category_label, activity.type_label]) ||
+      "Sin categoria";
+
+    return (
+      <article
+        key={activity.activityId}
+        className={`internal-activity-catalog-page__list-row ${
+          activity.isPublished
+            ? "internal-activity-catalog-page__list-row--published"
+            : "internal-activity-catalog-page__list-row--unpublished"
+        }`}
+      >
+        <div className="internal-activity-catalog-page__list-status">
+          <ActivityPublicationBadge
+            isPublished={activity.isPublished}
+            unpublishedLabel="Despublicada"
+          />
+          <span className="internal-activity-catalog-page__list-id">
+            Actividad #{activity.activityId}
+          </span>
+        </div>
+
+        <div className="internal-activity-catalog-page__list-main">
+          <p className="internal-activity-catalog-page__list-taxonomy">
+            {taxonomyLabel}
+          </p>
+          <h2 className="internal-activity-catalog-page__list-title">
+            {activity.title}
+          </h2>
+          <dl className="internal-activity-catalog-page__list-facts">
+            <div>
+              <dt>Centro</dt>
+              <dd>{activity.center_name || "Centro no informado"}</dd>
+            </div>
+            <div>
+              <dt>Horario</dt>
+              <dd>{getScheduleLabel(activity)}</dd>
+            </div>
+            <div>
+              <dt>Ubicacion</dt>
+              <dd>
+                {formatActivityLocationLabel(activity, {
+                  consultLocation: "Consulta la ubicacion",
+                })}
+              </dd>
+            </div>
+            <div>
+              <dt>Trazabilidad</dt>
+              <dd>{getDraftReference(activity)}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="internal-activity-catalog-page__list-actions">
+          {activity.draftId ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                navigate(`/internal/activities/${activity.activityId}`)
+              }
+            >
+              Abrir detalle
+            </Button>
+          ) : (
+            <span className="internal-activity-catalog-page__no-detail">
+              Sin detalle editable
+            </span>
+          )}
+          <Button
+            type="button"
+            onClick={() => handleTogglePublication(activity)}
+            disabled={Boolean(pendingActivityId)}
+          >
+            {getActionLabel(activity, isPending)}
+          </Button>
+        </div>
+      </article>
+    );
+  };
+
   return (
     <div className="internal-activity-catalog-page">
       <main className="internal-activity-catalog-page__main">
@@ -222,7 +455,7 @@ export function InternalActivityCatalogPage() {
 
           <section
             className="internal-activity-catalog-page__toolbar"
-            aria-label="Filtros de publicacion"
+            aria-label="Controles del catalogo interno"
           >
             <div className="internal-activity-catalog-page__filters">
               {FILTER_OPTIONS.map((option) => (
@@ -240,6 +473,29 @@ export function InternalActivityCatalogPage() {
                   {option.label}
                 </Button>
               ))}
+            </div>
+
+            <div
+              className="internal-activity-catalog-page__view-toggle"
+              aria-label="Vista del catalogo interno"
+            >
+              {VIEW_MODE_OPTIONS.map((option) => {
+                const Icon = option.icon;
+
+                return (
+                  <Button
+                    key={option.value}
+                    type="button"
+                    variant={viewMode === option.value ? "default" : "outline"}
+                    className="internal-activity-catalog-page__view-button"
+                    aria-pressed={viewMode === option.value}
+                    onClick={() => setViewMode(option.value)}
+                  >
+                    <Icon />
+                    {option.label}
+                  </Button>
+                );
+              })}
             </div>
           </section>
 
@@ -275,149 +531,19 @@ export function InternalActivityCatalogPage() {
               title="No hay actividades para este filtro"
               description="Cambia el filtro o revisa que la migracion del panel interno este aplicada en Supabase."
             />
+          ) : viewMode === "list" ? (
+            <section
+              className="internal-activity-catalog-page__list"
+              aria-live="polite"
+            >
+              {activities.map(renderActivityListRow)}
+            </section>
           ) : (
             <section
               className="internal-activity-catalog-page__grid"
               aria-live="polite"
             >
-              {activities.map((activity) => {
-                const imageSrc =
-                  getTrimmedText(activity.image_url) ||
-                  ADMIN_ACTIVITY_PLACEHOLDER_SRC;
-                const isPlaceholderImage =
-                  imageSrc === ADMIN_ACTIVITY_PLACEHOLDER_SRC;
-                const isPending = pendingActivityId === activity.activityId;
-                const taxonomyLabel = joinLabels([
-                  activity.category_label,
-                  activity.type_label,
-                ]);
-
-                return (
-                  <Card
-                    key={activity.activityId}
-                    className={`internal-activity-catalog-page__card ${
-                      activity.isPublished
-                        ? "internal-activity-catalog-page__card--published"
-                        : "internal-activity-catalog-page__card--unpublished"
-                    }`}
-                  >
-                    <div className="internal-activity-catalog-page__card-media">
-                      <img
-                        src={imageSrc}
-                        alt={activity.title}
-                        className="internal-activity-catalog-page__card-image"
-                        data-placeholder-applied={
-                          isPlaceholderImage ? "true" : "false"
-                        }
-                        onError={handleAdminActivityImageError}
-                      />
-                    </div>
-
-                    <CardContent className="internal-activity-catalog-page__card-content">
-                      <div className="internal-activity-catalog-page__card-topline">
-                        <ActivityPublicationBadge
-                          isPublished={activity.isPublished}
-                          unpublishedLabel="Despublicada"
-                        />
-                        <span className="internal-activity-catalog-page__card-id">
-                          Actividad #{activity.activityId}
-                        </span>
-                      </div>
-
-                      <div className="internal-activity-catalog-page__card-heading">
-                        {taxonomyLabel ? (
-                          <p className="internal-activity-catalog-page__card-category">
-                            {taxonomyLabel}
-                          </p>
-                        ) : null}
-                        <h2 className="internal-activity-catalog-page__card-title">
-                          {activity.title}
-                        </h2>
-                      </div>
-
-                      <div className="internal-activity-catalog-page__facts">
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Ubicacion
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {formatActivityLocationLabel(activity, {
-                              consultLocation: "Consulta la ubicacion",
-                            })}
-                          </span>
-                        </div>
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Centro
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {activity.center_name || "Centro no informado"}
-                          </span>
-                        </div>
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Edad
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {formatActivityAgeLabel(activity)}
-                          </span>
-                        </div>
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Horario
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {getScheduleLabel(activity)}
-                          </span>
-                        </div>
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Precio
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {getPriceLabel(activity)}
-                          </span>
-                        </div>
-                        <div className="internal-activity-catalog-page__fact">
-                          <span className="internal-activity-catalog-page__fact-label">
-                            Trazabilidad
-                          </span>
-                          <span className="internal-activity-catalog-page__fact-value">
-                            {getDraftReference(activity)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="internal-activity-catalog-page__card-actions">
-                        {activity.draftId ? (
-                          <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() =>
-                              navigate(
-                                `/internal/activities/${activity.activityId}`,
-                              )
-                            }
-                          >
-                            Abrir detalle
-                          </Button>
-                        ) : (
-                          <span className="internal-activity-catalog-page__no-detail">
-                            Sin detalle editable
-                          </span>
-                        )}
-                        <Button
-                          type="button"
-                          onClick={() => handleTogglePublication(activity)}
-                          disabled={Boolean(pendingActivityId)}
-                        >
-                          {getActionLabel(activity, isPending)}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {activities.map(renderActivityCard)}
             </section>
           )}
         </div>

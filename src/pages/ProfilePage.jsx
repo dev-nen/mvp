@@ -6,6 +6,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  Plus,
   UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -157,15 +158,25 @@ export function ProfilePage() {
                         {t("profile.publicationsDescription")}
                       </p>
                     </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="profile-page__action-button"
-                      onClick={() => navigate("/perfil/publicaciones")}
-                    >
-                      <ClipboardList />
-                      {t("profile.publicationsAction")}
-                    </Button>
+                    <div className="profile-page__publication-actions">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="profile-page__action-button"
+                        onClick={() => navigate("/perfil/publicaciones")}
+                      >
+                        <ClipboardList />
+                        {t("profile.publicationsAction")}
+                      </Button>
+                      <Button
+                        type="button"
+                        className="profile-page__action-button"
+                        onClick={() => navigate("/perfil/publicaciones/nueva")}
+                      >
+                        <Plus />
+                        {t("profile.submitActivityAction")}
+                      </Button>
+                    </div>
                   </div>
 
                   {hasDraftInboxAccess ? (

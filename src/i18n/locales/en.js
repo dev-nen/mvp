@@ -178,7 +178,9 @@ const en = {
       close: "Close contact options",
       back: "Back",
       form: "Form",
+      instagram: "Instagram",
       phone: "Call",
+      website: "Website",
     },
   },
   auth: {
@@ -205,6 +207,24 @@ const en = {
       googleConnecting: "Connecting with Google...",
       signIn: "Sign in",
       createAccount: "Create account",
+    },
+    trust: {
+      title: "Your trust matters to us",
+      data: {
+        title: "We only ask for your email and locality",
+        description:
+          "to help you find activities near you and personalize messages when you make contact.",
+      },
+      privacy: {
+        title: "We do not request personal data",
+        description:
+          "and we will never sell or share it.\nYour information is safe with us.",
+      },
+      account: {
+        title: "With your account you can",
+        description:
+          "save your favorite activities and easily share them with friends and family.",
+      },
     },
     anonymous: {
       welcome: "Welcome",
@@ -319,8 +339,9 @@ const en = {
       "We could not update your account information right now.",
     publicationsTitle: "My publications",
     publicationsDescription:
-      "Check the status of activities you sent to NensGo.",
+      "Check your publication status or send an activity for NensGo to review.",
     publicationsAction: "My publications",
+    submitActivityAction: "Send activity",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",
@@ -349,7 +370,7 @@ const en = {
     emptyEyebrow: "Publications",
     emptyTitle: "You have not sent any publications yet",
     emptyDescription:
-      "You have not sent any publications yet. When you send or edit an activity, you will be able to track its status here.",
+      "You have not sent any publications yet. You can send an activity for NensGo to review.",
     status: {
       inReview: "In review",
       needsChanges: "Needs changes",
@@ -359,6 +380,7 @@ const en = {
       archived: "Archived",
     },
     actions: {
+      submit: "Send activity",
       correct: "Correct",
       edit: "Edit publication",
       unpublish: "Unpublish",
@@ -382,7 +404,15 @@ const en = {
     submitErrorDescription: "We could not send the publication.",
     noOptionsTitle: "We could not prepare the options",
     noOptionsDescription:
-      "The form needs available centers, categories and types before sending changes.",
+      "The form needs available categories and types before sending changes.",
+    new: {
+      eyebrow: "Send activity",
+      title: "Send activity",
+      description:
+        "Complete the activity information so NensGo can review it.",
+      submit: "Send activity",
+      success: "Activity sent. NensGo will review it before publishing.",
+    },
     correction: {
       eyebrow: "Correction",
       title: "Correct publication",
@@ -404,6 +434,7 @@ const en = {
       title: "The title is required.",
       description: "The description is required.",
       center: "The center is required.",
+      proposedCenterName: "Enter the proposed center name.",
       category: "The category is required.",
       type: "The type is required.",
       schedule: "The schedule is required.",

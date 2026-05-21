@@ -30,7 +30,7 @@ Estado general: `Partial`. Hay SQL versionado en `supabase/sql`; Phase 1 del cat
 | `unpublish_internal_admin_activity`      | Despublicar actividad por id          | Internal RPC                     | Toggle seguro por `activity_id`; no cambia drafts.             |
 | `list_internal_approved_activity_states` | Estados internos de actividades       | Internal RPC                     | Para lifecycle interno.                                        |
 | `get_internal_approved_activity`         | Read interno de actividad aprobada    | Internal RPC                     | Para pantalla interna.                                         |
-| `update_approved_activity_from_draft`    | Edición interna                       | Internal RPC                     | No cubre publicación de contactos.                             |
+| `update_approved_activity_from_draft`    | Edición interna                       | Internal RPC                     | Phase 4 publica contactos cuando el payload revisado los incluye. |
 | `unpublish_approved_activity`            | Despublicar actividad                 | Internal RPC                     | Debe validarse contra catálogo público.                        |
 | `republish_approved_activity`            | Republicar actividad                  | Internal RPC                     | Debe validarse contra catálogo público.                        |
 | `get_internal_pvi_report`                | Reporting interno                     | Service role                     | Sólo vía `/api/internal/pvi`.                                  |
@@ -58,6 +58,7 @@ pass.
 | `resubmit_my_activity_draft` | Submit linked correction | Auth RPC | Creates new linked `pending_review` draft. |
 | `get_my_activity_for_edit` | Load own published activity for edit | Auth RPC | Owner-only, sanitized. |
 | `create_my_activity_edit_draft` | Create edit request | Auth RPC | Unpublishes current activity and creates `pending_review` draft. |
+| `create_my_activity_submission` | New user activity submission | Auth RPC | Creates `activity_drafts` only with `source_type = 'user_submission'`; no direct `activities` write. |
 
 When `approve_activity_draft` approves a draft with
 `submitted_by_user_id`, the created `activities` row must set
@@ -66,6 +67,65 @@ drafts with `submitted_by_user_id null` may keep `owner_user_id null`.
 
 `source_reference_url` remains draft traceability and user correction support.
 It is not part of the public activity catalog model in Phase 2 Core.
+
+### Phase 3 Core user submission resources
+
+Phase 3 adds the first authenticated normal-user flow for submitting a new
+activity from scratch. These contracts are repo-versioned only until the SQL is
+applied manually and live smoke validation passes.
+
+| Resource | Purpose | Access | Notes |
+| --- | --- | --- | --- |
+| `create_my_activity_submission` | Create a new user-submitted draft | Auth RPC | Requires `auth.uid()`, validates canonical activity fields, inserts only into `activity_drafts`, and returns the new draft id. |
+| `activity_drafts.source_type = 'user_submission'` | Marks Phase 3 user-originated submissions | Auth/Internal via RPC | No separate public submission table in Phase 3. |
+| `activity_drafts.source_reference_url` | Optional traceability/reference URL | Auth/Internal via RPC | Empty strings normalize to null; not copied into public catalog data. |
+
+The RPC must not insert or update `public.activities`, approve a draft, publish
+an activity, create centers, create contact options, or upload images. Existing
+admins review Phase 3 drafts through `/internal/drafts` and the Phase 2
+lifecycle.
+
+### Phase 4 Core contact option resources
+
+Phase 4 makes contact options part of the draft lifecycle. These contracts are
+repo-versioned only until the SQL is applied manually and live smoke validation
+passes.
+
+| Resource | Purpose | Access | Notes |
+| --- | --- | --- | --- |
+| `reviewed_payload_json.contact_options` | Draft contact payload | Auth/Internal via RPC | User/admin form payload. Contacts stay private until approval. |
+| `activity_contact_options.contact_method = 'instagram'` | Instagram public contact method | Internal write, public read model | Stored as a normalized Instagram profile URL in `contact_value`. |
+| `approve_activity_draft` | Draft approval | Internal RPC | Publishes contact options to `activity_contact_options` when the reviewed payload explicitly includes `contact_options`. |
+| `update_approved_activity_from_draft` | Internal approved edit | Internal RPC | Replaces published contact options when the reviewed payload explicitly includes `contact_options`. |
+| `create_my_activity_submission` | User submission | Auth RPC | Accepts contact options in draft payload but still writes only `activity_drafts`. |
+| `resubmit_my_activity_draft` | User correction | Auth RPC | Carries corrected contact options in the new pending draft. |
+| `create_my_activity_edit_draft` | User edit request | Auth RPC | Stores contact edits in draft and keeps them unpublished until approval. |
+
+Phase 4 uses the existing raw table shape (`contact_method`, `contact_value`,
+`is_active`, `is_deleted`). Normal users must not receive direct write grants
+to `activity_contact_options`. Public users keep reading only
+`activity_contact_options_read`.
+
+The draft payload contact shape is:
+
+```json
+{
+  "contact_options": [
+    {
+      "type": "instagram",
+      "label": "Instagram",
+      "raw_value": "@usuario",
+      "normalized_value": "usuario",
+      "url": "https://www.instagram.com/usuario/",
+      "is_primary": false
+    }
+  ]
+}
+```
+
+If a reviewed payload omits `contact_options`, existing published contacts are
+preserved. If it includes an empty array, the approved activity has no active
+contact options after approval/update.
 
 ## Public read models
 
@@ -85,6 +145,10 @@ Vista pública segura para contacto. Debe filtrar por:
 - actividad no eliminada;
 - centro activo;
 - centro no eliminado.
+
+Phase 4 keeps this as the only public contact read boundary. The CTA label in
+the public UI remains `Contactar`; one contact opens directly and multiple
+contacts open the chooser.
 
 ### `municipality_choices_read`
 

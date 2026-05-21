@@ -77,6 +77,8 @@ Check:
 - [ ] Detail opens from Favorites.
 - [ ] Contact with one option opens direct action.
 - [ ] Contact with multiple options opens chooser.
+- [ ] Contact CTA label remains `Contactar` with one or multiple options.
+- [ ] Instagram contact option opens a normalized Instagram profile URL.
 - [ ] Contact with zero options hides operational CTA.
 - [ ] Contact event writes to `activity_contact_events`.
 
@@ -157,6 +159,101 @@ Negative:
 - [ ] authenticated non-internal cannot call admin lifecycle RPCs.
 - [ ] public catalog still reads `catalog_activities_read`.
 - [ ] inactive/deleted activities remain hidden from public catalog.
+
+## Phase 3 Core smoke checklist
+
+Apply the Phase 3 SQL manually before these checks. Do not mark Phase 3 Core
+live validated until these pass.
+
+Preflight:
+
+- [ ] `create_my_activity_submission` exists.
+- [ ] `create_my_activity_submission` is `security definer`.
+- [ ] authenticated users have execute grant.
+- [ ] anon cannot execute the RPC.
+
+Positive:
+
+- [ ] normal user calls `create_my_activity_submission` with valid payload.
+- [ ] one `activity_drafts` row is created.
+- [ ] `review_status = 'pending_review'`.
+- [ ] `source_type = 'user_submission'`.
+- [ ] `submitted_by_user_id = auth.uid()`.
+- [ ] `approved_activity_id is null`.
+- [ ] no `public.activities` row is created.
+- [ ] `list_my_activity_publications` returns the new draft as `En revision`.
+- [ ] admin Draft Inbox sees the draft.
+
+Negative:
+
+- [ ] anon cannot call `create_my_activity_submission`.
+- [ ] missing title fails.
+- [ ] invalid `center_id` fails.
+- [ ] invalid `category_id` fails.
+- [ ] invalid `type_id` fails.
+- [ ] invalid age range fails.
+- [ ] user cannot publish directly.
+- [ ] user cannot approve/archive.
+
+UI smoke:
+
+- [ ] login as a normal user.
+- [ ] open `/perfil/publicaciones`.
+- [ ] click `Enviar actividad`.
+- [ ] fill a valid form.
+- [ ] submit.
+- [ ] user is redirected to `/perfil/publicaciones`.
+- [ ] item appears as `En revision` after SQL is applied.
+- [ ] admin sees it in `/internal/drafts`.
+
+## Phase 4 Core contact options smoke checklist
+
+Apply the Phase 4 SQL manually before these checks. Do not mark Phase 4 Core
+live validated until these pass.
+
+Preflight:
+
+- [ ] `activity_contact_options` accepts the expected contact methods.
+- [ ] `instagram` contact method is accepted.
+- [ ] normal users have no broad direct write grant on `activity_contact_options`.
+- [ ] approval/update functions are `security definer` where needed.
+
+Admin:
+
+- [ ] internal user can open a pending draft with `contact_options`.
+- [ ] internal user can add a WhatsApp contact option.
+- [ ] internal user can add an Instagram contact option.
+- [ ] requesting changes does not publish contact options.
+- [ ] approving a draft publishes contact options.
+- [ ] editing an approved activity can update contact options through the
+  internal lifecycle.
+
+User:
+
+- [ ] normal user can submit an activity draft with contact options.
+- [ ] normal user can enter Instagram as handle or URL.
+- [ ] invalid Instagram input shows a clear error.
+- [ ] normal user cannot write directly to `activity_contact_options`.
+- [ ] correction/edit drafts keep contact changes unpublished until approval.
+
+Public:
+
+- [ ] public detail still shows `Contactar`.
+- [ ] one contact option opens directly.
+- [ ] multiple contact options open the chooser.
+- [ ] chooser includes Instagram when present.
+- [ ] Instagram opens the normalized Instagram URL.
+- [ ] chooser spacing/alignment is coherent and option buttons are not
+  artificially stretched.
+
+Negative:
+
+- [ ] unsafe URL is rejected.
+- [ ] `javascript:` URL is rejected.
+- [ ] invalid email is rejected.
+- [ ] invalid Instagram is rejected.
+- [ ] unapproved draft contact options do not appear publicly.
+- [ ] inactive/deleted activities do not expose contact options publicly.
 
 Phase 1 admin activity catalog evidence recorded on 2026-05-19:
 

@@ -34,6 +34,18 @@
   max-width: 44rem;
 }
 
+.user-publications-page__intro-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.user-publications-page__submit-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .user-publications-page__eyebrow {
   color: var(--color-secondary);
   font-size: 0.8125rem;
@@ -190,6 +202,17 @@
 }
 
 @media (min-width: 56rem) {
+  .user-publications-page__intro-row {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .user-publications-page__submit-button {
+    flex: 0 0 auto;
+  }
+
   .user-publications-page__title {
     font-size: 3rem;
   }

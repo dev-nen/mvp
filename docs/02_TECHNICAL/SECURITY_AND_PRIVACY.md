@@ -46,6 +46,33 @@ Validar en live antes de considerar cerrado.
 - `source_reference_url` remains draft traceability/correction support and is
   not added to the public activity catalog model in Phase 2 Core.
 
+## Phase 3 Core submission security
+
+- `create_my_activity_submission` is the only Phase 3 normal-user write path.
+- The RPC requires `auth.uid()`, runs as `security definer`, and creates only
+  the caller's `activity_drafts` row.
+- Normal users do not insert/update `public.activities`, publish directly,
+  approve, reject, archive, republish, create centers, create contact options,
+  or upload images in Phase 3.
+- `/perfil/publicaciones/nueva` is protected by `ProtectedRoute`, but the SQL
+  RPC remains the security boundary.
+- `source_reference_url` is optional draft traceability only and is not public
+  catalog data.
+
+## Phase 4 Core contact security
+
+- Normal users may submit contact options only inside `activity_drafts`
+  payloads. They must not write directly to `activity_contact_options`.
+- Contact options become public only when an internal reviewer approves or
+  updates an approved activity through the internal lifecycle RPCs.
+- `activity_contact_options_read` remains the public read boundary and must
+  continue filtering inactive/deleted activities, centers and options.
+- `source_reference_url` remains traceability only and must not be treated as a
+  contact option.
+- Instagram values are normalized and validated as real Instagram profile URLs;
+  unsafe protocols such as `javascript:` and `data:` are rejected before
+  publication.
+
 ## Public read models
 
 - `catalog_activities_read`: catálogo público.
@@ -123,4 +150,10 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Phase 2 Core SQL/RPCs: pending manual apply and live smoke. Validate
   owner-only reads, owner-only despublicar, admin-only lifecycle actions,
   internal note non-leakage, and negative anon/non-owner/non-internal calls.
+- Phase 3 Core SQL/RPC: pending manual apply and live smoke. Validate
+  authenticated-only draft creation, draft-only writes, `source_type =
+  'user_submission'`, and no direct `public.activities` write.
+- Phase 4 Core SQL/RPC: pending manual apply and live smoke. Validate contact
+  option draft storage, admin approval publication, Instagram normalization,
+  and no normal-user direct writes to `activity_contact_options`.
 - `/api/internal/pvi` bearer token y noindex headers.

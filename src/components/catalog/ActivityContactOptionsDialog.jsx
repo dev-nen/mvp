@@ -11,7 +11,11 @@ function normalizeContactMethod(contactMethod) {
 function getContactOptionTone(contactOption) {
   const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
 
-  if (["whatsapp", "email", "web", "form", "phone"].includes(contactMethod)) {
+  if (contactMethod === "website") {
+    return "web";
+  }
+
+  if (["whatsapp", "email", "web", "form", "phone", "instagram"].includes(contactMethod)) {
     return contactMethod;
   }
 
@@ -29,8 +33,8 @@ function getContactOptionDisplayLabel(contactOption, t) {
     return "E-mail";
   }
 
-  if (contactMethod === "web") {
-    return "Web";
+  if (contactMethod === "web" || contactMethod === "website") {
+    return t("catalog.contactOptions.website");
   }
 
   if (contactMethod === "form") {
@@ -39,6 +43,10 @@ function getContactOptionDisplayLabel(contactOption, t) {
 
   if (contactMethod === "phone") {
     return t("catalog.contactOptions.phone");
+  }
+
+  if (contactMethod === "instagram") {
+    return t("catalog.contactOptions.instagram");
   }
 
   return getActivityContactOptionLabel(contactOption);

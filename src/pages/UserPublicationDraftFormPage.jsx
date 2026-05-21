@@ -11,12 +11,20 @@ import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CenterDraftModeField } from "@/features/scout-drafts/CenterDraftModeField";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
+import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/i18n/useI18n";
-import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
 import {
+  resolveActivityImagePreviewUrl,
+  uploadUserSubmissionCoverImage,
+  validateDraftCoverImageFile,
+} from "@/services/internalDraftCoverImageService";
+import {
+  createMyActivitySubmission,
   createMyActivityEditDraft,
   getMyActivityDraftForCorrection,
   getMyActivityForEdit,
@@ -52,8 +60,17 @@ function validatePublicationForm(formState, t) {
     return t("userPublicationForm.validation.description");
   }
 
-  if (!getTrimmedText(formState.centerId)) {
+  const centerMode = getTrimmedText(formState.centerMode) || "existing";
+
+  if (centerMode === "existing" && !getTrimmedText(formState.centerId)) {
     return t("userPublicationForm.validation.center");
+  }
+
+  if (
+    centerMode === "proposed_new" &&
+    !getTrimmedText(formState.centerProposalName)
+  ) {
+    return t("userPublicationForm.validation.proposedCenterName");
   }
 
   if (!getTrimmedText(formState.categoryId)) {
@@ -83,6 +100,12 @@ function validatePublicationForm(formState, t) {
     return t("userPublicationForm.validation.ageUntil");
   }
 
+  const { errors } = normalizeContactOptionsForPayload(formState.contactOptions);
+
+  if (errors.length > 0) {
+    return errors[0].message;
+  }
+
   return "";
 }
 
@@ -108,9 +131,19 @@ function FieldFeedbackList({ feedbackItems, summary }) {
 }
 
 function UserPublicationDraftFormPage({ mode }) {
+  const isNewSubmission = mode === "new";
   const isCorrection = mode === "correction";
+  let modeCopyKey = "edit";
+
+  if (isNewSubmission) {
+    modeCopyKey = "new";
+  } else if (isCorrection) {
+    modeCopyKey = "correction";
+  }
+
   const navigate = useNavigate();
   const { activityId, draftId } = useParams();
+  const { user } = useAuth();
   const { t } = useI18n();
   const [recordTitle, setRecordTitle] = useState("");
   const [formState, setFormState] = useState(() => mapDraftPayloadToFormState({}));
@@ -121,6 +154,8 @@ function UserPublicationDraftFormPage({ mode }) {
   const [typeChoices, setTypeChoices] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [coverFile, setCoverFile] = useState(null);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
   const [error, setError] = useState("");
   const [formMessage, setFormMessage] = useState("");
   const [formMessageTone, setFormMessageTone] = useState("success");
@@ -134,27 +169,45 @@ function UserPublicationDraftFormPage({ mode }) {
       setFormMessage("");
 
       try {
-        const [record, options] = await Promise.all([
-          isCorrection
+        let recordPromise = Promise.resolve(null);
+
+        if (!isNewSubmission) {
+          recordPromise = isCorrection
             ? getMyActivityDraftForCorrection(draftId)
-            : getMyActivityForEdit(activityId),
+            : getMyActivityForEdit(activityId);
+        }
+
+        const [record, options] = await Promise.all([
+          recordPromise,
           listMyPublicationFormOptions(),
         ]);
-        const nextPayload = isCorrection
-          ? record.reviewedPayload
-          : record.activityPayload;
 
         if (!isMounted) {
           return;
         }
 
-        setRecordTitle(record.title);
-        setFormState({
-          ...mapDraftPayloadToFormState(nextPayload),
-          sourceReferenceUrl: record.sourceReferenceUrl || "",
-        });
-        setFeedbackSummary(isCorrection ? record.userFeedbackSummary : "");
-        setFeedbackItems(isCorrection ? record.userFeedbackJson : []);
+        if (isNewSubmission) {
+          setRecordTitle("");
+          setFormState({
+            ...mapDraftPayloadToFormState({}),
+            hasContactOptionsPayload: true,
+          });
+          setFeedbackSummary("");
+          setFeedbackItems([]);
+        } else {
+          const nextPayload = isCorrection
+            ? record.reviewedPayload
+            : record.activityPayload;
+
+          setRecordTitle(record.title);
+          setFormState({
+            ...mapDraftPayloadToFormState(nextPayload),
+            sourceReferenceUrl: record.sourceReferenceUrl || "",
+          });
+          setFeedbackSummary(isCorrection ? record.userFeedbackSummary : "");
+          setFeedbackItems(isCorrection ? record.userFeedbackJson : []);
+        }
+
         setCenterChoices(options.centerChoices);
         setCategoryChoices(options.categoryChoices);
         setTypeChoices(options.typeChoices);
@@ -180,7 +233,21 @@ function UserPublicationDraftFormPage({ mode }) {
     return () => {
       isMounted = false;
     };
-  }, [activityId, draftId, isCorrection, t]);
+  }, [activityId, draftId, isCorrection, isNewSubmission, t]);
+
+  useEffect(() => {
+    if (!coverFile) {
+      setCoverPreviewUrl("");
+      return undefined;
+    }
+
+    const objectUrl = URL.createObjectURL(coverFile);
+    setCoverPreviewUrl(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [coverFile]);
 
   const highlightedFields = useMemo(
     () => getFeedbackFieldKeys(feedbackItems),
@@ -192,6 +259,26 @@ function UserPublicationDraftFormPage({ mode }) {
       ...currentFormState,
       [fieldName]: nextValue,
     }));
+  };
+
+  const handleImageFileChange = (nextFile) => {
+    setFormMessage("");
+
+    if (!nextFile) {
+      setCoverFile(null);
+      return;
+    }
+
+    const validationError = validateDraftCoverImageFile(nextFile);
+
+    if (validationError) {
+      setCoverFile(null);
+      setFormMessageTone("error");
+      setFormMessage(validationError);
+      return;
+    }
+
+    setCoverFile(nextFile);
   };
 
   const handleSubmit = async () => {
@@ -208,7 +295,33 @@ function UserPublicationDraftFormPage({ mode }) {
     setError("");
 
     try {
-      const reviewedPayload = mapFormStateToDraftPayload(formState);
+      let nextFormState = formState;
+
+      if (coverFile) {
+        const imagePath = await uploadUserSubmissionCoverImage({
+          userId: user?.id,
+          file: coverFile,
+        });
+        nextFormState = {
+          ...formState,
+          imageUrl: imagePath,
+        };
+      }
+
+      const reviewedPayload = mapFormStateToDraftPayload(nextFormState);
+
+      if (isNewSubmission) {
+        await createMyActivitySubmission({
+          reviewedPayload,
+          sourceReferenceUrl: formState.sourceReferenceUrl,
+        });
+        navigate("/perfil/publicaciones", {
+          state: {
+            userPublicationsMessage: t("userPublicationForm.new.success"),
+          },
+        });
+        return;
+      }
 
       if (isCorrection) {
         await resubmitMyActivityDraft({
@@ -247,7 +360,7 @@ function UserPublicationDraftFormPage({ mode }) {
   };
 
   const hasFormOptions =
-    centerChoices.length > 0 && categoryChoices.length > 0 && typeChoices.length > 0;
+    categoryChoices.length > 0 && typeChoices.length > 0;
 
   return (
     <div className="user-publication-draft-form-page">
@@ -265,20 +378,14 @@ function UserPublicationDraftFormPage({ mode }) {
 
             <div className="user-publication-draft-form-page__intro">
               <p className="user-publication-draft-form-page__eyebrow">
-                {isCorrection
-                  ? t("userPublicationForm.correction.eyebrow")
-                  : t("userPublicationForm.edit.eyebrow")}
+                {t(`userPublicationForm.${modeCopyKey}.eyebrow`)}
               </p>
               <h1 className="user-publication-draft-form-page__title">
-                {isCorrection
-                  ? t("userPublicationForm.correction.title")
-                  : t("userPublicationForm.edit.title")}
+                {t(`userPublicationForm.${modeCopyKey}.title`)}
               </h1>
               <p className="user-publication-draft-form-page__description">
                 {recordTitle ||
-                  (isCorrection
-                    ? t("userPublicationForm.correction.description")
-                    : t("userPublicationForm.edit.description"))}
+                  t(`userPublicationForm.${modeCopyKey}.description`)}
               </p>
             </div>
           </header>
@@ -316,7 +423,7 @@ function UserPublicationDraftFormPage({ mode }) {
                     feedbackItems={feedbackItems}
                     summary={feedbackSummary}
                   />
-                ) : (
+                ) : isNewSubmission ? null : (
                   <p className="user-publication-draft-form-page__warning">
                     {t("userPublicationForm.edit.warning")}
                   </p>
@@ -328,11 +435,25 @@ function UserPublicationDraftFormPage({ mode }) {
                   typeChoices={typeChoices}
                   formState={formState}
                   highlightedFields={highlightedFields}
-                  imagePreviewSrc={resolveActivityImagePreviewUrl(
-                    formState.imageUrl,
-                  )}
+                  imagePreviewSrc={
+                    coverPreviewUrl ||
+                    resolveActivityImagePreviewUrl(formState.imageUrl)
+                  }
+                  isImageUploadEnabled
                   onFieldChange={handleFieldChange}
-                  showSourceReferenceUrlField
+                  onImageFileChange={handleImageFileChange}
+                  priceMode="user"
+                  centerFieldSlot={
+                    <CenterDraftModeField
+                      centerChoices={centerChoices}
+                      formState={formState}
+                      highlightedFields={highlightedFields}
+                      idPrefix="user-publication-center"
+                      onFieldChange={handleFieldChange}
+                    />
+                  }
+                  showCenterField={false}
+                  showImageUrlField={false}
                 />
 
                 {formMessage ? (
@@ -363,9 +484,7 @@ function UserPublicationDraftFormPage({ mode }) {
                     ) : (
                       <>
                         <Save />
-                        {isCorrection
-                          ? t("userPublicationForm.correction.submit")
-                          : t("userPublicationForm.edit.submit")}
+                        {t(`userPublicationForm.${modeCopyKey}.submit`)}
                       </>
                     )}
                   </Button>
@@ -379,6 +498,10 @@ function UserPublicationDraftFormPage({ mode }) {
       <Footer />
     </div>
   );
+}
+
+export function UserActivitySubmissionPage() {
+  return <UserPublicationDraftFormPage mode="new" />;
 }
 
 export function UserPublicationCorrectionPage() {

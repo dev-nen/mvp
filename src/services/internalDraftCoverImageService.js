@@ -104,3 +104,37 @@ export async function uploadDraftCoverImage({ draftId, file }) {
 
   return objectPath;
 }
+
+export async function uploadUserSubmissionCoverImage({ userId, file }) {
+  const validationError = validateDraftCoverImageFile(file);
+
+  if (validationError) {
+    throw new Error(validationError);
+  }
+
+  const normalizedUserId =
+    typeof userId === "string" ? userId.trim().toLowerCase() : "";
+
+  if (!/^[0-9a-f-]{36}$/.test(normalizedUserId)) {
+    throw new Error("Necesitamos una cuenta valida antes de subir la imagen.");
+  }
+
+  const supabase = getSupabaseOrThrow();
+  const extension = COVER_IMAGE_EXTENSION_BY_MIME.get(file.type);
+  const objectPath = `user-submissions/${normalizedUserId}/cover-${getSafeUuid()}.${extension}`;
+  const { error } = await supabase.storage
+    .from(ACTIVITY_IMAGE_BUCKET)
+    .upload(objectPath, file, {
+      cacheControl: "3600",
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(
+      error.message || "No pudimos subir la imagen principal.",
+    );
+  }
+
+  return objectPath;
+}

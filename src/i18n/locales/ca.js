@@ -180,7 +180,9 @@ const ca = {
       close: "Tancar opcions de contacte",
       back: "Tornar",
       form: "Formulari",
+      instagram: "Instagram",
       phone: "Trucar",
+      website: "Web",
     },
   },
   auth: {
@@ -207,6 +209,24 @@ const ca = {
       googleConnecting: "Connectant amb Google...",
       signIn: "Iniciar sessió",
       createAccount: "Crear compte",
+    },
+    trust: {
+      title: "La teva confiança és important per a nosaltres",
+      data: {
+        title: "Només et demanem l'email i la localitat",
+        description:
+          "per ajudar-te a trobar activitats a prop teu i personalitzar els missatges quan contactis.",
+      },
+      privacy: {
+        title: "No demanem dades personals",
+        description:
+          "i mai les vendrem ni les compartirem.\nLa teva informació està segura amb nosaltres.",
+      },
+      account: {
+        title: "Amb el teu compte podràs",
+        description:
+          "guardar les teves activitats favorites i compartir-les fàcilment amb amics i família.",
+      },
     },
     anonymous: {
       welcome: "Benvingut",
@@ -324,8 +344,9 @@ const ca = {
       "No hem pogut actualitzar la informació del teu compte ara mateix.",
     publicationsTitle: "Les meves publicacions",
     publicationsDescription:
-      "Consulta l'estat de les activitats que has enviat a NensGo.",
+      "Consulta l'estat de les teves publicacions o envia una activitat perque NensGo la revisi.",
     publicationsAction: "Les meves publicacions",
+    submitActivityAction: "Enviar activitat",
     internalDescription:
       "Si formes part de l'equip, pots obrir el Draft Inbox des d'aquí.",
     internalAction: "Obrir Draft Inbox",
@@ -354,7 +375,7 @@ const ca = {
     emptyEyebrow: "Publicacions",
     emptyTitle: "Encara no tens publicacions enviades",
     emptyDescription:
-      "Encara no tens publicacions enviades. Quan enviis o editis una activitat, en podras seguir l'estat aqui.",
+      "Encara no tens publicacions enviades. Pots enviar una activitat perque NensGo la revisi.",
     status: {
       inReview: "En revisio",
       needsChanges: "Necessita canvis",
@@ -364,6 +385,7 @@ const ca = {
       archived: "Arxivada",
     },
     actions: {
+      submit: "Enviar activitat",
       correct: "Corregir",
       edit: "Editar publicacio",
       unpublish: "Despublicar",
@@ -387,7 +409,15 @@ const ca = {
     submitErrorDescription: "No hem pogut enviar la publicacio.",
     noOptionsTitle: "No hem pogut preparar les opcions",
     noOptionsDescription:
-      "El formulari necessita centres, categories i tipus disponibles abans d'enviar canvis.",
+      "El formulari necessita categories i tipus disponibles abans d'enviar canvis.",
+    new: {
+      eyebrow: "Enviar activitat",
+      title: "Enviar activitat",
+      description:
+        "Completa la informacio de l'activitat perque la puguem revisar.",
+      submit: "Enviar activitat",
+      success: "Activitat enviada. NensGo la revisara abans de publicar-la.",
+    },
     correction: {
       eyebrow: "Correccio",
       title: "Corregir publicacio",
@@ -410,6 +440,7 @@ const ca = {
       title: "El titol es obligatori.",
       description: "La descripcio es obligatoria.",
       center: "El centre es obligatori.",
+      proposedCenterName: "Indica el nom del centre proposat.",
       category: "La categoria es obligatoria.",
       type: "El tipus es obligatori.",
       schedule: "L'horari es obligatori.",

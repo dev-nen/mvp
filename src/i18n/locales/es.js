@@ -181,7 +181,9 @@ const es = {
       close: "Cerrar opciones de contacto",
       back: "Volver",
       form: "Formulario",
+      instagram: "Instagram",
       phone: "Llamar",
+      website: "Web",
     },
   },
   auth: {
@@ -208,6 +210,24 @@ const es = {
       googleConnecting: "Conectando con Google...",
       signIn: "Iniciar sesión",
       createAccount: "Crear cuenta",
+    },
+    trust: {
+      title: "Tu confianza es importante para nosotros",
+      data: {
+        title: "Solo te pedimos tu email y tu localidad",
+        description:
+          "para ayudarte a encontrar actividades cerca de ti y personalizar los mensajes cuando contactes.",
+      },
+      privacy: {
+        title: "No solicitamos datos personales",
+        description:
+          "y nunca los venderemos ni los compartiremos.\nTu información está segura con nosotros.",
+      },
+      account: {
+        title: "Con tu cuenta podrás",
+        description:
+          "guardar tus actividades favoritas y compartirlas fácilmente con amigos y familia.",
+      },
     },
     anonymous: {
       welcome: "Bienvenido",
@@ -325,8 +345,9 @@ const es = {
       "No pudimos actualizar la información de tu cuenta ahora mismo.",
     publicationsTitle: "Mis publicaciones",
     publicationsDescription:
-      "Consulta el estado de las actividades que enviaste a NensGo.",
+      "Consulta el estado de tus publicaciones o envía una actividad para que NensGo la revise.",
     publicationsAction: "Mis publicaciones",
+    submitActivityAction: "Enviar actividad",
     internalDescription:
       "Si formas parte del equipo, puedes abrir el Draft Inbox desde aquí.",
     internalAction: "Abrir Draft Inbox",
@@ -355,7 +376,7 @@ const es = {
     emptyEyebrow: "Publicaciones",
     emptyTitle: "Todavía no tienes publicaciones enviadas",
     emptyDescription:
-      "Todavía no tienes publicaciones enviadas. Cuando envíes o edites una actividad, podrás seguir su estado aquí.",
+      "Todavía no tienes publicaciones enviadas. Puedes enviar una actividad para que NensGo la revise.",
     status: {
       inReview: "En revisión",
       needsChanges: "Necesita cambios",
@@ -365,6 +386,7 @@ const es = {
       archived: "Archivada",
     },
     actions: {
+      submit: "Enviar actividad",
       correct: "Corregir",
       edit: "Editar publicación",
       unpublish: "Despublicar",
@@ -388,7 +410,15 @@ const es = {
     submitErrorDescription: "No pudimos enviar la publicación.",
     noOptionsTitle: "No pudimos preparar las opciones",
     noOptionsDescription:
-      "El formulario necesita centros, categorías y tipos disponibles antes de enviar cambios.",
+      "El formulario necesita categorías y tipos disponibles antes de enviar cambios.",
+    new: {
+      eyebrow: "Enviar actividad",
+      title: "Enviar actividad",
+      description:
+        "Completa la información de la actividad para que podamos revisarla.",
+      submit: "Enviar actividad",
+      success: "Actividad enviada. NensGo la revisará antes de publicarla.",
+    },
     correction: {
       eyebrow: "Corrección",
       title: "Corregir publicación",
@@ -411,6 +441,7 @@ const es = {
       title: "El título es obligatorio.",
       description: "La descripción es obligatoria.",
       center: "El centro es obligatorio.",
+      proposedCenterName: "Indica el nombre del centro propuesto.",
       category: "La categoría es obligatoria.",
       type: "El tipo es obligatorio.",
       schedule: "El horario es obligatorio.",

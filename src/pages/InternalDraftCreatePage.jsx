@@ -1,12 +1,19 @@
-import { AlertTriangle, ArrowLeft, LoaderCircle, Save, SearchX } from "lucide-react";
+import { AlertTriangle, ArrowLeft, LoaderCircle, Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CenterDraftModeField } from "@/features/scout-drafts/CenterDraftModeField";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
-import { getDefaultDraftFormState } from "@/helpers/mapDraftPayloadToFormState";
+import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
+import {
+  clearInternalDraftCreateLocalDraft,
+  getInternalDraftCreateDefaultFormState,
+  readInternalDraftCreateLocalDraft,
+  writeInternalDraftCreateLocalDraft,
+} from "@/helpers/internalDraftCreateAutosave";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -26,6 +33,14 @@ function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getCenterMode(value) {
+  const normalizedValue = getTrimmedText(value);
+
+  return ["existing", "proposed_new", "not_applicable"].includes(normalizedValue)
+    ? normalizedValue
+    : "existing";
+}
+
 function validateCreateDraftForm(formState) {
   if (!getTrimmedText(formState.title)) {
     return "El título es obligatorio.";
@@ -35,8 +50,17 @@ function validateCreateDraftForm(formState) {
     return "La descripción larga es obligatoria.";
   }
 
-  if (!getTrimmedText(formState.centerId)) {
+  const centerMode = getCenterMode(formState.centerMode);
+
+  if (centerMode === "existing" && !getTrimmedText(formState.centerId)) {
     return "El centro es obligatorio.";
+  }
+
+  if (
+    centerMode === "proposed_new" &&
+    !getTrimmedText(formState.centerProposalName)
+  ) {
+    return "El nombre del centro propuesto es obligatorio.";
   }
 
   if (!getTrimmedText(formState.categoryId)) {
@@ -66,21 +90,37 @@ function validateCreateDraftForm(formState) {
     return "La regla de edad hasta necesita edad máxima.";
   }
 
+  const { errors } = normalizeContactOptionsForPayload(formState.contactOptions);
+
+  if (errors.length > 0) {
+    return errors[0].message;
+  }
+
   return "";
 }
 
 export function InternalDraftCreatePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [formState, setFormState] = useState(() => ({
-    ...getDefaultDraftFormState(),
-    descriptionFormat: "markdown",
-  }));
+  const [localDraftSnapshot] = useState(() =>
+    readInternalDraftCreateLocalDraft(),
+  );
+  const [formState, setFormState] = useState(
+    () =>
+      localDraftSnapshot?.formState ??
+      getInternalDraftCreateDefaultFormState(),
+  );
   const [centerChoices, setCenterChoices] = useState([]);
   const [categoryChoices, setCategoryChoices] = useState([]);
   const [typeChoices, setTypeChoices] = useState([]);
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
+  const [hadRecoveredCoverFile, setHadRecoveredCoverFile] = useState(
+    () => localDraftSnapshot?.hadCoverFile === true,
+  );
+  const [isLocalDraftRestored, setIsLocalDraftRestored] = useState(() =>
+    Boolean(localDraftSnapshot),
+  );
   const [createdDraftId, setCreatedDraftId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -134,6 +174,12 @@ export function InternalDraftCreatePage() {
   }, []);
 
   useEffect(() => {
+    writeInternalDraftCreateLocalDraft(formState, {
+      hadCoverFile: Boolean(coverFile) || hadRecoveredCoverFile,
+    });
+  }, [coverFile, formState, hadRecoveredCoverFile]);
+
+  useEffect(() => {
     if (!coverFile) {
       setCoverPreviewUrl("");
       return undefined;
@@ -159,6 +205,7 @@ export function InternalDraftCreatePage() {
 
     if (!nextFile) {
       setCoverFile(null);
+      setHadRecoveredCoverFile(false);
       return;
     }
 
@@ -166,12 +213,24 @@ export function InternalDraftCreatePage() {
 
     if (validationError) {
       setCoverFile(null);
+      setHadRecoveredCoverFile(false);
       setFeedbackTone("error");
       setFeedbackMessage(validationError);
       return;
     }
 
     setCoverFile(nextFile);
+    setHadRecoveredCoverFile(false);
+  };
+
+  const handleDiscardLocalDraft = () => {
+    clearInternalDraftCreateLocalDraft();
+    setFormState(getInternalDraftCreateDefaultFormState());
+    setCoverFile(null);
+    setHadRecoveredCoverFile(false);
+    setIsLocalDraftRestored(false);
+    setCreatedDraftId(null);
+    setFeedbackMessage("");
   };
 
   const handleSaveDraft = async () => {
@@ -216,6 +275,7 @@ export function InternalDraftCreatePage() {
         reviewNotes: "",
       });
 
+      clearInternalDraftCreateLocalDraft();
       navigate(`/internal/drafts/${draft.id}`);
     } catch (error) {
       setFeedbackTone("error");
@@ -274,18 +334,35 @@ export function InternalDraftCreatePage() {
               actionLabel="Volver al inbox"
               onAction={() => navigate("/internal/drafts")}
             />
-          ) : centerChoices.length === 0 ? (
-            <CatalogState
-              icon={SearchX}
-              eyebrow="Sin centros"
-              title="No hay centros disponibles"
-              description="El alta interna necesita elegir un centro activo antes de crear un draft publicable."
-              actionLabel="Volver al inbox"
-              onAction={() => navigate("/internal/drafts")}
-            />
           ) : (
             <Card className="internal-draft-create-page__panel">
               <CardContent className="internal-draft-create-page__panel-content">
+                {isLocalDraftRestored ? (
+                  <div
+                    className="internal-draft-create-page__recovery"
+                    role="status"
+                  >
+                    <div className="internal-draft-create-page__recovery-copy">
+                      <p className="internal-draft-create-page__recovery-title">
+                        Restauramos un borrador local no guardado.
+                      </p>
+                      {hadRecoveredCoverFile ? (
+                        <p className="internal-draft-create-page__recovery-note">
+                          La imagen seleccionada debe volver a elegirse.
+                        </p>
+                      ) : null}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleDiscardLocalDraft}
+                      disabled={isSaving}
+                    >
+                      Descartar borrador local
+                    </Button>
+                  </div>
+                ) : null}
+
                 <ScoutDraftReviewForm
                   centerChoices={centerChoices}
                   categoryChoices={categoryChoices}
@@ -295,6 +372,15 @@ export function InternalDraftCreatePage() {
                   isImageUploadEnabled
                   onFieldChange={handleFieldChange}
                   onImageFileChange={handleImageFileChange}
+                  centerFieldSlot={
+                    <CenterDraftModeField
+                      centerChoices={centerChoices}
+                      formState={formState}
+                      idPrefix="internal-draft-center"
+                      onFieldChange={handleFieldChange}
+                    />
+                  }
+                  showCenterField={false}
                   showImageUrlField={false}
                 />
 

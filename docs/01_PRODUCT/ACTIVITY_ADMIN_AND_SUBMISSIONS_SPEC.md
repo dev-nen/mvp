@@ -6,7 +6,8 @@
 - Implementation status: `Partial`.
 - Phase 1 admin activity catalog is implemented in the repo behind `/internal/activities` and live-smoke validated against Supabase.
 - The Phase 1 SQL migration and return-type hotfix migration are versioned in `supabase/sql` and were applied for the manual live smoke.
-- User submissions, contact option lifecycle, draft lifecycle expansion, expiration lifecycle, and Vercel configuration remain out of scope.
+- Public anonymous submissions, contact option lifecycle, expiration lifecycle,
+  provider/center ownership, and Vercel configuration remain out of scope.
 
 ### Phase 2 Core status update
 
@@ -21,6 +22,25 @@
 - Provider/center account ownership, contact option lifecycle, expiration
   lifecycle, public anonymous submissions, `/sugerir-actividad`, admin
   card/list toggle, and Vercel configuration remain out of scope.
+
+### Phase 3 Core status update
+
+- Product status: `Partial`.
+- Implementation status remains `Partial` until the Phase 3 SQL migration is
+  applied manually and live Supabase/RLS smoke validation passes.
+- Phase 3 adds the first normal-user submission flow from
+  `/perfil/publicaciones/nueva`.
+- Authenticated users can submit a new activity for NensGo review. The flow
+  creates an `activity_drafts` row only; it does not publish directly and does
+  not write to `public.activities`.
+- Phase 3 uses `source_type = 'user_submission'` and
+  `submitted_by_user_id = auth.uid()` so the existing user inbox can show the
+  draft as `En revision`.
+- `source_reference_url` remains optional draft traceability only and is not
+  public catalog data.
+- Public anonymous submissions, `/sugerir-actividad`, provider/center
+  ownership, center creation, contact option lifecycle, and normal-user image
+  upload/storage remain out of scope.
 
 ## 2. Problem Statement
 
@@ -559,74 +579,96 @@ summary before sending it.
 Phase 2 Core remains `Partial` until SQL is manually applied and live smoke
 validation passes.
 
-## 9. Recommended Phase 3
+## 9. Phase 3 Core: Authenticated User Activity Submission
 
-### User Submissions
+### Status
 
-Normal users should be able to suggest activities, but suggestions must not
-publish directly.
+Phase 3 Core is implemented in the repo once the Phase 3 migrations and
+frontend changes are present, but it is not live validated until SQL is applied
+manually in Supabase and the smoke checklist passes.
 
-Recommendation for first version:
+### Objective
 
-- require login;
-- do not allow anonymous submissions by default;
-- write into `activity_drafts` with a new `source_type`, or into a separate
-  submission table only if RLS/user visibility needs make that cleaner;
-- suggested default source type: `user_submission`;
-- track `submitted_by` or equivalent creator/user id;
-- keep publication through internal review only;
-- no normal-user image upload in the first version unless explicitly approved;
-- contact/link data from submissions is internal reference only until Phase 4.
+Allow an authenticated normal user to submit a new activity/publication from
+scratch for NensGo admin review.
 
-### Route / Button Concept
+Core flow:
 
-Potential route:
+- user opens `/perfil/publicaciones`;
+- user clicks `Enviar actividad`;
+- user fills `/perfil/publicaciones/nueva`;
+- frontend calls `create_my_activity_submission`;
+- Supabase creates one `activity_drafts` row with
+  `review_status = 'pending_review'` and
+  `submitted_by_user_id = auth.uid()`;
+- user returns to `/perfil/publicaciones`;
+- the submission appears as `En revision` through
+  `list_my_activity_publications`;
+- admins review the draft in the existing `/internal/drafts` flow.
 
-- `/sugerir-actividad` as a protected user route, or a protected action started
-  from catalog/profile.
+### Route and UI
 
-Potential entry points:
+- `/perfil/publicaciones/nueva` is a protected user route.
+- It uses `ProtectedRoute`, not `InternalToolRoute`.
+- It stays under the existing user publications area; Phase 3 does not add a
+  public `/sugerir-actividad` route.
+- Entry points are `Enviar actividad` from `/perfil/publicaciones` and user
+  publication copy from `/perfil`.
 
-- profile secondary nav;
-- catalog empty state or footer;
-- "Suggest an activity" CTA in a future product area.
+### Supabase contract
 
-### Minimal Form Fields
+`create_my_activity_submission(p_reviewed_payload jsonb, p_source_reference_url text default null)`
+returns the new draft id.
 
-Recommended Phase 3 fields:
+The RPC:
 
-- activity title;
-- center/provider name if known;
-- city/area;
-- category/type free-text or selection if available;
-- description;
-- age range;
-- schedule/date text;
-- price/free text;
-- reference URL;
-- contact/reference notes for internal use;
-- optional comments from submitter.
+- requires `auth.uid()`;
+- is `security definer` with explicit grants to authenticated users;
+- creates `activity_drafts` only;
+- does not insert or update `public.activities`;
+- sets `source_type = 'user_submission'`;
+- sets a human-readable `source_label`;
+- sets `review_status = 'pending_review'`;
+- sets `submitted_by_user_id = auth.uid()` and `created_by = auth.uid()`;
+- sets `revision_number = 1`;
+- stores optional `source_reference_url` as draft traceability;
+- stores no user feedback or internal notes for a new submission.
 
-No image upload in first version.
+### Submission form
+
+The form collects the same canonical activity fields already used by the Draft
+Inbox review form: title, description, description format, center, category,
+type, age rule, price/free label, schedule, venue fields, optional image URL,
+and optional source reference URL.
+
+Phase 3 users must choose an existing center, category, and type from sanitized
+options. Creating a center/institution/provider is out of scope.
+
+Image handling is text-only for an existing URL/path if the form exposes it.
+Phase 3 does not add Supabase Storage upload, base64 persistence, or SVG upload
+for normal users.
 
 ### User Visibility
 
-Open product decision:
+Phase 3 uses the existing `/perfil/publicaciones` inbox. Users see only their
+own submissions/publications, sanitized status, and public feedback where it
+exists. They never see `review_notes` or `internal_review_notes`.
 
-- users may see submission history and status, but only their own submissions;
-- users may see `needs_changes` or `rejected` reason only if the team writes
-  public-facing feedback, not raw internal notes.
+### Non-goals
 
-### RLS Requirements
+- No direct normal-user publication.
+- No direct normal-user writes to `public.activities`.
+- No anonymous submissions.
+- No public `/sugerir-actividad`.
+- No provider/center account ownership.
+- No center/institution creation.
+- No contact option lifecycle.
+- No normal-user image upload/storage.
 
-- authenticated users can create their own submissions;
-- users can read only their own submission summary if the product exposes
-  history;
-- users cannot read internal drafts from other users;
-- users cannot edit after approval/rejection unless resubmission is explicitly
-  supported;
-- users cannot approve, publish, unpublish, or write `activities`;
-- internal admins can review all submissions through internal tooling.
+## 10. Future User Submission Extensions
+
+Future phases may add public discovery entry points, richer reference/contact
+capture, or provider-assisted flows only after separate product decisions.
 
 ### Spam / Abuse
 
@@ -635,32 +677,80 @@ Open product decision:
 - avoid file upload until storage policy, moderation, malware/content handling,
   and quota strategy are explicit.
 
-## 10. Recommended Phase 4
+## 11. Phase 4 Contact Options Lifecycle
 
-### Contact Options Lifecycle
+Status: `Partial` in repo until the Phase 4 SQL is manually applied and live
+smoke validated.
 
-Current gap:
+### Product Contract
 
-- public contact reads use `activity_contact_options_read`;
-- contact options are filtered by active option, active activity, and active
-  center;
-- the current internal approved activity lifecycle does not create/edit/publish
-  `activity_contact_options` end to end.
+- The public CTA always says `Contactar`.
+- If an activity has exactly one contact option, clicking `Contactar` opens it
+  directly.
+- If an activity has multiple contact options, clicking `Contactar` opens the
+  chooser/modal; the CTA label still says `Contactar`.
+- Contact options are reviewed before publication.
+- User-submitted contact options live first in `activity_drafts`.
+- Approval publishes/updates `activity_contact_options` together with the
+  activity.
+- Normal users never write directly to live `activity_contact_options`.
+- Admin/internal users can review and edit contact options as part of Draft
+  Inbox and approved activity workflows.
+- `source_reference_url` remains traceability only and is not a contact option.
 
-Do not include contact option editing in Phase 1 because it changes a separate
-public contact contract and broadens RLS/data-quality risk.
+### Supported Contact Types
 
-Future requirements:
+- `whatsapp`
+- `phone`
+- `email`
+- `website`
+- `instagram`
 
-- internal form for contact methods and values;
-- validation for WhatsApp/phone/email/web URL as applicable;
-- admin-only raw contact writes;
-- public read model keeps hiding unsafe/inactive contacts;
-- contact events continue to snapshot the chosen public contact option;
-- user submissions can store contact/link data as internal reference until
-  reviewed and published through the contact lifecycle.
+Instagram is a supported contact type. It can be entered as `@usuario`,
+`usuario`, or an Instagram profile URL. The reviewed/published value is
+normalized to:
 
-## 11. Recommended Phase 5
+```txt
+https://www.instagram.com/{handle}/
+```
+
+Invalid handles, unrelated protocols, `javascript:`, `data:` and
+mailto-as-instagram are rejected.
+
+### Draft Payload
+
+Contact options are stored in the reviewed payload:
+
+```json
+{
+  "activity": {},
+  "contact_options": [
+    {
+      "type": "instagram",
+      "label": "Instagram",
+      "raw_value": "@usuario",
+      "normalized_value": "usuario",
+      "url": "https://www.instagram.com/usuario/",
+      "is_primary": false
+    }
+  ]
+}
+```
+
+Missing `contact_options` means preserve existing live contact options during
+approved activity update. An explicit empty array means the reviewed activity
+has no published contact options after approval/update.
+
+### Security Boundary
+
+- User forms can create only draft payloads.
+- Internal RPCs enforce `internal_tool_access`.
+- Public reads continue through `activity_contact_options_read`.
+- Raw `activity_contact_options` remains non-public and not writable by normal
+  users.
+- Contact events keep snapshotting the selected public contact method/value.
+
+## 12. Recommended Phase 5
 
 ### Expiration / Date Lifecycle
 
@@ -681,7 +771,7 @@ This phase may be `M` if it is admin UI/manual only. It becomes `L` if it adds
 automated unpublishing, scheduled jobs, new SQL lifecycle states, or public
 catalog filtering rules.
 
-## 12. Security Model
+## 13. Security Model
 
 - Internal admins are authorized through `internal_tool_access`.
 - Frontend route guards are UX only; Supabase RLS/RPC checks are the security
@@ -690,21 +780,23 @@ catalog filtering rules.
   exposed.
 - Users cannot read internal drafts or other users' submissions.
 - Users cannot approve, publish, unpublish, or write directly to `activities`.
+- Phase 3 user submission uses a security-definer RPC with `auth.uid()` and
+  creates only the caller's draft.
 - Publish/unpublish must be admin-only.
 - Do not expose `SUPABASE_SERVICE_ROLE_KEY` or server-only secrets.
 - Do not add public debug UI or raw technical errors.
 - Do not show Supabase UUIDs to end users.
 
-## 13. Data Model Questions
+## 14. Data Model Questions
 
-Answer before implementation:
+Resolved decisions and remaining questions:
 
 - Should `activity_drafts.review_status` expand beyond `pending_review`,
   `approved`, and `rejected`?
-- Should `source_type` values expand to include `user_submission`?
-- Should user submissions live in `activity_drafts` or a separate table?
-- If using `activity_drafts`, does it need `submitted_by`, public feedback, or
-  visibility fields?
+- Phase 3 expands user-submitted drafts with `source_type = 'user_submission'`.
+- Phase 3 user submissions live in `activity_drafts`.
+- Phase 3 uses `submitted_by_user_id` for ownership and existing public
+  feedback fields from Phase 2.
 - Is `is_active` enough for Phase 1 publication? Current recommendation: yes.
 - Should `publication_status` remain future-only? Current recommendation: yes.
 - Do current `created_by`/`updated_by` fields meet audit needs, or is a history
@@ -717,26 +809,25 @@ Answer before implementation:
   recommendation: yes.
 - How should archived and expired interact with `is_active`?
 
-## 14. Implementation Roadmap
+## 15. Implementation Roadmap
 
 | Phase | Task size | Tooling lane | CODEGRAPH | Dependencies | Output | Risks |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1. Admin Activity Catalog | L | Codex CLI | true | Existing internal auth, activity data, current RPC pattern | `/internal/activities` list, admin read RPC, publish/unpublish card action | RLS, direct writes, incomplete activity coverage |
 | 2. Draft Lifecycle | L | Codex CLI | true | Phase 1 clarity, PO decisions on statuses | Standardized statuses, filters, notes/reasons, resubmission rules | State ambiguity, migration compatibility |
-| 3. User Submissions | L | Codex CLI | true | Phase 2 lifecycle, user RLS design | Logged-in submission form and admin review entry | Spam, privacy, cross-user reads, abuse |
+| 3. User Submissions | L | Codex CLI | true | Phase 2 lifecycle, user RLS design | `/perfil/publicaciones/nueva`, `create_my_activity_submission`, logged-in submission form and admin review entry | Spam, privacy, cross-user reads, abuse |
 | 4. Contact Options Lifecycle | L | Codex CLI | true | Contact product decisions, validation rules | Admin contact editing/publishing | Public contact leakage, bad contact data |
 | 5. Expiration / Dates | M/L | Codex CLI | true if SQL/routes/shared catalog change | Date model decision | Expiry filters/actions or automated lifecycle | Unexpected public catalog hiding, scheduled job complexity |
 
-## 15. Open Questions For PO
+## 16. Open Questions For PO
 
 - Should unpublished activities remain editable?
 - Should unpublished activities stay visible in admin search by default?
 - Should rejected drafts be resubmittable?
 - Should users see rejection reasons?
 - Should users see a history of submitted activities?
-- Should submissions require login? Current recommendation: yes.
-- Should normal users be allowed to upload images? Current recommendation:
-  no for first version.
+- Should later submissions support anonymous users? Phase 3 answer: no.
+- Should normal users be allowed to upload images later? Phase 3 answer: no.
 - Should admin cards include metrics such as views, favorites, or contact
   clicks?
 - Should expiration auto-unpublish one-off events?
@@ -745,7 +836,7 @@ Answer before implementation:
 - Should the Draft Inbox route remain as `/internal/drafts` while the broader
   activity panel becomes `/internal/activities`? Current recommendation: yes.
 
-## 16. Non-goals For First Implementation
+## 17. Non-goals For First Implementation
 
 - No normal-user direct publish.
 - No bulk publish/unpublish.
