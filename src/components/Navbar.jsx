@@ -3,7 +3,6 @@ import { Heart, LogIn, Menu, Search, User, X } from "lucide-react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BrandLockup } from "@/components/branding/BrandLockup";
 import { LanguageSelector } from "@/components/i18n/LanguageSelector";
-import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { getShortUserDisplayName } from "@/helpers/userDisplayName";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/i18n/useI18n";
@@ -67,8 +66,6 @@ export function Navbar({ enableSearch = false }) {
       : accessState === "verification_pending"
         ? t("nav.verifyEmail")
         : t("nav.access");
-  const isParaCentrosRoute = location.pathname === "/para-centros";
-
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -234,17 +231,6 @@ export function Navbar({ enableSearch = false }) {
           </NavLink>
           <div className="navbar__mobile-actions">
             <LanguageSelector className="navbar__language-selector navbar__language-selector--mobile" />
-            {isParaCentrosRoute ? (
-              <a
-                className="navbar__b2b-action"
-                href={PARA_CENTROS_FORM_URL}
-                target="_blank"
-                rel="noreferrer noopener"
-                onClick={closeMenu}
-              >
-                {t("nav.joinProject")}
-              </a>
-            ) : null}
           </div>
         </nav>
 
@@ -260,16 +246,6 @@ export function Navbar({ enableSearch = false }) {
             </Button>
           ) : null}
 
-          {isParaCentrosRoute ? (
-            <a
-              className="navbar__b2b-action"
-              href={PARA_CENTROS_FORM_URL}
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              {t("nav.joinShort")}
-            </a>
-          ) : null}
           <LanguageSelector className="navbar__language-selector" />
           {renderAuthAction()}
           {renderProtectedLinks()}

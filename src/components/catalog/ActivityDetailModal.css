@@ -304,6 +304,7 @@
 }
 
 .activity-detail-modal__contact {
+  align-items: center;
   padding: 0.6rem;
   background:
     linear-gradient(180deg, rgba(249, 246, 241, 0.94), rgba(255, 255, 255, 0.96));
@@ -318,7 +319,6 @@
 @media (min-width: 40rem) {
   .activity-detail-modal__contact .button {
     width: auto;
-    align-self: flex-start;
   }
 }
 

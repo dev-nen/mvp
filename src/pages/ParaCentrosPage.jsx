@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Footer } from "@/components/Footer";
-import { PARA_CENTROS_FORM_URL } from "@/constants/paraCentros";
 import { SeoHead } from "@/components/SeoHead";
 import { useI18n } from "@/i18n/useI18n";
 import "./ParaCentrosPage.css";
@@ -120,14 +119,6 @@ function ActivityPreviewModal({ open, onClose, activityExample, preview }) {
                 {preview.contactTitle}
               </h3>
               <p className="para-centros__modal-text">{preview.contactCopy}</p>
-              <a
-                className="para-centros__button para-centros__button--contact"
-                href={PARA_CENTROS_FORM_URL}
-                target="_blank"
-                rel="noreferrer noopener"
-              >
-                {preview.contactCta}
-              </a>
             </section>
           </div>
         </div>
@@ -467,17 +458,6 @@ export function ParaCentrosPage() {
                   {cta.contactNote}{" "}
                   <a href="mailto:info@nensgo.com">info@nensgo.com</a>.
                 </p>
-              </div>
-
-              <div className="para-centros__cta-actions">
-                <a
-                  className="para-centros__button para-centros__button--secondary"
-                  href={PARA_CENTROS_FORM_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {cta.action}
-                </a>
               </div>
             </article>
           </div>
