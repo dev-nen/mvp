@@ -337,11 +337,22 @@ const ca = {
       "Aquí pots revisar les dades principals associades al teu compte dins de NensGo.",
     visibleName: "Nom visible",
     email: "Email",
-    city: "Ciutat",
+    city: "Municipi o localitat",
+    cityPlaceholder: "Cerca el teu municipi o localitat",
+    cityHelp:
+      "Comença a escriure almenys dues lletres i selecciona una opció.",
+    emailReadonlyHelp:
+      "Aquest email pertany al teu compte i no s'edita des d'aquesta pantalla.",
     unavailable: "No disponible",
-    noCity: "Sense ciutat associada",
+    noCity: "Sense municipi associat",
     authError:
       "No hem pogut actualitzar la informació del teu compte ara mateix.",
+    nameRequired: "El nom és obligatori.",
+    cityRequired: "Selecciona un municipi o localitat.",
+    save: "Guardar canvis",
+    saving: "Guardant...",
+    saveSuccess: "Canvis guardats.",
+    saveError: "No hem pogut guardar els canvis ara mateix.",
     publicationsTitle: "Les meves publicacions",
     publicationsDescription:
       "Consulta l'estat de les teves publicacions o envia una activitat perque NensGo la revisi.",

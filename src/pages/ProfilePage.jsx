@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ClipboardList,
@@ -7,6 +7,7 @@ import {
   Mail,
   MapPin,
   Plus,
+  Save,
   UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +18,21 @@ import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/i18n/useI18n";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  getMunicipalityChoiceById,
+  getMunicipalityChoiceLabel,
+  normalizeMunicipalityQuery,
+  searchMunicipalityChoices,
+} from "@/services/municipalityService";
 import "./ProfilePage.css";
+
+const MUNICIPALITY_SEARCH_DEBOUNCE_MS = 250;
+const MUNICIPALITY_SEARCH_MIN_LENGTH = 2;
+
+function getTrimmedText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
 
 function ProfileLoadingState() {
   const { t } = useI18n();
@@ -45,17 +60,151 @@ export function ProfilePage() {
   const { t } = useI18n();
   const [isStartingGoogleSignIn, setIsStartingGoogleSignIn] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [municipalityQuery, setMunicipalityQuery] = useState("");
+  const [municipalityChoices, setMunicipalityChoices] = useState([]);
+  const [municipalityChoicesError, setMunicipalityChoicesError] = useState("");
+  const [isLoadingMunicipalityChoices, setIsLoadingMunicipalityChoices] =
+    useState(false);
+  const [selectedMunicipality, setSelectedMunicipality] = useState(null);
+  const [fieldError, setFieldError] = useState("");
+  const [profileFeedback, setProfileFeedback] = useState("");
+  const [profileFeedbackStatus, setProfileFeedbackStatus] = useState("");
   const {
     appUser,
+    appUserError,
     authError,
     isAuthenticated,
     isAuthLoading,
+    isUpdatingAppUserProfile,
     openAccessGate,
     signInWithGoogle,
     signOut,
+    updateAppUserProfile,
     user,
   } = useAuth();
   const { hasAccess: hasDraftInboxAccess } = useInternalToolAccess();
+
+  const userDisplayName = getShortUserDisplayName({ appUser, user });
+  const accountEmail = user?.email || appUser?.email || t("profile.unavailable");
+  const normalizedMunicipalityQuery = useMemo(
+    () => normalizeMunicipalityQuery(municipalityQuery),
+    [municipalityQuery],
+  );
+  const selectedMunicipalityLabel = getMunicipalityChoiceLabel(selectedMunicipality);
+  const shouldSearchMunicipalities =
+    isAuthenticated &&
+    normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH &&
+    municipalityQuery !== selectedMunicipalityLabel;
+  const isMunicipalityOptionsOpen =
+    shouldSearchMunicipalities &&
+    (isLoadingMunicipalityChoices ||
+      municipalityChoices.length > 0 ||
+      municipalityChoicesError ||
+      normalizedMunicipalityQuery.length >= MUNICIPALITY_SEARCH_MIN_LENGTH);
+  const savedCityId = appUser?.cityId ? String(appUser.cityId) : "";
+  const selectedCityId = selectedMunicipality?.id
+    ? String(selectedMunicipality.id)
+    : "";
+  const isProfileDirty =
+    getTrimmedText(profileName) !== getTrimmedText(appUser?.name) ||
+    selectedCityId !== savedCityId;
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setProfileName("");
+      setMunicipalityQuery("");
+      setSelectedMunicipality(null);
+      setMunicipalityChoices([]);
+      setMunicipalityChoicesError("");
+      setFieldError("");
+      setProfileFeedback("");
+      setProfileFeedbackStatus("");
+      return undefined;
+    }
+
+    let isMounted = true;
+
+    setProfileName(appUser?.name || userDisplayName || "");
+    setSelectedMunicipality(null);
+    setMunicipalityQuery(appUser?.cityName || "");
+    setMunicipalityChoices([]);
+    setMunicipalityChoicesError("");
+    setFieldError("");
+
+    if (!appUser?.cityId) {
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    getMunicipalityChoiceById(appUser.cityId)
+      .then((municipalityChoice) => {
+        if (!isMounted || !municipalityChoice) {
+          return;
+        }
+
+        setSelectedMunicipality(municipalityChoice);
+        setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+      })
+      .catch(() => {
+        if (isMounted) {
+          setMunicipalityChoicesError("saved_city");
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    appUser?.cityId,
+    appUser?.cityName,
+    appUser?.name,
+    isAuthenticated,
+    userDisplayName,
+  ]);
+
+  useEffect(() => {
+    if (!shouldSearchMunicipalities) {
+      setMunicipalityChoices([]);
+      setIsLoadingMunicipalityChoices(false);
+      return undefined;
+    }
+
+    let isCancelled = false;
+
+    setIsLoadingMunicipalityChoices(true);
+    setMunicipalityChoicesError("");
+
+    const timeoutId = window.setTimeout(() => {
+      searchMunicipalityChoices(municipalityQuery)
+        .then((nextMunicipalityChoices) => {
+          if (isCancelled) {
+            return;
+          }
+
+          setMunicipalityChoices(nextMunicipalityChoices);
+        })
+        .catch(() => {
+          if (isCancelled) {
+            return;
+          }
+
+          setMunicipalityChoices([]);
+          setMunicipalityChoicesError("municipality");
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setIsLoadingMunicipalityChoices(false);
+          }
+        });
+    }, MUNICIPALITY_SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [municipalityQuery, shouldSearchMunicipalities]);
 
   const handleGoBack = () => {
     navigate("/", { replace: true });
@@ -77,7 +226,68 @@ export function ProfilePage() {
     setIsSigningOut(false);
   };
 
-  const userDisplayName = getShortUserDisplayName({ appUser, user });
+  const handleMunicipalityQueryChange = (event) => {
+    const nextQuery = event.target.value;
+
+    setMunicipalityQuery(nextQuery);
+    setMunicipalityChoicesError("");
+    setFieldError("");
+    setProfileFeedback("");
+    setProfileFeedbackStatus("");
+
+    if (selectedMunicipality && nextQuery !== selectedMunicipalityLabel) {
+      setSelectedMunicipality(null);
+    }
+  };
+
+  const handleSelectMunicipality = (municipalityChoice) => {
+    setSelectedMunicipality(municipalityChoice);
+    setMunicipalityQuery(getMunicipalityChoiceLabel(municipalityChoice));
+    setMunicipalityChoices([]);
+    setMunicipalityChoicesError("");
+    setFieldError("");
+    setProfileFeedback("");
+    setProfileFeedbackStatus("");
+  };
+
+  const handleSubmitProfile = async (event) => {
+    event.preventDefault();
+
+    const nextName = getTrimmedText(profileName);
+
+    if (!nextName) {
+      setFieldError("name");
+      setProfileFeedback(t("profile.nameRequired"));
+      setProfileFeedbackStatus("error");
+      return;
+    }
+
+    if (!selectedMunicipality) {
+      setFieldError("city");
+      setProfileFeedback(t("profile.cityRequired"));
+      setProfileFeedbackStatus("error");
+      return;
+    }
+
+    setFieldError("");
+    setProfileFeedback("");
+    setProfileFeedbackStatus("");
+
+    const { error } = await updateAppUserProfile({
+      name: nextName,
+      lastName: appUser?.lastName || "",
+      cityId: selectedMunicipality.id,
+    });
+
+    if (error) {
+      setProfileFeedback(t("profile.saveError"));
+      setProfileFeedbackStatus("error");
+      return;
+    }
+
+    setProfileFeedback(t("profile.saveSuccess"));
+    setProfileFeedbackStatus("success");
+  };
 
   return (
     <div className="profile-page">
@@ -114,40 +324,168 @@ export function ProfilePage() {
                     </p>
                   </div>
 
-                  <dl className="profile-page__details-list">
-                    <div className="profile-page__detail-item">
-                      <dt>
-                        <UserRound />
-                        {t("profile.visibleName")}
-                      </dt>
-                      <dd>{userDisplayName}</dd>
-                    </div>
-
-                    <div className="profile-page__detail-item">
-                      <dt>
-                        <Mail />
-                        {t("profile.email")}
-                      </dt>
-                      <dd>{user?.email ?? t("profile.unavailable")}</dd>
-                    </div>
-
-                    <div className="profile-page__detail-item">
-                      <dt>
-                        <MapPin />
-                        {t("profile.city")}
-                      </dt>
-                      <dd>{appUser?.cityName || t("profile.noCity")}</dd>
-                    </div>
-                  </dl>
-
-                  {authError ? (
-                    <p
-                      className="profile-page__feedback profile-page__feedback--error"
-                      role="alert"
+                  <form
+                    className="profile-page__form"
+                    onSubmit={handleSubmitProfile}
+                    noValidate
+                  >
+                    <fieldset
+                      className="profile-page__fieldset"
+                      disabled={isUpdatingAppUserProfile}
                     >
-                      {t("profile.authError")}
-                    </p>
-                  ) : null}
+                      <div className="profile-page__field">
+                        <label className="profile-page__field-label" htmlFor="profile-name">
+                          <UserRound />
+                          {t("auth.common.name")}
+                        </label>
+                        <Input
+                          id="profile-name"
+                          className="profile-page__input"
+                          value={profileName}
+                          onChange={(event) => {
+                            setProfileName(event.target.value);
+                            setFieldError("");
+                            setProfileFeedback("");
+                            setProfileFeedbackStatus("");
+                          }}
+                          aria-invalid={fieldError === "name"}
+                          autoComplete="given-name"
+                        />
+                      </div>
+
+                      <div className="profile-page__field">
+                        <label className="profile-page__field-label" htmlFor="profile-email">
+                          <Mail />
+                          {t("profile.email")}
+                        </label>
+                        <Input
+                          id="profile-email"
+                          className="profile-page__input profile-page__input--readonly"
+                          value={accountEmail}
+                          readOnly
+                          disabled
+                        />
+                        <p className="profile-page__field-help">
+                          {t("profile.emailReadonlyHelp")}
+                        </p>
+                      </div>
+
+                      <div className="profile-page__field">
+                        <label className="profile-page__field-label" htmlFor="profile-city">
+                          <MapPin />
+                          {t("profile.city")}
+                        </label>
+                        <div className="profile-page__autocomplete">
+                          <Input
+                            id="profile-city"
+                            type="search"
+                            role="combobox"
+                            aria-autocomplete="list"
+                            aria-expanded={Boolean(isMunicipalityOptionsOpen)}
+                            aria-controls="profile-city-options"
+                            className="profile-page__input"
+                            placeholder={t("profile.cityPlaceholder")}
+                            value={municipalityQuery}
+                            onChange={handleMunicipalityQueryChange}
+                            aria-invalid={fieldError === "city"}
+                            autoComplete="off"
+                          />
+
+                          {isMunicipalityOptionsOpen ? (
+                            <div
+                              id="profile-city-options"
+                              className="profile-page__autocomplete-panel"
+                              role="listbox"
+                            >
+                              {isLoadingMunicipalityChoices ? (
+                                <p className="profile-page__autocomplete-status">
+                                  {t("auth.onboarding.searching")}
+                                </p>
+                              ) : null}
+
+                              {!isLoadingMunicipalityChoices &&
+                              municipalityChoices.length === 0 &&
+                              !municipalityChoicesError ? (
+                                <p className="profile-page__autocomplete-status">
+                                  {t("auth.onboarding.noResults")}
+                                </p>
+                              ) : null}
+
+                              {!isLoadingMunicipalityChoices
+                                ? municipalityChoices.map((municipalityChoice) => (
+                                    <button
+                                      key={
+                                        municipalityChoice.isSynthetic
+                                          ? municipalityChoice.syntheticKey
+                                          : municipalityChoice.id
+                                      }
+                                      type="button"
+                                      className="profile-page__autocomplete-option"
+                                      role="option"
+                                      aria-selected={
+                                        selectedMunicipality?.id ===
+                                          municipalityChoice.id &&
+                                        selectedMunicipality?.displayName ===
+                                          municipalityChoice.displayName
+                                      }
+                                      onClick={() =>
+                                        handleSelectMunicipality(municipalityChoice)
+                                      }
+                                    >
+                                      <span className="profile-page__autocomplete-option-name">
+                                        {municipalityChoice.displayName}
+                                      </span>
+                                      {municipalityChoice.provinceName ? (
+                                        <span className="profile-page__autocomplete-option-meta">
+                                          {municipalityChoice.provinceName}
+                                        </span>
+                                      ) : null}
+                                    </button>
+                                  ))
+                                : null}
+                            </div>
+                          ) : null}
+                        </div>
+                        <p className="profile-page__field-help">
+                          {t("profile.cityHelp")}
+                        </p>
+                      </div>
+
+                      {profileFeedback || authError || appUserError ? (
+                        <p
+                          className={`profile-page__feedback ${
+                            profileFeedbackStatus === "success"
+                              ? "profile-page__feedback--success"
+                              : "profile-page__feedback--error"
+                          }`}
+                          role={
+                            profileFeedbackStatus === "success"
+                              ? "status"
+                              : "alert"
+                          }
+                        >
+                          {profileFeedback || t("profile.authError")}
+                        </p>
+                      ) : null}
+
+                      <div className="profile-page__form-actions">
+                        <Button
+                          type="submit"
+                          className="profile-page__action-button"
+                          disabled={
+                            isUpdatingAppUserProfile ||
+                            !isProfileDirty ||
+                            !selectedMunicipality
+                          }
+                        >
+                          <Save />
+                          {isUpdatingAppUserProfile
+                            ? t("profile.saving")
+                            : t("profile.save")}
+                        </Button>
+                      </div>
+                    </fieldset>
+                  </form>
 
                   <div className="profile-page__publication-tool">
                     <div>
