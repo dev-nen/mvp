@@ -1,4 +1,9 @@
 import { CONTACT_OPTION_TYPES } from "@/helpers/contactOptions";
+import {
+  clearFormLocalRecovery,
+  readFormLocalRecovery,
+  writeFormLocalRecovery,
+} from "@/helpers/formLocalRecovery";
 import { getDefaultDraftFormState } from "@/helpers/mapDraftPayloadToFormState";
 
 export const INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY =
@@ -42,18 +47,6 @@ function normalizeChoice(value, allowedValues, fallbackValue) {
   const normalizedValue = getTrimmedText(value).toLowerCase();
 
   return allowedValues.includes(normalizedValue) ? normalizedValue : fallbackValue;
-}
-
-function getSessionStorage() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return window.sessionStorage;
-  } catch {
-    return null;
-  }
 }
 
 function normalizeContactType(value) {
@@ -157,8 +150,7 @@ function normalizeStoredPayload(storedPayload) {
   if (
     !storedPayload ||
     typeof storedPayload !== "object" ||
-    Array.isArray(storedPayload) ||
-    storedPayload.version !== STORAGE_VERSION
+    Array.isArray(storedPayload)
   ) {
     return null;
   }
@@ -179,69 +171,25 @@ function normalizeStoredPayload(storedPayload) {
 }
 
 export function readInternalDraftCreateLocalDraft() {
-  const storage = getSessionStorage();
-
-  if (!storage) {
-    return null;
-  }
-
-  try {
-    const storedValue = storage.getItem(
-      INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY,
-    );
-
-    if (!storedValue) {
-      return null;
-    }
-
-    return normalizeStoredPayload(JSON.parse(storedValue));
-  } catch {
-    return null;
-  }
+  return readFormLocalRecovery({
+    storageKey: INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY,
+    version: STORAGE_VERSION,
+    sanitizePayload: normalizeStoredPayload,
+  });
 }
 
 export function writeInternalDraftCreateLocalDraft(formState, options = {}) {
-  const storage = getSessionStorage();
-
-  if (!storage) {
-    return false;
-  }
-
-  const nextFormState = sanitizeInternalDraftCreateFormState(formState);
-  const hadCoverFile = options.hadCoverFile === true;
-
-  try {
-    if (!hasMeaningfulLocalDraft(nextFormState, hadCoverFile)) {
-      storage.removeItem(INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY);
-      return false;
-    }
-
-    storage.setItem(
-      INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY,
-      JSON.stringify({
-        formState: nextFormState,
-        hadCoverFile,
-        savedAt: new Date().toISOString(),
-        version: STORAGE_VERSION,
-      }),
-    );
-
-    return true;
-  } catch {
-    return false;
-  }
+  return writeFormLocalRecovery({
+    storageKey: INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY,
+    version: STORAGE_VERSION,
+    payload: {
+      formState,
+      hadCoverFile: options.hadCoverFile === true,
+    },
+    sanitizePayload: normalizeStoredPayload,
+  });
 }
 
 export function clearInternalDraftCreateLocalDraft() {
-  const storage = getSessionStorage();
-
-  if (!storage) {
-    return;
-  }
-
-  try {
-    storage.removeItem(INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY);
-  } catch {
-    // Browser-local recovery is best effort only.
-  }
+  clearFormLocalRecovery(INTERNAL_DRAFT_CREATE_LOCAL_DRAFT_STORAGE_KEY);
 }

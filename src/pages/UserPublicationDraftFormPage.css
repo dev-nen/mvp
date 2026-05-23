@@ -63,6 +63,34 @@
   gap: var(--space-4);
 }
 
+.user-publication-draft-form-page__recovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border: 1px solid rgba(75, 143, 231, 0.22);
+  border-radius: var(--radius-lg);
+  background: rgba(75, 143, 231, 0.08);
+}
+
+.user-publication-draft-form-page__recovery-copy {
+  min-width: min(100%, 18rem);
+}
+
+.user-publication-draft-form-page__recovery-title {
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+.user-publication-draft-form-page__recovery-note {
+  margin-top: 0.25rem;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
 .user-publication-draft-form-page__feedback-box,
 .user-publication-draft-form-page__warning,
 .user-publication-draft-form-page__message {

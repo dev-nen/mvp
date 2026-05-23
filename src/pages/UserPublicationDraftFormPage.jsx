@@ -16,6 +16,12 @@ import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewFo
 import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
+import {
+  clearUserPublicationLocalDraft,
+  getUserPublicationLocalDraftStorageKey,
+  readUserPublicationLocalDraft,
+  writeUserPublicationLocalDraft,
+} from "@/helpers/userPublicationLocalRecovery";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/i18n/useI18n";
 import {
@@ -145,8 +151,20 @@ function UserPublicationDraftFormPage({ mode }) {
   const { activityId, draftId } = useParams();
   const { user } = useAuth();
   const { t } = useI18n();
+  const localDraftStorageKey = useMemo(
+    () =>
+      getUserPublicationLocalDraftStorageKey({
+        activityId,
+        draftId,
+        mode,
+      }),
+    [activityId, draftId, mode],
+  );
   const [recordTitle, setRecordTitle] = useState("");
   const [formState, setFormState] = useState(() => mapDraftPayloadToFormState({}));
+  const [serverFormState, setServerFormState] = useState(() =>
+    mapDraftPayloadToFormState({}),
+  );
   const [feedbackItems, setFeedbackItems] = useState([]);
   const [feedbackSummary, setFeedbackSummary] = useState("");
   const [centerChoices, setCenterChoices] = useState([]);
@@ -156,6 +174,9 @@ function UserPublicationDraftFormPage({ mode }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coverFile, setCoverFile] = useState(null);
   const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
+  const [hadRecoveredCoverFile, setHadRecoveredCoverFile] = useState(false);
+  const [isLocalDraftRestored, setIsLocalDraftRestored] = useState(false);
+  const [hasLocalRecoveryChanges, setHasLocalRecoveryChanges] = useState(false);
   const [error, setError] = useState("");
   const [formMessage, setFormMessage] = useState("");
   const [formMessageTone, setFormMessageTone] = useState("success");
@@ -186,28 +207,46 @@ function UserPublicationDraftFormPage({ mode }) {
           return;
         }
 
+        let nextRecordTitle = "";
+        let nextFeedbackSummary = "";
+        let nextFeedbackItems = [];
+        let nextFormState;
+
         if (isNewSubmission) {
-          setRecordTitle("");
-          setFormState({
+          nextFormState = {
             ...mapDraftPayloadToFormState({}),
             hasContactOptionsPayload: true,
-          });
-          setFeedbackSummary("");
-          setFeedbackItems([]);
+          };
         } else {
           const nextPayload = isCorrection
             ? record.reviewedPayload
             : record.activityPayload;
 
-          setRecordTitle(record.title);
-          setFormState({
+          nextRecordTitle = record.title;
+          nextFormState = {
             ...mapDraftPayloadToFormState(nextPayload),
             sourceReferenceUrl: record.sourceReferenceUrl || "",
-          });
-          setFeedbackSummary(isCorrection ? record.userFeedbackSummary : "");
-          setFeedbackItems(isCorrection ? record.userFeedbackJson : []);
+          };
+          nextFeedbackSummary = isCorrection ? record.userFeedbackSummary : "";
+          nextFeedbackItems = isCorrection ? record.userFeedbackJson : [];
         }
 
+        const localDraftSnapshot = readUserPublicationLocalDraft(
+          localDraftStorageKey,
+          {
+            fallbackFormState: nextFormState,
+          },
+        );
+
+        setRecordTitle(nextRecordTitle);
+        setServerFormState(nextFormState);
+        setFormState(localDraftSnapshot?.formState ?? nextFormState);
+        setHadRecoveredCoverFile(localDraftSnapshot?.hadCoverFile === true);
+        setIsLocalDraftRestored(Boolean(localDraftSnapshot));
+        setHasLocalRecoveryChanges(Boolean(localDraftSnapshot));
+        setCoverFile(null);
+        setFeedbackSummary(nextFeedbackSummary);
+        setFeedbackItems(nextFeedbackItems);
         setCenterChoices(options.centerChoices);
         setCategoryChoices(options.categoryChoices);
         setTypeChoices(options.typeChoices);
@@ -233,7 +272,14 @@ function UserPublicationDraftFormPage({ mode }) {
     return () => {
       isMounted = false;
     };
-  }, [activityId, draftId, isCorrection, isNewSubmission, t]);
+  }, [
+    activityId,
+    draftId,
+    isCorrection,
+    isNewSubmission,
+    localDraftStorageKey,
+    t,
+  ]);
 
   useEffect(() => {
     if (!coverFile) {
@@ -249,12 +295,33 @@ function UserPublicationDraftFormPage({ mode }) {
     };
   }, [coverFile]);
 
+  useEffect(() => {
+    if (isLoading || error || !hasLocalRecoveryChanges) {
+      return;
+    }
+
+    writeUserPublicationLocalDraft(localDraftStorageKey, formState, {
+      fallbackFormState: serverFormState,
+      hadCoverFile: Boolean(coverFile) || hadRecoveredCoverFile,
+    });
+  }, [
+    coverFile,
+    error,
+    formState,
+    hadRecoveredCoverFile,
+    hasLocalRecoveryChanges,
+    isLoading,
+    localDraftStorageKey,
+    serverFormState,
+  ]);
+
   const highlightedFields = useMemo(
     () => getFeedbackFieldKeys(feedbackItems),
     [feedbackItems],
   );
 
   const handleFieldChange = (fieldName, nextValue) => {
+    setHasLocalRecoveryChanges(true);
     setFormState((currentFormState) => ({
       ...currentFormState,
       [fieldName]: nextValue,
@@ -262,10 +329,12 @@ function UserPublicationDraftFormPage({ mode }) {
   };
 
   const handleImageFileChange = (nextFile) => {
+    setHasLocalRecoveryChanges(true);
     setFormMessage("");
 
     if (!nextFile) {
       setCoverFile(null);
+      setHadRecoveredCoverFile(false);
       return;
     }
 
@@ -273,12 +342,24 @@ function UserPublicationDraftFormPage({ mode }) {
 
     if (validationError) {
       setCoverFile(null);
+      setHadRecoveredCoverFile(false);
       setFormMessageTone("error");
       setFormMessage(validationError);
       return;
     }
 
     setCoverFile(nextFile);
+    setHadRecoveredCoverFile(false);
+  };
+
+  const handleDiscardLocalDraft = () => {
+    clearUserPublicationLocalDraft(localDraftStorageKey);
+    setFormState(serverFormState);
+    setCoverFile(null);
+    setHadRecoveredCoverFile(false);
+    setIsLocalDraftRestored(false);
+    setHasLocalRecoveryChanges(false);
+    setFormMessage("");
   };
 
   const handleSubmit = async () => {
@@ -315,6 +396,8 @@ function UserPublicationDraftFormPage({ mode }) {
           reviewedPayload,
           sourceReferenceUrl: formState.sourceReferenceUrl,
         });
+        clearUserPublicationLocalDraft(localDraftStorageKey);
+        setHasLocalRecoveryChanges(false);
         navigate("/perfil/publicaciones", {
           state: {
             userPublicationsMessage: t("userPublicationForm.new.success"),
@@ -329,6 +412,8 @@ function UserPublicationDraftFormPage({ mode }) {
           reviewedPayload,
           sourceReferenceUrl: formState.sourceReferenceUrl,
         });
+        clearUserPublicationLocalDraft(localDraftStorageKey);
+        setHasLocalRecoveryChanges(false);
         navigate("/perfil/publicaciones", {
           state: {
             userPublicationsMessage: t("userPublicationForm.correction.success"),
@@ -342,6 +427,8 @@ function UserPublicationDraftFormPage({ mode }) {
         reviewedPayload,
         sourceReferenceUrl: formState.sourceReferenceUrl,
       });
+      clearUserPublicationLocalDraft(localDraftStorageKey);
+      setHasLocalRecoveryChanges(false);
       navigate("/perfil/publicaciones", {
         state: {
           userPublicationsMessage: t("userPublicationForm.edit.success"),
@@ -418,6 +505,32 @@ function UserPublicationDraftFormPage({ mode }) {
           ) : (
             <Card className="user-publication-draft-form-page__panel">
               <CardContent className="user-publication-draft-form-page__panel-content">
+                {isLocalDraftRestored ? (
+                  <div
+                    className="user-publication-draft-form-page__recovery"
+                    role="status"
+                  >
+                    <div className="user-publication-draft-form-page__recovery-copy">
+                      <p className="user-publication-draft-form-page__recovery-title">
+                        {t("userPublicationForm.recovery.title")}
+                      </p>
+                      {hadRecoveredCoverFile ? (
+                        <p className="user-publication-draft-form-page__recovery-note">
+                          {t("userPublicationForm.recovery.imageNote")}
+                        </p>
+                      ) : null}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleDiscardLocalDraft}
+                      disabled={isSubmitting}
+                    >
+                      {t("userPublicationForm.recovery.discard")}
+                    </Button>
+                  </div>
+                ) : null}
+
                 {isCorrection ? (
                   <FieldFeedbackList
                     feedbackItems={feedbackItems}

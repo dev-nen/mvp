@@ -405,6 +405,11 @@ const en = {
     noOptionsTitle: "We could not prepare the options",
     noOptionsDescription:
       "The form needs available categories and types before sending changes.",
+    recovery: {
+      title: "We restored an unsaved local draft.",
+      imageNote: "The selected image must be chosen again.",
+      discard: "Discard local draft",
+    },
     new: {
       eyebrow: "Send activity",
       title: "Send activity",

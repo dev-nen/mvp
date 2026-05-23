@@ -411,6 +411,11 @@ const es = {
     noOptionsTitle: "No pudimos preparar las opciones",
     noOptionsDescription:
       "El formulario necesita categorías y tipos disponibles antes de enviar cambios.",
+    recovery: {
+      title: "Restauramos un borrador local no guardado.",
+      imageNote: "La imagen seleccionada debe volver a elegirse.",
+      discard: "Descartar borrador local",
+    },
     new: {
       eyebrow: "Enviar actividad",
       title: "Enviar actividad",

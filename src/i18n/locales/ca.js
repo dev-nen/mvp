@@ -410,6 +410,11 @@ const ca = {
     noOptionsTitle: "No hem pogut preparar les opcions",
     noOptionsDescription:
       "El formulari necessita categories i tipus disponibles abans d'enviar canvis.",
+    recovery: {
+      title: "Hem restaurat un esborrany local no desat.",
+      imageNote: "Cal tornar a triar la imatge seleccionada.",
+      discard: "Descartar esborrany local",
+    },
     new: {
       eyebrow: "Enviar activitat",
       title: "Enviar activitat",
