@@ -7,12 +7,19 @@ function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function normalizeContactMethod(value) {
+  const contactMethod = getTrimmedText(value).toLowerCase();
+
+  return contactMethod === "web" ? "website" : contactMethod;
+}
+
 function normalizeContactOption(row) {
   return {
     id: row.id,
     activityId: row.activity_id,
-    contactMethod: getTrimmedText(row.contact_method).toLowerCase(),
+    contactMethod: normalizeContactMethod(row.contact_method),
     contactValue: getTrimmedText(row.contact_value),
+    contactLabel: getTrimmedText(row.contact_label),
   };
 }
 
@@ -32,7 +39,7 @@ export async function listActivityContactOptions(activityId) {
 
   const { data, error } = await supabase
     .from("activity_contact_options_read")
-    .select("id, activity_id, contact_method, contact_value")
+    .select("id, activity_id, contact_method, contact_value, contact_label")
     .eq("activity_id", activityId)
     .order("id", { ascending: true });
 

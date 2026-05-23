@@ -5,7 +5,16 @@ import { useI18n } from "@/i18n/useI18n";
 import "./ActivityContactOptionsDialog.css";
 
 function normalizeContactMethod(contactMethod) {
-  return typeof contactMethod === "string" ? contactMethod.trim().toLowerCase() : "";
+  const normalizedMethod =
+    typeof contactMethod === "string" ? contactMethod.trim().toLowerCase() : "";
+
+  return normalizedMethod === "web" ? "website" : normalizedMethod;
+}
+
+function getCustomContactLabel(contactOption) {
+  return typeof contactOption?.contactLabel === "string"
+    ? contactOption.contactLabel.trim()
+    : "";
 }
 
 function getContactOptionTone(contactOption) {
@@ -15,7 +24,7 @@ function getContactOptionTone(contactOption) {
     return "web";
   }
 
-  if (["whatsapp", "email", "web", "form", "phone", "instagram"].includes(contactMethod)) {
+  if (["whatsapp", "email", "form", "phone", "instagram"].includes(contactMethod)) {
     return contactMethod;
   }
 
@@ -33,7 +42,7 @@ function getContactOptionDisplayLabel(contactOption, t) {
     return "E-mail";
   }
 
-  if (contactMethod === "web" || contactMethod === "website") {
+  if (contactMethod === "website") {
     return t("catalog.contactOptions.website");
   }
 
@@ -50,6 +59,24 @@ function getContactOptionDisplayLabel(contactOption, t) {
   }
 
   return getActivityContactOptionLabel(contactOption);
+}
+
+function getContactOptionSecondaryValue(contactOption) {
+  const contactMethod = normalizeContactMethod(contactOption?.contactMethod);
+  const contactValue =
+    typeof contactOption?.contactValue === "string"
+      ? contactOption.contactValue.trim()
+      : "";
+
+  if (!contactValue) {
+    return "";
+  }
+
+  if (["website", "form", "instagram"].includes(contactMethod)) {
+    return "";
+  }
+
+  return contactValue;
 }
 
 export function ActivityContactOptionsDialog({
@@ -104,6 +131,10 @@ export function ActivityContactOptionsDialog({
         <div className="activity-contact-options-dialog__list">
           {contactOptions.map((contactOption) => {
             const tone = getContactOptionTone(contactOption);
+            const displayLabel =
+              getCustomContactLabel(contactOption) ||
+              getContactOptionDisplayLabel(contactOption, t);
+            const secondaryValue = getContactOptionSecondaryValue(contactOption);
 
             return (
               <button
@@ -113,11 +144,13 @@ export function ActivityContactOptionsDialog({
                 onClick={() => onSelectOption?.(contactOption)}
               >
                 <span className="activity-contact-options-dialog__item-label">
-                  {getContactOptionDisplayLabel(contactOption, t)}
+                  {displayLabel}
                 </span>
-                <span className="activity-contact-options-dialog__item-value">
-                  {contactOption.contactValue}
-                </span>
+                {secondaryValue ? (
+                  <span className="activity-contact-options-dialog__item-value">
+                    {secondaryValue}
+                  </span>
+                ) : null}
               </button>
             );
           })}

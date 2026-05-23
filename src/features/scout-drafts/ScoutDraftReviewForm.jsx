@@ -276,7 +276,7 @@ export function ScoutDraftReviewForm({
                         </label>
 
                         <label>
-                          Etiqueta
+                          Texto del botón
                           <Input
                             className="scout-draft-review-form__input"
                             value={contactOption.label || ""}
@@ -288,8 +288,11 @@ export function ScoutDraftReviewForm({
                               )
                             }
                             disabled={isReadOnly}
-                            placeholder="Opcional"
+                            placeholder="Inscripción, reservar plaza, web del centro"
                           />
+                          <span className="scout-draft-review-form__hint">
+                            Opcional. Si lo dejas vacío, usaremos el tipo de contacto.
+                          </span>
                         </label>
                       </div>
 
