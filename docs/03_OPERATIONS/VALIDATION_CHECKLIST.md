@@ -215,6 +215,8 @@ Preflight:
 
 - [ ] `activity_contact_options` accepts the expected contact methods.
 - [ ] `instagram` contact method is accepted.
+- [ ] `website` and `form` are accepted and remain distinct contact methods.
+- [ ] nullable `contact_label` is exposed through `activity_contact_options_read`.
 - [ ] normal users have no broad direct write grant on `activity_contact_options`.
 - [ ] approval/update functions are `security definer` where needed.
 
@@ -222,6 +224,7 @@ Admin:
 
 - [ ] internal user can open a pending draft with `contact_options`.
 - [ ] internal user can add a WhatsApp contact option.
+- [ ] internal user can add website and form contact options with optional labels.
 - [ ] internal user can add an Instagram contact option.
 - [ ] requesting changes does not publish contact options.
 - [ ] approving a draft publishes contact options.
@@ -241,6 +244,8 @@ Public:
 - [ ] public detail still shows `Contactar`.
 - [ ] one contact option opens directly.
 - [ ] multiple contact options open the chooser.
+- [ ] chooser shows custom contact labels as primary button text.
+- [ ] unlabeled contacts fall back to default type labels.
 - [ ] chooser includes Instagram when present.
 - [ ] Instagram opens the normalized Instagram URL.
 - [ ] chooser spacing/alignment is coherent and option buttons are not
