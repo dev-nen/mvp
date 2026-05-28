@@ -104,7 +104,7 @@ Status: Confirmed in merged code. Pending QA in browser.
 
 Status: Deferred.
 
-- Organizador / request-to-publish flow.
+- [Organizador / request-to-publish flow](../../01_PRODUCT/ORGANIZER_REQUEST_FLOW_SPEC.md).
 - Day/date/schedule model.
 - Full Conócenos content.
 - FAQ section.
