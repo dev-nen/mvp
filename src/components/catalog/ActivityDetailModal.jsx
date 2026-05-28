@@ -105,11 +105,9 @@ export function ActivityDetailModal({
     ? t("catalog.detail.loadingContactOptions")
     : contactOptionsError
       ? t("catalog.detail.contactOptionsError")
-      : hasMultipleContactOptions
-        ? t("catalog.detail.choosePreferredChannel")
-        : hasSingleContactOption
-          ? null
-          : t("catalog.detail.noContactOptions");
+      : hasContactOptions
+        ? null
+        : t("catalog.detail.noContactOptions");
 
   const handleSelectContactOption = (contactOption) => {
     onContactClick?.(activity, contactOption);

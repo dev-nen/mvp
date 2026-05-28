@@ -5,7 +5,7 @@ const en = {
   nav: {
     home: "Home",
     activities: "Activities",
-    about: "About NensGo",
+    about: "About us",
     centers: "For centers",
     joinProject: "Join the project",
     joinShort: "Join",
@@ -157,7 +157,6 @@ const en = {
       contact: "Contact",
       loadingContactOptions: "Loading contact options.",
       contactOptionsError: "We could not load the contact right now.",
-      choosePreferredChannel: "Choose the channel you prefer.",
       noContactOptions: "No contact channel is published right now.",
       retryContacts: "Retry contacts",
       loadingContact: "Loading contact",
@@ -648,7 +647,7 @@ const en = {
     cta: {
       kicker: "Do you want to join the project?",
       title: "Your activity can be part of NensGo.",
-      text: "Leave us your details in the form and we will contact you if you wish.",
+      text: "Email us to tell us about your proposal and NensGo will get back to you.",
       contactNote: "You can also write to us directly at",
       action: "I want to participate",
     },

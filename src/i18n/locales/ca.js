@@ -5,7 +5,7 @@ const ca = {
   nav: {
     home: "Inici",
     activities: "Activitats",
-    about: "Sobre NensGo",
+    about: "Coneix-nos",
     centers: "Per a centres",
     joinProject: "Unir-me al projecte",
     joinShort: "Unir-me",
@@ -158,7 +158,6 @@ const ca = {
       contact: "Contacte",
       loadingContactOptions: "Carregant opcions de contacte.",
       contactOptionsError: "No hem pogut carregar el contacte ara mateix.",
-      choosePreferredChannel: "Tria el canal que prefereixis.",
       noContactOptions:
         "No hi ha cap canal de contacte publicat en aquest moment.",
       retryContacts: "Tornar a provar contactes",
@@ -656,7 +655,7 @@ const ca = {
       kicker: "Vols unir-te al projecte?",
       title: "La teva activitat pot formar part de NensGo.",
       text:
-        "Deixa'ns les teves dades al formulari i et contactarem si així ho vols.",
+        "Escriu-nos per email per explicar-nos la teva proposta i et respondrem des de NensGo.",
       contactNote: "També pots escriure'ns directament a",
       action: "Vull participar",
     },

@@ -5,7 +5,7 @@ const es = {
   nav: {
     home: "Inicio",
     activities: "Actividades",
-    about: "Sobre NensGo",
+    about: "Conócenos",
     centers: "Para centros",
     joinProject: "Unirme al proyecto",
     joinShort: "Unirme",
@@ -159,7 +159,6 @@ const es = {
       contact: "Contacto",
       loadingContactOptions: "Cargando opciones de contacto.",
       contactOptionsError: "No pudimos cargar el contacto ahora mismo.",
-      choosePreferredChannel: "Elige el canal que prefieras.",
       noContactOptions:
         "No hay un canal de contacto publicado en este momento.",
       retryContacts: "Reintentar contactos",
@@ -656,7 +655,7 @@ const es = {
     cta: {
       kicker: "¿Quieres unirte al proyecto?",
       title: "Tu actividad puede formar parte de NensGo.",
-      text: "Déjanos tus datos en el formulario y te contactaremos si así lo deseas.",
+      text: "Escríbenos por email para contarnos tu propuesta y te responderemos desde NensGo.",
       contactNote: "También puedes escribirnos directamente a",
       action: "Quiero participar",
     },
