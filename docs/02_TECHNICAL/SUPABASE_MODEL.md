@@ -129,6 +129,9 @@ The draft payload contact shape is:
 and default type labels are resolved by the UI when `label`/`contact_label` is
 empty.
 
+At most one contact option may have `is_primary = true`. Frontend and SQL
+normalization keep the first primary option and clear later primary flags.
+
 If a reviewed payload omits `contact_options`, existing published contacts are
 preserved. If it includes an empty array, the approved activity has no active
 contact options after approval/update.

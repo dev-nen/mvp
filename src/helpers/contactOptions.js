@@ -175,7 +175,7 @@ export function mapPayloadContactOptionsToFormState(payload) {
     ? payload.contact_options
     : [];
 
-  return contactOptions
+  const mappedContactOptions = contactOptions
     .map((contactOption) => {
       const type = normalizeContactType(
         contactOption?.type ?? contactOption?.contact_method,
@@ -197,6 +197,24 @@ export function mapPayloadContactOptionsToFormState(payload) {
       };
     })
     .filter((contactOption) => contactOption.type && contactOption.value);
+
+  let hasPrimaryContactOption = false;
+
+  return mappedContactOptions.map((contactOption) => {
+    if (contactOption.isPrimary !== true) {
+      return contactOption;
+    }
+
+    if (!hasPrimaryContactOption) {
+      hasPrimaryContactOption = true;
+      return contactOption;
+    }
+
+    return {
+      ...contactOption,
+      isPrimary: false,
+    };
+  });
 }
 
 export function normalizeContactOptionForPayload(contactOption) {
@@ -283,6 +301,7 @@ export function normalizeContactOptionForPayload(contactOption) {
 export function normalizeContactOptionsForPayload(contactOptions) {
   const normalizedContactOptions = [];
   const errors = [];
+  let hasPrimaryContactOption = false;
 
   (Array.isArray(contactOptions) ? contactOptions : []).forEach(
     (contactOption, index) => {
@@ -297,7 +316,18 @@ export function normalizeContactOptionsForPayload(contactOptions) {
       }
 
       if (result.contactOption) {
-        normalizedContactOptions.push(result.contactOption);
+        const nextContactOption = {
+          ...result.contactOption,
+          is_primary:
+            result.contactOption.is_primary === true &&
+            !hasPrimaryContactOption,
+        };
+
+        if (nextContactOption.is_primary) {
+          hasPrimaryContactOption = true;
+        }
+
+        normalizedContactOptions.push(nextContactOption);
       }
     },
   );

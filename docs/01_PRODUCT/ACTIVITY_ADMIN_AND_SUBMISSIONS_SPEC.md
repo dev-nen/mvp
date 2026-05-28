@@ -744,6 +744,9 @@ Contact options are stored in the reviewed payload:
 `label` is optional custom public button text. Empty labels are preserved as
 empty/null data and the public UI falls back to the contact type label.
 
+At most one contact option may be primary. If multiple payload entries mark
+`is_primary = true`, normalization keeps the first one and clears the rest.
+
 Missing `contact_options` means preserve existing live contact options during
 approved activity update. An explicit empty array means the reviewed activity
 has no published contact options after approval/update.

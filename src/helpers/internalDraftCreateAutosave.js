@@ -69,14 +69,23 @@ function sanitizeContactOptions(contactOptions) {
     return [];
   }
 
+  let hasPrimaryContactOption = false;
+
   return contactOptions
     .map((contactOption) => {
       if (!contactOption || typeof contactOption !== "object") {
         return null;
       }
 
+      const isPrimary =
+        contactOption.isPrimary === true && !hasPrimaryContactOption;
+
+      if (isPrimary) {
+        hasPrimaryContactOption = true;
+      }
+
       return {
-        isPrimary: contactOption.isPrimary === true,
+        isPrimary,
         label: normalizeText(contactOption.label),
         type: normalizeContactType(contactOption.type),
         value: normalizeText(contactOption.value),
