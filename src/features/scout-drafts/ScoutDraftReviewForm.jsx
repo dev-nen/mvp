@@ -484,9 +484,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className={getFieldClassName("isFree")}>
-          <label htmlFor="draft-is-free">
-            {priceMode === "user" ? "Precio" : "Gratuidad"}
-          </label>
+          <label htmlFor="draft-is-free">Precio</label>
           <select
             id="draft-is-free"
             className="scout-draft-review-form__select"
@@ -499,11 +497,9 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        {priceMode === "user" && formState.isFree === "true" ? null : (
+        {formState.isFree === "true" ? null : (
           <div className={getFieldClassName("priceLabel")}>
-            <label htmlFor="draft-price-label">
-              {priceMode === "user" ? "Precio orientativo" : "Texto de precio"}
-            </label>
+            <label htmlFor="draft-price-label">Precio orientativo</label>
             <Input
               id="draft-price-label"
               className="scout-draft-review-form__input"
@@ -516,11 +512,9 @@ export function ScoutDraftReviewForm({
                   : undefined
               }
             />
-            {priceMode === "user" ? (
-              <p className="scout-draft-review-form__hint">
-                Opcional. Si no lo sabes, puedes dejarlo en blanco.
-              </p>
-            ) : null}
+            <p className="scout-draft-review-form__hint">
+              Opcional. Si no lo sabes, puedes dejarlo en blanco.
+            </p>
           </div>
         )}
 
