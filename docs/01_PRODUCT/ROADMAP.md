@@ -66,7 +66,7 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 
 - Integrar opciones de contacto en el mismo ciclo de draft, revision,
   aprobacion y publicacion que la actividad.
-- Soportar `whatsapp`, `phone`, `email`, `website` e `instagram` como tipos de
+- Soportar `whatsapp`, `phone`, `email`, `website`, `form` e `instagram` como tipos de
   contacto revisables.
 - Mantener el CTA publico principal como `Contactar` siempre: una opcion abre
   directo y varias opciones abren selector/modal sin renombrar el CTA.

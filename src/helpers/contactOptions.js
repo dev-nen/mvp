@@ -6,6 +6,7 @@ export const CONTACT_OPTION_TYPES = [
   "phone",
   "email",
   "website",
+  "form",
   "instagram",
 ];
 
@@ -13,7 +14,8 @@ export const CONTACT_OPTION_TYPE_CHOICES = [
   { value: "whatsapp", label: "WhatsApp" },
   { value: "phone", label: "Telefono" },
   { value: "email", label: "Email" },
-  { value: "website", label: "Web / formulario" },
+  { value: "website", label: "Web" },
+  { value: "form", label: "Formulario" },
   { value: "instagram", label: "Instagram" },
 ];
 
@@ -24,7 +26,7 @@ function getTrimmedText(value) {
 function normalizeContactType(value) {
   const normalizedValue = getTrimmedText(value).toLowerCase();
 
-  if (normalizedValue === "web" || normalizedValue === "form") {
+  if (normalizedValue === "web") {
     return "website";
   }
 
@@ -33,30 +35,6 @@ function normalizeContactType(value) {
   }
 
   return "";
-}
-
-function getDefaultLabelForContactType(type) {
-  if (type === "whatsapp") {
-    return "WhatsApp";
-  }
-
-  if (type === "phone") {
-    return "Telefono";
-  }
-
-  if (type === "email") {
-    return "Email";
-  }
-
-  if (type === "website") {
-    return "Web";
-  }
-
-  if (type === "instagram") {
-    return "Instagram";
-  }
-
-  return "Contacto";
 }
 
 function safeParseUrl(value) {
@@ -197,7 +175,7 @@ export function mapPayloadContactOptionsToFormState(payload) {
     ? payload.contact_options
     : [];
 
-  return contactOptions
+  const mappedContactOptions = contactOptions
     .map((contactOption) => {
       const type = normalizeContactType(
         contactOption?.type ?? contactOption?.contact_method,
@@ -211,12 +189,32 @@ export function mapPayloadContactOptionsToFormState(payload) {
 
       return {
         isPrimary: contactOption?.is_primary === true,
-        label: getTrimmedText(contactOption?.label),
+        label: getTrimmedText(
+          contactOption?.label ?? contactOption?.contact_label,
+        ),
         type: type || "website",
         value: getTrimmedText(fallbackValue),
       };
     })
     .filter((contactOption) => contactOption.type && contactOption.value);
+
+  let hasPrimaryContactOption = false;
+
+  return mappedContactOptions.map((contactOption) => {
+    if (contactOption.isPrimary !== true) {
+      return contactOption;
+    }
+
+    if (!hasPrimaryContactOption) {
+      hasPrimaryContactOption = true;
+      return contactOption;
+    }
+
+    return {
+      ...contactOption,
+      isPrimary: false,
+    };
+  });
 }
 
 export function normalizeContactOptionForPayload(contactOption) {
@@ -258,7 +256,7 @@ export function normalizeContactOptionForPayload(contactOption) {
   } else if (type === "email") {
     normalizedValue = normalizeEmailValue(rawValue);
     url = normalizedValue ? `mailto:${normalizedValue}` : "";
-  } else if (type === "website") {
+  } else if (type === "website" || type === "form") {
     url = normalizeWebsiteUrl(rawValue);
     normalizedValue = url;
   } else if (type === "instagram") {
@@ -282,15 +280,20 @@ export function normalizeContactOptionForPayload(contactOption) {
     };
   }
 
+  const normalizedContactOption = {
+    type,
+    raw_value: rawValue,
+    normalized_value: normalizedValue,
+    url,
+    is_primary: isPrimary,
+  };
+
+  if (label) {
+    normalizedContactOption.label = label;
+  }
+
   return {
-    contactOption: {
-      type,
-      label: label || getDefaultLabelForContactType(type),
-      raw_value: rawValue,
-      normalized_value: normalizedValue,
-      url,
-      is_primary: isPrimary,
-    },
+    contactOption: normalizedContactOption,
     error: "",
   };
 }
@@ -298,6 +301,7 @@ export function normalizeContactOptionForPayload(contactOption) {
 export function normalizeContactOptionsForPayload(contactOptions) {
   const normalizedContactOptions = [];
   const errors = [];
+  let hasPrimaryContactOption = false;
 
   (Array.isArray(contactOptions) ? contactOptions : []).forEach(
     (contactOption, index) => {
@@ -312,7 +316,18 @@ export function normalizeContactOptionsForPayload(contactOptions) {
       }
 
       if (result.contactOption) {
-        normalizedContactOptions.push(result.contactOption);
+        const nextContactOption = {
+          ...result.contactOption,
+          is_primary:
+            result.contactOption.is_primary === true &&
+            !hasPrimaryContactOption,
+        };
+
+        if (nextContactOption.is_primary) {
+          hasPrimaryContactOption = true;
+        }
+
+        normalizedContactOptions.push(nextContactOption);
       }
     },
   );

@@ -8,6 +8,26 @@ import {
 } from "@/helpers/contactOptions";
 import "./ScoutDraftReviewForm.css";
 
+function keepOnlyFirstPrimaryContactOption(contactOptions) {
+  let hasPrimaryContactOption = false;
+
+  return contactOptions.map((contactOption) => {
+    if (contactOption?.isPrimary !== true) {
+      return contactOption;
+    }
+
+    if (!hasPrimaryContactOption) {
+      hasPrimaryContactOption = true;
+      return contactOption;
+    }
+
+    return {
+      ...contactOption,
+      isPrimary: false,
+    };
+  });
+}
+
 export function ScoutDraftReviewForm({
   categoryChoices,
   centerChoices,
@@ -78,7 +98,9 @@ export function ScoutDraftReviewForm({
     onFieldChange("contactOptionsTouched", true);
     onFieldChange(
       "contactOptions",
-      contactOptions.filter((_, optionIndex) => optionIndex !== index),
+      keepOnlyFirstPrimaryContactOption(
+        contactOptions.filter((_, optionIndex) => optionIndex !== index),
+      ),
     );
   };
 
@@ -88,15 +110,29 @@ export function ScoutDraftReviewForm({
     }
 
     onFieldChange("contactOptionsTouched", true);
+
+    if (fieldName === "isPrimary") {
+      onFieldChange(
+        "contactOptions",
+        contactOptions.map((contactOption, optionIndex) => ({
+          ...contactOption,
+          isPrimary: nextValue === true ? optionIndex === index : false,
+        })),
+      );
+      return;
+    }
+
     onFieldChange(
       "contactOptions",
-      contactOptions.map((contactOption, optionIndex) =>
-        optionIndex === index
-          ? {
-              ...contactOption,
-              [fieldName]: nextValue,
-            }
-          : contactOption,
+      keepOnlyFirstPrimaryContactOption(
+        contactOptions.map((contactOption, optionIndex) =>
+          optionIndex === index
+            ? {
+                ...contactOption,
+                [fieldName]: nextValue,
+              }
+            : contactOption,
+        ),
       ),
     );
   };
@@ -276,7 +312,7 @@ export function ScoutDraftReviewForm({
                         </label>
 
                         <label>
-                          Etiqueta
+                          Texto del botón
                           <Input
                             className="scout-draft-review-form__input"
                             value={contactOption.label || ""}
@@ -288,8 +324,11 @@ export function ScoutDraftReviewForm({
                               )
                             }
                             disabled={isReadOnly}
-                            placeholder="Opcional"
+                            placeholder="Inscripción, reservar plaza, web del centro"
                           />
+                          <span className="scout-draft-review-form__hint">
+                            Opcional. Si lo dejas vacío, usaremos el tipo de contacto.
+                          </span>
                         </label>
                       </div>
 
@@ -445,9 +484,7 @@ export function ScoutDraftReviewForm({
         </div>
 
         <div className={getFieldClassName("isFree")}>
-          <label htmlFor="draft-is-free">
-            {priceMode === "user" ? "Precio" : "Gratuidad"}
-          </label>
+          <label htmlFor="draft-is-free">Precio</label>
           <select
             id="draft-is-free"
             className="scout-draft-review-form__select"
@@ -460,11 +497,9 @@ export function ScoutDraftReviewForm({
           </select>
         </div>
 
-        {priceMode === "user" && formState.isFree === "true" ? null : (
+        {formState.isFree === "true" ? null : (
           <div className={getFieldClassName("priceLabel")}>
-            <label htmlFor="draft-price-label">
-              {priceMode === "user" ? "Precio orientativo" : "Texto de precio"}
-            </label>
+            <label htmlFor="draft-price-label">Precio orientativo</label>
             <Input
               id="draft-price-label"
               className="scout-draft-review-form__input"
@@ -477,11 +512,9 @@ export function ScoutDraftReviewForm({
                   : undefined
               }
             />
-            {priceMode === "user" ? (
-              <p className="scout-draft-review-form__hint">
-                Opcional. Si no lo sabes, puedes dejarlo en blanco.
-              </p>
-            ) : null}
+            <p className="scout-draft-review-form__hint">
+              Opcional. Si no lo sabes, puedes dejarlo en blanco.
+            </p>
           </div>
         )}
 

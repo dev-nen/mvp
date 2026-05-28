@@ -95,16 +95,18 @@ passes.
 | --- | --- | --- | --- |
 | `reviewed_payload_json.contact_options` | Draft contact payload | Auth/Internal via RPC | User/admin form payload. Contacts stay private until approval. |
 | `activity_contact_options.contact_method = 'instagram'` | Instagram public contact method | Internal write, public read model | Stored as a normalized Instagram profile URL in `contact_value`. |
+| `activity_contact_options.contact_method = 'form'` | Form public contact method | Internal write, public read model | Stored as a URL in `contact_value`, but remains distinct from `website`. |
+| `activity_contact_options.contact_label` | Optional public contact label | Internal write, public read model | Nullable. Public UI falls back to the contact type label when empty. |
 | `approve_activity_draft` | Draft approval | Internal RPC | Publishes contact options to `activity_contact_options` when the reviewed payload explicitly includes `contact_options`. |
 | `update_approved_activity_from_draft` | Internal approved edit | Internal RPC | Replaces published contact options when the reviewed payload explicitly includes `contact_options`. |
 | `create_my_activity_submission` | User submission | Auth RPC | Accepts contact options in draft payload but still writes only `activity_drafts`. |
 | `resubmit_my_activity_draft` | User correction | Auth RPC | Carries corrected contact options in the new pending draft. |
 | `create_my_activity_edit_draft` | User edit request | Auth RPC | Stores contact edits in draft and keeps them unpublished until approval. |
 
-Phase 4 uses the existing raw table shape (`contact_method`, `contact_value`,
-`is_active`, `is_deleted`). Normal users must not receive direct write grants
-to `activity_contact_options`. Public users keep reading only
-`activity_contact_options_read`.
+Phase 4 uses the raw table shape (`contact_method`, `contact_value`,
+nullable `contact_label`, `is_active`, `is_deleted`). Normal users must not
+receive direct write grants to `activity_contact_options`. Public users keep
+reading only `activity_contact_options_read`.
 
 The draft payload contact shape is:
 
@@ -122,6 +124,13 @@ The draft payload contact shape is:
   ]
 }
 ```
+
+`label` is optional custom button text. It is not required in draft payloads,
+and default type labels are resolved by the UI when `label`/`contact_label` is
+empty.
+
+At most one contact option may have `is_primary = true`. Frontend and SQL
+normalization keep the first primary option and clear later primary flags.
 
 If a reviewed payload omits `contact_options`, existing published contacts are
 preserved. If it includes an empty array, the approved activity has no active
@@ -148,7 +157,8 @@ Vista pública segura para contacto. Debe filtrar por:
 
 Phase 4 keeps this as the only public contact read boundary. The CTA label in
 the public UI remains `Contactar`; one contact opens directly and multiple
-contacts open the chooser.
+contacts open the chooser. The view exposes nullable `contact_label` alongside
+`contact_method` and `contact_value`.
 
 ### `municipality_choices_read`
 

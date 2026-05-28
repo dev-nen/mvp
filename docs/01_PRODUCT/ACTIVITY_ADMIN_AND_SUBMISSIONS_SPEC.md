@@ -704,7 +704,11 @@ smoke validated.
 - `phone`
 - `email`
 - `website`
+- `form`
 - `instagram`
+
+`website` and `form` both open URLs, but they remain distinct reviewed and
+published contact types. Legacy `web` values may be treated as `website`.
 
 Instagram is a supported contact type. It can be entered as `@usuario`,
 `usuario`, or an Instagram profile URL. The reviewed/published value is
@@ -736,6 +740,12 @@ Contact options are stored in the reviewed payload:
   ]
 }
 ```
+
+`label` is optional custom public button text. Empty labels are preserved as
+empty/null data and the public UI falls back to the contact type label.
+
+At most one contact option may be primary. If multiple payload entries mark
+`is_primary = true`, normalization keeps the first one and clears the rest.
 
 Missing `contact_options` means preserve existing live contact options during
 approved activity update. An explicit empty array means the reviewed activity
