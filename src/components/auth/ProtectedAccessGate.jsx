@@ -312,11 +312,18 @@ export function ProtectedAccessGate() {
     }
   };
 
+  const canCloseAccessGate = accessState !== "onboarding_required";
+  const handleDismissAccessGate = () => {
+    if (canCloseAccessGate) {
+      closeAccessGate();
+    }
+  };
+
   return (
     <div className="protected-access-gate" role="presentation">
       <div
         className="protected-access-gate__overlay"
-        onClick={closeAccessGate}
+        onClick={handleDismissAccessGate}
       />
 
       <Card
@@ -326,14 +333,16 @@ export function ProtectedAccessGate() {
         aria-labelledby="protected-access-gate-title"
       >
         <CardContent className="protected-access-gate__content">
-          <button
-            type="button"
-            className="protected-access-gate__close"
-            onClick={closeAccessGate}
-            aria-label={t("auth.common.closeAccess")}
-          >
-            <X />
-          </button>
+          {canCloseAccessGate ? (
+            <button
+              type="button"
+              className="protected-access-gate__close"
+              onClick={closeAccessGate}
+              aria-label={t("auth.common.closeAccess")}
+            >
+              <X />
+            </button>
+          ) : null}
 
           {accessState === "anonymous" ? (
             <>
@@ -711,19 +720,6 @@ export function ProtectedAccessGate() {
                   className="protected-access-gate__input"
                   value={profileName}
                   onChange={(event) => setProfileName(event.target.value)}
-                />
-
-                <label
-                  className="protected-access-gate__label"
-                  htmlFor="profile-last-name"
-                >
-                  {t("auth.common.lastName")}
-                </label>
-                <Input
-                  id="profile-last-name"
-                  className="protected-access-gate__input"
-                  value={profileLastName}
-                  onChange={(event) => setProfileLastName(event.target.value)}
                 />
 
                 <label

@@ -96,13 +96,7 @@ export function getDefaultOnboardingForm(authUser, appUser = null) {
     getTrimmedText(authUser?.email).split("@")[0] ||
     "";
   const preferredLastName =
-    getTrimmedText(appUser?.lastName) ||
-    getTrimmedText(metadata.family_name) ||
-    getTrimmedText(metadata.last_name) ||
-    splitAuthFullName(
-      getTrimmedText(metadata.full_name) || getTrimmedText(metadata.name),
-    ).lastName ||
-    "";
+    getTrimmedText(appUser?.lastName) || "";
 
   return {
     name: preferredName,

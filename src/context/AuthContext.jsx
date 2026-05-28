@@ -169,6 +169,7 @@ export function AuthProvider({ children }) {
   const [resolvedIntent, setResolvedIntent] = useState(null);
   const [isAccessGateOpen, setIsAccessGateOpen] = useState(false);
   const [isCompletingOnboarding, setIsCompletingOnboarding] = useState(false);
+  const [isUpdatingAppUserProfile, setIsUpdatingAppUserProfile] = useState(false);
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState("");
   const [verificationMessage, setVerificationMessage] = useState("");
 
@@ -711,6 +712,28 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const updateAppUserProfile = useCallback(async (profileInput) => {
+    setIsUpdatingAppUserProfile(true);
+    setAppUserError("");
+
+    try {
+      const nextAppUser = await ensureAppUserProfile(profileInput);
+      setAppUser(nextAppUser);
+
+      return { data: nextAppUser, error: null };
+    } catch (error) {
+      const resolvedError =
+        error instanceof Error
+          ? error
+          : new Error("No pudimos actualizar el perfil del usuario.");
+
+      setAppUserError(resolvedError.message);
+      return { data: null, error: resolvedError };
+    } finally {
+      setIsUpdatingAppUserProfile(false);
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
       value={{
@@ -728,6 +751,7 @@ export function AuthProvider({ children }) {
         isAuthLoading,
         isCompletingOnboarding,
         isEmailVerified: isAuthUserEmailVerified(user),
+        isUpdatingAppUserProfile,
         openAccessGate,
         pendingIntent,
         pendingVerificationEmail,
@@ -740,6 +764,7 @@ export function AuthProvider({ children }) {
         signOut,
         signUpWithPassword,
         startProtectedAction,
+        updateAppUserProfile,
         user,
         verificationMessage,
       }}

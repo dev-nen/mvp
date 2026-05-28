@@ -331,11 +331,21 @@ const en = {
       "Here you can review the main details linked to your NensGo account.",
     visibleName: "Visible name",
     email: "Email",
-    city: "City",
+    city: "Municipality or locality",
+    cityPlaceholder: "Search your municipality or locality",
+    cityHelp: "Start typing at least two letters and select an option.",
+    emailReadonlyHelp:
+      "This email belongs to your account and cannot be edited from this screen.",
     unavailable: "Unavailable",
-    noCity: "No city linked",
+    noCity: "No municipality linked",
     authError:
       "We could not update your account information right now.",
+    nameRequired: "Name is required.",
+    cityRequired: "Select a municipality or locality.",
+    save: "Save changes",
+    saving: "Saving...",
+    saveSuccess: "Changes saved.",
+    saveError: "We could not save the changes right now.",
     publicationsTitle: "My publications",
     publicationsDescription:
       "Check your publication status or send an activity for NensGo to review.",

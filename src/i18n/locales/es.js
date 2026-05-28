@@ -337,11 +337,22 @@ const es = {
       "Aquí puedes revisar los datos principales asociados a tu cuenta dentro de NensGo.",
     visibleName: "Nombre visible",
     email: "Email",
-    city: "Ciudad",
+    city: "Municipio o localidad",
+    cityPlaceholder: "Busca tu municipio o localidad",
+    cityHelp:
+      "Empieza a escribir al menos dos letras y selecciona una opción.",
+    emailReadonlyHelp:
+      "Este email pertenece a tu cuenta y no se edita desde esta pantalla.",
     unavailable: "No disponible",
-    noCity: "Sin ciudad asociada",
+    noCity: "Sin municipio asociado",
     authError:
       "No pudimos actualizar la información de tu cuenta ahora mismo.",
+    nameRequired: "El nombre es obligatorio.",
+    cityRequired: "Selecciona un municipio o localidad.",
+    save: "Guardar cambios",
+    saving: "Guardando...",
+    saveSuccess: "Cambios guardados.",
+    saveError: "No pudimos guardar los cambios ahora mismo.",
     publicationsTitle: "Mis publicaciones",
     publicationsDescription:
       "Consulta el estado de tus publicaciones o envía una actividad para que NensGo la revise.",
