@@ -15,6 +15,12 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Documentar Phase 3 como implementada en repo cuando exista la migracion SQL
   y la ruta `/perfil/publicaciones/nueva`, pero no live-validada hasta aplicar
   SQL manualmente.
+- Documentar Phase 4 Organizador / publisher request flow como implementado en
+  repo cuando exista la migracion
+  `2026-05-30_publisher_request_flow_phase4.sql`, la ruta
+  `/perfil/organizador/solicitud`, y la pestaña interna
+  `Alta de Publicadores`; mantenerlo como `Partial` hasta aplicar SQL y
+  completar smoke live.
 - Mantener registrada la evidencia de Phase 1: `/internal/activities` está implementado y live-smoke validado para catálogo interno y publicar/despublicar.
 - Mantener visible la deuda técnica y no presentar el proyecto como production-ready.
 
@@ -31,9 +37,9 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 ## Siguiente
 
 - Cerrar smoke tests live de Supabase, RLS y RPC.
-- Preparar Pack 4A con la especificación de
-  [Organizador / publisher request flow](./ORGANIZER_REQUEST_FLOW_SPEC.md);
-  la implementación queda para fases posteriores.
+- Aplicar y validar el SQL de
+  [Organizador / publisher request flow](./ORGANIZER_REQUEST_FLOW_SPEC.md):
+  solicitud, revision interna, aprobacion y gating de nuevas submissions.
 - Revisar calidad de datos del catálogo y contact options.
 - Monitorizar tamaño del bundle Vite si se añaden dependencias grandes o vuelve el warning.
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
@@ -64,6 +70,16 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
   subidas por usuarios normales.
 - Mantener Phase 3 como `Partial` hasta aplicar la migracion SQL y completar
   smoke Supabase/RLS.
+
+### Phase 4 Publisher: Organizador request flow
+
+- Implementado en repo como solicitud de alta de Organizador, revision interna
+  en Draft Inbox y gating de nuevas submissions por publisher aprobado.
+- Superficies: `/perfil/publicaciones`, `/perfil/organizador/solicitud` y
+  `/internal/drafts` -> `Alta de Publicadores`.
+- SQL: `supabase/sql/2026-05-30_publisher_request_flow_phase4.sql`.
+- Mantener como `Partial` hasta aplicar SQL manualmente y validar RLS/RPC/UI en
+  vivo.
 
 ### Phase 4 Core: contact options lifecycle
 

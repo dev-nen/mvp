@@ -59,6 +59,24 @@ Validar en live antes de considerar cerrado.
 - `source_reference_url` is optional draft traceability only and is not public
   catalog data.
 
+## Phase 4 Publisher / Organizador security
+
+- Normal family users are not publishers by default.
+- Publisher capability is represented by `publisher_profiles.is_active = true`,
+  not by `user_profiles.role_id` or `internal_tool_access`.
+- `publisher_requests` and `publisher_profiles` contain private organizer PII
+  and contact data. Normal users may read only their own safe fields.
+- User mutations go through `submit_my_publisher_request` and
+  `resubmit_my_publisher_request`; they do not create publisher profiles.
+- Internal request review RPCs require
+  `internal_tool_access.tool_name = 'draft_inbox'`.
+- Approving a request creates or updates the active publisher profile. It does
+  not approve or publish activities.
+- New activity submissions require an active publisher profile server-side.
+  Frontend route gating is UX only.
+- Existing draft history, corrections and edit requests remain available
+  through their existing owner-checked RPCs where product rules allow.
+
 ## Phase 4 Core contact security
 
 - Normal users may submit contact options only inside `activity_drafts`
@@ -116,6 +134,7 @@ Las rutas `/privacidad` y `/terminos` existen y usan canonical `https://nensgo.c
 - HTML crudo o Markdown con HTML habilitado en descripciones.
 - Imágenes base64 en `activity_drafts` o `activities`.
 - Reporting interno en rutas públicas.
+- Publisher request PII or internal review notes in public catalog/profile UI.
 
 ## Defensive audit items
 
@@ -153,6 +172,10 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Phase 3 Core SQL/RPC: pending manual apply and live smoke. Validate
   authenticated-only draft creation, draft-only writes, `source_type =
   'user_submission'`, and no direct `public.activities` write.
+- Phase 4 Publisher SQL/RPC: pending manual apply and live smoke. Validate
+  own-only request/profile reads, normal-user request submit/resubmit, internal
+  Draft Inbox approval, active profile creation, non-approved submission
+  denial, approved publisher draft creation, and historical draft visibility.
 - Phase 4 Core SQL/RPC: pending manual apply and live smoke. Validate contact
   option draft storage, admin approval publication, Instagram normalization,
   and no normal-user direct writes to `activity_contact_options`.

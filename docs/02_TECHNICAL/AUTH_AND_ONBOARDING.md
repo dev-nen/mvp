@@ -20,6 +20,10 @@ Estado: `Partial`. El frontend está implementado, pero el entorno real requiere
 - El usuario se considera usable cuando está autenticado, verificado y tiene perfil mínimo.
 - El email viene de Supabase Auth y se trata como no editable en esta fase.
 - La app no muestra UUIDs de Supabase al usuario.
+- El estado Organizador/publisher no vive en `user_profiles.role_id`; se
+  deriva de `publisher_requests` y `publisher_profiles`.
+- Un usuario normal puede estar `ready` para usar NensGo como familia sin estar
+  aprobado como publisher.
 
 ## Access states
 
@@ -78,6 +82,19 @@ Las acciones protegidas pueden guardarse temporalmente en `sessionStorage` con k
 
 Esto es UX para continuar una acción tras login/onboarding. No es frontera de seguridad.
 
+## Organizador request flow
+
+- `/perfil/publicaciones` is the user publication hub and shows the
+  Organizador invitation/status for non-approved users.
+- `/perfil/organizador/solicitud` lets authenticated users submit or resubmit
+  an Organizador request.
+- The request form uses Supabase Auth email as read-only context and does not
+  ask for an editable email field.
+- Approved publisher status only enables new activity draft submission; it does
+  not grant direct publishing.
+- Historical submissions remain visible to the owner even if they are not an
+  approved publisher.
+
 ## Pendiente de validación
 
 - Google OAuth real.
@@ -85,4 +102,6 @@ Esto es UX para continuar una acción tras login/onboarding. No es frontera de s
 - Redirect URLs.
 - Onboarding con municipios DIR3 reales.
 - RLS de `user_profiles`.
+- RLS/RPCs de `publisher_requests` y `publisher_profiles`.
+- Gating live de nuevas submissions para usuarios sin publisher aprobado.
 - Errores amigables sin exponer detalles técnicos.
