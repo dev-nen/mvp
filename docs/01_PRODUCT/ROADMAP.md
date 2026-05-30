@@ -31,6 +31,9 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 ## Siguiente
 
 - Cerrar smoke tests live de Supabase, RLS y RPC.
+- Preparar Pack 4A con la especificación de
+  [Organizador / publisher request flow](./ORGANIZER_REQUEST_FLOW_SPEC.md);
+  la implementación queda para fases posteriores.
 - Revisar calidad de datos del catálogo y contact options.
 - Monitorizar tamaño del bundle Vite si se añaden dependencias grandes o vuelve el warning.
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
