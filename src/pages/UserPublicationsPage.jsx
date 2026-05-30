@@ -208,12 +208,16 @@ export function UserPublicationsPage() {
     const message =
       location.state?.userPublicationsMessage ||
       location.state?.publisherRequestMessage;
+    const errorMessage =
+      location.state?.userPublicationsError ||
+      location.state?.publisherRequestError;
 
-    if (!message) {
+    if (!message && !errorMessage) {
       return;
     }
 
-    setActionMessage(message);
+    setActionMessage(message || "");
+    setActionError(errorMessage || "");
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate]);
 

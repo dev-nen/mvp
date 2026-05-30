@@ -420,6 +420,15 @@ const ca = {
     noOptionsTitle: "No hem pogut preparar les opcions",
     noOptionsDescription:
       "El formulari necessita categories i tipus disponibles abans d'enviar canvis.",
+    publisherGate: {
+      eyebrow: "Organizador",
+      title: "Sol-licita l'alta com a Organizador",
+      description:
+        "Per enviar una activitat nova necessites tenir aprovada la teva sol-licitud d'Organizador. Les teves publicacions anteriors continuen visibles al teu panell.",
+      action: "Tornar a les meves publicacions",
+      submitBlocked:
+        "Per enviar una activitat nova necessites tenir aprovada la teva sol-licitud d'Organizador.",
+    },
     recovery: {
       title: "Hem restaurat un esborrany local no desat.",
       imageNote: "Cal tornar a triar la imatge seleccionada.",
