@@ -350,7 +350,7 @@ const en = {
     publicationsDescription:
       "Check your publication status or send an activity for NensGo to review.",
     publicationsAction: "My publications",
-    submitActivityAction: "Send activity",
+    submitActivityAction: "Organizador",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",

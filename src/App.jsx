@@ -55,6 +55,10 @@ const ParaCentrosPage = lazyNamedPage(
   () => import("@/pages/ParaCentrosPage"),
   "ParaCentrosPage",
 );
+const OrganizerRequestPage = lazyNamedPage(
+  () => import("@/pages/OrganizerRequestPage"),
+  "OrganizerRequestPage",
+);
 const PrivacyPolicyPage = lazyNamedPage(
   () => import("@/pages/PrivacyPolicyPage"),
   "PrivacyPolicyPage",
@@ -152,6 +156,14 @@ function AppRoutes() {
             element={
               <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
                 <UserActivityEditRequestPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/perfil/organizador/solicitud"
+            element={
+              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
+                <OrganizerRequestPage />
               </ProtectedRoute>
             }
           />

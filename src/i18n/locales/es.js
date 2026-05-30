@@ -357,7 +357,7 @@ const es = {
     publicationsDescription:
       "Consulta el estado de tus publicaciones o envía una actividad para que NensGo la revise.",
     publicationsAction: "Mis publicaciones",
-    submitActivityAction: "Enviar actividad",
+    submitActivityAction: "Organizador",
     internalDescription:
       "Si formas parte del equipo, puedes abrir el Draft Inbox desde aquí.",
     internalAction: "Abrir Draft Inbox",

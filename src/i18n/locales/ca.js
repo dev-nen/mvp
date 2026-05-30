@@ -356,7 +356,7 @@ const ca = {
     publicationsDescription:
       "Consulta l'estat de les teves publicacions o envia una activitat perque NensGo la revisi.",
     publicationsAction: "Les meves publicacions",
-    submitActivityAction: "Enviar activitat",
+    submitActivityAction: "Organizador",
     internalDescription:
       "Si formes part de l'equip, pots obrir el Draft Inbox des d'aquí.",
     internalAction: "Obrir Draft Inbox",
