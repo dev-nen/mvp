@@ -1,6 +1,45 @@
 # Security and Privacy
 
+## Frontera vigente: mantenimiento (octubre de 2026)
+
+Estado: **Partial**. Los cambios están versionados en
+`supabase/sql/2026-10-02_maintenance_admin.sql`; no se han aplicado ni validado
+en producción en esta transición.
+
+- El público usa lecturas anónimas de catálogo y contactos. La app activa no
+  solicita cuentas, favoritos, perfiles ni escrituras de eventos.
+- Ambas administradoras previas se provisionan explícitamente en
+  `maintenance_operator`. `is_maintenance_operator` exige además su permiso
+  existente `internal_tool_access.tool_name = 'draft_inbox'`. La allowlist no
+  es singleton ni incorpora automáticamente otras cuentas.
+- RLS restrictiva, guards en RPCs internas y políticas de Storage restringen el
+  mantenimiento a las cuentas permitidas. Las RPCs de importación y alta de
+  centros comprueban autorización; las altas tienen confirmación humana.
+- Se revocan accesos a flujos públicos de perfil, favoritos, eventos y publishers
+  retirados. Los registros se conservan. Ocultar controles de la UI no sustituye
+  aplicar la migración ni deshabilitar altas en Supabase Auth.
+- La API de respaldo valida el bearer con `auth.getUser` y ejecuta el RPC de
+  permiso con esa identidad. Sólo producción y el dominio canónico pueden
+  solicitar el deploy. No devuelve el hook ni usa `service_role`.
+- `PUBLIC_CATALOG_DEPLOY_HOOK` es un secreto sólo de servidor. Nunca usar prefijo
+  `VITE_`, incluirlo en código cliente, logs o capturas.
+- La copia permite exclusivamente datos de las vistas públicas y sus imágenes;
+  excluye cuentas, borradores, notas internas y secretos.
+- El nombre opcional para WhatsApp/correo sólo vive en el estado del diálogo y se
+  descarta al cerrar/cambiar actividad. No se guarda ni se registra como evento.
+
+La retención de datos históricos y los textos legales se revisan al terminar
+el proyecto. No se declara cumplimiento legal definitivo. El
+[runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) detalla provisión de ambas
+cuentas, configuración y comprobaciones externas.
+
+El resto del documento conserva la **referencia histórica** anterior:
+permisos de usuarios/centros, PVI y eventos no son el contrato de mantenimiento.
+
+## Referencia anterior (histórica)
+
 ## Security model
+
 
 La seguridad real del sistema debe vivir en Supabase y en APIs server-side, no en el frontend.
 

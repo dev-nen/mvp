@@ -32,7 +32,7 @@ const STRING_FIELDS = [
 ];
 
 const DESCRIPTION_FORMATS = ["markdown", "plain"];
-const AGE_RULE_TYPES = ["all", "range", "from", "until"];
+const AGE_RULE_TYPES = ["", "all", "range", "from", "until"];
 const CENTER_MODES = ["existing", "proposed_new", "not_applicable"];
 
 function getTrimmedText(value) {
@@ -114,7 +114,7 @@ export function sanitizeInternalDraftCreateFormState(formState) {
   nextFormState.ageRuleType = normalizeChoice(
     formState.ageRuleType,
     AGE_RULE_TYPES,
-    "all",
+    "",
   );
   nextFormState.centerMode = normalizeChoice(
     formState.centerMode,
@@ -122,7 +122,7 @@ export function sanitizeInternalDraftCreateFormState(formState) {
     "existing",
   );
   nextFormState.isFree =
-    formState.isFree === "true" || formState.isFree === true ? "true" : "false";
+    formState.isFree === "true" || formState.isFree === true ? "true" : formState.isFree === "false" || formState.isFree === false ? "false" : "";
   nextFormState.contactOptions = sanitizeContactOptions(
     formState.contactOptions,
   );
@@ -137,7 +137,7 @@ function hasMeaningfulLocalDraft(formState, hadCoverFile) {
     return true;
   }
 
-  if (formState.isFree === "true" || formState.ageRuleType !== "all") {
+  if (formState.isFree === "true" || (formState.ageRuleType && formState.ageRuleType !== "all")) {
     return true;
   }
 

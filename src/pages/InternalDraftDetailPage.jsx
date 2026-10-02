@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ActivityPublicationBadge } from "@/features/scout-drafts/ActivityPublicationBadge";
 import { ScoutDraftReviewForm } from "@/features/scout-drafts/ScoutDraftReviewForm";
 import { ScoutDraftStatusBadge } from "@/features/scout-drafts/ScoutDraftStatusBadge";
+import { MaintenanceCenterCreatePanel } from "@/features/scout-drafts/MaintenanceCenterCreatePanel";
 import {
   DRAFT_REVIEW_TARGET_STATUSES,
   buildDefaultUserFeedbackSummary,
@@ -30,7 +31,7 @@ import {
   rejectInternalDraft,
   saveInternalDraftReview,
 } from "@/services/internalDraftsService";
-import { resolveActivityImagePreviewUrl } from "@/services/internalDraftCoverImageService";
+import { resolveActivityImagePreviewUrl, uploadDraftCoverImage } from "@/services/internalDraftCoverImageService";
 import "./InternalDraftDetailPage.css";
 
 function formatDateLabel(value) {
@@ -82,6 +83,9 @@ function getInitialDraftPayload(draft) {
 }
 
 function validateDraftForApproval(formState) {
+  if (!["all", "range", "from", "until"].includes(formState.ageRuleType)) return "Confirma la edad antes de aprobar; no se deduce de la fuente.";
+  if (!["true", "false"].includes(formState.isFree)) return "Confirma si la actividad es gratuita o de pago antes de aprobar.";
+  if (formState.importReview?.requires_confirmation && formState.importReview?.review_confirmed !== true) return "Confirma la revisión de los datos importados antes de aprobar.";
   if (!getTrimmedText(formState.title)) {
     return "El título es obligatorio para aprobar.";
   }
@@ -163,6 +167,7 @@ export function InternalDraftDetailPage() {
   const [isRequestingChanges, setIsRequestingChanges] = useState(false);
   const [isArchiving, setIsArchiving] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -338,14 +343,28 @@ export function InternalDraftDetailPage() {
           centerMode: "existing",
           centerProposalName: "",
           centerProposalNotes: "",
+          importReview: currentFormState.importReview ? { ...currentFormState.importReview, review_confirmed: false } : null,
         };
       }
 
       return {
         ...currentFormState,
         [fieldName]: nextValue,
+        importReview: fieldName === "importReview" ? nextValue : currentFormState.importReview ? { ...currentFormState.importReview, review_confirmed: false } : null,
       };
     });
+  };
+
+  const handleImageFileChange = async (file) => {
+    if (!file || !draft || !isPendingDraft || isUploadingImage) return;
+    setIsUploadingImage(true); setFeedbackMessage("");
+    try {
+      const path = await uploadDraftCoverImage({ draftId: draft.id, file });
+      handleFieldChange("imageUrl", path);
+      setFeedbackTone("success"); setFeedbackMessage("Imagen subida. Guarda el borrador para conservarla.");
+    } catch {
+      setFeedbackTone("error"); setFeedbackMessage("No pudimos subir la imagen. Usa JPG, PNG o WebP de hasta 5 MB y reintenta.");
+    } finally { setIsUploadingImage(false); }
   };
 
   const handleFeedbackTargetChange = (nextTargetStatus) => {
@@ -549,7 +568,7 @@ export function InternalDraftDetailPage() {
   };
 
   const handleApproveDraft = async () => {
-    if (!draft || !isPendingDraft) {
+    if (!draft || !isPendingDraft || isUploadingImage) {
       return;
     }
 
@@ -697,8 +716,28 @@ export function InternalDraftDetailPage() {
                           formState.imageUrl,
                         )}
                         onFieldChange={handleFieldChange}
-                        isReadOnly={isReadOnlyDraft}
+                        isReadOnly={isReadOnlyDraft || isUploadingImage}
+                        isImageUploadEnabled={isPendingDraft}
+                        onImageFileChange={handleImageFileChange}
                       />
+
+                      {isPendingDraft && formState.centerMode === "proposed_new" ? <MaintenanceCenterCreatePanel
+                        key={draft.id} draftId={draft.id} formState={formState}
+                        onBeforeCreate={() => saveInternalDraftReview({ draftId: draft.id, reviewedPayload: mapFormStateToDraftPayload(formState), internalReviewNotes: reviewNotes })}
+                        onCreated={async () => {
+                          setCenterChoices(await listDraftCenters());
+                          await refreshDraft("Centro creado y vinculado al borrador. Revisa los demás datos antes de aprobar.");
+                        }} /> : null}
+
+                      {formState.importReview ? <div className="internal-draft-detail-page__center-notice">
+                        <h3>Revisión del material importado</h3>
+                        <p>Estos avisos describen la fuente original. Corrige los datos en el editor; comprueba especialmente la vigencia de las fechas sin año.</p>
+                        {Array.isArray(formState.importReview.warnings) ? <ul>{formState.importReview.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul> : null}
+                        {formState.importReview.notes ? <p>{formState.importReview.notes}</p> : null}
+                        {isPendingDraft ? <label><input type="checkbox" checked={formState.importReview.review_confirmed === true}
+                          onChange={(event) => handleFieldChange("importReview", { ...formState.importReview, review_confirmed: event.target.checked })} /> He contrastado los datos, las propuestas y la vigencia de las fechas antes de publicar.</label> : null}
+                      </div> : null}
+                      {isUploadingImage ? <p role="status">Preparando y subiendo imagen…</p> : null}
 
                       {isPendingDraft ? (
                         <div className="internal-draft-detail-page__public-feedback">

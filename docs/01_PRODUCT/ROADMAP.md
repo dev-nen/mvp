@@ -1,6 +1,32 @@
 # Product Roadmap
 
-Este roadmap resume el orden de producto desde el estado actual. No sustituye al roadmap maestro histórico en [05_ARCHIVE/ROADMAP_MASTER.md](../05_ARCHIVE/ROADMAP_MASTER.md), pero ofrece una lectura más directa para revisión externa.
+## Decisión vigente: detener desarrollo y mantener servicio
+
+El 2 de octubre de 2026 se detiene el roadmap de crecimiento. La rama
+`feat/publisher-request-flow-phase4` está adaptada para operar como prueba de
+concepto/portfolio con planes gratuitos, dominio conservado y cargas ocasionales,
+durante un máximo de un año más.
+
+Estado: **Partial**. Ahora corresponde validar la vista previa, preparar SQL/Auth
+y ambas administradoras previas, confirmar costes/cuotas reales y desplegar la
+transición aprobada. Después sólo quedan carga editorial ocasional, revisión de
+datos vigentes y respaldo público manual tras publicar, modificar o retirar.
+
+No se continúa el desarrollo de organizadores, favoritos, onboarding público,
+reporting, extracción automatizada, IA integrada ni aplicaciones nuevas. Los
+datos históricos se preservan. La finalización del servicio y la disposición de
+esos datos se decidirán posteriormente; no hay apagado automático.
+
+Detalle: [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) y
+[plan de transición](../03_OPERATIONS/MAINTENANCE_TRANSITION_2026-10.md).
+
+## Roadmap anterior (histórico, sin ejecución prevista)
+
+Este contenido preserva el contexto del MVP y del
+[roadmap maestro histórico](../05_ARCHIVE/ROADMAP_MASTER.md). No representa
+trabajo autorizado ni prioridades vigentes del mantenimiento.
+
+
 
 ## Ahora
 

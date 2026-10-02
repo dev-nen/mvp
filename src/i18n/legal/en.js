@@ -1,306 +1,154 @@
 const enLegal = {
-  privacy: {
-    seoTitle: "Privacy Policy | NensGo",
-    seoDescription:
-      "Learn how NensGo handles user data, Google sign-in and the information needed to use the platform.",
-    title: "Privacy Policy",
-    lastUpdated: "Last updated: May 2026",
-    intro:
-      "At NensGo, we want families to discover children’s and family activities in a simple and safe way. This policy explains what data we may process when you use the website, create an account, sign in with Google or interact with published activities.",
-    sections: [
+  "privacy": {
+    "seoTitle": "Privacy Policy | NensGo",
+    "seoDescription": "How NensGo handles data in its public catalogue and private administration.",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: October 2026",
+    "intro": "You can browse the NensGo catalogue without an account. This policy describes the free service and its private administration.",
+    "sections": [
       {
-        title: "1. Who manages NensGo",
-        blocks: [
+        "title": "1. The project and contact",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "NensGo is an early-stage digital project focused on bringing children’s and family activities together in a single online catalog.",
+            "type": "paragraph",
+            "text": "NensGo is a digital project for discovering children’s and family activities. For questions about privacy or your data, contact:"
           },
           {
-            type: "paragraph",
-            text: "For any question about privacy or data use, you can contact us at:",
-          },
-          { type: "email", value: "info@nensgo.com" },
-          {
-            type: "paragraph",
-            text:
-              "If NensGo later operates under a specific company, legal entity or commercial structure, this policy will be updated to reflect those details.",
-          },
-        ],
+            "type": "email",
+            "value": "info@nensgo.com"
+          }
+        ]
       },
       {
-        title: "2. What data we may process",
-        blocks: [
+        "title": "2. Public browsing and preferences",
+        "blocks": [
           {
-            type: "paragraph",
-            text: "We may process the following data, depending on how you use NensGo:",
+            "type": "paragraph",
+            "text": "We do not offer public registration, profiles or favourites, and we do not collect statistics about visits, viewed activities or contact actions. Your chosen language is saved in your browser to remember this preference."
           },
           {
-            type: "list",
-            items: [
-              "Account data: first name, last name, email address, profile image if provided by the sign-in provider, and sign-in method.",
-              "Google Sign-In data: when you choose to sign in with Google, we receive the basic information needed to identify your account, such as your name, email address and profile image if available.",
-              "NensGo profile data: city or municipality selected during onboarding and basic preferences needed to use the platform.",
-              "Activity data within the website: favorites, viewed activities, contact actions and basic usage signals to improve the service.",
-              "Technical data: basic information needed for the website to work correctly, such as session, browser, device, selected language and technical usage events.",
-            ],
-          },
-          {
-            type: "paragraph",
-            text:
-              "We do not request especially sensitive data for the normal use of NensGo.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "Hosting providers may process technical connection data and logs needed to operate and protect their services."
+          }
+        ]
       },
       {
-        title: "3. Why we use the data",
-        blocks: [
-          { type: "paragraph", text: "We use the data to:" },
+        "title": "3. Contacting centres",
+        "blocks": [
           {
-            type: "list",
-            items: [
-              "Allow account access.",
-              "Complete and maintain your user profile.",
-              "Remember your favorites.",
-              "Show a more useful experience based on your city or municipality.",
-              "Help you contact centers or activity providers.",
-              "Improve the quality, security and operation of the platform.",
-              "Understand which activities generate more interest, in an aggregated or functional way.",
-            ],
+            "type": "paragraph",
+            "text": "You may enter an optional name to prepare a WhatsApp or email message. NensGo does not save it in an account, database or browser storage. You can contact a centre without entering your name."
           },
-          { type: "paragraph", text: "We do not sell your personal data to third parties." },
-        ],
+          {
+            "type": "paragraph",
+            "text": "The message is prepared on your device and you decide whether to send it. Opening WhatsApp, email, phone, Instagram or an external website is subject to that service’s and centre’s terms and privacy policies."
+          }
+        ]
       },
       {
-        title: "4. Google Sign-In",
-        blocks: [
+        "title": "4. Administration and historical data",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "If you choose to sign in with Google, Google allows us to receive the basic information needed to create or recognize your NensGo account. This usually includes your name, email address and profile image if available.",
+            "type": "paragraph",
+            "text": "Private access is reserved for administration and uses Supabase to verify the account and session; Google may be used as a sign-in provider."
           },
           {
-            type: "paragraph",
-            text:
-              "NensGo uses this information only to make sign-in easier, identify your profile and operate the platform. We do not use your Google account to publish content on your behalf or to access information that is not needed for the service.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "Account, profile, favourite and event data from the previous service are retained privately without use in the public catalogue. You can request access, correction or deletion by writing to info@nensgo.com. Retention will be reviewed when the project ends."
+          }
+        ]
       },
       {
-        title: "5. Contacting activities and centers",
-        blocks: [
+        "title": "5. Providers and public backup",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "When you click a contact option, NensGo may prepare a message with basic information about the activity you are interested in. If you are signed in, the message may include your name so the center or activity provider can better identify your request.",
-          },
-          {
-            type: "paragraph",
-            text:
-              "The final message may be sent through external services such as WhatsApp, email, phone or the center’s website links. In those cases, the terms and privacy policies of the relevant external service also apply.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "Vercel hosts the website. Supabase stores the catalogue, images and private authentication. A public copy of activities, images and contact details keeps the catalogue available if the database is unavailable; it excludes accounts and internal documentation."
+          }
+        ]
       },
       {
-        title: "6. Technical providers",
-        blocks: [
+        "title": "6. Changes",
+        "blocks": [
           {
-            type: "paragraph",
-            text: "To provide the service, we may use technical providers such as:",
-          },
-          {
-            type: "list",
-            items: [
-              "Supabase, for authentication, database and technical storage of the application.",
-              "Google, when you choose to sign in with Google.",
-              "Vercel, for web hosting, deployment and basic usage analytics.",
-            ],
-          },
-          {
-            type: "paragraph",
-            text:
-              "These providers may process technical data needed to provide their services. We use these tools to operate NensGo safely and functionally.",
-          },
-        ],
-      },
-      {
-        title: "7. Data retention",
-        blocks: [
-          {
-            type: "paragraph",
-            text:
-              "We keep data while your account is active or while it is needed to provide the service, maintain security, resolve issues or comply with applicable obligations.",
-          },
-          {
-            type: "paragraph",
-            text:
-              "You can request the deletion or review of your data by writing to info@nensgo.com.",
-          },
-        ],
-      },
-      {
-        title: "8. Your rights",
-        blocks: [
-          {
-            type: "paragraph",
-            text:
-              "You can contact us to request access, correction, update or deletion of your personal data. You can also ask for information about how your data is used within NensGo.",
-          },
-          { type: "paragraph", text: "Contact:" },
-          { type: "email", value: "info@nensgo.com" },
-        ],
-      },
-      {
-        title: "9. Changes to this policy",
-        blocks: [
-          {
-            type: "paragraph",
-            text:
-              "NensGo is under development and may evolve. If we make relevant changes to how we process data, we will update this policy and change the last updated date.",
-          },
-        ],
-      },
-    ],
+            "type": "paragraph",
+            "text": "We will update this policy and its revision date if data processing changes. We do not sell personal data."
+          }
+        ]
+      }
+    ]
   },
-  terms: {
-    seoTitle: "Terms of Use | NensGo",
-    seoDescription:
-      "Read the basic terms for using NensGo, a platform for discovering children’s and family activities.",
-    title: "Terms of Use",
-    lastUpdated: "Last updated: May 2026",
-    intro:
-      "These terms govern the basic use of NensGo. By using the website, creating an account or contacting activities through the platform, you accept these conditions.",
-    sections: [
+  "terms": {
+    "seoTitle": "Terms of Use | NensGo",
+    "seoDescription": "Terms for browsing the free NensGo catalogue.",
+    "title": "Terms of Use",
+    "lastUpdated": "Last updated: October 2026",
+    "intro": "These terms describe use of the free public NensGo catalogue.",
+    "sections": [
       {
-        title: "1. What NensGo is",
-        blocks: [
+        "title": "1. What NensGo offers",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "NensGo is a digital platform that helps families discover children’s and family activities near them. Its goal is to bring together useful information about activities, centers and cultural, educational, sports and family leisure proposals.",
-          },
-          {
-            type: "paragraph",
-            text: "NensGo is currently in an early development and validation stage.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "NensGo brings children’s and family activities together as a proof of concept. You can browse activities and contact their centres without registering. The catalogue is maintained manually from time to time."
+          }
+        ]
       },
       {
-        title: "2. Activity information",
-        blocks: [
+        "title": "2. Information and bookings",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "Activity information may come from centers, organizing entities, public sources, forms, direct communications or manual curation by the NensGo team.",
+            "type": "paragraph",
+            "text": "Information may come from public sources or centres and may change. Confirm dates, ages, prices, availability and conditions directly with the organiser before attending, booking or paying."
           },
           {
-            type: "paragraph",
-            text:
-              "We try to keep the information clear and useful, but it may change. Before attending, booking or paying for an activity, we recommend confirming the details directly with the relevant center or organizer.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "NensGo does not manage bookings, payments or delivery of activities. Organisers are responsible for times, safety, cancellations and conditions."
+          }
+        ]
       },
       {
-        title: "3. NensGo is not the organizer of the activities",
-        blocks: [
+        "title": "3. Website use",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "Unless expressly stated otherwise, NensGo does not directly organize, deliver or manage the published activities.",
-          },
-          {
-            type: "paragraph",
-            text:
-              "Responsibility for schedules, prices, availability, cancellations, changes, access conditions, safety, payments or final service delivery belongs to the center, entity or organizer of each activity.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "Use the website lawfully and respectfully. Do not attempt unauthorised administration access, interfere with the service or use contact details for spam, fraud or abuse."
+          }
+        ]
       },
       {
-        title: "4. Use of the platform",
-        blocks: [
-          { type: "paragraph", text: "By using NensGo, you agree to:" },
+        "title": "4. External contacts",
+        "blocks": [
           {
-            type: "list",
-            items: [
-              "Use the platform lawfully and respectfully.",
-              "Not enter false data or third-party data without authorization.",
-              "Not attempt to access private or internal areas without permission.",
-              "Not interfere with the technical operation of the website.",
-              "Not use NensGo to send spam, abuse, fraud or misleading communications.",
-            ],
-          },
-          {
-            type: "paragraph",
-            text: "We may limit or block access if we detect misuse of the platform.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "Contact links open external services. You decide whether to send prepared messages; the external service’s and centre’s terms also apply."
+          }
+        ]
       },
       {
-        title: "5. User accounts",
-        blocks: [
+        "title": "5. Availability",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "For some features, such as saving favorites, completing your profile or contacting activities, sign-in may be required.",
-          },
-          {
-            type: "paragraph",
-            text:
-              "You are responsible for keeping access to your account secure. If you detect unauthorized use, you can write to info@nensgo.com.",
-          },
-        ],
+            "type": "paragraph",
+            "text": "The service is free with limited maintenance. Interruptions or outdated information may occur; the last published backup may be displayed during an incident. The project may be withdrawn when this stage ends."
+          }
+        ]
       },
       {
-        title: "6. Contacting centers or activities",
-        blocks: [
+        "title": "6. Questions and changes",
+        "blocks": [
           {
-            type: "paragraph",
-            text:
-              "NensGo may provide links or contact methods for centers and activity providers, such as WhatsApp, email, phone or external pages.",
+            "type": "paragraph",
+            "text": "To report an activity error or ask about these terms, write to info@nensgo.com. We will update the date if these terms change."
           },
           {
-            type: "paragraph",
-            text:
-              "When you leave NensGo or contact through an external service, the terms of that service or the relevant center also apply.",
-          },
-        ],
-      },
-      {
-        title: "7. Service availability",
-        blocks: [
-          {
-            type: "paragraph",
-            text:
-              "We try to keep NensGo available and up to date, but we cannot guarantee that the website will always work without interruptions, errors or changes.",
-          },
-          {
-            type: "paragraph",
-            text: "We may modify, pause or remove features while the platform evolves.",
-          },
-        ],
-      },
-      {
-        title: "8. Changes to these terms",
-        blocks: [
-          {
-            type: "paragraph",
-            text:
-              "We may update these terms when the product, usage model or features change. If the change is relevant, we will update the date shown at the top of this page.",
-          },
-        ],
-      },
-      {
-        title: "9. Contact",
-        blocks: [
-          {
-            type: "paragraph",
-            text: "For questions about these terms, you can contact us at:",
-          },
-          { type: "email", value: "info@nensgo.com" },
-        ],
-      },
-    ],
-  },
+            "type": "email",
+            "value": "info@nensgo.com"
+          }
+        ]
+      }
+    ]
+  }
 };
 
 export default enLegal;

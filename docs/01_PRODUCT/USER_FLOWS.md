@@ -1,6 +1,40 @@
 # User Flows
 
+## Flujos vigentes de mantenimiento
+
+Estado: **Partial**; implementados localmente en
+`feat/publisher-request-flow-phase4`, pendientes de rollout y validación live.
+
+**Familias:** entrar en `/` → explorar categorías del catálogo → Ver más →
+detalle sin sesión → contacto directo si hay un canal o selector si hay varios.
+Si existe WhatsApp/correo se puede indicar un nombre opcional para el mensaje;
+cerrar o cambiar actividad lo descarta. No se registra el contacto como evento.
+
+**Administración:** entrar directamente en `/usuario` con cualquiera de las dos
+cuentas previas → importar JSON → guardar borradores → revisar datos/fuentes e
+imagen → seleccionar un centro o confirmar su alta → confirmar revisión →
+aprobar/publicar → Crear respaldo público → esperar nueva copia publicada.
+
+**Modificar o retirar:** abrir Actividades → revisar/guardar cambios o
+despublicar → Crear respaldo público → comprobar catálogo sin sesión. La retirada
+es despublicación, no borrado histórico.
+
+**Fallo de datos:** la lectura pública falla → validar última copia desplegada →
+mostrar catálogo, contactos e imágenes de esa copia. La administración necesita
+Supabase operativo; si está pausado, reactivarlo antes de editar o crear copias.
+
+No hay registro ni onboarding público, favoritos, perfil ni submissions de
+centros. Una sesión de otro usuario histórico no concede mantenimiento; se
+requiere allowlist y permiso SQL. Ver el
+[runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+
+Los flujos que siguen pertenecen al **MVP anterior** y se conservan como contexto;
+no describen la navegación activa tras esta transición.
+
+## Referencia anterior (histórica)
+
 ## Navegación anónima
+
 
 1. La familia entra en `/`.
 2. Ve landing y catálogo público.

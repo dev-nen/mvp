@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /internal/
+Disallow: /usuario
 Disallow: /perfil
 Disallow: /favoritos
 Disallow: /soporte

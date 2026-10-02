@@ -46,6 +46,12 @@ function getTrimmedText(value) {
 }
 
 function validateApprovedActivityForm(formState) {
+  if (!["all", "range", "from", "until"].includes(formState.ageRuleType)) {
+    return "Confirma la edad antes de guardar; no se deduce de la fuente.";
+  }
+  if (!["true", "false"].includes(formState.isFree)) {
+    return "Confirma si la actividad es gratuita o de pago antes de guardar.";
+  }
   if (!getTrimmedText(formState.title)) {
     return "El título es obligatorio para guardar.";
   }

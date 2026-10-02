@@ -1,249 +1,58 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
-import { Analytics } from "@vercel/analytics/react";
-import { InternalToolRoute } from "@/components/auth/InternalToolRoute";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Navbar } from "@/components/Navbar";
 import { RouteLoadingFallback } from "@/components/ui/RouteLoadingFallback";
-import { AuthProvider } from "@/context/AuthContext";
 import { I18nProvider } from "@/i18n/I18nProvider";
-import { useI18n } from "@/i18n/useI18n";
 import { HomePage } from "@/pages/HomePage";
 
-const OPEN_FAVORITES_INTENT = { type: "open_favorites" };
-const OPEN_PROFILE_INTENT = { type: "open_profile" };
-const OPEN_PUBLICATIONS_INTENT = { type: "open_publications" };
-
 function lazyNamedPage(importer, exportName) {
-  return lazy(() =>
-    importer().then((module) => ({
-      default: module[exportName],
-    })),
-  );
+  return lazy(() => importer().then((module) => ({ default: module[exportName] })));
 }
 
 const AboutPage = lazyNamedPage(() => import("@/pages/AboutPage"), "AboutPage");
-const FavoriteActivityDetailPage = lazyNamedPage(
-  () => import("@/pages/FavoriteActivityDetailPage"),
-  "FavoriteActivityDetailPage",
-);
-const FavoritesPage = lazyNamedPage(
-  () => import("@/pages/FavoritesPage"),
-  "FavoritesPage",
-);
-const InternalApprovedActivityPage = lazyNamedPage(
-  () => import("@/pages/InternalApprovedActivityPage"),
-  "InternalApprovedActivityPage",
-);
-const InternalActivityCatalogPage = lazyNamedPage(
-  () => import("@/pages/InternalActivityCatalogPage"),
-  "InternalActivityCatalogPage",
-);
-const InternalDraftDetailPage = lazyNamedPage(
-  () => import("@/pages/InternalDraftDetailPage"),
-  "InternalDraftDetailPage",
-);
-const InternalDraftCreatePage = lazyNamedPage(
-  () => import("@/pages/InternalDraftCreatePage"),
-  "InternalDraftCreatePage",
-);
-const InternalDraftInboxPage = lazyNamedPage(
-  () => import("@/pages/InternalDraftInboxPage"),
-  "InternalDraftInboxPage",
-);
-const ParaCentrosPage = lazyNamedPage(
-  () => import("@/pages/ParaCentrosPage"),
-  "ParaCentrosPage",
-);
-const OrganizerRequestPage = lazyNamedPage(
-  () => import("@/pages/OrganizerRequestPage"),
-  "OrganizerRequestPage",
-);
-const PrivacyPolicyPage = lazyNamedPage(
-  () => import("@/pages/PrivacyPolicyPage"),
-  "PrivacyPolicyPage",
-);
-const PlaceholderPage = lazyNamedPage(
-  () => import("@/pages/PlaceholderPage"),
-  "PlaceholderPage",
-);
-const ProfilePage = lazyNamedPage(
-  () => import("@/pages/ProfilePage"),
-  "ProfilePage",
-);
-const UserPublicationsPage = lazyNamedPage(
-  () => import("@/pages/UserPublicationsPage"),
-  "UserPublicationsPage",
-);
-const UserActivitySubmissionPage = lazyNamedPage(
-  () => import("@/pages/UserPublicationDraftFormPage"),
-  "UserActivitySubmissionPage",
-);
-const UserPublicationCorrectionPage = lazyNamedPage(
-  () => import("@/pages/UserPublicationDraftFormPage"),
-  "UserPublicationCorrectionPage",
-);
-const UserActivityEditRequestPage = lazyNamedPage(
-  () => import("@/pages/UserPublicationDraftFormPage"),
-  "UserActivityEditRequestPage",
-);
-const TermsOfUsePage = lazyNamedPage(
-  () => import("@/pages/TermsOfUsePage"),
-  "TermsOfUsePage",
-);
+const PrivacyPolicyPage = lazyNamedPage(() => import("@/pages/PrivacyPolicyPage"), "PrivacyPolicyPage");
+const TermsOfUsePage = lazyNamedPage(() => import("@/pages/TermsOfUsePage"), "TermsOfUsePage");
+const MaintenanceLayout = lazyNamedPage(() => import("@/components/auth/MaintenanceLayout"), "MaintenanceLayout");
+const MaintenanceRoute = lazyNamedPage(() => import("@/components/auth/MaintenanceRoute"), "MaintenanceRoute");
+const MaintenanceLoginPage = lazyNamedPage(() => import("@/pages/MaintenanceLoginPage"), "MaintenanceLoginPage");
+const InternalDraftInboxPage = lazyNamedPage(() => import("@/pages/InternalDraftInboxPage"), "InternalDraftInboxPage");
+const InternalDraftCreatePage = lazyNamedPage(() => import("@/pages/InternalDraftCreatePage"), "InternalDraftCreatePage");
+const InternalDraftDetailPage = lazyNamedPage(() => import("@/pages/InternalDraftDetailPage"), "InternalDraftDetailPage");
+const InternalActivityCatalogPage = lazyNamedPage(() => import("@/pages/InternalActivityCatalogPage"), "InternalActivityCatalogPage");
+const InternalApprovedActivityPage = lazyNamedPage(() => import("@/pages/InternalApprovedActivityPage"), "InternalApprovedActivityPage");
+const InternalJsonImportPage = lazyNamedPage(() => import("@/pages/InternalJsonImportPage"), "InternalJsonImportPage");
 
 function PublicLayout() {
-  return (
-    <>
-      <Navbar />
-      <Suspense fallback={<RouteLoadingFallback />}>
-        <Outlet />
-      </Suspense>
-    </>
-  );
+  return <><Navbar /><Suspense fallback={<RouteLoadingFallback />}><Outlet /></Suspense></>;
 }
 
-function withRouteLoadingFallback(element) {
-  return <Suspense fallback={<RouteLoadingFallback />}>{element}</Suspense>;
-}
-
-function AppRoutes() {
-  const { t } = useI18n();
-
-  return (
-    <AuthProvider>
-      <Routes>
-        <Route element={<PublicLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/sobre-nensgo" element={<AboutPage />} />
-          <Route path="/para-centros" element={<ParaCentrosPage />} />
-          <Route path="/privacidad" element={<PrivacyPolicyPage />} />
-          <Route path="/terminos" element={<TermsOfUsePage />} />
-          <Route
-            path="/perfil"
-            element={
-              <ProtectedRoute intent={OPEN_PROFILE_INTENT}>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil/publicaciones"
-            element={
-              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
-                <UserPublicationsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil/publicaciones/nueva"
-            element={
-              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
-                <UserActivitySubmissionPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil/publicaciones/:draftId/corregir"
-            element={
-              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
-                <UserPublicationCorrectionPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil/publicaciones/actividad/:activityId/editar"
-            element={
-              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
-                <UserActivityEditRequestPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/perfil/organizador/solicitud"
-            element={
-              <ProtectedRoute intent={OPEN_PUBLICATIONS_INTENT}>
-                <OrganizerRequestPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/favoritos"
-            element={
-              <ProtectedRoute intent={OPEN_FAVORITES_INTENT}>
-                <FavoritesPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/favoritos/:activityId"
-            element={
-              <ProtectedRoute intent={OPEN_FAVORITES_INTENT}>
-                <FavoriteActivityDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/soporte"
-            element={
-              <PlaceholderPage
-                title={t("support.title")}
-                description={t("support.description")}
-              />
-            }
-          />
-        </Route>
-        <Route
-          path="/internal/drafts"
-          element={withRouteLoadingFallback(
-            <InternalToolRoute>
-              <InternalDraftInboxPage />
-            </InternalToolRoute>,
-          )}
-        />
-        <Route
-          path="/internal/drafts/new"
-          element={withRouteLoadingFallback(
-            <InternalToolRoute>
-              <InternalDraftCreatePage />
-            </InternalToolRoute>,
-          )}
-        />
-        <Route
-          path="/internal/drafts/:draftId"
-          element={withRouteLoadingFallback(
-            <InternalToolRoute>
-              <InternalDraftDetailPage />
-            </InternalToolRoute>,
-          )}
-        />
-        <Route
-          path="/internal/activities"
-          element={withRouteLoadingFallback(
-            <InternalToolRoute>
-              <InternalActivityCatalogPage />
-            </InternalToolRoute>,
-          )}
-        />
-        <Route
-          path="/internal/activities/:activityId"
-          element={withRouteLoadingFallback(
-            <InternalToolRoute>
-              <InternalApprovedActivityPage />
-            </InternalToolRoute>,
-          )}
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <Analytics />
-    </AuthProvider>
-  );
+function PrivatePage({ children }) {
+  return <MaintenanceRoute>{children}</MaintenanceRoute>;
 }
 
 export default function App() {
   return (
     <I18nProvider>
-      <AppRoutes />
+      <Routes>
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/sobre-nensgo" element={<AboutPage />} />
+          <Route path="/privacidad" element={<PrivacyPolicyPage />} />
+          <Route path="/terminos" element={<TermsOfUsePage />} />
+          <Route path="/para-centros" element={<Navigate to="/sobre-nensgo" replace />} />
+        </Route>
+        <Route element={<Suspense fallback={<RouteLoadingFallback />}><MaintenanceLayout /></Suspense>}>
+          <Route path="/usuario" element={<MaintenanceLoginPage />} />
+          <Route path="/internal" element={<Navigate to="/internal/drafts" replace />} />
+          <Route path="/internal/drafts" element={<PrivatePage><InternalDraftInboxPage /></PrivatePage>} />
+          <Route path="/internal/drafts/new" element={<PrivatePage><InternalDraftCreatePage /></PrivatePage>} />
+          <Route path="/internal/drafts/:draftId" element={<PrivatePage><InternalDraftDetailPage /></PrivatePage>} />
+          <Route path="/internal/activities" element={<PrivatePage><InternalActivityCatalogPage /></PrivatePage>} />
+          <Route path="/internal/activities/:activityId" element={<PrivatePage><InternalApprovedActivityPage /></PrivatePage>} />
+          <Route path="/internal/import" element={<PrivatePage><InternalJsonImportPage /></PrivatePage>} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </I18nProvider>
   );
 }

@@ -80,4 +80,22 @@ const webUrl = buildActivityContactActionUrl(
 
 assert.equal(webUrl, "https://example.com/contacto");
 
-console.log("contact-message-personalization-check: ok");
+// UI language changes the prepared message, never dynamic names or contact data.
+for (const language of ["es", "ca", "en"]) {
+  const dynamicActivity = { title: "Pintura & música / Júlia", city_name: "Sant Pere de Ribes" };
+  const context = { requesterName: "  Ana & Júlia  ", language };
+  const greetingStart = { es: "Hola, soy Ana & Júlia.", ca: "Hola, soc Ana & Júlia.", en: "Hello, my name is Ana & Júlia." }[language];
+  for (const [contactMethod, contactValue, parameter] of [["whatsapp", "+34 600 111 222", "text"], ["email", "centro@example.test", "body"]]) {
+    const prepared = new URL(buildActivityContactActionUrl(dynamicActivity, { contactMethod, contactValue }, context));
+    const message = prepared.searchParams.get(parameter);
+    assert.ok(message.startsWith(greetingStart));
+    assert.ok(message.includes(dynamicActivity.title));
+    assert.ok(message.includes(dynamicActivity.city_name));
+    const withoutName = new URL(buildActivityContactActionUrl(dynamicActivity, { contactMethod, contactValue }, { language }));
+    assert.ok(withoutName.searchParams.get(parameter).includes(dynamicActivity.title));
+    assert.equal(withoutName.searchParams.get(parameter).includes("Ana & Júlia"), false);
+  }
+}
+assert.equal(buildActivityContactActionUrl(activity, { contactMethod: "website", contactValue: "javascript:alert(1)" }), "");
+
+console.log("contact-message-personalization-check: ok (ES/CA/EN, optional names, safe encoding, unchanged dynamic values)");

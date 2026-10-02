@@ -8,10 +8,6 @@ export function LandingHero({ onExploreActivities }) {
     <section className="landing-section landing-hero">
       <div className="landing-hero__panel">
         <div className="landing-hero__content">
-          <p className="landing-section__eyebrow">
-            {t("landingHero.eyebrow")}
-          </p>
-
           <div className="landing-hero__brand-lockup" aria-label="NensGo">
             <img
               className="landing-hero__brand-mark"
@@ -39,9 +35,9 @@ export function LandingHero({ onExploreActivities }) {
 
         <figure className="landing-hero__visual" aria-hidden="true">
           <img
-            src="/para-centros/kidspainting.webp"
-            width="1122"
-            height="1402"
+            src="/maintenance/activities-hero.webp"
+            width="1200"
+            height="800"
             decoding="async"
             alt=""
           />

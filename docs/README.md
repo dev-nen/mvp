@@ -2,7 +2,18 @@
 
 Este es el punto de entrada único para entender el repositorio. La documentación separa estado actual, producto, arquitectura, operaciones, decisiones y referencias históricas.
 
-NensGo es una app React/Vite/Supabase para descubrir actividades infantiles y familiares. El estado actual es MVP/validación: hay funcionalidad real implementada, pero algunas piezas dependen de configuración externa y smoke tests live antes de tratarse como cerradas.
+NensGo es una app React/Vite/Supabase para descubrir actividades infantiles y
+familiares. Desde octubre de 2026 la rama `feat/publisher-request-flow-phase4`
+contiene la adaptación a mantenimiento gratuito como prueba de concepto y
+portfolio. Estado: **Partial**, con configuración externa y despliegue pendientes.
+
+La referencia operativa vigente es
+[MAINTENANCE_RUNBOOK.md](./03_OPERATIONS/MAINTENANCE_RUNBOOK.md), junto con el
+[plan de transición](./03_OPERATIONS/MAINTENANCE_TRANSITION_2026-10.md). Se conserva
+el catálogo y ambas cuentas administradoras anteriores; se retiran cuentas
+públicas, favoritos, flujos de centros y estadísticas. Los documentos anteriores
+de esas funcionalidades describen historia y contratos previos, no funciones que
+deban reactivarse durante el mantenimiento.
 
 La raíz de `docs/` se mantiene limpia: este `README.md` y subcarpetas numeradas. La documentación antigua o de contexto vive en `05_ARCHIVE`.
 
@@ -28,6 +39,8 @@ La raíz de `docs/` se mantiene limpia: este `README.md` y subcarpetas numeradas
 | [02_TECHNICAL/SECURITY_AND_PRIVACY.md](./02_TECHNICAL/SECURITY_AND_PRIVACY.md) | Seguridad, DevOps, CTO | RLS, privacidad, secretos y validaciones pendientes |
 | [02_TECHNICAL/DEPLOYMENT_AND_ENV.md](./02_TECHNICAL/DEPLOYMENT_AND_ENV.md) | DevOps | Entornos, Vercel, Supabase y variables |
 | [03_OPERATIONS/LOCAL_SETUP.md](./03_OPERATIONS/LOCAL_SETUP.md) | Developers | Cómo correr el repo localmente |
+| [03_OPERATIONS/MAINTENANCE_RUNBOOK.md](./03_OPERATIONS/MAINTENANCE_RUNBOOK.md) | Administradores, DevOps | Rutina de cargas, JSON, respaldo manual y preparación externa de octubre de 2026 |
+| [03_OPERATIONS/MAINTENANCE_TRANSITION_2026-10.md](./03_OPERATIONS/MAINTENANCE_TRANSITION_2026-10.md) | Revisión, ingeniería | Alcance y límites de la transición en la rama activa |
 | [03_OPERATIONS/AI_WORKFLOW.md](./03_OPERATIONS/AI_WORKFLOW.md) | PO, IA, developers | Contrato operativo para clasificar tareas y escalar ceremonia por riesgo |
 | [03_OPERATIONS/DISKETNEN_TEMPLATES.md](./03_OPERATIONS/DISKETNEN_TEMPLATES.md) | PO, IA, developers | Plantillas reutilizables para discovery, implementacion, review y fix packs |
 | [03_OPERATIONS/VALIDATION_CHECKLIST.md](./03_OPERATIONS/VALIDATION_CHECKLIST.md) | QA, tech lead | Checks locales, manuales y live |
@@ -76,7 +89,10 @@ Si vas a pedirle a una IA que analice este repositorio, indícale que empiece po
 6. `docs/02_TECHNICAL/SECURITY_AND_PRIVACY.md`
 7. `docs/03_OPERATIONS/AI_WORKFLOW.md`
 
-La documentación distingue estado actual, decisiones, deuda técnica y próximos pasos. La app está en fase MVP/validación; no asumir que todas las piezas internas están productizadas o validadas en vivo.
+La documentación distingue estado actual, decisiones, deuda técnica y próximos
+pasos. El mantenimiento está implementado localmente y pendiente de rollout;
+las evidencias antiguas de otras funcionalidades no validan esta transición en
+producción.
 
 ## Estado de los docs anteriores
 

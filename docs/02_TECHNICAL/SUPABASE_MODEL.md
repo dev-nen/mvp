@@ -1,6 +1,43 @@
 # Supabase Model
 
+## Contrato vigente de mantenimiento (octubre de 2026)
+
+Estado: **Partial**. En la rama `feat/publisher-request-flow-phase4`, la
+migración `2026-10-02_maintenance_admin.sql` es aditiva y manual, posterior a
+las dependencias existentes de drafts/lifecycle/contactos. No ha sido aplicada
+al entorno live como parte de esta transición.
+
+| Recurso | Uso y acceso vigentes tras el rollout |
+| --- | --- |
+| `catalog_activities_read` | Catálogo público, único origen de datos de actividades para la copia allowlisted. |
+| `activity_contact_options_read` | Canales públicos de actividades visibles; también se copian para el fallback. |
+| `maintenance_operator` | Allowlist privada de ambas cuentas previas; sin lectura/escritura cliente directa. |
+| `is_maintenance_operator` | RPC autenticada; devuelve booleano y exige allowlist más permiso previo `draft_inbox`. |
+| `activity_drafts` | Borradores históricos y nuevos; acceso restrictivo a los operadores permitidos. |
+| `maintenance_import_batches` | Control privado del reintento por cuenta y contenido; no se exporta. |
+| `import_maintenance_drafts` | Importación atómica de borradores, autorizada en servidor; no publica. |
+| `list_maintenance_institutions` | Opciones de entidad organizadora para revisión interna autorizada. |
+| `create_maintenance_center` | Alta protegida de centro y, si se confirma, entidad; vincula el draft sin publicar. |
+| RPCs internas de lifecycle | Conservan la lógica previa y reciben guard adicional de operador; la aprobación valida datos/revisión. |
+| Storage `activities` | Escrituras de los operadores permitidos y lectura pública de imágenes aprobadas. |
+| Cuentas/perfiles/favoritos/eventos/publishers | Datos históricos conservados; flujos públicos y estadísticas retirados. |
+
+La creación de centros respeta el esquema real: entidad, municipio, nombre,
+dirección y código postal obligatorios. La migración añade defaults de secuencia
+a IDs de centros/entidades sólo cuando no existen; no inventa direcciones ni
+contactos. `municipality_choices_read` se reutiliza para confirmar el municipio
+del centro, sin reactivar onboarding público.
+
+El respaldo copia sólo las vistas y campos permitidos definidos en
+`src/shared/publicCatalogBackupContract.mjs`. No es un backup privado restaurable.
+Provisión y orden externo: [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+Las tablas, grants y RPCs de usuarios descritos abajo son **historia del MVP**;
+no deben habilitarse como parte de la transición.
+
+## Referencia anterior (histórica)
+
 ## Scope
+
 
 Este documento resume los recursos Supabase relevantes para la revisión técnica. No sustituye una inspección live del proyecto Supabase.
 

@@ -1,6 +1,34 @@
 # Auth and Onboarding
 
+## Acceso vigente de mantenimiento
+
+Estado: **Partial**. La adaptación local usa Supabase Auth sólo en
+`/usuario` y `/internal/*`; la aplicación pública no monta el provider de Auth.
+No hay enlaces públicos de cuenta, registro, perfil u onboarding.
+
+`MaintenanceAuthProvider` conserva inicio de sesión Google y email/password y
+cierre de sesión. Comprueba la identidad con `auth.getUser` y el permiso con
+`is_maintenance_operator`; no crea perfiles ni retoma intenciones públicas.
+Sus estados son `anonymous`, `loading_user`, `ready`, `forbidden` y `error`.
+El gate de UI no reemplaza RLS ni autorización dentro de RPCs/API.
+
+Se mantienen **ambas cuentas administradoras previas**, provisionadas
+explícitamente en `maintenance_operator`, con su permiso existente
+`draft_inbox`. Una sesión válida de otro usuario histórico no le permite
+administrar. El retorno de Google usa `/usuario`.
+
+Deshabilitar nuevas altas en Supabase Auth, revisar redirects y validar ambas
+cuentas son pasos externos pendientes. La ausencia de un botón de registro no
+demuestra que el proveedor ya haya bloqueado altas.
+El [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) incluye el SQL de provisión.
+
+Las secciones siguientes describen el **flujo histórico** de registro/perfil/
+municipio; se mantienen para contexto y no son el contrato de la app activa.
+
+## Referencia anterior (histórica)
+
 ## Auth model
+
 
 Supabase Auth es la autoridad de identidad. La app soporta:
 

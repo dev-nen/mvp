@@ -2,9 +2,7 @@ import {
   ArrowRight,
   Building2,
   Clock3,
-  Heart,
   MapPin,
-  Share2,
   Users,
   Wallet,
 } from "lucide-react";
@@ -72,32 +70,6 @@ function handlePublicCardImageError(event) {
   imageElement.src = PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
 }
 
-async function sharePublicActivity(activity, copy) {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const title = getTrimmedText(activity?.title) || copy.shareTitle;
-  const shareUrl = new URL("/", window.location.origin);
-
-  if (activity?.id) {
-    shareUrl.searchParams.set("actividad", String(activity.id));
-  }
-
-  const sharePayload = {
-    title,
-    text: copy.shareText.replace("{title}", title),
-    url: shareUrl.toString(),
-  };
-
-  if (navigator.share) {
-    await navigator.share(sharePayload);
-    return;
-  }
-
-  await navigator.clipboard?.writeText(sharePayload.url);
-}
-
 export function buildPublicCatalogCardViewModel(
   activity = {},
   copy = DEFAULT_CARD_COPY,
@@ -105,7 +77,8 @@ export function buildPublicCatalogCardViewModel(
   const title = getTrimmedText(activity.title);
   const imageUrl = getTrimmedText(activity.image_url);
   const categoryLabel = getTrimmedText(activity.category_label);
-  const centerLabel = getTrimmedText(activity.center_name);
+  const centerLabel =
+    getTrimmedText(activity.center_name) || getTrimmedText(activity.venue_name);
   const cityLabel = getTrimmedText(activity.city_name);
   const ageLabel = formatPublicActivityAgeLabel(activity, copy);
 
@@ -126,18 +99,11 @@ export function isPublicCatalogActivityValid(activity) {
     viewModel.ageLabel || viewModel.categoryLabel || viewModel.centerLabel,
   );
 
-  return Boolean(
-    viewModel.title &&
-      viewModel.cityLabel &&
-      viewModel.imageSrc &&
-      hasUsefulSignal,
-  );
+  return Boolean(viewModel.title && viewModel.imageSrc && hasUsefulSignal);
 }
 
 export function CatalogActivityCard({
   activity,
-  isFavorite = false,
-  onToggleFavorite,
   onViewMore,
   viewMoreLabel,
   variant = "default",
@@ -156,9 +122,7 @@ export function CatalogActivityCard({
     const viewModel = buildPublicCatalogCardViewModel(activity, ageCopy);
     const isPlaceholderImage =
       viewModel.imageSrc === PUBLIC_CATALOG_CARD_PLACEHOLDER_SRC;
-    const publicMetaLabel = [viewModel.ageLabel, viewModel.cityLabel]
-      .filter(Boolean)
-      .join(" · ");
+    const publicMetaLabel = viewModel.ageLabel || ageCopy.consultAge;
 
     return (
       <Card className="catalog-card catalog-card--public">
@@ -169,51 +133,9 @@ export function CatalogActivityCard({
             className="catalog-card__image"
             data-placeholder-applied={isPlaceholderImage ? "true" : "false"}
             onError={handlePublicCardImageError}
+            loading="lazy"
+            decoding="async"
           />
-
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className={`catalog-card__favorite catalog-card__favorite--public ${
-              isFavorite ? "catalog-card__favorite--active" : ""
-            }`}
-            onClick={() => onToggleFavorite?.(activity)}
-            disabled={!onToggleFavorite}
-            aria-label={
-              isFavorite
-                ? t("catalog.card.removeFavorite")
-                : t("catalog.card.addFavorite")
-            }
-          >
-            <Heart
-              className={`catalog-card__favorite-icon ${
-                isFavorite ? "catalog-card__favorite-icon--filled" : ""
-              }`}
-            />
-          </Button>
-
-          {viewModel.showFreeBadge ? (
-            <span className="catalog-card__free-badge">
-              {t("catalog.card.free")}
-            </span>
-          ) : null}
-
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="catalog-card__share catalog-card__share--public"
-            onClick={() => {
-              void sharePublicActivity(activity, {
-                shareTitle: t("catalog.card.shareTitle"),
-                shareText: t("catalog.card.shareText"),
-              }).catch(() => {});
-            }}
-            aria-label={t("catalog.card.share")}
-          >
-            <Share2 />
-          </Button>
         </div>
 
         <CardContent className="catalog-card__content catalog-card__content--public">
@@ -266,28 +188,10 @@ export function CatalogActivityCard({
           className="catalog-card__image"
           data-placeholder-applied={isPlaceholderImage ? "true" : "false"}
           onError={handlePublicCardImageError}
+          loading="lazy"
+          decoding="async"
         />
 
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className={`catalog-card__favorite ${
-            isFavorite ? "catalog-card__favorite--active" : ""
-          }`}
-          onClick={() => onToggleFavorite?.(activity)}
-          aria-label={
-            isFavorite
-              ? t("catalog.card.removeFavorite")
-              : t("catalog.card.addFavorite")
-          }
-        >
-          <Heart
-            className={`catalog-card__favorite-icon ${
-              isFavorite ? "catalog-card__favorite-icon--filled" : ""
-            }`}
-          />
-        </Button>
       </div>
 
       <CardContent className="catalog-card__content">

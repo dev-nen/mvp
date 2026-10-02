@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getActivityContactOptionLabel } from "@/helpers/buildActivityContactAction";
@@ -87,10 +88,45 @@ export function ActivityContactOptionsDialog({
   onSelectOption,
 }) {
   const { t } = useI18n();
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    if (!open) {
+      return undefined;
+    }
+    const previousFocusedElement = document.activeElement;
+    panelRef.current?.querySelector("button")?.focus();
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose?.();
+      } else if (event.key === "Tab") {
+        const buttons = panelRef.current?.querySelectorAll("button:not([disabled])");
+        const firstButton = buttons?.[0];
+        const lastButton = buttons?.[buttons.length - 1];
+        if (event.shiftKey && document.activeElement === firstButton) {
+          event.preventDefault();
+          lastButton?.focus();
+        } else if (!event.shiftKey && document.activeElement === lastButton) {
+          event.preventDefault();
+          firstButton?.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      previousFocusedElement?.focus?.();
+    };
+  }, [open, onClose]);
 
   if (!open || !activity) {
     return null;
   }
+  const contactTitle = [activity.center_name, activity.title]
+    .filter((value) => typeof value === "string" && value.trim())
+    .map((value) => value.trim())
+    .join(" · ");
 
   return (
     <div className="activity-contact-options-dialog" role="presentation">
@@ -100,6 +136,7 @@ export function ActivityContactOptionsDialog({
       />
 
       <div
+        ref={panelRef}
         className="activity-contact-options-dialog__panel"
         role="dialog"
         aria-modal="true"
@@ -111,10 +148,10 @@ export function ActivityContactOptionsDialog({
               id="activity-contact-options-dialog-title"
               className="activity-contact-options-dialog__title"
             >
-              {t("catalog.contactOptions.title")}
+              {contactTitle}
             </h3>
             <p className="activity-contact-options-dialog__subtitle">
-              {t("catalog.contactOptions.subtitle", { title: activity.title })}
+              {t("catalog.contactOptions.subtitle")}
             </p>
           </div>
 
