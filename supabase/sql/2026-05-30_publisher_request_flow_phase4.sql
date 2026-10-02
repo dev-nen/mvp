@@ -97,12 +97,12 @@ alter table public.publisher_profiles enable row level security;
 revoke all on table public.publisher_requests from public;
 revoke all on table public.publisher_requests from anon;
 revoke all on table public.publisher_requests from authenticated;
-grant select on public.publisher_requests to authenticated;
 
 revoke all on table public.publisher_profiles from public;
 revoke all on table public.publisher_profiles from anon;
 revoke all on table public.publisher_profiles from authenticated;
-grant select on public.publisher_profiles to authenticated;
+
+-- Read access is RPC-only so internal review notes and reviewer IDs stay private.
 
 drop policy if exists publisher_requests_select_own on public.publisher_requests;
 create policy publisher_requests_select_own
@@ -661,7 +661,7 @@ begin
   end if;
 
   return query
-  update public.publisher_requests
+  update public.publisher_requests as requests
   set
     review_status = 'needs_changes',
     user_feedback_summary = trim(p_user_feedback_summary),
@@ -670,12 +670,12 @@ begin
     reviewed_by = auth.uid(),
     reviewed_at = now(),
     updated_at = now()
-  where id = p_request_id
-    and review_status = 'pending_review'
+  where requests.id = p_request_id
+    and requests.review_status = 'pending_review'
   returning
-    publisher_requests.id::bigint,
-    publisher_requests.review_status::text,
-    publisher_requests.updated_at::timestamptz;
+    requests.id::bigint,
+    requests.review_status::text,
+    requests.updated_at::timestamptz;
 end;
 $$;
 
@@ -717,7 +717,7 @@ begin
   end if;
 
   return query
-  update public.publisher_requests
+  update public.publisher_requests as requests
   set
     review_status = 'rejected',
     user_feedback_summary = trim(p_user_feedback_summary),
@@ -726,12 +726,12 @@ begin
     reviewed_by = auth.uid(),
     reviewed_at = now(),
     updated_at = now()
-  where id = p_request_id
-    and review_status = 'pending_review'
+  where requests.id = p_request_id
+    and requests.review_status = 'pending_review'
   returning
-    publisher_requests.id::bigint,
-    publisher_requests.review_status::text,
-    publisher_requests.updated_at::timestamptz;
+    requests.id::bigint,
+    requests.review_status::text,
+    requests.updated_at::timestamptz;
 end;
 $$;
 
@@ -766,23 +766,23 @@ begin
     raise exception 'draft_inbox access is required';
   end if;
 
-  select *
+  select requests.*
   into request_row
-  from public.publisher_requests
-  where id = p_request_id
-    and review_status = 'pending_review'
+  from public.publisher_requests as requests
+  where requests.id = p_request_id
+    and requests.review_status = 'pending_review'
   for update;
 
   if request_row.id is null then
     raise exception 'publisher request is not pending review';
   end if;
 
-  select id
+  select profiles.id
   into active_profile_id
-  from public.publisher_profiles
-  where user_id = request_row.user_id
-    and is_active = true
-  order by approved_at desc, id desc
+  from public.publisher_profiles as profiles
+  where profiles.user_id = request_row.user_id
+    and profiles.is_active = true
+  order by profiles.approved_at desc, profiles.id desc
   limit 1;
 
   if active_profile_id is null then
@@ -820,7 +820,7 @@ begin
     )
     returning id into active_profile_id;
   else
-    update public.publisher_profiles
+    update public.publisher_profiles as profiles
     set
       publisher_request_id = request_row.id,
       is_active = true,
@@ -837,10 +837,10 @@ begin
       approved_by = auth.uid(),
       approved_at = now(),
       updated_at = now()
-    where id = active_profile_id;
+    where profiles.id = active_profile_id;
   end if;
 
-  update public.publisher_requests
+  update public.publisher_requests as requests
   set
     review_status = 'approved',
     user_feedback_summary = null,
@@ -849,11 +849,11 @@ begin
     reviewed_by = auth.uid(),
     reviewed_at = now(),
     updated_at = now()
-  where id = request_row.id
+  where requests.id = request_row.id
   returning
-    publisher_requests.id,
-    publisher_requests.review_status,
-    publisher_requests.updated_at
+    requests.id,
+    requests.review_status,
+    requests.updated_at
   into request_row.id, request_row.review_status, request_row.updated_at;
 
   return query

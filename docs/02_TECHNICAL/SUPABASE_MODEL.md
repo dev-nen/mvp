@@ -95,8 +95,8 @@ applied manually and live smoke validation passes.
 
 | Resource | Purpose | Access | Notes |
 | --- | --- | --- | --- |
-| `publisher_requests` | Stores Organizador request lifecycle and submitted organizer data | Auth own read, internal via RPC | Review statuses: `pending_review`, `needs_changes`, `approved`, `rejected`; `not_requested` is derived by no row/profile. |
-| `publisher_profiles` | Active approved publisher state | Auth own read, internal via RPC | One active profile per user; used to gate new submissions. |
+| `publisher_requests` | Stores Organizador request lifecycle and submitted organizer data | Auth own safe fields/internal, RPC-only | Review statuses: `pending_review`, `needs_changes`, `approved`, `rejected`; `not_requested` is derived by no row/profile. |
+| `publisher_profiles` | Active approved publisher state | Auth own safe fields/internal, RPC-only | One active profile per user; used to gate new submissions. |
 | `get_my_publisher_status` | Current user's publisher status | Auth RPC | Returns safe request/profile fields, user-facing feedback and `can_submit_activities`. |
 | `submit_my_publisher_request` | Create first pending request | Auth RPC | Does not create a profile or grant publication rights. |
 | `resubmit_my_publisher_request` | Reapply after needs_changes/rejected | Auth RPC | Creates a new pending row linked by `supersedes_request_id`. |
@@ -109,6 +109,13 @@ applied manually and live smoke validation passes.
 
 The request UI lives at `/perfil/organizador/solicitud`. Internal review lives
 inside `/internal/drafts` under the tab label `Alta de Publicadores`.
+
+Client roles cannot read or write either publisher table directly. The safe
+status RPC and internal review RPCs are the only client access paths. The
+corrected foundation migration includes this restriction; installations that
+already applied its original version must apply
+`2026-09-18_publisher_request_review_hardening.sql`, which also fixes ambiguous
+column references in the three internal review transitions.
 
 The server gate is intentionally scoped to new user submissions. Existing draft
 history, corrections and edit requests continue through their existing RPCs
@@ -234,7 +241,8 @@ Validar en live:
 - internal autorizado puede crear y revisar drafts;
 - internal autorizado puede ejecutar RPCs internas esperadas;
 - authenticated normal user can submit a publisher request and read only their
-  own `publisher_requests` / `publisher_profiles`;
+  own safe request/profile fields via `get_my_publisher_status`, with no direct
+  table access or internal-note exposure;
 - authenticated normal user without an active publisher profile cannot create
   a new activity submission;
 - internal Draft Inbox reviewer can approve publisher requests and create an

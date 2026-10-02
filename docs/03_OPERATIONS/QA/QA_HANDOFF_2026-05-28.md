@@ -8,6 +8,11 @@ Status: Confirmed for repository integration. Pending QA for manual product smok
 
 Manual QA is not claimed as passed in this document. Items that require browser or live Supabase validation are marked `Pending QA`.
 
+Follow-up: [2026-09-18 publisher validation and hardening](./PUBLISHER_PHASE4_VALIDATION_2026-09-18.md)
+records the two SQL fixes, automated PostgreSQL checks and external read-only
+inspection separately from the historical integration evidence below. Browser
+QA and live migration application must not be inferred from local test results.
+
 ## Scope included
 
 ### Pack 1 — Public polish

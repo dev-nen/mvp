@@ -65,7 +65,9 @@ Validar en live antes de considerar cerrado.
 - Publisher capability is represented by `publisher_profiles.is_active = true`,
   not by `user_profiles.role_id` or `internal_tool_access`.
 - `publisher_requests` and `publisher_profiles` contain private organizer PII
-  and contact data. Normal users may read only their own safe fields.
+  and contact data. Client roles have no direct table access. Normal users
+  read only their own safe fields through `get_my_publisher_status`; internal
+  reviewers use the permission-checked internal RPCs. RLS remains enabled.
 - User mutations go through `submit_my_publisher_request` and
   `resubmit_my_publisher_request`; they do not create publisher profiles.
 - Internal request review RPCs require
@@ -76,6 +78,13 @@ Validar en live antes de considerar cerrado.
   Frontend route gating is UX only.
 - Existing draft history, corrections and edit requests remain available
   through their existing owner-checked RPCs where product rules allow.
+
+The 2026-09-18 hardening removes the original table-wide SELECT grants and
+qualifies review RPC column references to avoid PL/pgSQL output-parameter
+ambiguity. Fresh installs use the corrected Phase 4 foundation; existing
+installs use `2026-09-18_publisher_request_review_hardening.sql`. Local SQL
+regression coverage is available through `npm.cmd run check:publisher-sql`;
+it does not replace live Supabase/UI validation.
 
 ## Phase 4 Core contact security
 
