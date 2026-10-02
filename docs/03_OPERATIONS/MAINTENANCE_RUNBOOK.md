@@ -3,7 +3,8 @@
 Estado: **Partial**. La adaptación está implementada en la rama
 `feat/publisher-request-flow-phase4`. El SQL, la configuración de Auth y el
 despliegue de producción de esta transición siguen pendientes. Este documento
-describe el contrato del código local; no confirma el estado de `nensgo.com` ni
+describe la implementación local y su vista previa validada; no confirma la
+adaptación de `nensgo.com` ni
 que la facturación real ya sea gratuita.
 
 La decisión del 2 de octubre de 2026 es mantener el catálogo como prueba de
@@ -162,10 +163,16 @@ consultarse.
 
 ## Preparación externa y primer despliegue
 
-Estos pasos están **Planned**; no se ejecutan por abrir esta documentación.
+La comprobación técnica de la vista previa está **Done**. La revisión por el
+usuario y el resto de pasos están **Planned**; no se ejecutan por abrir esta
+documentación.
 
-1. Revisar la vista previa local y después una vista previa de Vercel del commit
-   aprobado. El build de publicación necesita las dos variables públicas de
+1. Revisar la [vista previa de Vercel](https://mvp-ldjrjg3su-dibrandons-projects.vercel.app/)
+   del commit `db49e55`, ya compilada y validada técnicamente después del envío
+   autorizado de la rama. La protección de Vercel sigue activa: usar una sesión
+   autorizada o el acceso temporal facilitado por el conector, sin desactivarla.
+   Véase [la evidencia](./QA/MAINTENANCE_VALIDATION_2026-10-02.md).
+   El build de publicación necesita las dos variables públicas de
    Supabase y acceso a las vistas. `build:local` sólo compila la interfaz y no
    genera una copia; no usarlo como build de producción.
 2. En Supabase, contrastar qué migraciones previas de Draft Inbox, lifecycle y
@@ -231,8 +238,9 @@ Estos pasos están **Planned**; no se ejecutan por abrir esta documentación.
    denegaciones. Solicitar un respaldo manual y esperar su nueva generación
    confirmada. La vista previa nunca debe disparar el hook de producción.
 
-El despliegue, el envío de la rama y las configuraciones externas no se han
-realizado en esta adaptación local. Las claves de servicio anteriores no son
+La rama se envió para preview con autorización del usuario. Producción continúa
+en su despliegue anterior; SQL, Auth, hook y facturación siguen pendientes.
+Las claves de servicio anteriores no son
 necesarias para la API de respaldo ni para su build; no exponerlas ni eliminarlas
 sin comprobar otros usos externos.
 

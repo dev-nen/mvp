@@ -11,9 +11,14 @@ const argument = process.argv.find((value) => value.startsWith("--preview-url=")
 const local = process.argv.includes("--local");
 
 async function request(site, pathname, method = "GET") {
-  return fetch(new URL(pathname, site), {
-    method, redirect: "error", cache: "no-store", signal: AbortSignal.timeout(15_000),
+  const response = await fetch(new URL(pathname, site), {
+    method, redirect: "manual", cache: "no-store", signal: AbortSignal.timeout(15_000),
   });
+  assert.ok(response.status < 300 || response.status >= 400,
+    "A deployment redirect prevented verification. If Vercel authentication is required, review the authenticated preview in a browser.");
+  assert.ok(![401, 403].includes(response.status) || pathname === "/api/internal/catalog-backup",
+    "Deployment protection prevented verification. Review the authenticated preview in a browser.");
+  return response;
 }
 
 try {
@@ -22,7 +27,6 @@ try {
   assert.ok(["http:", "https:"].includes(site.protocol) && !site.username && !site.password && !site.search && !site.hash, "Invalid preview URL.");
   assert.ok(!local || ["localhost", "127.0.0.1", "[::1]"].includes(site.hostname), "--local is only for a local Vite preview.");
   const home = await request(site, "/");
-  assert.notEqual(home.status, 401, "Deployment protection prevented verification. Review the authenticated preview in a browser.");
   assert.ok(home.ok && (await home.text()).includes("NensGo"), "Preview home is unavailable.");
   console.log("PASS preview home responds");
 

@@ -1,8 +1,10 @@
 # Mantenimiento NensGo: validación del 2 de octubre de 2026
 
 Rama: `feat/publisher-request-flow-phase4`. Estado global: **Partial**.
-Implementación local y revisión: **Done**. SQL/Auth/despliegue y facturación
-real: **Planned**, sin cambios en producción realizados por esta tarea.
+Implementación local, revisión y validación técnica de la vista previa: **Done**.
+SQL/Auth/despliegue de producción y facturación real: **Planned**, sin cambios
+en producción realizados por esta tarea. La revisión visual por el usuario
+queda pendiente.
 
 ## Comprobaciones locales
 
@@ -50,23 +52,64 @@ internas. No se aumentó el umbral para ocultar el aviso.
 
 Las fixtures modelan las tablas necesarias; no sustituyen la validación de RLS,
 Storage, Auth y datos en Supabase real. Las pruebas de API usan identidades y
-respuestas del hook controladas; no se disparó ningún despliegue externo.
+respuestas del hook controladas; no se invocó ningún Deploy Hook ni se cambió
+producción. El envío autorizado de la rama sí generó una vista previa de Vercel.
 
 La consulta externa de sólo lectura confirmó las dos cuentas previas con permiso
 `draft_inbox`. El usuario decidió conservar ambas. La migración nueva y las RPCs
 de mantenimiento aún no están instaladas en el entorno real. No se modificaron
 cuentas, datos históricos ni configuración Auth.
 
-Vercel identifica el proyecto existente `mvp-nen`, pero el conector no permitió
-obtener su configuración completa y no hay sesión CLI disponible. No se ha
+Vercel identifica el proyecto existente `mvp-nen` y permite inspeccionar sus
+despliegues. No se obtuvo su configuración completa ni hay sesión CLI disponible.
+No se ha
 confirmado el plan, consumo, extras ni facturación actual de Vercel/Supabase.
 No se han cancelado servicios ni declarado coste cero verificado.
 
-Pendiente: revisar preview de Vercel del commit aprobado, instalar SQL y
+Pendiente: revisión visual de la vista previa por el usuario, instalar SQL y
 provisionar las dos cuentas, deshabilitar altas, configurar el hook secreto de
 la rama aprobada, desplegar, validar ambas sesiones y denegaciones en vivo,
 confirmar un nuevo respaldo publicado y comprobar cuotas/facturación.
 Los pasos concretos están en [el runbook](../MAINTENANCE_RUNBOOK.md).
+
+## Vista previa de Vercel autorizada
+
+El usuario autorizó el envío de `feat/publisher-request-flow-phase4` el 2 de
+octubre. El commit de implementación `db49e55434315208e10f8529e9ee2d208edf6c74`
+se publicó en GitHub y generó el despliegue `dpl_S6QBxXDVxBgCRm8xyHEZEUVfzBwZ`,
+estado **READY**, `target: null` (preview), sin alias de producción:
+[vista previa validada](https://mvp-ldjrjg3su-dibrandons-projects.vercel.app/).
+
+El navegador pasó la autenticación de Vercel usando acceso temporal del conector,
+sin sesión de NensGo. No se guardó ese enlace temporal en el repositorio ni se
+desactivó la protección del despliegue. La pestaña del navegador de Codex quedó
+abierta en la vista previa para revisión.
+
+| Comprobación remota | Evidencia | Estado |
+| --- | --- | --- |
+| Catálogo e idiomas | Seis tarjetas, navegación reducida y categorías del catálogo; interfaz ES/CA/EN, valores dinámicos conservados | Done |
+| Copia publicada | Contrato compartido valida manifiesto y catálogo de la misma generación: 6 actividades, 8 contactos, 6 imágenes; las seis imágenes responden con tipo de imagen | Done |
+| Fallo de Supabase | Bloquear el dominio real `auth.nensgo.com` y recargar: seis tarjetas, seis imágenes copiadas cargadas y selector de La Cala con teléfono/Instagram | Done |
+| Móvil | 390×844, detalle y selector en inglés desde el respaldo; captura inspeccionada | Done |
+| APIs sin sesión de NensGo | `GET /api/internal/pvi` devuelve 410; `POST /api/internal/catalog-backup` devuelve 401 sin solicitar despliegue | Done |
+| Navegador | Sin excepciones JavaScript; sin claves de sesión Supabase en localStorage | Done |
+
+Manifiesto confirmado: generación `61ec31e1-e61d-4388-856e-89833f4a922b`,
+`generatedAt: 2026-10-02T14:05:05.308Z`, 1732497 bytes de imágenes copiadas.
+Capturas temporales inspeccionadas: `nensgo-vercel-maintenance-desktop.png` y
+`nensgo-vercel-maintenance-mobile-contact.png`. No se enviaron mensajes de contacto.
+
+La comprobación HTTP sin sesión encuentra la redirección de autenticación de
+Vercel y sale con código 1 y una explicación explícita. No representa un fallo
+de la aplicación; las comprobaciones remotas anteriores se hicieron en el
+navegador autenticado. El mismo script pasa contra la vista previa local.
+
+Producción sigue asociada a `dpl_8cajDXdo4k1kpJNeqF19xxWwkhbo`, rama `main`,
+commit `582b635d36c190f4cc3fbfff025a66d8a8503800`; sus alias `nensgo.com` y
+`www.nensgo.com` se comprobaron después del envío. Este dato describe el destino
+externo actual; no se usa `main` como fuente de implementación.
+La copia de preview no valida todavía el ciclo manual de respaldo en producción
+ni los permisos administrativos reales tras instalar la migración.
 
 ## Ilustración del banner
 

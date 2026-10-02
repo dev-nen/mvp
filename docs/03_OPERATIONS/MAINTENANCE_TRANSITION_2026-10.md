@@ -8,8 +8,9 @@
   favorites, public submission flows and internal draft/publication tools.
 - Pre-existing September publisher hardening changes are not part of this
   transition and must be preserved separately.
-- Status: Done for local implementation and review; overall Partial because
-  external SQL/Auth/deployment and actual billing verification remain Planned.
+- Status: Done for local implementation, review and technical preview validation;
+  overall Partial because external SQL/Auth, production rollout and actual billing
+  verification remain Planned. The user authorized a push for preview on October 2.
 
 ## Goal and agreed product decisions
 
@@ -50,7 +51,8 @@ confirmed in conversation take precedence over its speculative alternatives.
 
 No legacy data deletion, organizer feature completion, new paid integrations,
 search, anonymous likes, automated daily backups, automatic site shutdown,
-repository push, production change or billing cancellation in this local task.
+production change or billing cancellation in this task. Repository push was
+initially excluded; the user's later authorization covers this branch for preview.
 No editing of the attached DOCX. No SQL is applied to the live database here.
 
 ## Risks and assumptions avoided
@@ -89,11 +91,35 @@ No editing of the attached DOCX. No SQL is applied to the live database here.
 
 ## Pending external rollout
 
-Review preview first. Confirm free plans/quotas, existing admin permission,
+The technical preview is Done; user review and production rollout remain Planned.
+Confirm free plans/quotas, existing admin permission,
 disable signup, apply reviewed additive maintenance SQL, set a server-only deploy
 hook for the approved release branch, then deploy and validate live. Monthly
 operator flow: import -> review -> publish/unpublish -> Create public backup.
 The public fallback is only as current as the latest confirmed manual backup.
+
+## Authorized preview follow-up
+
+Branch remains `feat/publisher-request-flow-phase4`. Push commit `db49e55` only
+for preview; inspect deployment metadata and verify its public copy, API denials,
+languages, mobile detail/contacts and fallback in an authenticated Vercel browser
+without a NensGo session. Record the evidence in this plan, the runbook and QA.
+Production, live SQL/Auth, billing and the deploy hook remain outside this push.
+
+The HTTP-only preview check encountered a Vercel authentication redirect and
+reported an unhelpful `fetch failed`. This localized S follow-up changes only
+`scripts/runtime-preview-check.mjs` to explain rejected redirects; it changes no
+application routes, data, auth or permissions. Validate the script syntax, local
+preview success and protected preview rejection, then commit and push the same
+authorized branch. Do not disable deployment protection or store access tokens.
+
+Preview `dpl_S6QBxXDVxBgCRm8xyHEZEUVfzBwZ` for `db49e55` is READY and technically
+validated at https://mvp-ldjrjg3su-dibrandons-projects.vercel.app/.
+It serves six activities, eight contacts and six copied images; authenticated
+Vercel browser checks cover ES/CA/EN, mobile detail/contact, the actual Supabase
+host outage and unauthenticated application API denial. Production aliases still
+point to the previous deployment on `main` (`582b635`). User review, both real
+admin sessions after provisioning and the production backup cycle remain Planned.
 
 ## Review and local closure
 
