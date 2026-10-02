@@ -42,6 +42,8 @@ function getCenterMode(value) {
 }
 
 function validateCreateDraftForm(formState) {
+  if (!["all", "range", "from", "until"].includes(formState.ageRuleType)) return "Confirma la edad de la actividad.";
+  if (!["true", "false"].includes(formState.isFree)) return "Confirma si la actividad es gratuita o de pago.";
   if (!getTrimmedText(formState.title)) {
     return "El título es obligatorio.";
   }

@@ -1,6 +1,34 @@
 # Auth and Onboarding
 
+## Acceso vigente de mantenimiento
+
+Estado: **Partial**. La adaptación local usa Supabase Auth sólo en
+`/usuario` y `/internal/*`; la aplicación pública no monta el provider de Auth.
+No hay enlaces públicos de cuenta, registro, perfil u onboarding.
+
+`MaintenanceAuthProvider` conserva inicio de sesión Google y email/password y
+cierre de sesión. Comprueba la identidad con `auth.getUser` y el permiso con
+`is_maintenance_operator`; no crea perfiles ni retoma intenciones públicas.
+Sus estados son `anonymous`, `loading_user`, `ready`, `forbidden` y `error`.
+El gate de UI no reemplaza RLS ni autorización dentro de RPCs/API.
+
+Se mantienen **ambas cuentas administradoras previas**, provisionadas
+explícitamente en `maintenance_operator`, con su permiso existente
+`draft_inbox`. Una sesión válida de otro usuario histórico no le permite
+administrar. El retorno de Google usa `/usuario`.
+
+Deshabilitar nuevas altas en Supabase Auth, revisar redirects y validar ambas
+cuentas son pasos externos pendientes. La ausencia de un botón de registro no
+demuestra que el proveedor ya haya bloqueado altas.
+El [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) incluye el SQL de provisión.
+
+Las secciones siguientes describen el **flujo histórico** de registro/perfil/
+municipio; se mantienen para contexto y no son el contrato de la app activa.
+
+## Referencia anterior (histórica)
+
 ## Auth model
+
 
 Supabase Auth es la autoridad de identidad. La app soporta:
 
@@ -20,6 +48,10 @@ Estado: `Partial`. El frontend está implementado, pero el entorno real requiere
 - El usuario se considera usable cuando está autenticado, verificado y tiene perfil mínimo.
 - El email viene de Supabase Auth y se trata como no editable en esta fase.
 - La app no muestra UUIDs de Supabase al usuario.
+- El estado Organizador/publisher no vive en `user_profiles.role_id`; se
+  deriva de `publisher_requests` y `publisher_profiles`.
+- Un usuario normal puede estar `ready` para usar NensGo como familia sin estar
+  aprobado como publisher.
 
 ## Access states
 
@@ -78,6 +110,19 @@ Las acciones protegidas pueden guardarse temporalmente en `sessionStorage` con k
 
 Esto es UX para continuar una acción tras login/onboarding. No es frontera de seguridad.
 
+## Organizador request flow
+
+- `/perfil/publicaciones` is the user publication hub and shows the
+  Organizador invitation/status for non-approved users.
+- `/perfil/organizador/solicitud` lets authenticated users submit or resubmit
+  an Organizador request.
+- The request form uses Supabase Auth email as read-only context and does not
+  ask for an editable email field.
+- Approved publisher status only enables new activity draft submission; it does
+  not grant direct publishing.
+- Historical submissions remain visible to the owner even if they are not an
+  approved publisher.
+
 ## Pendiente de validación
 
 - Google OAuth real.
@@ -85,4 +130,6 @@ Esto es UX para continuar una acción tras login/onboarding. No es frontera de s
 - Redirect URLs.
 - Onboarding con municipios DIR3 reales.
 - RLS de `user_profiles`.
+- RLS/RPCs de `publisher_requests` y `publisher_profiles`.
+- Gating live de nuevas submissions para usuarios sin publisher aprobado.
 - Errores amigables sin exponer detalles técnicos.

@@ -1,0 +1,6 @@
+.maintenance-layout { min-height: 100vh; background: var(--color-page-gradient-start); }
+.maintenance-layout__header { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; padding-block: 1rem; }
+.maintenance-layout__header nav { display: flex; gap: 1rem; flex-wrap: wrap; margin-left: auto; }
+.maintenance-layout__header nav a { color: var(--color-text-muted); text-decoration: none; padding-block: .5rem; }
+.maintenance-layout__header nav a.active { color: var(--brand-blue-dark); font-weight: 700; }
+@media (max-width: 600px) { .maintenance-layout__header nav { margin-left: 0; width: 100%; } }

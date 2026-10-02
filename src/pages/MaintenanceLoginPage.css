@@ -1,0 +1,6 @@
+.maintenance-login { padding-block: 2rem 4rem; }
+.maintenance-login__back { display: inline-block; margin-bottom: 1.5rem; }
+.maintenance-login__panel { max-width: 28rem; margin-inline: auto; padding: 2rem; border: 1px solid var(--border, #ddd); border-radius: 1.25rem; background: var(--card, #fff); }
+.maintenance-login__panel h1 { margin-top: 0; }
+.maintenance-login__panel form { display: grid; gap: .7rem; margin-block: 1.5rem; }
+.maintenance-login__panel > button { margin-top: .5rem; }

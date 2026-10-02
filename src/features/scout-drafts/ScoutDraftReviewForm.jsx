@@ -452,6 +452,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => onFieldChange("ageRuleType", event.target.value)}
             disabled={isReadOnly}
           >
+            <option value="">Pendiente de confirmar</option>
             <option value="all">Todas</option>
             <option value="range">Rango</option>
             <option value="from">Desde</option>
@@ -492,6 +493,7 @@ export function ScoutDraftReviewForm({
             onChange={(event) => handleIsFreeChange(event.target.value)}
             disabled={isReadOnly}
           >
+            <option value="">Pendiente de confirmar</option>
             <option value="true">Gratis</option>
             <option value="false">De pago</option>
           </select>

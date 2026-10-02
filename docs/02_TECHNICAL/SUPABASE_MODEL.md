@@ -1,6 +1,43 @@
 # Supabase Model
 
+## Contrato vigente de mantenimiento (octubre de 2026)
+
+Estado: **Partial**. En la rama `feat/publisher-request-flow-phase4`, la
+migración `2026-10-02_maintenance_admin.sql` es aditiva y manual, posterior a
+las dependencias existentes de drafts/lifecycle/contactos. No ha sido aplicada
+al entorno live como parte de esta transición.
+
+| Recurso | Uso y acceso vigentes tras el rollout |
+| --- | --- |
+| `catalog_activities_read` | Catálogo público, único origen de datos de actividades para la copia allowlisted. |
+| `activity_contact_options_read` | Canales públicos de actividades visibles; también se copian para el fallback. |
+| `maintenance_operator` | Allowlist privada de ambas cuentas previas; sin lectura/escritura cliente directa. |
+| `is_maintenance_operator` | RPC autenticada; devuelve booleano y exige allowlist más permiso previo `draft_inbox`. |
+| `activity_drafts` | Borradores históricos y nuevos; acceso restrictivo a los operadores permitidos. |
+| `maintenance_import_batches` | Control privado del reintento por cuenta y contenido; no se exporta. |
+| `import_maintenance_drafts` | Importación atómica de borradores, autorizada en servidor; no publica. |
+| `list_maintenance_institutions` | Opciones de entidad organizadora para revisión interna autorizada. |
+| `create_maintenance_center` | Alta protegida de centro y, si se confirma, entidad; vincula el draft sin publicar. |
+| RPCs internas de lifecycle | Conservan la lógica previa y reciben guard adicional de operador; la aprobación valida datos/revisión. |
+| Storage `activities` | Escrituras de los operadores permitidos y lectura pública de imágenes aprobadas. |
+| Cuentas/perfiles/favoritos/eventos/publishers | Datos históricos conservados; flujos públicos y estadísticas retirados. |
+
+La creación de centros respeta el esquema real: entidad, municipio, nombre,
+dirección y código postal obligatorios. La migración añade defaults de secuencia
+a IDs de centros/entidades sólo cuando no existen; no inventa direcciones ni
+contactos. `municipality_choices_read` se reutiliza para confirmar el municipio
+del centro, sin reactivar onboarding público.
+
+El respaldo copia sólo las vistas y campos permitidos definidos en
+`src/shared/publicCatalogBackupContract.mjs`. No es un backup privado restaurable.
+Provisión y orden externo: [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+Las tablas, grants y RPCs de usuarios descritos abajo son **historia del MVP**;
+no deben habilitarse como parte de la transición.
+
+## Referencia anterior (histórica)
+
 ## Scope
+
 
 Este documento resume los recursos Supabase relevantes para la revisión técnica. No sustituye una inspección live del proyecto Supabase.
 
@@ -23,6 +60,8 @@ Estado general: `Partial`. Hay SQL versionado en `supabase/sql`; Phase 1 del cat
 | `activity_contact_events`                | Eventos de contacto                   | Auth/Public write según política | Guarda método/target snapshot.                                 |
 | `activity_drafts`                        | Draft Inbox interno                   | Internal                         | Requiere `internal_tool_access`; admite creación manual interna como draft. |
 | `internal_tool_access`                   | Autorización de herramientas internas | Internal/Auth self-check         | No sustituye RLS/RPC checks.                                   |
+| `publisher_requests`                     | Solicitudes de alta de Organizador    | Auth own/Internal via RPC        | Lifecycle privado: pending, needs_changes, approved, rejected. |
+| `publisher_profiles`                     | Estado publisher aprobado             | Auth own/Internal via RPC        | Gating de nuevas submissions; no es perfil publico en v1.      |
 | `ensure_my_profile`                      | Provisioning de perfil app            | Auth RPC                         | Debe validar municipio ES DIR3 activo.                         |
 | `approve_activity_draft`                 | Publicación desde draft               | Internal RPC                     | Authenticated + check interno.                                 |
 | `list_internal_admin_activities`         | Catálogo interno completo             | Internal RPC                     | Lista actividades no eliminadas, incluidas despublicadas.      |
@@ -84,6 +123,40 @@ The RPC must not insert or update `public.activities`, approve a draft, publish
 an activity, create centers, create contact options, or upload images. Existing
 admins review Phase 3 drafts through `/internal/drafts` and the Phase 2
 lifecycle.
+
+### Phase 4 publisher / Organizador request resources
+
+Phase 4 adds an explicit request/review model before normal users can submit
+new activity drafts. These contracts are repo-versioned only until the SQL is
+applied manually and live smoke validation passes.
+
+| Resource | Purpose | Access | Notes |
+| --- | --- | --- | --- |
+| `publisher_requests` | Stores Organizador request lifecycle and submitted organizer data | Auth own safe fields/internal, RPC-only | Review statuses: `pending_review`, `needs_changes`, `approved`, `rejected`; `not_requested` is derived by no row/profile. |
+| `publisher_profiles` | Active approved publisher state | Auth own safe fields/internal, RPC-only | One active profile per user; used to gate new submissions. |
+| `get_my_publisher_status` | Current user's publisher status | Auth RPC | Returns safe request/profile fields, user-facing feedback and `can_submit_activities`. |
+| `submit_my_publisher_request` | Create first pending request | Auth RPC | Does not create a profile or grant publication rights. |
+| `resubmit_my_publisher_request` | Reapply after needs_changes/rejected | Auth RPC | Creates a new pending row linked by `supersedes_request_id`. |
+| `list_internal_publisher_requests` | Internal request queue | Internal RPC | Requires `internal_tool_access.tool_name = 'draft_inbox'`. |
+| `get_internal_publisher_request` | Internal request detail | Internal RPC | Requires Draft Inbox access. |
+| `request_internal_publisher_changes` | Ask user for changes | Internal RPC | Stores user-visible feedback separately from internal notes. |
+| `reject_internal_publisher_request` | Reject request | Internal RPC | Rejected users may reapply. |
+| `approve_internal_publisher_request` | Approve request | Internal RPC | Creates or updates active `publisher_profiles`; does not publish activities. |
+| `activity_drafts_require_approved_publisher_for_submission` | New-submission server gate | Trigger | Blocks first-version `user_submission` drafts unless the submitter has an active publisher profile. |
+
+The request UI lives at `/perfil/organizador/solicitud`. Internal review lives
+inside `/internal/drafts` under the tab label `Alta de Publicadores`.
+
+Client roles cannot read or write either publisher table directly. The safe
+status RPC and internal review RPCs are the only client access paths. The
+corrected foundation migration includes this restriction; installations that
+already applied its original version must apply
+`2026-09-18_publisher_request_review_hardening.sql`, which also fixes ambiguous
+column references in the three internal review transitions.
+
+The server gate is intentionally scoped to new user submissions. Existing draft
+history, corrections and edit requests continue through their existing RPCs
+where product rules allow.
 
 ### Phase 4 Core contact option resources
 
@@ -204,6 +277,13 @@ Validar en live:
 - authenticated no autorizado no accede a Draft Inbox;
 - internal autorizado puede crear y revisar drafts;
 - internal autorizado puede ejecutar RPCs internas esperadas;
+- authenticated normal user can submit a publisher request and read only their
+  own safe request/profile fields via `get_my_publisher_status`, with no direct
+  table access or internal-note exposure;
+- authenticated normal user without an active publisher profile cannot create
+  a new activity submission;
+- internal Draft Inbox reviewer can approve publisher requests and create an
+  active `publisher_profiles` row;
 - las portadas de draft sólo pueden subirse desde usuarios internos autorizados;
 - `service_role` se limita a server-side;
 - errores técnicos no se filtran al usuario final.

@@ -1,7 +1,9 @@
 import {
-  getSupabaseClient,
+  getPublicSupabaseClient,
   getSupabaseClientError,
 } from "@/services/supabaseClient";
+import { PUBLIC_CONTACT_COLUMNS } from "@/shared/publicCatalogBackupContract.mjs";
+import { publicCatalogBackupReader } from "@/services/publicCatalogBackupService";
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -28,29 +30,22 @@ export async function listActivityContactOptions(activityId) {
     return [];
   }
 
-  const supabase = getSupabaseClient();
+  const rows = await publicCatalogBackupReader.readContacts(activityId, async (signal) => {
+    const supabase = getPublicSupabaseClient();
+    if (!supabase) {
+      throw new Error(getSupabaseClientError() || "Public contacts are unavailable.");
+    }
+    const { data, error } = await supabase
+      .from("activity_contact_options_read")
+      .select(PUBLIC_CONTACT_COLUMNS.join(", "))
+      .eq("activity_id", activityId)
+      .order("id", { ascending: true })
+      .abortSignal(signal);
+    if (error) throw new Error("Public contacts are unavailable.");
+    return data ?? [];
+  });
 
-  if (!supabase) {
-    throw new Error(
-      getSupabaseClientError() ||
-        "No pudimos conectar con Supabase para cargar los contactos.",
-    );
-  }
-
-  const { data, error } = await supabase
-    .from("activity_contact_options_read")
-    .select("id, activity_id, contact_method, contact_value, contact_label")
-    .eq("activity_id", activityId)
-    .order("id", { ascending: true });
-
-  if (error) {
-    throw new Error(
-      error.message ||
-        "No pudimos cargar las opciones de contacto de esta actividad.",
-    );
-  }
-
-  return (data ?? [])
+  return rows
     .map(normalizeContactOption)
     .filter((contactOption) => contactOption.contactMethod && contactOption.contactValue);
 }

@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { LandingBridgeCTA } from "@/components/landing/LandingBridgeCTA";
-import { LandingValueProps } from "@/components/landing/LandingValueProps";
 import { SeoHead } from "@/components/SeoHead";
 import { useI18n } from "@/i18n/useI18n";
 import "./AboutPage.css";
@@ -34,7 +33,10 @@ export function AboutPage() {
             </div>
           </section>
 
-          <LandingValueProps quickAccessItems={t("about.quickAccessItems")} />
+          <section className="about-page__letter" aria-labelledby="about-letter-title">
+            <h2 id="about-letter-title">{t("about.letterTitle")}</h2>
+            {t("about.paragraphs").map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          </section>
           <LandingBridgeCTA onExploreActivities={handleExploreActivities} />
         </div>
       </main>

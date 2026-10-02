@@ -169,8 +169,7 @@ const envExample = readRepoFile(".env.example");
 const requiredEnvVars = [
   "VITE_SUPABASE_URL",
   "VITE_SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE_KEY",
-  "INTERNAL_PVI_API_TOKEN",
+  "PUBLIC_CATALOG_DEPLOY_HOOK",
 ];
 const missingEnvVars = requiredEnvVars.filter(
   (envVarName) => !envExample.includes(`${envVarName}=`),

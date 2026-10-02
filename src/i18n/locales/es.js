@@ -357,7 +357,7 @@ const es = {
     publicationsDescription:
       "Consulta el estado de tus publicaciones o envía una actividad para que NensGo la revise.",
     publicationsAction: "Mis publicaciones",
-    submitActivityAction: "Enviar actividad",
+    submitActivityAction: "Organizador",
     internalDescription:
       "Si formas parte del equipo, puedes abrir el Draft Inbox desde aquí.",
     internalAction: "Abrir Draft Inbox",
@@ -421,6 +421,15 @@ const es = {
     noOptionsTitle: "No pudimos preparar las opciones",
     noOptionsDescription:
       "El formulario necesita categorías y tipos disponibles antes de enviar cambios.",
+    publisherGate: {
+      eyebrow: "Organizador",
+      title: "Solicita el alta como Organizador",
+      description:
+        "Para enviar una actividad nueva necesitas tener aprobada tu solicitud de Organizador. Tus publicaciones anteriores siguen visibles en tu panel.",
+      action: "Volver a mis publicaciones",
+      submitBlocked:
+        "Para enviar una actividad nueva necesitas tener aprobada tu solicitud de Organizador.",
+    },
     recovery: {
       title: "Restauramos un borrador local no guardado.",
       imageNote: "La imagen seleccionada debe volver a elegirse.",

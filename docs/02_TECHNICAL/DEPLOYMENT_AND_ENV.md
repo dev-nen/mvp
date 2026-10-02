@@ -1,6 +1,44 @@
 # Deployment and Environment
 
+## Despliegue vigente de mantenimiento
+
+Estado: **Partial**. El código está adaptado en
+`feat/publisher-request-flow-phase4`; no se han aplicado SQL ni configuración
+Auth ni desplegado esta transición en producción. No se han confirmado los
+planes, extras, facturas y cuotas reales de octubre.
+
+Vercel mantiene framework Vite, `dist` y rewrites SPA/API. El build de publicación
+es `npm.cmd run build`: compila y exporta catálogo, contactos e imágenes desde las
+vistas públicas. Un fallo de exportación aborta el build para conservar el
+despliegue anterior. `build:local` sólo compila la interfaz y no sustituye ese
+build de publicación.
+
+| Variable | Entorno/uso vigente |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Pública: cliente, API y build; URL del proyecto. |
+| `VITE_SUPABASE_ANON_KEY` | Pública: cliente anónimo y API/build con vistas/permisos; nunca service role. |
+| `PUBLIC_CATALOG_DEPLOY_HOOK` | Secreto sólo servidor y Production; hook de la rama aprobada con la adaptación incluida. |
+
+La API de respaldo no necesita `SUPABASE_SERVICE_ROLE_KEY` ni
+`INTERNAL_PVI_API_TOKEN`. La API PVI está retirada (410). Revisar usos externos
+antes de retirar secretos antiguos de dashboards; no exponerlos.
+
+Orden: revisar vista previa del commit → contrastar/aplicar SQL aditivo →
+provisionar **ambas cuentas previas** → deshabilitar altas/revisar redirects Auth →
+configurar hook y variables → desplegar commit aprobado → validar producción y
+nuevo respaldo confirmado. El hook se liga a una rama del repositorio conectado;
+elegir una rama antigua podría publicar código anterior. La vista previa no
+puede disparar el hook de producción.
+
+Pasos concretos, SQL de provisión y control de costes:
+[runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+El contenido restante es **histórico**; sus variables PVI y validaciones de
+Analytics no son requisitos de esta transición.
+
+## Referencia anterior (histórica)
+
 ## Hosting assumption
+
 
 El repo está preparado para Vercel:
 

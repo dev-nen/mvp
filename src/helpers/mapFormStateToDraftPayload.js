@@ -27,7 +27,7 @@ function normalizeAgeRuleType(value) {
     return "all";
   }
 
-  return "all";
+  return null;
 }
 
 function normalizeCenterMode(value) {
@@ -68,7 +68,7 @@ export function mapFormStateToDraftPayload(formState) {
       age_max: ageRuleType === "range" || ageRuleType === "until" ? ageMax : null,
       price_label:
         formState?.isFree === "true" ? "" : getTrimmedText(formState?.priceLabel),
-      is_free: formState?.isFree === "true",
+      is_free: formState?.isFree === "true" ? true : formState?.isFree === "false" ? false : null,
       schedule_label: getTrimmedText(formState?.scheduleLabel),
       venue_name: getTrimmedText(formState?.venueName),
       venue_address_1: getTrimmedText(formState?.venueAddress1),
@@ -85,6 +85,10 @@ export function mapFormStateToDraftPayload(formState) {
               mode: "proposed_new",
               name: getTrimmedText(formState?.centerProposalName),
               notes: getTrimmedText(formState?.centerProposalNotes),
+              city_name: getTrimmedText(formState?.centerProposalCity),
+              institution_name: getTrimmedText(formState?.centerProposalInstitution),
+              address_line_1: getTrimmedText(formState?.centerProposalAddress),
+              postal_code: getTrimmedText(formState?.centerProposalPostalCode),
             }
           : {
               mode: "not_applicable",
@@ -95,6 +99,8 @@ export function mapFormStateToDraftPayload(formState) {
   if (shouldIncludeContactOptions) {
     payload.contact_options = contactOptions;
   }
+
+  if (formState?.importReview) payload.import_review = formState.importReview;
 
   return payload;
 }

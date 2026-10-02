@@ -1,6 +1,33 @@
 # NensGo - Project Brief
 
+## Alcance vigente: mantenimiento gratuito (octubre de 2026)
+
+Estado: **Partial**. La rama `feat/publisher-request-flow-phase4` contiene la
+adaptación local; SQL, Auth, facturación y despliegue requieren validación externa.
+El servicio se mantiene como prueba de concepto y portfolio, con el dominio
+`nensgo.com`, cargas ocasionales y un máximo de un año más.
+
+La experiencia pública es catálogo por categorías, detalle y contactos sin
+sesión, con textos ES/CA/EN y una copia pública de respaldo. No hay buscador,
+filtros adicionales, registro público, perfil, favoritos, estadísticas ni
+publicación autoservicio por centros. Conócenos presenta el proyecto.
+
+Ambas cuentas administradoras anteriores se mantienen. Acceden directamente por
+`/usuario` y trabajan con borradores: importar JSON, revisar sin inventar datos,
+seleccionar o crear un centro confirmado, publicar/retirar y crear respaldo
+manual. La autorización real se verifica en SQL y en la API; la URL privada no
+sustituye los permisos. Los datos históricos se preservan sin uso público.
+
+El único coste aceptado es el dominio; los planes, extras y cuotas reales aún
+deben comprobarse. No se incorporan servicios de IA ni tareas diarias.
+El [runbook vigente](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) reúne el contrato y
+los pasos externos. La documentación que sigue conserva el MVP anterior como
+**referencia histórica** y no amplía el alcance del mantenimiento.
+
+## Referencia anterior (histórica)
+
 ## Qué es NensGo
+
 
 NensGo es una plataforma web para descubrir actividades infantiles y familiares cerca de la familia usuaria.
 

@@ -1,7 +1,8 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Heart, LoaderCircle, X } from "lucide-react";
+import { lazy, Suspense, useCallback, useEffect, useId, useRef, useState } from "react";
+import { ArrowLeft, LoaderCircle, X } from "lucide-react";
 import { ActivityContactOptionsDialog } from "@/components/catalog/ActivityContactOptionsDialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   ACTIVITY_DETAIL_PLACEHOLDER_SRC,
   buildActivityDetailViewModel,
@@ -20,17 +21,17 @@ const SafeMarkdown = lazy(() =>
 
 export function ActivityDetailModal({
   activity,
-  isFavorite = false,
-  onToggleFavorite,
   open,
   onClose,
-  onContactClick,
-  contactRequesterName = "",
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const panelRef = useRef(null);
+  const requesterNameId = useId();
   const scrollContainerRef = useRef(null);
   const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [requesterName, setRequesterName] = useState("");
+  const handleCloseContactDialog = useCallback(() => setIsContactDialogOpen(false), []);
   const {
     contactOptions,
     isLoading: isContactOptionsLoading,
@@ -45,13 +46,35 @@ export function ActivityDetailModal({
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousFocusedElement = document.activeElement;
 
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
+    panelRef.current?.querySelector("button")?.focus();
 
     const handleKeyDown = (event) => {
+      // The contact chooser owns keyboard interaction while it is open.
+      if (document.querySelector(".activity-contact-options-dialog")) {
+        return;
+      }
       if (event.key === "Escape") {
+        event.preventDefault();
         onClose?.();
+        return;
+      }
+      if (event.key === "Tab") {
+        const focusableElements = panelRef.current?.querySelectorAll(
+          'button:not([disabled]), a[href], input:not([disabled]), [tabindex="0"]',
+        );
+        const firstElement = focusableElements?.[0];
+        const lastElement = focusableElements?.[focusableElements.length - 1];
+        if (event.shiftKey && document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement?.focus();
+        } else if (!event.shiftKey && document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement?.focus();
+        }
       }
     };
 
@@ -61,15 +84,17 @@ export function ActivityDetailModal({
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       window.removeEventListener("keydown", handleKeyDown);
+      previousFocusedElement?.focus?.();
     };
   }, [open, onClose]);
 
   useEffect(() => {
+    setRequesterName("");
+    setIsContactDialogOpen(false);
+    setIsDescriptionExpanded(false);
     if (!open) {
       return;
     }
-
-    setIsDescriptionExpanded(false);
 
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
@@ -101,6 +126,9 @@ export function ActivityDetailModal({
   const hasSingleContactOption = contactOptions.length === 1;
   const hasMultipleContactOptions = contactOptions.length > 1;
   const hasContactOptions = hasSingleContactOption || hasMultipleContactOptions;
+  const canPersonalizeMessage = contactOptions.some((option) =>
+    ["whatsapp", "email"].includes(option.contactMethod),
+  );
   const contactMessage = isContactOptionsLoading
     ? t("catalog.detail.loadingContactOptions")
     : contactOptionsError
@@ -110,9 +138,9 @@ export function ActivityDetailModal({
         : t("catalog.detail.noContactOptions");
 
   const handleSelectContactOption = (contactOption) => {
-    onContactClick?.(activity, contactOption);
     openActivityContactAction(activity, contactOption, {
-      requesterName: contactRequesterName,
+      requesterName,
+      language,
     });
     setIsContactDialogOpen(false);
   };
@@ -130,15 +158,12 @@ export function ActivityDetailModal({
     setIsContactDialogOpen(true);
   };
 
-  const handleToggleFavorite = () => {
-    onToggleFavorite?.(activity);
-  };
-
   return (
     <div className="activity-detail-modal" role="presentation">
       <div className="activity-detail-modal__overlay" onClick={onClose} />
 
       <div
+        ref={panelRef}
         className={`activity-detail-modal__panel ${
           isDescriptionExpanded ? "activity-detail-modal__panel--expanded" : ""
         }`}
@@ -207,29 +232,6 @@ export function ActivityDetailModal({
                   ) : null}
                 </div>
 
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className={`activity-detail-modal__favorite ${
-                    isFavorite ? "activity-detail-modal__favorite--active" : ""
-                  }`}
-                  onClick={handleToggleFavorite}
-                  disabled={!onToggleFavorite}
-                  aria-label={
-                    isFavorite
-                      ? t("catalog.detail.removeFavorite")
-                      : t("catalog.detail.addFavorite")
-                  }
-                >
-                  <Heart
-                    className={`activity-detail-modal__favorite-icon ${
-                      isFavorite
-                        ? "activity-detail-modal__favorite-icon--filled"
-                        : ""
-                    }`}
-                  />
-                </Button>
               </div>
             </section>
 
@@ -299,6 +301,26 @@ export function ActivityDetailModal({
                   {contactMessage}
                 </p>
               ) : null}
+              {canPersonalizeMessage ? (
+                <div className="activity-detail-modal__requester-name">
+                  <label htmlFor={requesterNameId}>
+                    {t("catalog.detail.requesterNameLabel")}
+                  </label>
+                  <Input
+                    id={requesterNameId}
+                    type="text"
+                    value={requesterName}
+                    onChange={(event) => setRequesterName(event.target.value)}
+                    placeholder={t("catalog.detail.requesterNamePlaceholder")}
+                    autoComplete="off"
+                    maxLength={80}
+                    aria-describedby={`${requesterNameId}-hint`}
+                  />
+                  <p id={`${requesterNameId}-hint`}>
+                    {t("catalog.detail.requesterNameHint")}
+                  </p>
+                </div>
+              ) : null}
               {contactOptionsError ? (
                 <Button type="button" variant="outline" onClick={reloadContactOptions}>
                   {t("catalog.detail.retryContacts")}
@@ -327,7 +349,7 @@ export function ActivityDetailModal({
         activity={activity}
         contactOptions={contactOptions}
         open={isContactDialogOpen}
-        onClose={() => setIsContactDialogOpen(false)}
+        onClose={handleCloseContactDialog}
         onSelectOption={handleSelectContactOption}
       />
     </div>

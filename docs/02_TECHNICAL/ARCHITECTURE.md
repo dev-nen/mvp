@@ -1,6 +1,44 @@
 # Architecture
 
+## Arquitectura vigente: mantenimiento gratuito
+
+Estado: **Partial** en `feat/publisher-request-flow-phase4`; la configuración y
+validación externas de esta transición están pendientes.
+
+```mermaid
+flowchart LR
+  Family[Familia sin sesión] --> Public[React/Vite público]
+  Public --> Views[Vistas públicas Supabase]
+  Public --> Snapshot[Catálogo, contactos e imágenes del último build]
+  Admin[Ambas cuentas administradoras] --> Private[usuario e internal]
+  Private --> Auth[Supabase Auth y RPC de permisos]
+  Private --> Drafts[Borradores y lifecycle protegidos]
+  Private --> API[API de respaldo protegida]
+  API --> Hook[Deploy Hook secreto]
+  Hook --> Build[Build de la rama aprobada]
+  Views --> Build
+  Build --> Snapshot
+```
+
+El cliente público es anónimo y sin persistencia de sesión. El proveedor de Auth
+se monta únicamente en `/usuario` y `/internal/*`; `is_maintenance_operator`
+comprueba pertenencia a la allowlist y permiso previo `draft_inbox`. Los campos
+públicos se declaran en `src/shared/publicCatalogBackupContract.mjs`.
+
+`npm.cmd run build` exporta una copia pública e imágenes locales después de
+compilar. Las lecturas de catálogo/contactos usan esa copia validada cuando
+falla Supabase. La API solicita el deploy y el panel sólo confirma un nuevo
+manifiesto publicado. No hay analítica, reporting PVI activo ni cron; no se
+necesita una clave `service_role` para este mecanismo.
+
+Los contratos anteriores que siguen son **históricos**, incluidos Auth global,
+onboarding, favoritos, eventos y Analytics. No forman parte de la app activa.
+Detalle operativo: [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+
+## Referencia anterior (histórica)
+
 ## Modelo general
+
 
 NensGo es una SPA React/Vite. La app corre en navegador y usa Supabase para identidad, datos de producto y RPCs. Vercel sirve la app y expone una función interna server-side.
 

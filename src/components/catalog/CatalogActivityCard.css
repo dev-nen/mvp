@@ -105,69 +105,6 @@
   height: 1rem;
 }
 
-.catalog-card__favorite {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 2;
-  background: rgba(255, 255, 255, 0.94);
-  border-color: rgba(75, 143, 231, 0.12);
-  backdrop-filter: blur(10px);
-}
-
-.catalog-card__favorite--public {
-  box-shadow: 0 10px 24px rgba(47, 61, 115, 0.12);
-}
-
-.catalog-card__favorite--active {
-  color: var(--color-danger);
-}
-
-.catalog-card__favorite-icon--filled {
-  fill: currentColor;
-}
-
-.catalog-card__free-badge {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  z-index: 1;
-  padding: 0.25rem 0.5rem;
-  color: var(--color-primary-contrast);
-  background: var(--color-success);
-  border-radius: var(--radius-sm);
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.catalog-card__share {
-  color: var(--color-text);
-}
-
-.catalog-card__share--public {
-  position: absolute;
-  right: 0.7rem;
-  bottom: 0.7rem;
-  z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  color: var(--color-primary-strong);
-  background: rgba(255, 255, 255, 0.88);
-  border-radius: 999px;
-  box-shadow: 0 10px 22px rgba(47, 61, 115, 0.12);
-  backdrop-filter: blur(10px);
-}
-
-.catalog-card__share--public:hover {
-  background: rgba(255, 255, 255, 0.96);
-}
-
-.catalog-card__share--public svg {
-  width: 1.05rem;
-  height: 1.05rem;
-}
-
 .catalog-card__content {
   flex: 1;
   display: flex;

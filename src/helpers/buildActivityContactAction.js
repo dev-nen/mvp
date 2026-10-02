@@ -8,10 +8,37 @@ function normalizeContactMethod(contactMethod) {
   return getTrimmedText(contactMethod).toLowerCase();
 }
 
+function getContactLanguage(contactContext) {
+  return ["ca", "en"].includes(contactContext?.language)
+    ? contactContext.language
+    : "es";
+}
+
 function buildActivityGreeting(activity, contactContext = {}) {
-  const activityTitle = getTrimmedText(activity?.title) || "esta actividad";
-  const cityFragment = activity?.city_name ? ` en ${activity.city_name}` : "";
+  const language = getContactLanguage(contactContext);
   const requesterName = getTrimmedText(contactContext.requesterName);
+  const cityName = getTrimmedText(activity?.city_name);
+
+  if (language === "ca") {
+    const title = getTrimmedText(activity?.title) || "aquesta activitat";
+    const nameFragment = requesterName
+      ? ` soc ${requesterName}. M'interessa`
+      : " m'interessa";
+    const cityFragment = cityName ? ` a ${cityName}` : "";
+    return `Hola,${nameFragment} l'activitat "${title}"${cityFragment}. Em podríeu donar més informació?`;
+  }
+
+  if (language === "en") {
+    const title = getTrimmedText(activity?.title) || "this activity";
+    const nameFragment = requesterName
+      ? ` my name is ${requesterName}. I am interested`
+      : " I am interested";
+    const cityFragment = cityName ? ` in ${cityName}` : "";
+    return `Hello,${nameFragment} in the activity "${title}"${cityFragment}. Could you send me more information?`;
+  }
+
+  const activityTitle = getTrimmedText(activity?.title) || "esta actividad";
+  const cityFragment = cityName ? ` en ${cityName}` : "";
   const interestFragment = requesterName
     ? ` soy ${requesterName}. Me interesa`
     : " me interesa";
@@ -38,8 +65,14 @@ function buildEmailUrl(contactValue, activity, contactContext) {
     return "";
   }
 
-  const activityTitle = getTrimmedText(activity?.title) || "actividad";
-  const subject = `Consulta sobre ${activityTitle}`;
+  const language = getContactLanguage(contactContext);
+  const fallbackTitle = language === "en"
+    ? "activity"
+    : language === "ca" ? "activitat" : "actividad";
+  const activityTitle = getTrimmedText(activity?.title) || fallbackTitle;
+  const subject = language === "en"
+    ? `Enquiry about ${activityTitle}`
+    : `Consulta sobre ${activityTitle}`;
   const body = buildActivityGreeting(activity, contactContext);
 
   return `mailto:${normalizedEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;

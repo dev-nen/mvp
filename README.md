@@ -2,7 +2,10 @@
 
 NensGo es una plataforma web para descubrir actividades infantiles y familiares cerca de ti.
 
-El proyecto está en fase MVP/validación. Combina catálogo público, autenticación, onboarding por municipio, favoritos remotos y contacto con centros o responsables de actividades.
+La rama `feat/publisher-request-flow-phase4` está adaptada para mantenimiento
+gratuito como prueba de concepto y portfolio, con cargas ocasionales y un
+horizonte máximo de un año desde octubre de 2026. Estado general: **Partial**;
+la configuración externa y el despliegue de esta transición siguen pendientes.
 
 ## Qué es
 
@@ -10,15 +13,23 @@ NensGo ayuda a familias a encontrar actividades culturales, deportivas, educativ
 
 ## Estado actual
 
-- Catálogo público conectado a Supabase mediante `catalog_activities_read`.
-- Autenticación con Google y email/password.
-- Onboarding de usuario con municipio basado en datos DIR3.
-- Favoritos persistidos en Supabase.
-- Contacto con actividades mediante opciones configuradas en `activity_contact_options_read`.
-- Interfaz pública con base i18n ES/CA/EN.
-- Rutas públicas para presentación, centros, privacidad y términos.
-- Rutas protegidas para perfil y favoritos.
-- Backoffice interno/Draft Inbox implementado en repo, pendiente de validación live completa.
+- Catálogo y detalle sin sesión, con categorías disponibles y textos ES/CA/EN.
+- Contactos directos o selector según los canales existentes; nombre opcional,
+  temporal y sin almacenamiento para preparar mensajes de WhatsApp/correo.
+- Copia pública del catálogo, contactos e imágenes generada en cada build de
+  publicación, utilizada si falla la consulta a Supabase.
+- Administración privada en `/usuario`, conservando ambas cuentas anteriores,
+  con comprobación de sesión y permisos en servidor.
+- Importación JSON de una o varias actividades como borradores; revisión humana,
+  creación protegida de centros y publicación desde el editor existente.
+- Respaldo manual solicitado por una API protegida y confirmado mediante el
+  manifiesto realmente publicado; no hay tareas diarias.
+- Registro, perfiles públicos, favoritos, publicación por centros y estadísticas
+  retirados de la aplicación activa. Los datos históricos se conservan.
+
+El SQL de mantenimiento, el bloqueo de altas en Supabase, los secretos de
+despliegue y la facturación real requieren preparación externa. Los tests locales
+no sustituyen la validación de ambas cuentas ni de los permisos en producción.
 
 ## Stack resumido
 
@@ -29,13 +40,19 @@ NensGo ayuda a familias a encontrar actividades culturales, deportivas, educativ
 
 ## Rutas principales
 
-- Públicas: `/`, `/sobre-nensgo`, `/para-centros`, `/privacidad`, `/terminos`
-- Protegidas: `/perfil`, `/favoritos`, `/favoritos/:activityId`
-- Internas: `/internal/drafts`, `/internal/drafts/:draftId`, `/internal/activities/:activityId`
+- Públicas: `/`, `/sobre-nensgo`, `/privacidad`, `/terminos`.
+- Acceso privado: `/usuario`, sin enlace en navegación pública.
+- Administración: `/internal/import`, `/internal/drafts`,
+  `/internal/drafts/new`, `/internal/drafts/:draftId`, `/internal/activities`,
+  `/internal/activities/:activityId`.
+- `/para-centros` redirige a Conócenos; las rutas retiradas o desconocidas van a `/`.
 
 ## Documentación
 
 La documentación principal está en [`docs/README.md`](docs/README.md).
+La rutina operativa y la preparación externa están en
+[`MAINTENANCE_RUNBOOK.md`](docs/03_OPERATIONS/MAINTENANCE_RUNBOOK.md):
+**importar → revisar → publicar/retirar → crear respaldo**.
 
 Para una revisión técnica rápida:
 
@@ -58,8 +75,8 @@ Variables necesarias, sin valores en repo:
 ```txt
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-INTERNAL_PVI_API_TOKEN=
+# Sólo servidor y Production; nunca con prefijo VITE_:
+PUBLIC_CATALOG_DEPLOY_HOOK=
 ```
 
 ## Validación
@@ -71,7 +88,12 @@ git diff --check
 ```
 
 `npm.cmd` es la forma recomendada en PowerShell cuando el shim `npm` queda bloqueado por la política de ejecución.
+`build` necesita acceso a las vistas públicas de Supabase y genera la copia del
+catálogo. Para trabajar sólo en la interfaz sin exportar datos existe
+`npm.cmd run build:local`; no es el build de producción.
 
 ## Contacto
 
-El contacto operativo público del proyecto aparece en la ruta `/para-centros`. No se documentan datos societarios, fiscales o legales no verificados en este repositorio.
+Los contactos de cada actividad se muestran en su detalle cuando existen canales
+confirmados. No se documentan datos societarios, fiscales o legales no verificados
+en este repositorio.

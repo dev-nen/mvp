@@ -47,6 +47,16 @@
   color: var(--color-text-muted);
 }
 
+.about-page__letter {
+  max-width: 48rem;
+  padding: var(--space-6);
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid rgba(75, 143, 231, .12);
+  border-radius: var(--radius-lg);
+}
+.about-page__letter h2 { margin-bottom: var(--space-4); }
+.about-page__letter p { color: var(--color-text-muted); line-height: 1.8; margin-top: var(--space-3); }
+
 .about-page__hero {
   padding-top: var(--space-2);
 }

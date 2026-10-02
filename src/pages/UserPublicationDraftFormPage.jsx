@@ -4,6 +4,7 @@ import {
   LoaderCircle,
   Save,
   SearchX,
+  UserCheck,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,6 +24,7 @@ import {
   writeUserPublicationLocalDraft,
 } from "@/helpers/userPublicationLocalRecovery";
 import { useAuth } from "@/hooks/useAuth";
+import { usePublisherStatus } from "@/hooks/usePublisherStatus";
 import { useI18n } from "@/i18n/useI18n";
 import {
   resolveActivityImagePreviewUrl,
@@ -151,6 +153,11 @@ function UserPublicationDraftFormPage({ mode }) {
   const { activityId, draftId } = useParams();
   const { user } = useAuth();
   const { t } = useI18n();
+  const {
+    error: publisherStatusError,
+    isLoading: isPublisherStatusLoading,
+    publisherStatus,
+  } = usePublisherStatus({ enabled: isNewSubmission });
   const localDraftStorageKey = useMemo(
     () =>
       getUserPublicationLocalDraftStorageKey({
@@ -296,6 +303,32 @@ function UserPublicationDraftFormPage({ mode }) {
   }, [coverFile]);
 
   useEffect(() => {
+    if (
+      !isNewSubmission ||
+      isPublisherStatusLoading ||
+      publisherStatus.canSubmitActivities
+    ) {
+      return;
+    }
+
+    navigate("/perfil/publicaciones", {
+      replace: true,
+      state: {
+        userPublicationsError:
+          publisherStatusError ||
+          t("userPublicationForm.publisherGate.submitBlocked"),
+      },
+    });
+  }, [
+    isNewSubmission,
+    isPublisherStatusLoading,
+    navigate,
+    publisherStatus.canSubmitActivities,
+    publisherStatusError,
+    t,
+  ]);
+
+  useEffect(() => {
     if (isLoading || error || !hasLocalRecoveryChanges) {
       return;
     }
@@ -363,6 +396,15 @@ function UserPublicationDraftFormPage({ mode }) {
   };
 
   const handleSubmit = async () => {
+    if (
+      isNewSubmission &&
+      (isPublisherStatusLoading || !publisherStatus.canSubmitActivities)
+    ) {
+      setFormMessageTone("error");
+      setFormMessage(t("userPublicationForm.publisherGate.submitBlocked"));
+      return;
+    }
+
     const validationError = validatePublicationForm(formState, t);
 
     if (validationError) {
@@ -448,6 +490,11 @@ function UserPublicationDraftFormPage({ mode }) {
 
   const hasFormOptions =
     categoryChoices.length > 0 && typeChoices.length > 0;
+  const isPublisherGateLoading = isNewSubmission && isPublisherStatusLoading;
+  const isPublisherGateBlocked =
+    isNewSubmission &&
+    !isPublisherStatusLoading &&
+    (publisherStatusError || !publisherStatus.canSubmitActivities);
 
   return (
     <div className="user-publication-draft-form-page">
@@ -477,7 +524,7 @@ function UserPublicationDraftFormPage({ mode }) {
             </div>
           </header>
 
-          {isLoading ? (
+          {isLoading || isPublisherGateLoading ? (
             <CatalogState
               icon={LoaderCircle}
               eyebrow={t("userPublicationForm.loadingEyebrow")}
@@ -491,6 +538,18 @@ function UserPublicationDraftFormPage({ mode }) {
               title={t("userPublicationForm.loadErrorTitle")}
               description={error}
               actionLabel={t("userPublicationForm.back")}
+              onAction={() => navigate("/perfil/publicaciones")}
+            />
+          ) : isPublisherGateBlocked ? (
+            <CatalogState
+              icon={UserCheck}
+              eyebrow={t("userPublicationForm.publisherGate.eyebrow")}
+              title={t("userPublicationForm.publisherGate.title")}
+              description={
+                publisherStatusError ||
+                t("userPublicationForm.publisherGate.description")
+              }
+              actionLabel={t("userPublicationForm.publisherGate.action")}
               onAction={() => navigate("/perfil/publicaciones")}
             />
           ) : !hasFormOptions ? (

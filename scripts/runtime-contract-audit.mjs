@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { PUBLIC_CATALOG_COLUMNS } from "../src/shared/publicCatalogBackupContract.mjs";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const results = [];
@@ -96,8 +97,7 @@ const catalogService = read("src/services/catalogService.js");
 const activityPresentation = read("src/helpers/activityPresentation.js");
 const catalogSearch = read("src/helpers/catalogSearch.js");
 const catalogArea = read("src/helpers/catalogArea.js");
-const catalogSelect = getStringConstValue(catalogService, "CATALOG_SELECT");
-const catalogColumns = splitSelectColumns(catalogSelect);
+const catalogColumns = PUBLIC_CATALOG_COLUMNS;
 const catalogReadColumns = getCatalogReadColumns(allSql);
 const missingCatalogColumns = catalogColumns.filter((column) => {
   const columnName = column.split(/\s+as\s+/i).pop();
@@ -198,11 +198,11 @@ assert(
 
 const pviApi = read("api/internal/pvi.js");
 assert(
-  "internal PVI API uses service role env and server token",
-  pviApi.includes("SUPABASE_SERVICE_ROLE_KEY") &&
-    pviApi.includes("INTERNAL_PVI_API_TOKEN") &&
-    pviApi.includes('.rpc("get_internal_pvi_report"'),
-  "PVI API must stay server-side and bearer-token protected.",
+  "metrics API is retired without database access",
+  pviApi.includes("res.status(410)") &&
+    !pviApi.includes("SUPABASE_SERVICE_ROLE_KEY") &&
+    !pviApi.includes("createClient"),
+  "Maintenance must not collect or report product statistics.",
 );
 
 const frontendServiceFiles = [
@@ -230,7 +230,7 @@ assert(
   "internal draft creation route is protected and writes drafts only",
   routeMap.includes('path="/internal/drafts/new"') &&
     routeMap.includes("<InternalDraftCreatePage />") &&
-    routeMap.includes("<InternalToolRoute>") &&
+    routeMap.includes("<MaintenanceRoute>") &&
     read("src/services/internalDraftsService.js").includes('.from("activity_drafts")') &&
     read("src/services/internalDraftsService.js").includes(".insert({") &&
     !read("src/pages/InternalDraftCreatePage.jsx").includes('.from("activities")') &&
@@ -274,13 +274,11 @@ assert(
   missingGrants.join(", "),
 );
 
-const favoriteHook = read("src/hooks/useFavorites.js");
 assert(
-  "favorites use hard delete against user_favorite_activities",
-  favoriteHook.includes('.from("user_favorite_activities")') &&
-    favoriteHook.includes(".delete()") &&
-    !favoriteHook.includes("is_deleted"),
-  "Favorites should remain hard-delete in this phase.",
+  "public accounts and favorites are retired",
+  !routeMap.includes('path="/perfil"') && !routeMap.includes('path="/favoritos"') &&
+    !routeMap.includes("<AuthProvider>") && !routeMap.includes("Analytics"),
+  "Public browsing must not mount legacy protected-intent, profile or analytics flows.",
 );
 
 assert(

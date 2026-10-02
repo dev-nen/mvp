@@ -1,13 +1,14 @@
 import {
   buildSupabasePublicStorageUrl,
-  getSupabaseClient,
+  getPublicSupabaseClient,
   getSupabaseClientError,
 } from "@/services/supabaseClient";
 import { normalizeDescriptionFormat } from "@/helpers/activityPresentation";
 import { slugifyText } from "@/helpers/textSlug";
+import { PUBLIC_CATALOG_COLUMNS } from "@/shared/publicCatalogBackupContract.mjs";
+import { publicCatalogBackupReader } from "@/services/publicCatalogBackupService";
 
-const CATALOG_SELECT =
-  "id, title, center_id, center_name, city_id, city_name, category_id, category_label, type_id, type_label, description, description_format, short_description, image_url, age_rule_type, age_min, age_max, price_label, is_free, schedule_label, venue_name, venue_address_1, venue_postal_code, is_featured, created_at";
+const CATALOG_SELECT = PUBLIC_CATALOG_COLUMNS.join(", ");
 
 function getTrimmedText(value) {
   return typeof value === "string" ? value.trim() : "";
@@ -52,25 +53,29 @@ function normalizeCatalogActivity(activity) {
 }
 
 export async function listActivities() {
-  const supabase = getSupabaseClient();
+  const rows = await publicCatalogBackupReader.readCatalog(async (signal) => {
+    const supabase = getPublicSupabaseClient();
 
-  if (!supabase) {
-    throw new Error(
-      getSupabaseClientError() ||
-        "No pudimos conectar con Supabase para cargar el catálogo.",
-    );
-  }
+    if (!supabase) {
+      throw new Error(getSupabaseClientError() || "Public catalog is unavailable.");
+    }
 
-  const { data, error } = await supabase
-    .from("catalog_activities_read")
-    .select(CATALOG_SELECT)
-    .order("created_at", { ascending: false });
+    const activities = [];
+    const pageSize = 500;
+    for (let offset = 0; offset < 50_000; offset += pageSize) {
+      const { data, error } = await supabase
+        .from("catalog_activities_read")
+        .select(CATALOG_SELECT)
+        .order("created_at", { ascending: false })
+        .order("id", { ascending: false })
+        .range(offset, offset + pageSize - 1)
+        .abortSignal(signal);
+      if (error) throw new Error("Public catalog is unavailable.");
+      activities.push(...(data ?? []));
+      if ((data ?? []).length < pageSize) return activities;
+    }
+    throw new Error("Public catalog limit exceeded.");
+  });
 
-  if (error) {
-    throw new Error(
-      error.message || "No pudimos cargar el catálogo desde la base de datos.",
-    );
-  }
-
-  return (data ?? []).map(normalizeCatalogActivity);
+  return rows.map(normalizeCatalogActivity);
 }

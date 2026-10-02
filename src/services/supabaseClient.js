@@ -20,16 +20,12 @@ const supabaseConfigError = missingEnvVars.length
 
 let supabaseRuntimeError = "";
 let supabaseClient = null;
+let publicSupabaseClient = null;
 
-if (!supabaseConfigError) {
+function createSupabaseClient(authOptions) {
+  if (supabaseConfigError) return null;
   try {
-    supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-      },
-    });
+    return createClient(supabaseUrl, supabaseAnonKey, { auth: authOptions });
   } catch (error) {
     supabaseRuntimeError =
       "No pudimos inicializar el cliente de Supabase con la configuración actual.";
@@ -37,13 +33,12 @@ if (!supabaseConfigError) {
     if (import.meta.env.DEV) {
       console.warn("[supabase] Fallo al crear el cliente.", error);
     }
+    return null;
   }
 }
 
-export const supabase = supabaseClient;
-
 export function isSupabaseReady() {
-  return Boolean(supabase);
+  return Boolean(getSupabaseClient());
 }
 
 export function getSupabaseClientError() {
@@ -51,7 +46,26 @@ export function getSupabaseClientError() {
 }
 
 export function getSupabaseClient() {
-  return supabase;
+  if (!supabaseClient) {
+    supabaseClient = createSupabaseClient({
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    });
+  }
+  return supabaseClient;
+}
+
+export function getPublicSupabaseClient() {
+  if (!publicSupabaseClient) {
+    publicSupabaseClient = createSupabaseClient({
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      storageKey: "nensgo.public-read-only",
+    });
+  }
+  return publicSupabaseClient;
 }
 
 export function buildSupabasePublicStorageUrl(bucketName, objectPath) {

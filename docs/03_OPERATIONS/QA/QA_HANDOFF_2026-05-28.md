@@ -8,6 +8,11 @@ Status: Confirmed for repository integration. Pending QA for manual product smok
 
 Manual QA is not claimed as passed in this document. Items that require browser or live Supabase validation are marked `Pending QA`.
 
+Follow-up: [2026-09-18 publisher validation and hardening](./PUBLISHER_PHASE4_VALIDATION_2026-09-18.md)
+records the two SQL fixes, automated PostgreSQL checks and external read-only
+inspection separately from the historical integration evidence below. Browser
+QA and live migration application must not be inferred from local test results.
+
 ## Scope included
 
 ### Pack 1 — Public polish
@@ -45,6 +50,31 @@ Status: Confirmed in merged code and SQL files. Pending QA/live data validation.
 - Options are Gratis / De pago.
 - Removed Gratuidad / De pago o sin confirmar / Texto de precio.
 
+### Pack 4 — Organizador / Alta de Publicadores
+
+Status: Confirmed in code. Pending SQL apply. Pending QA.
+
+- Normal users see an invitation to become Organizador on
+  `/perfil/publicaciones`.
+- The request form exists at `/perfil/organizador/solicitud`.
+- The form uses authenticated user email as read-only context and does not ask
+  for an editable email.
+- Publisher request statuses are represented as `not_requested`,
+  `pending_review`, `needs_changes`, `approved`, and `rejected`.
+- Internal review lives inside `/internal/drafts` under the exact tab label
+  `Alta de Publicadores`.
+- Internal reviewers can list, inspect, approve, ask for changes, or reject
+  publisher requests.
+- Approved publishers can submit new activity drafts; they still do not publish
+  directly.
+- Non-approved users cannot create new activity submissions through the UI, and
+  the SQL migration adds a server-side gate on new user submissions.
+- Previous drafts remain visible through `/perfil/publicaciones`; correction
+  and edit-request paths remain available where existing product rules allow.
+- SQL migration required:
+  `supabase/sql/2026-05-30_publisher_request_flow_phase4.sql`.
+- SQL applied status: Pending SQL apply.
+
 ### Main hotfix — Local recovery
 
 Status: Confirmed in merged code. Pending QA in browser.
@@ -80,6 +110,27 @@ Status: Confirmed in merged code. Pending QA in browser.
 - [ ] Successful submit clears local recovery.
 - [ ] Internal draft creation still recovers unsaved data.
 
+### Organizador / Alta de Publicadores
+
+- [ ] Normal authenticated non-approved user sees the Organizador invitation on
+  `/perfil/publicaciones`.
+- [ ] Normal authenticated user can open
+  `/perfil/organizador/solicitud`.
+- [ ] Request form submits required fields and returns the user to
+  `/perfil/publicaciones`.
+- [ ] `pending_review` users see "Tu solicitud está en revisión." and cannot
+  open a new activity submission.
+- [ ] `needs_changes` users see user-facing feedback and can resubmit.
+- [ ] `rejected` users see user-facing feedback and can apply again.
+- [ ] `/internal/drafts` shows tabs `Actividades` and
+  `Alta de Publicadores`.
+- [ ] Internal reviewer can approve a pending publisher request.
+- [ ] Internal reviewer can ask for changes with user-facing feedback.
+- [ ] Internal reviewer can reject a pending publisher request.
+- [ ] Approved publisher can create a new activity draft.
+- [ ] Non-approved user cannot create a new activity draft by direct RPC call.
+- [ ] Previous user drafts remain visible for non-approved users.
+
 ### Contact options
 
 - [ ] Web and Formulario appear as separate types.
@@ -104,7 +155,7 @@ Status: Confirmed in merged code. Pending QA in browser.
 
 Status: Deferred.
 
-- [Organizador / request-to-publish flow](../../01_PRODUCT/ORGANIZER_REQUEST_FLOW_SPEC.md).
+- Public organizer profiles and public organizer profile editing.
 - Day/date/schedule model.
 - Full Conócenos content.
 - FAQ section.
@@ -118,6 +169,9 @@ Status: Confirmed for integration notes.
 
 - Some SQL migrations for contact labels and single-primary were already applied manually before this merge.
 - No SQL was applied during this merge itself.
+- Phase 4 Organizador SQL has not been applied by this handoff. Apply
+  `supabase/sql/2026-05-30_publisher_request_flow_phase4.sql` before QA of the
+  request/review/gating flow.
 - Branches were merged with arbolito history: no squash, no rebase, and explicit merge commits.
 - Known Vite warnings about `vendor-markdown` circular chunks and a vendor chunk over 500 kB remain existing warnings when the build exits 0.
 
@@ -129,7 +183,9 @@ Status: Confirmed.
 - Pack 1 merge commit: `eb385d7 Merge branch 'fix/qa-public-polish' into main`.
 - Pack 2 merge commit: `98bc531 Merge branch 'fix/auth-profile-onboarding-qa' into main`.
 - Pack 3 merge commit: `406f39f Merge branch 'feat/contact-options-labels-and-form-type' into main`.
-- Final main HEAD after QA pack merges: `406f39f`.
+- Pack 4A spec merge commit on main:
+  `582b635 Merge branch 'docs/organizador-request-flow-spec'`.
+- Pack 4 implementation branch: `feat/publisher-request-flow-phase4`.
 
 ## Validation run
 

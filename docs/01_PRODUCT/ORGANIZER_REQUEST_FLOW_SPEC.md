@@ -1,11 +1,13 @@
 # Organizador / Publisher Request Flow Spec
 
-Status: Planned.
+Status: Implemented in repository on `feat/publisher-request-flow-phase4`.
+Pending manual Supabase SQL apply and live QA.
 
-Pack: 4A.
+Pack: 4.
 
-Scope: Product and technical specification only. No UI, SQL, routes, RPCs,
-publication gating, deployment, or data migration is implemented by this spec.
+Scope: SQL/RPC foundation, user request UI, internal Draft Inbox review tab,
+and new-submission gating. No live SQL apply, deploy, public organizer
+profiles, or direct publishing is included.
 
 ## Summary
 
@@ -21,9 +23,30 @@ Approving a publisher request only enables the user to submit activity drafts.
 It does not publish activities directly. Activity submissions still go through
 the existing Draft Inbox review flow.
 
-## Current Behavior
+## Implementation Status
 
-Current repository behavior before Pack 4 implementation:
+Phase 4 is implemented in code and SQL migration files but remains `Partial`
+until the SQL is applied manually and Supabase/RLS/UI smoke checks pass.
+
+Implemented repository pieces:
+
+- SQL migration:
+  `supabase/sql/2026-05-30_publisher_request_flow_phase4.sql`.
+- User hub: `/perfil/publicaciones`.
+- User request route: `/perfil/organizador/solicitud`.
+- Internal review location: `/internal/drafts`, tab label
+  `Alta de Publicadores`.
+- New activity route gate: `/perfil/publicaciones/nueva` requires approved
+  publisher status in the frontend and is enforced server-side by an
+  `activity_drafts` trigger on new user submissions.
+- Existing publication history, correction, and edit-request flows remain
+  available through their existing RPCs and routes where product rules allow.
+
+No SQL has been applied live by this implementation task.
+
+## Baseline Before Implementation
+
+Repository behavior before Pack 4 implementation:
 
 - Any authenticated, verified, onboarded user can open
   `/perfil/publicaciones/nueva`.
@@ -79,7 +102,7 @@ V1 request fields:
   actividad.
 - `municipality_id` or `city_id`: required. Use the existing municipality
   source or autocomplete when implemented.
-- `phone`: required or strongly recommended; final requirement remains open.
+- `phone`: required.
   Visible copy: Teléfono de contacto.
 - `instagram`: optional.
 - `website`: optional.
@@ -91,7 +114,7 @@ V1 request fields:
 - Authenticated user email: sourced from the current user, not editable.
 - Admin feedback and review notes: internal/admin only.
 
-## Recommended Data Model Direction
+## Implemented Data Model Direction
 
 Do not store the whole lifecycle inside `user_profiles`.
 
@@ -104,14 +127,15 @@ data. Conceptual fields:
 - `organizer_type`
 - `full_name`
 - `commercial_name`
-- `municipality_id` or `city_id`
+- `city_id`
 - `phone`
 - `instagram`
 - `website`
 - `activity_description`
+- `has_physical_location`
 - `address_line_1`
-- `admin_feedback_summary`
-- `admin_feedback_json`
+- `user_feedback_summary`
+- `user_feedback_json`
 - `internal_review_notes`
 - `reviewed_by`
 - `reviewed_at`
@@ -129,11 +153,12 @@ fields:
 - `organizer_type`
 - `full_name`
 - `commercial_name`
-- `municipality_id` or `city_id`
+- `city_id`
 - `phone`
 - `instagram`
 - `website`
 - `activity_description`
+- `has_physical_location`
 - `address_line_1`
 - `approved_at`
 - `approved_by`
@@ -147,27 +172,34 @@ Rationale:
 - Separates request lifecycle from active approved publisher state.
 - Gives publication gating a single approved publisher state to check.
 
-## Recommended RPC Direction
+Implementation choices:
+
+- Municipality uses `city_id` against active ES municipalities.
+- Address is required only when the request declares a physical location.
+- Resubmission creates a new `pending_review` row linked by
+  `supersedes_request_id`; rejected users can reapply.
+
+## Implemented RPC Direction
 
 User-side RPCs:
 
 - `get_my_publisher_status()`
 - `submit_my_publisher_request(payload jsonb)`
-- `update_my_publisher_request(...)` or
-  `resubmit_my_publisher_request(...)`
+- `resubmit_my_publisher_request(request_id, payload jsonb)`
 
 Internal/admin RPCs:
 
-- `list_internal_publisher_requests()`
+- `list_internal_publisher_requests(status)`
 - `get_internal_publisher_request(request_id)`
-- `review_internal_publisher_request(request_id, status, feedback, notes)`
-- `approve_internal_publisher_request(request_id)`
+- `request_internal_publisher_changes(request_id, feedback, notes)`
+- `reject_internal_publisher_request(request_id, feedback, notes)`
+- `approve_internal_publisher_request(request_id, notes)`
 
 Publication gating:
 
-- Update `create_my_activity_submission` so new submissions require approved
-  publisher status.
-- Apply this gate only after the request and review flow exists.
+- `create_my_activity_submission` inserts are gated server-side by
+  `activity_drafts_require_approved_publisher_for_submission`.
+- The gate applies only to new first-version user submissions.
 - Preserve access to historical user drafts.
 - Frontend gating alone is not enough; server/RPC enforcement is required.
 
@@ -242,11 +274,13 @@ Statuses shown in the internal tab:
 
 ## Implementation Phases
 
+The phase implementation below is confirmed in repository code only. SQL apply
+and live QA remain pending.
+
 ### 4A — Spec/docs only
 
-- Create this specification.
-- No code.
-- No SQL.
+- Status: Done.
+- Created this specification.
 
 ### 4B — SQL/RPC foundation
 
@@ -255,18 +289,21 @@ Statuses shown in the internal tab:
 - Add RLS and grants.
 - Add user-side and internal/admin RPCs.
 - Avoid UI gating unless it is safe and the request/review path exists.
+- Status: Confirmed in code. Pending SQL apply and live QA.
 
 ### 4C — User request UI
 
 - Add the invitation on `/perfil/publicaciones`.
 - Add `/perfil/organizador/solicitud`.
 - Add status states for pending, needs changes, approved, and rejected.
+- Status: Confirmed in code. Pending SQL apply and live QA.
 
 ### 4D — Internal review UI
 
 - Add the Alta de Publicadores tab inside `/internal/drafts`.
 - Add internal request list/detail review.
 - Support Aprobar, Pedir cambios, and Rechazar.
+- Status: Confirmed in code. Pending SQL apply and live QA.
 
 ### 4E — Gate new activity submission
 
@@ -274,6 +311,7 @@ Statuses shown in the internal tab:
 - Enforce approved publisher status in `create_my_activity_submission`.
 - Keep historical drafts visible.
 - Preserve correction access where product rules allow.
+- Status: Confirmed in code. Pending SQL apply and live QA.
 
 ### 4F — Smoke/hardening
 
@@ -282,26 +320,25 @@ Statuses shown in the internal tab:
 - Smoke existing draft access.
 - Smoke UI states.
 - Update QA handoff.
+- Status: Pending QA.
 
-## Open Questions
+## Deferred Questions
 
-- Is phone required or strongly recommended?
-- Should address be required for all company/entity organizers, or only when
-  they have a fixed physical venue?
-- Should rejected requests reuse the same row or create a new request revision?
-- Should `needs_changes` edits preserve history/revision?
 - Should an approved publisher later appear publicly as an organizer profile?
-- Exact Spanish, Catalan, and English copy for CTAs and statuses.
+- Should approved publisher data become editable through a self-service profile
+  flow?
+- Should `needs_changes` feedback become fully field-level in the public form?
+- Exact final Catalan and English copy for all request/status states.
 
-## Out Of Scope For Pack 4A
+## Out Of Scope For Phase 4 Implementation
 
-- UI implementation.
-- SQL migrations.
-- SQL application.
-- Route changes.
-- Auth logic changes.
-- Publication gating changes.
-- Contact option changes.
-- Day/date/schedule model changes.
+- SQL live apply.
+- Deployment.
+- Direct publishing by organizers.
 - Public organizer profiles.
-- Push, deploy, or merge.
+- Contact option model changes beyond existing draft payload support.
+- Day/date/schedule model changes.
+- Conócenos content.
+- FAQ.
+- Report problem form.
+- Mobile polish and broader copy audit.

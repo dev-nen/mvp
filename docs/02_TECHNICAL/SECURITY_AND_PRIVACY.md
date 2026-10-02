@@ -1,6 +1,45 @@
 # Security and Privacy
 
+## Frontera vigente: mantenimiento (octubre de 2026)
+
+Estado: **Partial**. Los cambios están versionados en
+`supabase/sql/2026-10-02_maintenance_admin.sql`; no se han aplicado ni validado
+en producción en esta transición.
+
+- El público usa lecturas anónimas de catálogo y contactos. La app activa no
+  solicita cuentas, favoritos, perfiles ni escrituras de eventos.
+- Ambas administradoras previas se provisionan explícitamente en
+  `maintenance_operator`. `is_maintenance_operator` exige además su permiso
+  existente `internal_tool_access.tool_name = 'draft_inbox'`. La allowlist no
+  es singleton ni incorpora automáticamente otras cuentas.
+- RLS restrictiva, guards en RPCs internas y políticas de Storage restringen el
+  mantenimiento a las cuentas permitidas. Las RPCs de importación y alta de
+  centros comprueban autorización; las altas tienen confirmación humana.
+- Se revocan accesos a flujos públicos de perfil, favoritos, eventos y publishers
+  retirados. Los registros se conservan. Ocultar controles de la UI no sustituye
+  aplicar la migración ni deshabilitar altas en Supabase Auth.
+- La API de respaldo valida el bearer con `auth.getUser` y ejecuta el RPC de
+  permiso con esa identidad. Sólo producción y el dominio canónico pueden
+  solicitar el deploy. No devuelve el hook ni usa `service_role`.
+- `PUBLIC_CATALOG_DEPLOY_HOOK` es un secreto sólo de servidor. Nunca usar prefijo
+  `VITE_`, incluirlo en código cliente, logs o capturas.
+- La copia permite exclusivamente datos de las vistas públicas y sus imágenes;
+  excluye cuentas, borradores, notas internas y secretos.
+- El nombre opcional para WhatsApp/correo sólo vive en el estado del diálogo y se
+  descarta al cerrar/cambiar actividad. No se guarda ni se registra como evento.
+
+La retención de datos históricos y los textos legales se revisan al terminar
+el proyecto. No se declara cumplimiento legal definitivo. El
+[runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) detalla provisión de ambas
+cuentas, configuración y comprobaciones externas.
+
+El resto del documento conserva la **referencia histórica** anterior:
+permisos de usuarios/centros, PVI y eventos no son el contrato de mantenimiento.
+
+## Referencia anterior (histórica)
+
 ## Security model
+
 
 La seguridad real del sistema debe vivir en Supabase y en APIs server-side, no en el frontend.
 
@@ -59,6 +98,33 @@ Validar en live antes de considerar cerrado.
 - `source_reference_url` is optional draft traceability only and is not public
   catalog data.
 
+## Phase 4 Publisher / Organizador security
+
+- Normal family users are not publishers by default.
+- Publisher capability is represented by `publisher_profiles.is_active = true`,
+  not by `user_profiles.role_id` or `internal_tool_access`.
+- `publisher_requests` and `publisher_profiles` contain private organizer PII
+  and contact data. Client roles have no direct table access. Normal users
+  read only their own safe fields through `get_my_publisher_status`; internal
+  reviewers use the permission-checked internal RPCs. RLS remains enabled.
+- User mutations go through `submit_my_publisher_request` and
+  `resubmit_my_publisher_request`; they do not create publisher profiles.
+- Internal request review RPCs require
+  `internal_tool_access.tool_name = 'draft_inbox'`.
+- Approving a request creates or updates the active publisher profile. It does
+  not approve or publish activities.
+- New activity submissions require an active publisher profile server-side.
+  Frontend route gating is UX only.
+- Existing draft history, corrections and edit requests remain available
+  through their existing owner-checked RPCs where product rules allow.
+
+The 2026-09-18 hardening removes the original table-wide SELECT grants and
+qualifies review RPC column references to avoid PL/pgSQL output-parameter
+ambiguity. Fresh installs use the corrected Phase 4 foundation; existing
+installs use `2026-09-18_publisher_request_review_hardening.sql`. Local SQL
+regression coverage is available through `npm.cmd run check:publisher-sql`;
+it does not replace live Supabase/UI validation.
+
 ## Phase 4 Core contact security
 
 - Normal users may submit contact options only inside `activity_drafts`
@@ -116,6 +182,7 @@ Las rutas `/privacidad` y `/terminos` existen y usan canonical `https://nensgo.c
 - HTML crudo o Markdown con HTML habilitado en descripciones.
 - Imágenes base64 en `activity_drafts` o `activities`.
 - Reporting interno en rutas públicas.
+- Publisher request PII or internal review notes in public catalog/profile UI.
 
 ## Defensive audit items
 
@@ -153,6 +220,10 @@ Estado: implementado en repo, pendiente de aplicación/validación live donde co
 - Phase 3 Core SQL/RPC: pending manual apply and live smoke. Validate
   authenticated-only draft creation, draft-only writes, `source_type =
   'user_submission'`, and no direct `public.activities` write.
+- Phase 4 Publisher SQL/RPC: pending manual apply and live smoke. Validate
+  own-only request/profile reads, normal-user request submit/resubmit, internal
+  Draft Inbox approval, active profile creation, non-approved submission
+  denial, approved publisher draft creation, and historical draft visibility.
 - Phase 4 Core SQL/RPC: pending manual apply and live smoke. Validate contact
   option draft storage, admin approval publication, Instagram normalization,
   and no normal-user direct writes to `activity_contact_options`.

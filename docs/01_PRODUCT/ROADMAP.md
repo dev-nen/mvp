@@ -1,6 +1,32 @@
 # Product Roadmap
 
-Este roadmap resume el orden de producto desde el estado actual. No sustituye al roadmap maestro histórico en [05_ARCHIVE/ROADMAP_MASTER.md](../05_ARCHIVE/ROADMAP_MASTER.md), pero ofrece una lectura más directa para revisión externa.
+## Decisión vigente: detener desarrollo y mantener servicio
+
+El 2 de octubre de 2026 se detiene el roadmap de crecimiento. La rama
+`feat/publisher-request-flow-phase4` está adaptada para operar como prueba de
+concepto/portfolio con planes gratuitos, dominio conservado y cargas ocasionales,
+durante un máximo de un año más.
+
+Estado: **Partial**. Ahora corresponde validar la vista previa, preparar SQL/Auth
+y ambas administradoras previas, confirmar costes/cuotas reales y desplegar la
+transición aprobada. Después sólo quedan carga editorial ocasional, revisión de
+datos vigentes y respaldo público manual tras publicar, modificar o retirar.
+
+No se continúa el desarrollo de organizadores, favoritos, onboarding público,
+reporting, extracción automatizada, IA integrada ni aplicaciones nuevas. Los
+datos históricos se preservan. La finalización del servicio y la disposición de
+esos datos se decidirán posteriormente; no hay apagado automático.
+
+Detalle: [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) y
+[plan de transición](../03_OPERATIONS/MAINTENANCE_TRANSITION_2026-10.md).
+
+## Roadmap anterior (histórico, sin ejecución prevista)
+
+Este contenido preserva el contexto del MVP y del
+[roadmap maestro histórico](../05_ARCHIVE/ROADMAP_MASTER.md). No representa
+trabajo autorizado ni prioridades vigentes del mantenimiento.
+
+
 
 ## Ahora
 
@@ -15,6 +41,12 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 - Documentar Phase 3 como implementada en repo cuando exista la migracion SQL
   y la ruta `/perfil/publicaciones/nueva`, pero no live-validada hasta aplicar
   SQL manualmente.
+- Documentar Phase 4 Organizador / publisher request flow como implementado en
+  repo cuando exista la migracion
+  `2026-05-30_publisher_request_flow_phase4.sql`, la ruta
+  `/perfil/organizador/solicitud`, y la pestaña interna
+  `Alta de Publicadores`; mantenerlo como `Partial` hasta aplicar SQL y
+  completar smoke live.
 - Mantener registrada la evidencia de Phase 1: `/internal/activities` está implementado y live-smoke validado para catálogo interno y publicar/despublicar.
 - Mantener visible la deuda técnica y no presentar el proyecto como production-ready.
 
@@ -31,9 +63,9 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
 ## Siguiente
 
 - Cerrar smoke tests live de Supabase, RLS y RPC.
-- Preparar Pack 4A con la especificación de
-  [Organizador / publisher request flow](./ORGANIZER_REQUEST_FLOW_SPEC.md);
-  la implementación queda para fases posteriores.
+- Aplicar y validar el SQL de
+  [Organizador / publisher request flow](./ORGANIZER_REQUEST_FLOW_SPEC.md):
+  solicitud, revision interna, aprobacion y gating de nuevas submissions.
 - Revisar calidad de datos del catálogo y contact options.
 - Monitorizar tamaño del bundle Vite si se añaden dependencias grandes o vuelve el warning.
 - Formalizar modelo de localities/areas para sustituir el hardcode de Les Roquetes.
@@ -64,6 +96,16 @@ Este roadmap resume el orden de producto desde el estado actual. No sustituye al
   subidas por usuarios normales.
 - Mantener Phase 3 como `Partial` hasta aplicar la migracion SQL y completar
   smoke Supabase/RLS.
+
+### Phase 4 Publisher: Organizador request flow
+
+- Implementado en repo como solicitud de alta de Organizador, revision interna
+  en Draft Inbox y gating de nuevas submissions por publisher aprobado.
+- Superficies: `/perfil/publicaciones`, `/perfil/organizador/solicitud` y
+  `/internal/drafts` -> `Alta de Publicadores`.
+- SQL: `supabase/sql/2026-05-30_publisher_request_flow_phase4.sql`.
+- Mantener como `Partial` hasta aplicar SQL manualmente y validar RLS/RPC/UI en
+  vivo.
 
 ### Phase 4 Core: contact options lifecycle
 

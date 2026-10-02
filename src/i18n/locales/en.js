@@ -350,7 +350,7 @@ const en = {
     publicationsDescription:
       "Check your publication status or send an activity for NensGo to review.",
     publicationsAction: "My publications",
-    submitActivityAction: "Send activity",
+    submitActivityAction: "Organizador",
     internalDescription:
       "If you are part of the team, you can open the Draft Inbox from here.",
     internalAction: "Open Draft Inbox",
@@ -414,6 +414,15 @@ const en = {
     noOptionsTitle: "We could not prepare the options",
     noOptionsDescription:
       "The form needs available categories and types before sending changes.",
+    publisherGate: {
+      eyebrow: "Organizador",
+      title: "Request Organizador access",
+      description:
+        "To send a new activity, your Organizador request must be approved first. Your previous publications remain visible in your panel.",
+      action: "Back to my publications",
+      submitBlocked:
+        "To send a new activity, your Organizador request must be approved first.",
+    },
     recovery: {
       title: "We restored an unsaved local draft.",
       imageNote: "The selected image must be chosen again.",

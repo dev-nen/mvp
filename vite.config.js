@@ -92,7 +92,10 @@ function getVendorChunkName(id) {
     return 'vendor-markdown'
   }
 
-  return 'vendor'
+  // Let Rollup keep editor-only dependencies with their lazy entry points.
+  // A catch-all vendor chunk loads the private editor on public visits and
+  // forms a circular dependency with the shared Markdown chunk.
+  return undefined
 }
 
 export default defineConfig({

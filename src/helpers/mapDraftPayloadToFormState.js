@@ -28,7 +28,7 @@ function normalizeAgeRuleType(value) {
     return "all";
   }
 
-  return "all";
+  return "";
 }
 
 function normalizeNumericValue(value) {
@@ -88,14 +88,18 @@ export function getDefaultDraftFormState() {
     centerSearchQuery: "",
     centerProposalName: "",
     centerProposalNotes: "",
+    centerProposalCity: "",
+    centerProposalInstitution: "",
+    centerProposalAddress: "",
+    centerProposalPostalCode: "",
     categoryId: "",
     typeId: "",
     imageUrl: "",
-    ageRuleType: "all",
+    ageRuleType: "",
     ageMin: "",
     ageMax: "",
     priceLabel: "",
-    isFree: "false",
+    isFree: "",
     scheduleLabel: "",
     venueName: "",
     venueAddress1: "",
@@ -104,6 +108,7 @@ export function getDefaultDraftFormState() {
     contactOptions: [],
     contactOptionsTouched: false,
     hasContactOptionsPayload: false,
+    importReview: null,
   };
 }
 
@@ -126,6 +131,10 @@ export function mapDraftPayloadToFormState(payload) {
     centerSearchQuery: "",
     centerProposalName: getTrimmedText(centerPayload.name),
     centerProposalNotes: getTrimmedText(centerPayload.notes),
+    centerProposalCity: getTrimmedText(centerPayload.city_name),
+    centerProposalInstitution: getTrimmedText(centerPayload.institution_name),
+    centerProposalAddress: getTrimmedText(centerPayload.address_line_1),
+    centerProposalPostalCode: getTrimmedText(centerPayload.postal_code),
     categoryId: normalizeIdValue(activityPayload.category_id),
     typeId: normalizeIdValue(activityPayload.type_id),
     imageUrl: getTrimmedText(activityPayload.image_url),
@@ -133,7 +142,7 @@ export function mapDraftPayloadToFormState(payload) {
     ageMin: normalizeNumericValue(activityPayload.age_min),
     ageMax: normalizeNumericValue(activityPayload.age_max),
     priceLabel: getTrimmedText(activityPayload.price_label),
-    isFree: activityPayload.is_free === true ? "true" : "false",
+    isFree: activityPayload.is_free === true ? "true" : activityPayload.is_free === false ? "false" : "",
     scheduleLabel: getTrimmedText(activityPayload.schedule_label),
     venueName: getTrimmedText(activityPayload.venue_name),
     venueAddress1: getTrimmedText(activityPayload.venue_address_1),
@@ -141,5 +150,6 @@ export function mapDraftPayloadToFormState(payload) {
     contactOptions: mapPayloadContactOptionsToFormState(payload),
     contactOptionsTouched: false,
     hasContactOptionsPayload: hasContactOptionsPayload(payload),
+    importReview: payload?.import_review && typeof payload.import_review === "object" ? payload.import_review : null,
   };
 }

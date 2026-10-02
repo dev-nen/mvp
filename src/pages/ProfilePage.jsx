@@ -509,7 +509,7 @@ export function ProfilePage() {
                       <Button
                         type="button"
                         className="profile-page__action-button"
-                        onClick={() => navigate("/perfil/publicaciones/nueva")}
+                        onClick={() => navigate("/perfil/publicaciones")}
                       >
                         <Plus />
                         {t("profile.submitActivityAction")}

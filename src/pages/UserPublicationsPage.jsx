@@ -8,6 +8,7 @@ import {
   Plus,
   RotateCcw,
   SearchX,
+  UserPlus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,6 +16,8 @@ import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { PUBLISHER_STATUS } from "@/helpers/publisherStatus";
+import { usePublisherStatus } from "@/hooks/usePublisherStatus";
 import { useI18n } from "@/i18n/useI18n";
 import {
   listMyActivityPublications,
@@ -62,10 +65,98 @@ function getPublicationStatusLabel(userStatus, t) {
   return t("userPublications.status.inReview");
 }
 
+function PublisherStatusPanel({ onRequest, publisherStatus }) {
+  if (publisherStatus.status === PUBLISHER_STATUS.APPROVED) {
+    return null;
+  }
+
+  if (publisherStatus.status === PUBLISHER_STATUS.PENDING_REVIEW) {
+    return (
+      <Card className="user-publications-page__organizer-panel">
+        <CardContent className="user-publications-page__organizer-content">
+          <div className="user-publications-page__organizer-icon">
+            <LoaderCircle />
+          </div>
+          <div>
+            <p className="user-publications-page__organizer-eyebrow">
+              Organizador
+            </p>
+            <h2>Tu solicitud está en revisión.</h2>
+            <p>
+              Revisaremos tu alta antes de activar el envío de nuevas
+              actividades.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const isNeedsChanges =
+    publisherStatus.status === PUBLISHER_STATUS.NEEDS_CHANGES;
+  const isRejected = publisherStatus.status === PUBLISHER_STATUS.REJECTED;
+
+  return (
+    <Card className="user-publications-page__organizer-panel">
+      <CardContent className="user-publications-page__organizer-content">
+        <div className="user-publications-page__organizer-icon">
+          <UserPlus />
+        </div>
+        <div className="user-publications-page__organizer-copy">
+          <p className="user-publications-page__organizer-eyebrow">
+            Organizador
+          </p>
+          <h2>
+            {isNeedsChanges
+              ? "Completa tu solicitud de Organizador"
+              : "¿Ofreces actividades infantiles?"}
+          </h2>
+          <p>
+            {isRejected
+              ? "Tu solicitud no fue aprobada, pero puedes enviar una nueva para revisión interna."
+              : "Hazte Organizador en NensGo para enviar actividades al panel de revisión."}
+          </p>
+
+          {publisherStatus.userFeedbackSummary ? (
+            <div className="user-publications-page__organizer-feedback">
+              <p>{publisherStatus.userFeedbackSummary}</p>
+              {publisherStatus.userFeedbackJson.length > 0 ? (
+                <ul>
+                  {publisherStatus.userFeedbackJson.map((item, index) => (
+                    <li key={`${item.reason_code || item.field}-${index}`}>
+                      {item.message}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
+
+          <Button
+            type="button"
+            className="user-publications-page__organizer-button"
+            onClick={onRequest}
+          >
+            <UserPlus />
+            {isNeedsChanges
+              ? "Corregir solicitud"
+              : "Solicitar alta como Organizador"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function UserPublicationsPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useI18n();
+  const {
+    error: publisherStatusError,
+    isLoading: isPublisherStatusLoading,
+    publisherStatus,
+  } = usePublisherStatus();
   const [publications, setPublications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -114,13 +205,19 @@ export function UserPublicationsPage() {
   }, [t]);
 
   useEffect(() => {
-    const message = location.state?.userPublicationsMessage;
+    const message =
+      location.state?.userPublicationsMessage ||
+      location.state?.publisherRequestMessage;
+    const errorMessage =
+      location.state?.userPublicationsError ||
+      location.state?.publisherRequestError;
 
-    if (!message) {
+    if (!message && !errorMessage) {
       return;
     }
 
-    setActionMessage(message);
+    setActionMessage(message || "");
+    setActionError(errorMessage || "");
     navigate(location.pathname, { replace: true, state: null });
   }, [location.pathname, location.state, navigate]);
 
@@ -172,6 +269,10 @@ export function UserPublicationsPage() {
     }
   };
 
+  const canSubmitNewActivity = publisherStatus.canSubmitActivities;
+  const isPageLoading = isLoading || isPublisherStatusLoading;
+  const pageError = error || publisherStatusError;
+
   return (
     <div className="user-publications-page">
       <main className="user-publications-page__main">
@@ -199,30 +300,54 @@ export function UserPublicationsPage() {
                 </p>
               </div>
 
-              <Button
-                type="button"
-                className="user-publications-page__submit-button"
-                onClick={() => navigate("/perfil/publicaciones/nueva")}
-              >
-                <Plus />
-                {t("userPublications.actions.submit")}
-              </Button>
+              {canSubmitNewActivity ? (
+                <Button
+                  type="button"
+                  className="user-publications-page__submit-button"
+                  onClick={() => navigate("/perfil/publicaciones/nueva")}
+                >
+                  <Plus />
+                  {t("userPublications.actions.submit")}
+                </Button>
+              ) : null}
             </div>
           </header>
 
-          {isLoading ? (
+          {!isPageLoading && !pageError ? (
+            <PublisherStatusPanel
+              publisherStatus={publisherStatus}
+              onRequest={() => navigate("/perfil/organizador/solicitud")}
+            />
+          ) : null}
+
+          {!isPageLoading && !pageError && actionMessage ? (
+            <p className="user-publications-page__action-feedback user-publications-page__action-feedback--success">
+              {actionMessage}
+            </p>
+          ) : null}
+
+          {!isPageLoading && !pageError && actionError ? (
+            <p
+              className="user-publications-page__action-feedback user-publications-page__action-feedback--error"
+              role="alert"
+            >
+              {actionError}
+            </p>
+          ) : null}
+
+          {isPageLoading ? (
             <CatalogState
               icon={LoaderCircle}
               eyebrow={t("userPublications.loadingEyebrow")}
               title={t("userPublications.loadingTitle")}
               description={t("userPublications.loadingDescription")}
             />
-          ) : error ? (
+          ) : pageError ? (
             <CatalogState
               icon={AlertTriangle}
               eyebrow={t("userPublications.errorEyebrow")}
               title={t("userPublications.loadErrorTitle")}
-              description={error}
+              description={pageError}
               actionLabel={t("userPublications.retry")}
               onAction={() => window.location.reload()}
             />
@@ -231,27 +356,24 @@ export function UserPublicationsPage() {
               icon={SearchX}
               eyebrow={t("userPublications.emptyEyebrow")}
               title={t("userPublications.emptyTitle")}
-              description={t("userPublications.emptyDescription")}
-              actionLabel={t("userPublications.actions.submit")}
-              onAction={() => navigate("/perfil/publicaciones/nueva")}
+              description={
+                canSubmitNewActivity
+                  ? t("userPublications.emptyDescription")
+                  : "Todavía no tienes publicaciones enviadas."
+              }
+              actionLabel={
+                canSubmitNewActivity
+                  ? t("userPublications.actions.submit")
+                  : undefined
+              }
+              onAction={
+                canSubmitNewActivity
+                  ? () => navigate("/perfil/publicaciones/nueva")
+                  : undefined
+              }
             />
           ) : (
             <section className="user-publications-page__list" aria-live="polite">
-              {actionMessage ? (
-                <p className="user-publications-page__action-feedback user-publications-page__action-feedback--success">
-                  {actionMessage}
-                </p>
-              ) : null}
-
-              {actionError ? (
-                <p
-                  className="user-publications-page__action-feedback user-publications-page__action-feedback--error"
-                  role="alert"
-                >
-                  {actionError}
-                </p>
-              ) : null}
-
               {publications.map((publication) => {
                 const statusLabel = getPublicationStatusLabel(
                   publication.userStatus,

@@ -1,0 +1,10 @@
+.internal-json-import { padding-block: 2rem 4rem; max-width: 70rem; }
+.internal-json-import header p { max-width: 50rem; }
+.internal-json-import nav { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.internal-json-import > label, .internal-json-import details label { display: block; font-weight: 600; margin-block: 1rem .5rem; }
+.internal-json-import textarea { display: block; width: 100%; box-sizing: border-box; resize: vertical; padding: 1rem; border: 1px solid #cbd5e1; border-radius: .75rem; font: .88rem/1.5 monospace; margin-bottom: 1rem; }
+.internal-json-import details { border: 1px solid #cbd5e1; border-radius: .75rem; padding: 1rem; margin-bottom: 1.5rem; }
+.internal-json-import summary { cursor: pointer; font-weight: 600; }
+.internal-json-import pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+.internal-json-import article { padding: 1rem; margin-block: 1rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: .75rem; }
+.internal-json-import__error { color: #9f1239; }

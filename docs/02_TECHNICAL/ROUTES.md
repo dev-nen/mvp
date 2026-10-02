@@ -1,6 +1,38 @@
 # Routes
 
+## Rutas vigentes de mantenimiento
+
+Contrato local de `src/App.jsx` en `feat/publisher-request-flow-phase4`.
+Estado de rollout: **Partial**, con despliegue y smoke externo pendientes.
+
+| Ruta | Acceso y comportamiento |
+| --- | --- |
+| `/` | Pública: catálogo, categorías y detalle modal sin sesión. |
+| `/sobre-nensgo` | Pública: Conócenos como presentación del proyecto. |
+| `/privacidad`, `/terminos` | Públicas: textos adaptados a mantenimiento. |
+| `/para-centros` | Redirige a `/sobre-nensgo`; no landing ni alta de centros. |
+| `/usuario` | Login privado, sin enlace público; noindex. |
+| `/internal` | Redirige a `/internal/drafts`. |
+| `/internal/import` | Operadores permitidos: JSON, preview y guardar borradores. |
+| `/internal/drafts`, `/internal/drafts/new`, `/internal/drafts/:draftId` | Operadores permitidos: inbox, alta manual y revisión/publicación. |
+| `/internal/activities`, `/internal/activities/:activityId` | Operadores permitidos: catálogo y lifecycle de actividades aprobadas. |
+| `POST /api/internal/catalog-backup` | Sesión y permiso en servidor; sólo dominio/entorno de producción. |
+| `/api/internal/pvi` | Retirada; responde 410. |
+| Rutas de perfil/favoritos/centros retiradas y desconocidas | Redirigen a `/`; no montan sus páginas anteriores. |
+
+No se añade una ruta pública de cuenta ni una ruta nueva para el detalle: éste
+sigue en el modal de catálogo. La selección de contactos y el nombre temporal
+no requieren sesión. `robots.txt` excluye las rutas privadas y el sitemap
+contiene sólo las páginas públicas vigentes.
+Ver [runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md).
+
+El índice siguiente es **histórico**. Sus rutas protegidas y de publisher no
+deben interpretarse como activas después de esta transición.
+
+## Referencia anterior (histórica)
+
 ## Route index
+
 
 | Route | Tipo | SEO | Estado | Notes |
 | --- | --- | --- | --- | --- |

@@ -1,6 +1,37 @@
 # Product Overview
 
+## Producto vigente: mantenimiento gratuito
+
+Estado: **Partial**. La adaptación de octubre de 2026 está implementada en
+`feat/publisher-request-flow-phase4` y pendiente de configuración/despliegue
+externos. NensGo permanece como prueba de concepto y portfolio, con actividades
+cargadas ocasionalmente y un horizonte máximo de un año más.
+
+La familia navega sin cuenta: Actividades, Conócenos y ES/CA/EN. El catálogo
+conserva las categorías disponibles y tarjetas con imagen, categoría, título,
+edad, centro y Ver más. El detalle y los contactos no requieren login. Un canal
+abre directamente; varios muestran selector. El nombre para preparar WhatsApp
+o correo es opcional y temporal.
+
+No hay buscador, filtros adicionales, registro, favoritos, perfiles públicos,
+estadísticas ni publicación por centros. Conócenos describe el proyecto; no
+añade promesas de servicio ni datos de un equipo inventado.
+
+Ambas administradoras anteriores trabajan desde `/usuario`: importan JSON,
+revisan, completan sólo datos confirmados, seleccionan/crean centros, publican o
+retiran y solicitan respaldo público manual. Los datos históricos se conservan.
+La copia de catálogo/contactos/imágenes permite servir la última versión
+confirmada ante un fallo o pausa de Supabase; no convierte la operación en
+automática ni garantiza disponibilidad ilimitada.
+
+La rutina y los pasos externos están en el
+[runbook](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md). El alcance MVP que sigue es
+**referencia histórica** y no una lista de funciones a mantener o reactivar.
+
+## Referencia anterior (histórica)
+
 ## Concepto
+
 
 NensGo es una plataforma web para descubrir actividades infantiles y familiares cerca de la familia usuaria.
 

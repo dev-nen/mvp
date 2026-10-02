@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/build-public-catalog-backup.mjs",
+    "build:local": "vite build",
     "preview": "vite preview",
-    "check": "npm run check:static && npm run check:contracts && npm run check:contact-message && npm run build",
+    "check": "npm run check:static && npm run check:contracts && npm run check:contact-message && npm run check:publisher-sql && npm run check:backup && npm run check:maintenance-admin && npm run build",
+    "check:backup": "node scripts/public-catalog-backup-check.mjs",
+    "check:maintenance-admin": "node scripts/maintenance-admin-check.mjs",
     "check:static": "node scripts/runtime-static-audit.mjs",
     "check:contracts": "node scripts/runtime-contract-audit.mjs",
     "check:contact-message": "node scripts/contact-message-personalization-check.mjs",
+    "check:publisher-sql": "node scripts/publisher-request-sql-check.mjs",
     "check:preview": "node scripts/runtime-preview-check.mjs",
     "report:runtime": "node scripts/runtime-closure-report.mjs",
     "gate2:check": "node scripts/gate2-config-check.mjs",
@@ -24,7 +28,6 @@
   "dependencies": {
     "@mdxeditor/editor": "^4.0.0",
     "@supabase/supabase-js": "^2.100.1",
-    "@vercel/analytics": "^2.0.1",
     "lucide-react": "^0.564.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -32,6 +35,7 @@
     "react-router-dom": "^7.13.1"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
     "@vitejs/plugin-react": "^4.4.1",
     "vite": "^6.3.0"
   }

@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from "react"
 import es from "@/i18n/locales/es";
 import ca from "@/i18n/locales/ca";
 import en from "@/i18n/locales/en";
+import { maintenanceDictionaries, mergeMaintenanceCopy } from "@/i18n/maintenance";
 import {
   DEFAULT_LANGUAGE,
   LANGUAGE_STORAGE_KEY,
@@ -11,9 +12,9 @@ import {
 export const I18nContext = createContext(null);
 
 const dictionaries = {
-  es,
-  ca,
-  en,
+  es: mergeMaintenanceCopy(es, maintenanceDictionaries.es),
+  ca: mergeMaintenanceCopy(ca, maintenanceDictionaries.ca),
+  en: mergeMaintenanceCopy(en, maintenanceDictionaries.en),
 };
 
 function isSupportedLanguage(language) {
