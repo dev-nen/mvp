@@ -2,8 +2,8 @@
 
 ## Branch context
 
-- Status: Done for implementation, independent review and local validation;
-  release In progress. Size: L (backoffice persistence and shared draft contracts).
+- Status: Done for implementation, independent review, validation and release.
+  Size: L (backoffice persistence and shared draft contracts).
 - Active implementation branch: `main`, starting at `b133cf4`.
 - This continues the authorized maintenance release, including commit, push and production verification.
 - CodeGraph is unavailable in this session; discovery used direct source reads, real SQL in PGlite and read-only production queries.
@@ -78,6 +78,9 @@
 - Production read-only readiness and deployed commit; interactive production-admin testing is reported separately if unavailable.
 
 ## Pending after closure
+
+- Runtime commit `751524c` is deployed in production after successful remote
+  preview; detailed evidence is in [the validation record](./MAINTENANCE_CENTER_FIX_QA_2026-10-03.md).
 
 - The administrator supplies real missing information and explicitly publishes after review.
 - Existing user-owned records are preserved; no duplicate cleanup is implicit in this fix.

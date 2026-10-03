@@ -1,7 +1,7 @@
 # Center creation fix: validation on October 3, 2026
 
-Status: Done for implementation, independent review and local validation;
-release In progress. Branch: `main`, starting revision `b133cf4`.
+Status: Done for implementation, independent review, local validation and release.
+Branch: `main`, starting revision `b133cf4`.
 Scope and decisions: [implementation plan](./MAINTENANCE_CENTER_FIX_2026-10-03.md).
 
 ## Confirmed diagnosis
@@ -68,7 +68,31 @@ no actionable findings remaining. It does not claim a live administrator session
 
 ## Release and limits
 
-Remote preview, push, production readiness and exact deployed commit: Planned.
+Runtime commit: `751524c4accbdedcb0498337e75c7e9bf8783737`, pushed to `origin/main`.
+
+- Preview: `dpl_C2mgneKUb87Xfttdi57basFUz2Co`,
+  `https://mvp-hbjtlondu-dibrandons-projects.vercel.app`, READY. Created from an
+  archive of the exact runtime commit, excluding untracked attachments. Checked
+  before pushing main, using Vercel's protected access without disabling protection.
+  Home/editor assets, backup manifest/data and six copied images return 200;
+  unauthenticated backup API returns 401 and does not trigger a deployment.
+- Production: `dpl_64BSyJeLdjZNRhzyr1qr1uiDeNYG`,
+  `https://mvp-miyck0jtc-dibrandons-projects.vercel.app`, READY, target production,
+  Git reference main and exact runtime commit verified through Vercel metadata.
+- `npm.cmd run check:preview -- --preview-url=https://nensgo.com`: PASS. New
+  public generation contains 6 activities, 8 contacts and 6 copied images;
+  retired statistics API returns 410 and unauthenticated backup request 401.
+- `nensgo.com` serves the corrected detail-editor chunk and recovery controls.
+  A separate headless production browser verified `/usuario`: email/password and
+  Google controls present, no runtime errors. No account was used. The test
+  browser was closed. Authenticated creation/publication in production remains
+  the administrator's real operation after supplying missing facts.
+
+Release evidence is committed in a documentation-only follow-up; the runtime
+code is identical to the reviewed preview and deployed runtime commit. The user
+attachment remains untracked and untouched. Final Git synchronization is checked
+after that follow-up; no agent-made changes are left for a future task.
+
 The administrator must supply real missing facts, confirm the center and review
 before publication. No fake center, user authentication token, production draft
 write or automatic publication was used for validation. Auth signup closure and
