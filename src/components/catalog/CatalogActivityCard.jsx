@@ -136,6 +136,11 @@ export function CatalogActivityCard({
             loading="lazy"
             decoding="async"
           />
+          {viewModel.showFreeBadge ? (
+            <span className="catalog-card__free-badge">
+              {t("catalog.card.free")}
+            </span>
+          ) : null}
         </div>
 
         <CardContent className="catalog-card__content catalog-card__content--public">
@@ -191,7 +196,11 @@ export function CatalogActivityCard({
           loading="lazy"
           decoding="async"
         />
-
+        {activity.is_free === true ? (
+          <span className="catalog-card__free-badge">
+            {t("catalog.card.free")}
+          </span>
+        ) : null}
       </div>
 
       <CardContent className="catalog-card__content">
@@ -235,7 +244,9 @@ export function CatalogActivityCard({
             <Wallet className="catalog-card__fact-icon" />
             <div className="catalog-card__fact-body">
               <span className="catalog-card__fact-value">
-                {activity.price_label || t("catalog.card.consultPrice")}
+                {activity.is_free === true
+                  ? t("catalog.card.free")
+                  : activity.price_label || t("catalog.card.consultPrice")}
               </span>
             </div>
           </div>

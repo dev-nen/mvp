@@ -117,6 +117,7 @@ export function ActivityDetailModal({
     ageLabel: t("catalog.detail.ageLabel"),
     scheduleLabel: t("catalog.detail.scheduleLabel"),
     priceLabel: t("catalog.detail.priceLabel"),
+    freeLabel: t("catalog.detail.free"),
     venueLabel: t("catalog.detail.venueLabel"),
     addressLabel: t("catalog.detail.addressLabel"),
     centerLabel: t("catalog.detail.centerLabel"),

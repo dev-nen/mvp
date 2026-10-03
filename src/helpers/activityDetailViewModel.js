@@ -28,7 +28,9 @@ function buildDetailEvaluationItems(activity, copy) {
   const evaluationItems = [];
   const ageLabel = getTrimmedText(formatActivityAgeLabel(activity, copy.age));
   const scheduleLabel = getTrimmedText(activity.schedule_label);
-  const priceLabel = getTrimmedText(activity.price_label);
+  const priceLabel = activity.is_free === true
+    ? copy.freeLabel
+    : getTrimmedText(activity.price_label);
 
   if (ageLabel && ageLabel !== copy.age.consultAge) {
     evaluationItems.push({
@@ -48,7 +50,7 @@ function buildDetailEvaluationItems(activity, copy) {
     });
   }
 
-  if (activity.is_free !== true && priceLabel) {
+  if (priceLabel) {
     evaluationItems.push({
       key: "price",
       label: copy.priceLabel,
@@ -110,7 +112,9 @@ function buildDetailLocationItems(activity, copy) {
 function buildDetailSummaryItems(activity, copy) {
   const ageLabel = getTrimmedText(formatActivityAgeLabel(activity, copy.age));
   const scheduleLabel = getTrimmedText(activity.schedule_label);
-  const priceLabel = getTrimmedText(activity.price_label);
+  const priceLabel = activity.is_free === true
+    ? copy.freeLabel
+    : getTrimmedText(activity.price_label);
   const venueName = getTrimmedText(activity.venue_name);
   const address = getTrimmedText(activity.venue_address_1);
   const centerName = getTrimmedText(activity.center_name);
@@ -130,7 +134,7 @@ function buildDetailSummaryItems(activity, copy) {
     });
   }
 
-  if (activity.is_free !== true && priceLabel) {
+  if (priceLabel) {
     summaryItems.push({
       key: "price",
       value: priceLabel,
@@ -158,6 +162,7 @@ export function buildActivityDetailViewModel(activity = {}, copy = {}) {
     ageLabel: "Edad",
     scheduleLabel: "Horario",
     priceLabel: "Precio",
+    freeLabel: "Gratis",
     venueLabel: "Lugar",
     addressLabel: "Dirección",
     centerLabel: "Centro",
