@@ -1,0 +1,8 @@
+.maintenance-center-fields {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}

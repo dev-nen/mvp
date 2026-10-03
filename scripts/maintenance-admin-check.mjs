@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { PGlite } from "@electric-sql/pglite";
 import { getMaintenanceImportBatchKey, parseMaintenanceJsonImport } from "../src/helpers/maintenanceJsonImport.js";
+import { createAndLinkMaintenanceCenter } from "../src/helpers/maintenanceCenterCreation.js";
 
 // In-memory SQL only. Tables model the prerequisite schema; approval/update and
 // contact publication execute the real Phase 4 functions, followed by the real
@@ -216,6 +217,50 @@ try {
   assert.equal((await db.query("select count(*)::integer count from institutions where name='Nueva entidad'")).rows[0].count, 1);
   assert.equal((await client("authenticated", operator, "select create_maintenance_center($1) id", [centerRequest])).rows[0].id, centerId);
   assert.equal((await db.query("select reviewed_payload_json #>> '{activity,center_id}' center from activity_drafts where id=$1", [nextId])).rows[0].center, String(centerId));
+  // Reproduce the historical UI bug using the real RPC: a successful response
+  // followed by a failed refresh caused its stale pre-save to delete the link.
+  const stalePayload = { activity: { title: "Recovery fixture", center_id: null, age_rule_type: null, is_free: null }, center: { mode: "proposed_new", name: "Recovery center" } };
+  const recoveryId = (await client("authenticated", operator, "insert into activity_drafts(source_type,reviewed_payload_json,created_by) values('internal_manual',$1,auth.uid()) returning id", [stalePayload])).rows[0].id;
+  const recoveryRequest = { draft_id: recoveryId, name: "Recovery center", institution_id: 12, city_id: 1, address_line_1: "Confirmed fixture street", postal_code: "00000" };
+  const recoveredCenterId = (await client("authenticated", operator, "select create_maintenance_center($1) id", [recoveryRequest])).rows[0].id;
+  await client("authenticated", operator, "update activity_drafts set reviewed_payload_json=$1 where id=$2", [stalePayload, recoveryId]);
+  await assert.rejects(() => client("authenticated", operator, "select create_maintenance_center($1)", [recoveryRequest]), /center with this name and city already exists/);
+  assert.equal((await db.query("select reviewed_payload_json #>> '{activity,center_id}' center from activity_drafts where id=$1", [recoveryId])).rows[0].center, null);
+  // Recover the synthetic broken fixture, then prove the coordinator reads the
+  // binding before any write even when handed the same stale proposed payload.
+  await db.query("update activity_drafts set reviewed_payload_json=jsonb_build_object('activity',($1::jsonb -> 'activity') || jsonb_build_object('center_id',$2::bigint),'center',jsonb_build_object('mode','existing','center_id',$2::bigint)) where id=$3", [stalePayload, recoveredCenterId, recoveryId]);
+  let writes = 0;
+  const readDbDraft = async (draftId) => {
+    const row = (await client("authenticated", operator, "select id,review_status,reviewed_payload_json,updated_at from activity_drafts where id=$1", [draftId])).rows[0];
+    return row ? { id: row.id, reviewStatus: row.review_status, reviewedPayload: row.reviewed_payload_json, updatedAt: new Date(row.updated_at).toISOString() } : null;
+  };
+  const fixed = await createAndLinkMaintenanceCenter({ draftId: recoveryId, reviewedPayload: stalePayload, centerPayload: recoveryRequest }, {
+    readDraft: readDbDraft, saveDraft: async () => { writes++; throw new Error("Must not overwrite a binding"); }, createCenter: async () => { writes++; throw new Error("Must not create a duplicate"); },
+  });
+  assert.equal(fixed.centerId, Number(recoveredCenterId));
+  assert.equal(fixed.recovered, true);
+  assert.equal(writes, 0);
+  // A real successful transaction with a lost response is reconciled by reading
+  // the authoritative binding; reattempting creates neither center nor activity.
+  const lostId = (await client("authenticated", operator, "insert into activity_drafts(source_type,reviewed_payload_json,created_by) values('internal_manual',$1,auth.uid()) returning id", [stalePayload])).rows[0].id;
+  const lostRequest = { ...recoveryRequest, name: "Lost response center" };
+  let creationCalls = 0;
+  const dependencies = {
+    readDraft: readDbDraft,
+    saveDraft: async ({ draftId, reviewedPayload, expectedUpdatedAt }) => {
+      const changed = (await client("authenticated", operator, "update activity_drafts set reviewed_payload_json=$1,updated_at=updated_at+interval '1 second' where id=$2 and updated_at=$3 and review_status='pending_review' returning id", [reviewedPayload, draftId, expectedUpdatedAt])).rows[0];
+      if (!changed) { const error = new Error("Fixture conflict"); error.code = "DRAFT_REVISION_CONFLICT"; throw error; }
+      return readDbDraft(draftId);
+    },
+    createCenter: async (payload) => { creationCalls++; await client("authenticated", operator, "select create_maintenance_center($1) id", [payload]); throw new Error("Lost response fixture"); },
+  };
+  const lostResult = await createAndLinkMaintenanceCenter({ draftId: lostId, reviewedPayload: stalePayload, centerPayload: lostRequest }, dependencies);
+  assert.equal(lostResult.recovered, true);
+  await createAndLinkMaintenanceCenter({ draftId: lostId, reviewedPayload: stalePayload, centerPayload: lostRequest }, dependencies);
+  assert.equal(creationCalls, 1);
+  assert.equal((await db.query("select count(*)::integer count from centers where name='Lost response center'")).rows[0].count, 1);
+  assert.equal((await readDbDraft(lostId)).reviewedPayload.activity.age_rule_type, null);
+  assert.equal((await readDbDraft(lostId)).reviewedPayload.activity.is_free, null);
   const before = (await db.query("select count(*)::integer count from activity_drafts")).rows[0].count;
   await assert.rejects(() => client("authenticated", operator, "select import_maintenance_drafts($1,$2)", ["c".repeat(64), [items[0], { payload: null }]]), /invalid activity/);
   assert.equal((await db.query("select count(*)::integer count from activity_drafts")).rows[0].count, before);

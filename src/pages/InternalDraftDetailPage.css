@@ -64,7 +64,14 @@
 
 .internal-draft-detail-page__layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
+}
+
+.internal-draft-detail-page__column,
+.internal-draft-detail-page__panel,
+.internal-draft-detail-page__panel-content {
+  min-width: 0;
 }
 
 .internal-draft-detail-page__panel {
@@ -75,6 +82,24 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+}
+
+.internal-draft-detail-page .scout-draft-review-form,
+.internal-draft-detail-page .scout-draft-review-form__grid,
+.internal-draft-detail-page .scout-draft-review-form__field,
+.internal-draft-detail-page .rich-markdown-editor {
+  min-width: 0;
+}
+
+@media (max-width: 63.999rem) {
+  .internal-draft-detail-page .scout-draft-review-form,
+  .internal-draft-detail-page .scout-draft-review-form__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .internal-draft-detail-page .mdxeditor-toolbar {
+    flex-wrap: wrap;
+  }
 }
 
 .internal-draft-detail-page__panel-title {

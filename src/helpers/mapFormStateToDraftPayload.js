@@ -86,7 +86,10 @@ export function mapFormStateToDraftPayload(formState) {
               name: getTrimmedText(formState?.centerProposalName),
               notes: getTrimmedText(formState?.centerProposalNotes),
               city_name: getTrimmedText(formState?.centerProposalCity),
+              city_id: normalizeIntegerValue(formState?.centerProposalCityId),
+              city_label: getTrimmedText(formState?.centerProposalCityLabel),
               institution_name: getTrimmedText(formState?.centerProposalInstitution),
+              institution_id: normalizeIntegerValue(formState?.centerProposalInstitutionId),
               address_line_1: getTrimmedText(formState?.centerProposalAddress),
               postal_code: getTrimmedText(formState?.centerProposalPostalCode),
             }

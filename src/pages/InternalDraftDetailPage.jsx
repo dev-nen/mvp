@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowLeft, LoaderCircle, SearchX } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { CatalogState } from "@/components/states/CatalogState";
@@ -19,6 +19,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { normalizeContactOptionsForPayload } from "@/helpers/contactOptions";
 import { mapDraftPayloadToFormState } from "@/helpers/mapDraftPayloadToFormState";
 import { mapFormStateToDraftPayload } from "@/helpers/mapFormStateToDraftPayload";
+import { createAndLinkMaintenanceCenter } from "@/helpers/maintenanceCenterCreation";
+import { createMaintenanceCenter } from "@/services/maintenanceAdminService";
 import { getInternalApprovedActivity } from "@/services/internalApprovedActivitiesService";
 import { approveInternalDraft } from "@/services/draftApprovalService";
 import {
@@ -168,8 +170,19 @@ export function InternalDraftDetailPage() {
   const [isArchiving, setIsArchiving] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isCreatingCenter, setIsCreatingCenter] = useState(false);
+  const [centerRecoveryRequired, setCenterRecoveryRequired] = useState(false);
+  const [centerRecoveryMode, setCenterRecoveryMode] = useState("creation");
+  const [hasUncertainCenterRequest, setHasUncertainCenterRequest] = useState(false);
+  const writeInFlight = useRef(false);
+  const centerOperationInFlight = useRef(false);
+  const displayedDraftId = useRef(draftId);
 
   useEffect(() => {
+    displayedDraftId.current = draftId;
+    setCenterRecoveryRequired(false);
+    setCenterRecoveryMode("creation");
+    setHasUncertainCenterRequest(false);
     let isMounted = true;
 
     const loadLinkedApprovedActivity = async (nextDraft) => {
@@ -280,6 +293,8 @@ export function InternalDraftDetailPage() {
 
   const isPendingDraft = draft?.reviewStatus === "pending_review";
   const isReadOnlyDraft = draft?.reviewStatus !== "pending_review";
+  const isWriteBusy = isSaving || isRejecting || isRequestingChanges || isArchiving || isApproving || isUploadingImage || isCreatingCenter;
+  const areWritesBlocked = isWriteBusy || centerRecoveryRequired;
   const canArchiveDraft =
     draft &&
     ["pending_review", "needs_changes", "rejected"].includes(draft.reviewStatus) &&
@@ -335,6 +350,7 @@ export function InternalDraftDetailPage() {
   };
 
   const handleFieldChange = (fieldName, nextValue) => {
+    if (centerOperationInFlight.current || centerRecoveryRequired) return;
     setFormState((currentFormState) => {
       if (fieldName === "centerId" && getTrimmedText(nextValue)) {
         return {
@@ -356,7 +372,8 @@ export function InternalDraftDetailPage() {
   };
 
   const handleImageFileChange = async (file) => {
-    if (!file || !draft || !isPendingDraft || isUploadingImage) return;
+    if (!file || !draft || !isPendingDraft || writeInFlight.current || centerRecoveryRequired) return;
+    writeInFlight.current = true;
     setIsUploadingImage(true); setFeedbackMessage("");
     try {
       const path = await uploadDraftCoverImage({ draftId: draft.id, file });
@@ -364,7 +381,100 @@ export function InternalDraftDetailPage() {
       setFeedbackTone("success"); setFeedbackMessage("Imagen subida. Guarda el borrador para conservarla.");
     } catch {
       setFeedbackTone("error"); setFeedbackMessage("No pudimos subir la imagen. Usa JPG, PNG o WebP de hasta 5 MB y reintenta.");
-    } finally { setIsUploadingImage(false); }
+    } finally { writeInFlight.current = false; setIsUploadingImage(false); }
+  };
+
+  const handleCreateCenter = async (centerPayload) => {
+    if (!draft || !isPendingDraft || writeInFlight.current) return;
+    writeInFlight.current = true;
+    centerOperationInFlight.current = true;
+    setIsCreatingCenter(true);
+    setFeedbackMessage("");
+    try {
+      if (centerRecoveryRequired && centerRecoveryMode === "reload") {
+        const nextDraft = await getInternalDraftById(draft.id);
+        if (!nextDraft) throw new Error("No pudimos recuperar el borrador actualizado. Reintenta la recarga.");
+        if (String(displayedDraftId.current) !== String(draft.id)) return;
+        setDraft(nextDraft);
+        setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(nextDraft)));
+        setReviewNotes(nextDraft.internalReviewNotes || nextDraft.reviewNotes || "");
+        setCenterRecoveryRequired(false);
+        setHasUncertainCenterRequest(false);
+        setCenterRecoveryMode("creation");
+        setFeedbackTone("success");
+        setFeedbackMessage("Borrador actualizado recuperado. Revisa los datos antes de continuar.");
+        return;
+      }
+      const result = await createAndLinkMaintenanceCenter({
+        draftId: draft.id,
+        reviewedPayload: mapFormStateToDraftPayload(formState),
+        internalReviewNotes: reviewNotes,
+        centerPayload,
+        expectedDraftUpdatedAt: draft.updatedAt,
+        recoveringCreation: hasUncertainCenterRequest,
+      }, {
+        readDraft: getInternalDraftById,
+        saveDraft: saveInternalDraftReview,
+        createCenter: createMaintenanceCenter,
+        onDraftSaved: (savedDraft) => {
+          if (String(displayedDraftId.current) === String(draft.id)) setDraft(savedDraft);
+        },
+      });
+      if (String(displayedDraftId.current) !== String(draft.id)) return;
+      // Apply the confirmed transaction before any optional reference refresh.
+      // A failed list read must never turn this into another creation attempt.
+      setDraft(result.draft);
+      setFormState(mapDraftPayloadToFormState(result.draft.reviewedPayload));
+      setReviewNotes(result.draft.internalReviewNotes || result.draft.reviewNotes || "");
+      setCenterRecoveryRequired(false);
+      setHasUncertainCenterRequest(false);
+      setCenterRecoveryMode("creation");
+      setCenterChoices((current) => current.some((center) => String(center.id) === String(result.centerId)) ? current : [
+        ...current,
+        {
+          id: result.centerId,
+          name: result.recovered ? "Centro vinculado al borrador" : centerPayload.name,
+          cityId: centerPayload.city_id,
+          cityName: formState.centerProposalCityLabel || formState.centerProposalCity,
+          label: result.recovered ? "Centro vinculado al borrador" : centerPayload.name,
+        },
+      ]);
+      setFeedbackTone("success");
+      setFeedbackMessage("Centro creado y vinculado al borrador. Revisa los demás datos antes de aprobar.");
+      const [draftRead, centersRead] = await Promise.allSettled([
+        getInternalDraftById(draft.id), listDraftCenters(),
+      ]);
+      if (String(displayedDraftId.current) !== String(draft.id)) return;
+      if (centersRead.status === "fulfilled") setCenterChoices(centersRead.value);
+      if (draftRead.status === "fulfilled" && draftRead.value) {
+        setDraft(draftRead.value);
+        setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(draftRead.value)));
+        setReviewNotes(draftRead.value.internalReviewNotes || draftRead.value.reviewNotes || "");
+        if (centersRead.status === "rejected") setFeedbackMessage("El centro está creado y vinculado al borrador. No pudimos actualizar la lista de centros; el vínculo se conserva. Puedes guardar y continuar la revisión.");
+      } else {
+        setCenterRecoveryRequired(true);
+        setCenterRecoveryMode("reload");
+        setFeedbackMessage("El centro se creó y su vínculo está confirmado. No pudimos recuperar la última versión del borrador; recárgala antes de guardar o publicar.");
+      }
+    } catch (failure) {
+      if (String(displayedDraftId.current) !== String(draft.id)) return;
+      if (failure?.currentDraft) {
+        setDraft(failure.currentDraft);
+        setFormState(mapDraftPayloadToFormState(getInitialDraftPayload(failure.currentDraft)));
+        setReviewNotes(failure.currentDraft.internalReviewNotes || failure.currentDraft.reviewNotes || "");
+      }
+      setCenterRecoveryRequired((centerRecoveryMode === "reload" && centerRecoveryRequired) || failure?.requiresRecovery === true);
+      setHasUncertainCenterRequest(failure?.requiresRecovery === true && (hasUncertainCenterRequest || failure?.centerRequestStarted === true));
+      if (failure?.code === "DRAFT_REVISION_CONFLICT") setCenterRecoveryMode("reload");
+      if (centerRecoveryMode === "reload" && centerRecoveryRequired) throw new Error("No pudimos recuperar el borrador actualizado. Reintenta la recarga.");
+      setFeedbackTone("error");
+      setFeedbackMessage(failure instanceof Error ? failure.message : "No pudimos completar el alta del centro.");
+      throw failure;
+    } finally {
+      writeInFlight.current = false;
+      centerOperationInFlight.current = false;
+      setIsCreatingCenter(false);
+    }
   };
 
   const handleFeedbackTargetChange = (nextTargetStatus) => {
@@ -391,10 +501,11 @@ export function InternalDraftDetailPage() {
   };
 
   const handleSaveDraft = async () => {
-    if (!draft || !isPendingDraft) {
+    if (!draft || !isPendingDraft || writeInFlight.current || centerRecoveryRequired) {
       return;
     }
 
+    writeInFlight.current = true;
     setIsSaving(true);
     setFeedbackMessage("");
     setError("");
@@ -405,6 +516,7 @@ export function InternalDraftDetailPage() {
         internalReviewNotes: reviewNotes,
         reviewedPayload: mapFormStateToDraftPayload(formState),
         reviewNotes,
+        expectedUpdatedAt: draft.updatedAt,
       });
 
       setDraft(nextDraft);
@@ -413,6 +525,10 @@ export function InternalDraftDetailPage() {
       setFeedbackTone("success");
       setFeedbackMessage("Draft guardado.");
     } catch (saveError) {
+      if (saveError?.code === "DRAFT_REVISION_CONFLICT") {
+        setCenterRecoveryRequired(true);
+        setCenterRecoveryMode("reload");
+      }
       setFeedbackTone("error");
       setFeedbackMessage(
         saveError instanceof Error
@@ -420,12 +536,13 @@ export function InternalDraftDetailPage() {
           : "No pudimos guardar el draft.",
       );
     } finally {
+      writeInFlight.current = false;
       setIsSaving(false);
     }
   };
 
   const handleRejectDraft = async () => {
-    if (!draft || !isPendingDraft) {
+    if (!draft || !isPendingDraft || writeInFlight.current || centerRecoveryRequired) {
       return;
     }
 
@@ -447,6 +564,7 @@ export function InternalDraftDetailPage() {
       return;
     }
 
+    writeInFlight.current = true;
     setIsRejecting(true);
     setFeedbackMessage("");
     setError("");
@@ -476,12 +594,13 @@ export function InternalDraftDetailPage() {
           : "No pudimos rechazar el draft.",
       );
     } finally {
+      writeInFlight.current = false;
       setIsRejecting(false);
     }
   };
 
   const handleRequestChanges = async () => {
-    if (!draft || !isPendingDraft) {
+    if (!draft || !isPendingDraft || writeInFlight.current || centerRecoveryRequired) {
       return;
     }
 
@@ -503,6 +622,7 @@ export function InternalDraftDetailPage() {
       return;
     }
 
+    writeInFlight.current = true;
     setIsRequestingChanges(true);
     setFeedbackMessage("");
     setError("");
@@ -531,15 +651,17 @@ export function InternalDraftDetailPage() {
           : "No pudimos pedir cambios para el draft.",
       );
     } finally {
+      writeInFlight.current = false;
       setIsRequestingChanges(false);
     }
   };
 
   const handleArchiveDraft = async () => {
-    if (!canArchiveDraft) {
+    if (!canArchiveDraft || writeInFlight.current || centerRecoveryRequired) {
       return;
     }
 
+    writeInFlight.current = true;
     setIsArchiving(true);
     setFeedbackMessage("");
     setError("");
@@ -563,12 +685,13 @@ export function InternalDraftDetailPage() {
           : "No pudimos archivar el draft.",
       );
     } finally {
+      writeInFlight.current = false;
       setIsArchiving(false);
     }
   };
 
   const handleApproveDraft = async () => {
-    if (!draft || !isPendingDraft || isUploadingImage) {
+    if (!draft || !isPendingDraft || writeInFlight.current || centerRecoveryRequired) {
       return;
     }
 
@@ -580,6 +703,7 @@ export function InternalDraftDetailPage() {
       return;
     }
 
+    writeInFlight.current = true;
     setIsApproving(true);
     setFeedbackMessage("");
     setError("");
@@ -590,6 +714,7 @@ export function InternalDraftDetailPage() {
         internalReviewNotes: reviewNotes,
         reviewedPayload: mapFormStateToDraftPayload(formState),
         reviewNotes,
+        expectedUpdatedAt: draft.updatedAt,
       });
       const approvedActivityId = await approveInternalDraft(draft.id);
       await refreshDraft(
@@ -597,6 +722,10 @@ export function InternalDraftDetailPage() {
         "success",
       );
     } catch (approveError) {
+      if (approveError?.code === "DRAFT_REVISION_CONFLICT") {
+        setCenterRecoveryRequired(true);
+        setCenterRecoveryMode("reload");
+      }
       setFeedbackTone("error");
       setFeedbackMessage(
         approveError instanceof Error
@@ -604,6 +733,7 @@ export function InternalDraftDetailPage() {
           : "No pudimos aprobar el draft.",
       );
     } finally {
+      writeInFlight.current = false;
       setIsApproving(false);
     }
   };
@@ -616,6 +746,7 @@ export function InternalDraftDetailPage() {
               <Button
                 variant="ghost"
                 className="internal-draft-detail-page__back-button"
+                disabled={isWriteBusy}
                 onClick={() => navigate("/internal/drafts")}
               >
                 <ArrowLeft />
@@ -716,18 +847,26 @@ export function InternalDraftDetailPage() {
                           formState.imageUrl,
                         )}
                         onFieldChange={handleFieldChange}
-                        isReadOnly={isReadOnlyDraft || isUploadingImage}
+                        isReadOnly={isReadOnlyDraft || areWritesBlocked}
                         isImageUploadEnabled={isPendingDraft}
                         onImageFileChange={handleImageFileChange}
                       />
 
                       {isPendingDraft && formState.centerMode === "proposed_new" ? <MaintenanceCenterCreatePanel
-                        key={draft.id} draftId={draft.id} formState={formState}
-                        onBeforeCreate={() => saveInternalDraftReview({ draftId: draft.id, reviewedPayload: mapFormStateToDraftPayload(formState), internalReviewNotes: reviewNotes })}
-                        onCreated={async () => {
-                          setCenterChoices(await listDraftCenters());
-                          await refreshDraft("Centro creado y vinculado al borrador. Revisa los demás datos antes de aprobar.");
-                        }} /> : null}
+                        key={draft.id} formState={formState} onFieldChange={handleFieldChange}
+                        isBusy={isWriteBusy} recoveryRequired={centerRecoveryRequired}
+                        recoveryMode={centerRecoveryMode}
+                        onCreate={handleCreateCenter} /> : null}
+
+                      {centerRecoveryRequired && formState.centerMode !== "proposed_new" ? <div className="internal-draft-detail-page__center-notice">
+                        <p>Recupera la versión actual del borrador antes de editar o publicar. La recarga sustituirá los cambios del formulario que no se hayan guardado.</p>
+                        <Button disabled={isWriteBusy} onClick={() => {
+                          void handleCreateCenter({}).catch(() => {
+                            setFeedbackTone("error");
+                            setFeedbackMessage("No pudimos recuperar el borrador actualizado. Reintenta la recarga; el vínculo del centro se conserva.");
+                          });
+                        }}>Recargar borrador actualizado</Button>
+                      </div> : null}
 
                       {formState.importReview ? <div className="internal-draft-detail-page__center-notice">
                         <h3>Revisión del material importado</h3>
@@ -735,6 +874,7 @@ export function InternalDraftDetailPage() {
                         {Array.isArray(formState.importReview.warnings) ? <ul>{formState.importReview.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul> : null}
                         {formState.importReview.notes ? <p>{formState.importReview.notes}</p> : null}
                         {isPendingDraft ? <label><input type="checkbox" checked={formState.importReview.review_confirmed === true}
+                          disabled={areWritesBlocked}
                           onChange={(event) => handleFieldChange("importReview", { ...formState.importReview, review_confirmed: event.target.checked })} /> He contrastado los datos, las propuestas y la vigencia de las fechas antes de publicar.</label> : null}
                       </div> : null}
                       {isUploadingImage ? <p role="status">Preparando y subiendo imagen…</p> : null}
@@ -751,6 +891,7 @@ export function InternalDraftDetailPage() {
                             <div className="internal-draft-detail-page__feedback-targets">
                               <Button
                                 type="button"
+                                disabled={areWritesBlocked}
                                 variant={
                                   feedbackTargetStatus ===
                                   DRAFT_REVIEW_TARGET_STATUSES.NEEDS_CHANGES
@@ -767,6 +908,7 @@ export function InternalDraftDetailPage() {
                               </Button>
                               <Button
                                 type="button"
+                                disabled={areWritesBlocked}
                                 variant={
                                   feedbackTargetStatus ===
                                   DRAFT_REVIEW_TARGET_STATUSES.REJECTED
@@ -789,6 +931,7 @@ export function InternalDraftDetailPage() {
                               <button
                                 key={option.id}
                                 type="button"
+                                disabled={areWritesBlocked}
                                 className={`internal-draft-detail-page__feedback-chip ${
                                   selectedFeedbackOptionIds.includes(option.id)
                                     ? "internal-draft-detail-page__feedback-chip--selected"
@@ -810,6 +953,7 @@ export function InternalDraftDetailPage() {
                               id="draft-user-feedback-summary"
                               className="internal-draft-detail-page__notes-input"
                               value={userFeedbackSummary}
+                              disabled={areWritesBlocked}
                               onChange={(event) =>
                                 setUserFeedbackSummary(event.target.value)
                               }
@@ -832,7 +976,7 @@ export function InternalDraftDetailPage() {
                           className="internal-draft-detail-page__notes-input"
                           value={reviewNotes}
                           onChange={(event) => setReviewNotes(event.target.value)}
-                          disabled={draft.reviewStatus === "approved" || draft.reviewStatus === "archived"}
+                          disabled={areWritesBlocked || draft.reviewStatus === "approved" || draft.reviewStatus === "archived"}
                         />
                       </div>
 
@@ -850,26 +994,14 @@ export function InternalDraftDetailPage() {
                           <Button
                             variant="outline"
                             onClick={handleSaveDraft}
-                            disabled={
-                              isSaving ||
-                              isRequestingChanges ||
-                              isRejecting ||
-                              isArchiving ||
-                              isApproving
-                            }
+disabled={areWritesBlocked}
                           >
                             {isSaving ? "Guardando..." : "Guardar draft"}
                           </Button>
                           <Button
                             variant="outline"
                             onClick={handleRequestChanges}
-                            disabled={
-                              isSaving ||
-                              isRequestingChanges ||
-                              isRejecting ||
-                              isArchiving ||
-                              isApproving
-                            }
+disabled={areWritesBlocked}
                           >
                             {isRequestingChanges
                               ? "Pidiendo cambios..."
@@ -878,38 +1010,20 @@ export function InternalDraftDetailPage() {
                           <Button
                             variant="outline"
                             onClick={handleRejectDraft}
-                            disabled={
-                              isSaving ||
-                              isRequestingChanges ||
-                              isRejecting ||
-                              isArchiving ||
-                              isApproving
-                            }
+disabled={areWritesBlocked}
                           >
                             {isRejecting ? "No aprobando..." : "No aprobar"}
                           </Button>
                           <Button
                             variant="outline"
                             onClick={handleArchiveDraft}
-                            disabled={
-                              isSaving ||
-                              isRequestingChanges ||
-                              isRejecting ||
-                              isArchiving ||
-                              isApproving
-                            }
+disabled={areWritesBlocked}
                           >
                             {isArchiving ? "Archivando..." : "Archivar"}
                           </Button>
                           <Button
                             onClick={handleApproveDraft}
-                            disabled={
-                              isSaving ||
-                              isRequestingChanges ||
-                              isRejecting ||
-                              isArchiving ||
-                              isApproving
-                            }
+disabled={areWritesBlocked}
                           >
                             {isApproving ? "Aprobando..." : "Aprobar"}
                           </Button>

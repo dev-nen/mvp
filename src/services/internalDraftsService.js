@@ -176,6 +176,7 @@ export async function createInternalDraft({
 
 export async function saveInternalDraftReview({
   draftId,
+  expectedUpdatedAt,
   internalReviewNotes,
   reviewedPayload,
   reviewNotes,
@@ -183,26 +184,41 @@ export async function saveInternalDraftReview({
   const supabase = getSupabaseOrThrow();
   const normalizedInternalReviewNotes =
     getTrimmedText(internalReviewNotes) || getTrimmedText(reviewNotes) || null;
-  const { data, error } = await supabase
+  const hasRevisionPrecondition = expectedUpdatedAt !== undefined;
+  const expectedRevisionTime = Date.parse(expectedUpdatedAt);
+  if (hasRevisionPrecondition && (!getTrimmedText(expectedUpdatedAt) || !Number.isFinite(expectedRevisionTime))) {
+    const invalidRevisionError = new Error("No pudimos comprobar la versión del borrador. Recárgalo antes de guardar cambios.");
+    invalidRevisionError.code = "DRAFT_REVISION_CONFLICT";
+    throw invalidRevisionError;
+  }
+  const nextUpdateTime = hasRevisionPrecondition ? Math.max(Date.now(), expectedRevisionTime + 1) : Date.now();
+  let updateQuery = supabase
     .from("activity_drafts")
     .update({
       reviewed_payload_json: reviewedPayload,
       review_notes: normalizedInternalReviewNotes,
       internal_review_notes: normalizedInternalReviewNotes,
-      updated_at: new Date().toISOString(),
+      updated_at: new Date(nextUpdateTime).toISOString(),
     })
     .eq("id", draftId)
-    .eq("review_status", "pending_review")
+    .eq("review_status", "pending_review");
+  if (hasRevisionPrecondition) updateQuery = updateQuery.eq("updated_at", expectedUpdatedAt);
+  const { data, error } = await updateQuery
     .select(DRAFT_DETAIL_SELECT)
     .maybeSingle();
 
   if (error) {
     throw new Error(
-      error.message || "No pudimos guardar la revisión del draft.",
+      hasRevisionPrecondition ? "No pudimos guardar la revisión del borrador. Reintenta después de comprobarlo." : error.message || "No pudimos guardar la revisión del draft.",
     );
   }
 
   if (!data) {
+    if (hasRevisionPrecondition) {
+      const conflictError = new Error("El borrador cambió mientras lo revisabas. Recárgalo antes de guardar cambios.");
+      conflictError.code = "DRAFT_REVISION_CONFLICT";
+      throw conflictError;
+    }
     throw new Error("No pudimos guardar el draft pendiente solicitado.");
   }
 

@@ -13,6 +13,13 @@ both administrators and the button's full session-to-deployment flow remain
 unverified. The original implementation scope below is historical; its initial
 production/SQL/billing exclusions were superseded by that explicit authorization.
 
+The October 3 center-creation bug fix is tracked separately in
+[its scoped plan](./MAINTENANCE_CENTER_FIX_2026-10-03.md) and
+[validation evidence](./MAINTENANCE_CENTER_FIX_QA_2026-10-03.md). It persists
+reviewed center fields, recovers uncertain responses without stale saves, and
+keeps confirmed center bindings when reference refresh fails. It does not change
+Auth, RLS, paid-service configuration or publication requirements.
+
 ## Original branch context and implementation state (October 2)
 
 - Size: L (public routing, authentication boundaries, data and editorial flow).

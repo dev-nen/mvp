@@ -48,6 +48,29 @@ contenido normalizado y el servidor devuelve los borradores ya creados para ese
 contenido, incluso si reintenta la otra administradora. Cambiar los datos genera otro lote; revisar la lista antes de volver a
 importar para evitar duplicados editoriales.
 
+## Guardar y recuperar el alta de un centro
+
+Los campos de **Revisar y crear centro**, incluidos el municipio y la entidad
+seleccionados, se conservan con **Guardar draft**. Escribir el municipio sólo
+busca: hay que elegirlo en **Municipio confirmado**. La pantalla indica los
+datos obligatorios pendientes; no se completan automáticamente.
+
+El alta guarda la revisión, crea el centro y lo vincula al borrador. Mientras
+trabaja, bloquea las demás escrituras. Si se pierde la respuesta, usar
+**Comprobar resultado y continuar**: recupera primero el vínculo existente y,
+si sigue pendiente, reintenta la operación protegida sin sobrescribir el
+borrador con datos antiguos. Un error de recarga nunca solicita otro centro.
+
+Si aparece **Recargar borrador actualizado**, recuperar la versión del servidor
+antes de editar o publicar. Esta acción sustituye los cambios del formulario
+que no se hayan guardado. El vínculo confirmado del centro se conserva aunque
+falle la recarga; la pantalla mantiene bloqueadas otras escrituras hasta
+recuperar la versión actual. Un centro o entidad ya existente debe seleccionarse
+en su lista. El alta del centro no aprueba ni publica la actividad.
+
+La corrección y sus pruebas se documentan en
+[la validación del 3 de octubre](./MAINTENANCE_CENTER_FIX_QA_2026-10-03.md).
+
 ## Formato JSON de importación
 
 Contrato: `src/helpers/maintenanceJsonImport.js`. Se admiten entre 1 y 100
