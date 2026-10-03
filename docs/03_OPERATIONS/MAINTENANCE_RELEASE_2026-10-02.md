@@ -33,6 +33,17 @@ sin declarar permisos o facturación verificados por el mero éxito del build.
   vigente y referencias de publicación.
 - Vercel: proyecto existente `mvp-nen`, despliegue de `main`, hook de esa rama
   y variable secreta sólo de Production, comprobación de plan/uso disponible.
+- Vercel/Supabase Marketplace: instalación existente `supabase-nensgo-db`,
+  cambio de Pro a Free sin desinstalar ni borrar el recurso. Retirar el complemento
+  de pago `auth.nensgo.com`; conservar el dominio público `nensgo.com`. Actualizar
+  `VITE_SUPABASE_URL` a la URL estándar del mismo proyecto en sus entornos actuales
+  y recompilar antes del downgrade. Comprobar el callback Google estándar.
+- Supabase: sustituir únicamente el origen de las imágenes propias en
+  `activities.image_url` y `activity_drafts.reviewed_payload_json.activity.image_url`
+  cuando empiecen por `https://auth.nensgo.com/storage/v1/object/public/activities/`.
+  Los mismos objetos se sirven por la URL estándar; no mover ni borrar Storage.
+  Conservar el payload original parseado y el resto de los campos históricos,
+  fechas, contactos, permisos y estados. Comprobar conteos y URLs antes del downgrade.
 - Supabase: preflight de dependencias, migración versionada de mantenimiento,
   provisión explícita de las dos cuentas y retirada de altas públicas, sólo
   cuando haya acceso autorizado real al SQL y configuración.
@@ -76,3 +87,44 @@ manifiesto/catálogo/imágenes y navegador de producción. Rechazar anónimos y
 terceros, confirmar ambos admins y el nuevo respaldo únicamente con evidencia
 real. El cierre separará **Done** (Git y publicación comprobados) de **Partial**
 o **Planned** para cualquier configuración externa sin acceso o validación.
+
+## Avance confirmado y continuación del 3 de octubre
+
+Merge y push **Done**: `733140b` en `main`, despliegue de producción
+`dpl_2BsNvLyGxN1N6MXnf6cix4UtU4Jv` READY y alias `nensgo.com` confirmado.
+El check HTTP pasa: seis actividades, ocho contactos, seis imágenes copiadas,
+estadísticas 410 y respaldo sin sesión 401.
+
+Migración y provisión **Done**: aplicada atómicamente la revisión versionada
+`2026-10-02_maintenance_admin.sql` con hash
+`136876c2eb4dec8f06acc48d7b28a423ace56839f0d2cb7b0be93f6231ae7ee9`.
+La allowlist contiene exactamente las dos cuentas confirmadas; los conteos
+históricos de perfiles/favoritos/borradores/actividades/centros/contactos/eventos
+no cambiaron. La conexión usa CA oficial y verificación TLS, sin desactivarla.
+El hook de `main` y su variable sensible sólo de Production están configurados.
+
+Cuotas medidas: DB 27036819 bytes; Storage 9733979 bytes, 27 objetos.
+Vercel Hobby activo. Supabase mantiene Pro (25 USD/mes) y Custom Domain
+(10 USD/mes): pasar a Free sigue **In progress**. La oferta oficial Free está
+habilitada, advierte un reinicio breve y retirada de complementos. La copia pública
+ya publicada protege el catálogo durante ese cambio. El callback estándar de
+Google llega a su pantalla de acceso, sin `redirect_uri_mismatch`; esto no
+sustituye la sesión real de cada administradora.
+
+El usuario elige cerrar las altas personalmente en Supabase Auth. Esta acción
+sigue pendiente de confirmación; no se desactivan Email ni Google de las cuentas
+existentes. El panel oficial requiere su sesión, sin compartir contraseña.
+
+`VITE_SUPABASE_URL` ya apunta a la URL estándar del mismo proyecto en Production,
+Preview y Development, conservando sus ámbitos. La inspección real encontró cero
+URLs absolutas del dominio de pago en imágenes de actividades y payloads revisados:
+se guardan rutas relativas. No fue necesario modificar registros ni Storage.
+Se publicará una nueva copia con esta configuración antes de pasar a Free.
+
+Permisos reales **Done** mediante transacciones de sólo lectura y contexto RLS:
+las dos cuentas autorizadas acceden a los ocho borradores y once instituciones;
+los otros diecisiete usuarios existentes no pueden leer borradores/permisos ni
+importar o crear centros. El anónimo ve cero borradores y no ejecuta RPCs privadas.
+Se comprobaron la revocación de escrituras históricas y las tres políticas
+restrictivas de Storage. Esto no sustituye un inicio de sesión interactivo ni
+el ciclo manual del botón desde una sesión de administradora.
