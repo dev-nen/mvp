@@ -2,9 +2,11 @@
 
 ## Frontera vigente: mantenimiento (octubre de 2026)
 
-Estado: **Partial**. Los cambios están versionados en
-`supabase/sql/2026-10-02_maintenance_admin.sql`; no se han aplicado ni validado
-en producción en esta transición.
+Estado: **Partial**. `supabase/sql/2026-10-02_maintenance_admin.sql` está aplicado
+en producción. Ambas cuentas previas están provisionadas y los permisos reales
+se comprobaron mediante transacciones de sólo lectura con contexto RLS. El cierre
+de altas lo realizará el usuario; ambas sesiones y el botón de respaldo todavía
+requieren validación interactiva.
 
 - El público usa lecturas anónimas de catálogo y contactos. La app activa no
   solicita cuentas, favoritos, perfiles ni escrituras de eventos.
@@ -12,6 +14,9 @@ en producción en esta transición.
   `maintenance_operator`. `is_maintenance_operator` exige además su permiso
   existente `internal_tool_access.tool_name = 'draft_inbox'`. La allowlist no
   es singleton ni incorpora automáticamente otras cuentas.
+- Las dos cuentas autorizadas conservan acceso. Los otros diecisiete usuarios
+  existentes no leen borradores ni permisos internos y no importan ni crean
+  centros; los anónimos ven cero borradores. Los conteos históricos se preservan.
 - RLS restrictiva, guards en RPCs internas y políticas de Storage restringen el
   mantenimiento a las cuentas permitidas. Las RPCs de importación y alta de
   centros comprueban autorización; las altas tienen confirmación humana.

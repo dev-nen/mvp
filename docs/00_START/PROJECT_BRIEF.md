@@ -2,8 +2,10 @@
 
 ## Alcance vigente: mantenimiento gratuito (octubre de 2026)
 
-Estado: **Partial**. La rama `feat/publisher-request-flow-phase4` contiene la
-adaptación local; SQL, Auth, facturación y despliegue requieren validación externa.
+Estado: **Partial**. La adaptación está publicada desde `main` en `nensgo.com`;
+SQL, ambas administradoras, permisos reales y planes Hobby/Free están confirmados.
+Quedan el cierre de altas a cargo del usuario y la validación interactiva de
+ambas sesiones y del botón de respaldo.
 El servicio se mantiene como prueba de concepto y portfolio, con el dominio
 `nensgo.com`, cargas ocasionales y un máximo de un año más.
 
@@ -18,8 +20,10 @@ seleccionar o crear un centro confirmado, publicar/retirar y crear respaldo
 manual. La autorización real se verifica en SQL y en la API; la URL privada no
 sustituye los permisos. Los datos históricos se preservan sin uso público.
 
-El único coste aceptado es el dominio; los planes, extras y cuotas reales aún
-deben comprobarse. No se incorporan servicios de IA ni tareas diarias.
+El único coste aceptado es el dominio. Se retiró Pro y su complemento de dominio
+de Supabase: la instalación confirma Free a 0 USD/mes. DB y Storage medidos caben
+en sus cuotas; no se presupone tráfico futuro ni se anulan cargos anteriores.
+No se incorporan servicios de IA ni tareas diarias.
 El [runbook vigente](../03_OPERATIONS/MAINTENANCE_RUNBOOK.md) reúne el contrato y
 los pasos externos. La documentación que sigue conserva el MVP anterior como
 **referencia histórica** y no amplía el alcance del mantenimiento.

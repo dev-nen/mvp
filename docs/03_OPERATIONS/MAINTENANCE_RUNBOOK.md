@@ -1,11 +1,11 @@
 # NensGo: mantenimiento gratuito
 
-Estado: **Partial**. La adaptación está implementada en la rama
-`feat/publisher-request-flow-phase4`. El SQL, la configuración de Auth y el
-despliegue de producción de esta transición siguen pendientes. Este documento
-describe la implementación local y su vista previa validada; no confirma la
-adaptación de `nensgo.com` ni
-que la facturación real ya sea gratuita.
+Estado: **Partial**, actualizado el 3 de octubre de 2026. La adaptación está
+publicada desde `main` en `nensgo.com`. SQL, ambas administradoras, permisos
+reales, Deploy Hook y una nueva copia pública están comprobados. Vercel Hobby
+y Supabase Free a 0 USD/mes están confirmados; se retiró el complemento de pago.
+Quedan el cierre de altas que el usuario realizará y la validación interactiva
+de ambas sesiones y del botón. No se declaran anulados cargos anteriores.
 
 La decisión del 2 de octubre de 2026 es mantener el catálogo como prueba de
 concepto y portfolio durante un máximo de un año más, con cargas ocasionales.
@@ -161,11 +161,13 @@ administrar, reactivar el proyecto desde el dashboard, comprobar acceso y repeti
 el flujo editorial. No intentar un respaldo nuevo mientras la fuente no pueda
 consultarse.
 
-## Preparación externa y primer despliegue
+## Configuración aplicada y comprobaciones pendientes
 
-La comprobación técnica de la vista previa está **Done**. La revisión por el
-usuario y el resto de pasos están **Planned**; no se ejecutan por abrir esta
-documentación.
+La vista previa y la publicación autorizada en `main` están **Done**. Los pasos
+1–3 y 5 siguientes ya están aplicados y comprobados; el SQL se conserva como
+referencia, no hay que volver a ejecutarlo. En el paso 4 el usuario elige cerrar
+las altas personalmente. El paso 6 tiene producción y hook confirmados, pero
+ambas sesiones y el botón aún necesitan comprobación interactiva.
 
 1. Revisar la [vista previa de Vercel](https://mvp-ldjrjg3su-dibrandons-projects.vercel.app/)
    del commit `db49e55`, ya compilada y validada técnicamente después del envío
@@ -225,6 +227,15 @@ documentación.
    dos cuentas previas y autorizar el retorno a `https://nensgo.com/usuario` y el
    origen de la vista previa que se pruebe. Validar ambas sesiones y que otro
    usuario existente no puede administrar ni escribir.
+
+   Acción mínima pendiente del usuario: abrir
+   [Authentication → Sign In / Providers](https://supabase.com/dashboard/project/xgvsinjbvsohnreifxcj/auth/providers),
+   buscar **User Signups**, desactivar **Allow new users to sign up** y guardar.
+   Dejar Email y Google habilitados. Después, entrar en
+   [el acceso privado](https://nensgo.com/usuario) con cada cuenta previa y
+   comprobar el panel. Desde una sesión administradora, pulsar **Crear respaldo
+   público** y esperar la fecha confirmada; no necesita cargar una actividad
+   ficticia para esta comprobación. Estos pasos no requieren conectar Chrome.
 5. En el proyecto Vercel existente, comprobar el repositorio conectado y la rama
    aprobada para producción. Crear en **Settings → Git → Deploy Hooks** un hook
    para esa misma rama, que ya debe contener esta transición. Configurar
@@ -238,8 +249,20 @@ documentación.
    denegaciones. Solicitar un respaldo manual y esperar su nueva generación
    confirmada. La vista previa nunca debe disparar el hook de producción.
 
-La rama se envió para preview con autorización del usuario. Producción continúa
-en su despliegue anterior; SQL, Auth, hook y facturación siguen pendientes.
+El merge explícito `733140b` conserva el historial anterior; el usuario autorizó
+commit y push a `main`. El SQL versionado se aplicó de forma atómica y la allowlist
+contiene exactamente las dos cuentas previas. Los otros diecisiete usuarios
+existentes no leen borradores ni permisos internos y no importan ni crean centros;
+los anónimos ven cero borradores. Los conteos históricos no cambiaron.
+El hook `nensgo-public-maintenance` apunta a `main` y su variable sensible está
+sólo en Production. El 3 de octubre generó un despliegue READY y una nueva copia
+publicada, con 6 actividades, 8 contactos y 6 imágenes. Esto valida el mecanismo
+del hook, no sustituye la prueba del botón con una sesión real.
+
+La URL pública de Supabase en los entornos existentes es
+`https://xgvsinjbvsohnreifxcj.supabase.co`. El callback Google estándar funciona
+hasta su pantalla de acceso. Las imágenes ya usan rutas relativas; no se movieron
+objetos ni se modificaron datos para retirar `auth.nensgo.com`.
 Las claves de servicio anteriores no son
 necesarias para la API de respaldo ni para su build; no exponerlas ni eliminarlas
 sin comprobar otros usos externos.
@@ -262,11 +285,21 @@ separan pruebas completadas y comprobaciones externas pendientes.
 
 ## Costes y horizonte
 
-El único coste aceptado es el dominio. Revisar en los dashboards reales de
-Supabase y Vercel el plan, facturas, extras habilitados y consumo antes de
-considerar la operación gratuita. La identificación del proyecto o un build
-correcto no demuestra el plan contratado. No se han cancelado servicios ni
-confirmado cuotas reales en esta tarea.
+El único coste aceptado es el dominio. La instalación Marketplace existente se
+cambió de Pro a Free sin desinstalar el recurso. La API confirma tanto el plan
+como el plan del proveedor en `free`, 0 USD/mes y sin complementos; Vercel confirma
+Hobby activo. Se retiraron Pro (25 USD/mes) y Custom Domain (10 USD/mes).
+El dominio público `nensgo.com` se conserva; `auth.nensgo.com` ya no sirve el
+complemento. No se necesita modificar las cuentas ni deshabilitar sus proveedores.
+
+Uso real tras el cambio: DB 27135123 bytes (aprox. 25,9 MiB), Storage 9733979
+bytes (aprox. 9,3 MiB), 27 objetos. Cabe en las cuotas Free. No hay URLs
+`/render/image/` en actividades. El egress actual de Supabase no está disponible
+con estos accesos; `vercel usage` no ofrece datos de coste y sus métricas de
+transferencia requieren Observability Plus, que no se activó. Esto no significa
+tráfico cero ni garantiza el consumo futuro. Revisar el consumo al cargar lotes.
+La última factura pagada es del 13/09/2026, 42,58 USD; pueden liquidarse consumos
+anteriores al cambio. No se confirmó aún una nueva factura de cierre.
 
 Supabase publica para Free 500 MB de base de datos, 1 GB de Storage y 5 GB de
 egress; puede pausar proyectos tras una semana de inactividad. Las cuotas y las

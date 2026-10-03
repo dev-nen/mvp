@@ -2,10 +2,11 @@
 
 NensGo es una plataforma web para descubrir actividades infantiles y familiares cerca de ti.
 
-La rama `feat/publisher-request-flow-phase4` está adaptada para mantenimiento
-gratuito como prueba de concepto y portfolio, con cargas ocasionales y un
-horizonte máximo de un año desde octubre de 2026. Estado general: **Partial**;
-la configuración externa y el despliegue de esta transición siguen pendientes.
+`main` está publicado en `nensgo.com` para mantenimiento gratuito como prueba
+de concepto y portfolio, con cargas ocasionales y un horizonte máximo de un año
+desde octubre de 2026. Vercel Hobby y Supabase Free están confirmados. Estado
+general: **Partial** por el cierre de altas que el usuario realizará en Auth
+y la validación interactiva de ambas sesiones y del botón de respaldo.
 
 ## Qué es
 
@@ -27,9 +28,10 @@ NensGo ayuda a familias a encontrar actividades culturales, deportivas, educativ
 - Registro, perfiles públicos, favoritos, publicación por centros y estadísticas
   retirados de la aplicación activa. Los datos históricos se conservan.
 
-El SQL de mantenimiento, el bloqueo de altas en Supabase, los secretos de
-despliegue y la facturación real requieren preparación externa. Los tests locales
-no sustituyen la validación de ambas cuentas ni de los permisos en producción.
+El SQL está aplicado y ambas cuentas previas están provisionadas. Los permisos
+reales y el Deploy Hook de `main` se comprobaron; una copia nueva quedó publicada
+tras pasar a Free. Los datos históricos se conservaron. Las pruebas RLS no
+sustituyen un inicio de sesión interactivo: véanse los pendientes del runbook.
 
 ## Stack resumido
 

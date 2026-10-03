@@ -2,8 +2,10 @@
 
 ## Arquitectura vigente: mantenimiento gratuito
 
-Estado: **Partial** en `feat/publisher-request-flow-phase4`; la configuración y
-validación externas de esta transición están pendientes.
+Estado: **Partial**. `main` está publicado en `nensgo.com`; SQL, permisos,
+Deploy Hook y planes Hobby/Free están configurados y comprobados. Quedan el
+cierre de altas por el usuario y la validación interactiva de ambas sesiones
+y del botón administrativo.
 
 ```mermaid
 flowchart LR
@@ -30,6 +32,11 @@ compilar. Las lecturas de catálogo/contactos usan esa copia validada cuando
 falla Supabase. La API solicita el deploy y el panel sólo confirma un nuevo
 manifiesto publicado. No hay analítica, reporting PVI activo ni cron; no se
 necesita una clave `service_role` para este mecanismo.
+
+Supabase utiliza su URL estándar `https://xgvsinjbvsohnreifxcj.supabase.co`;
+el complemento de pago `auth.nensgo.com` se retiró sin cambiar el dominio público.
+Las imágenes conservan rutas relativas en Storage. El hook de `main` y su secreto
+se limitan a Production; se comprobó una nueva generación realmente publicada.
 
 Los contratos anteriores que siguen son **históricos**, incluidos Auth global,
 onboarding, favoritos, eventos y Analytics. No forman parte de la app activa.

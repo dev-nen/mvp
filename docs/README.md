@@ -3,9 +3,10 @@
 Este es el punto de entrada único para entender el repositorio. La documentación separa estado actual, producto, arquitectura, operaciones, decisiones y referencias históricas.
 
 NensGo es una app React/Vite/Supabase para descubrir actividades infantiles y
-familiares. Desde octubre de 2026 la rama `feat/publisher-request-flow-phase4`
-contiene la adaptación a mantenimiento gratuito como prueba de concepto y
-portfolio. Estado: **Partial**, con configuración externa y despliegue pendientes.
+familiares. Desde octubre de 2026 `main` contiene la adaptación publicada en
+`nensgo.com` como prueba de concepto y portfolio, con Vercel Hobby y Supabase Free
+confirmados. Estado: **Partial** por cierre de altas a cargo del usuario y
+validación interactiva de ambas sesiones y del botón de respaldo.
 
 La referencia operativa vigente es
 [MAINTENANCE_RUNBOOK.md](./03_OPERATIONS/MAINTENANCE_RUNBOOK.md), junto con el
@@ -14,6 +15,10 @@ el catálogo y ambas cuentas administradoras anteriores; se retiran cuentas
 públicas, favoritos, flujos de centros y estadísticas. Los documentos anteriores
 de esas funcionalidades describen historia y contratos previos, no funciones que
 deban reactivarse durante el mantenimiento.
+
+La [publicación y configuración reales](./03_OPERATIONS/MAINTENANCE_RELEASE_2026-10-02.md)
+y la [evidencia de QA](./03_OPERATIONS/QA/MAINTENANCE_VALIDATION_2026-10-02.md)
+registran el SQL aplicado, ambas administradoras, permisos, costes y respaldo.
 
 La raíz de `docs/` se mantiene limpia: este `README.md` y subcarpetas numeradas. La documentación antigua o de contexto vive en `05_ARCHIVE`.
 
@@ -90,9 +95,9 @@ Si vas a pedirle a una IA que analice este repositorio, indícale que empiece po
 7. `docs/03_OPERATIONS/AI_WORKFLOW.md`
 
 La documentación distingue estado actual, decisiones, deuda técnica y próximos
-pasos. El mantenimiento está implementado localmente y pendiente de rollout;
-las evidencias antiguas de otras funcionalidades no validan esta transición en
-producción.
+pasos. El mantenimiento está publicado desde `main` y conserva estado **Partial**
+por altas Auth y sesiones/botón pendientes; sus pruebas de producción constan en
+QA. Las evidencias antiguas de otras funcionalidades no validan esta transición.
 
 ## Estado de los docs anteriores
 

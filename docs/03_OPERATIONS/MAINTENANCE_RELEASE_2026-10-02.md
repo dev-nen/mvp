@@ -1,6 +1,6 @@
 # NensGo: integración y publicación en main, 2 de octubre de 2026
 
-## Contexto y estado actual
+## Contexto inicial (2 de octubre)
 
 Tamaño **L** por publicación de cambios de acceso/datos y configuración externa.
 Estado inicial: **In progress**. El usuario autoriza expresamente merge a `main`,
@@ -8,11 +8,12 @@ commit y push para terminar la transición. `main` es ahora el destino solicitad
 no una referencia supuesta. Fuente de implementación: la rama validada
 `feat/publisher-request-flow-phase4`, commit `4494ff6`.
 
-Tras actualizar las referencias, `origin/main` sigue en `582b635` y es ancestro
-de la rama fuente. Su vista previa está READY y validada; las nueve revisiones
-se integran sin divergencia. Las pruebas completas y revisión independiente de
-implementación ya constan en QA. Supabase SQL/Auth, hook y costes reales todavía
-no están confirmados. Ambas cuentas administradoras anteriores se conservan.
+Al iniciar el release, tras actualizar las referencias, `origin/main` estaba en
+`582b635` y era ancestro de la rama fuente. Su vista previa estaba READY y validada;
+las nueve revisiones podían integrarse sin divergencia. Las pruebas completas y
+revisión independiente ya constaban en QA. Supabase SQL/Auth, hook y costes reales
+aún no estaban confirmados. Se acordó conservar ambas cuentas administradoras.
+Los resultados actuales figuran al final de este documento.
 
 ## Objetivo
 
@@ -104,8 +105,8 @@ no cambiaron. La conexión usa CA oficial y verificación TLS, sin desactivarla.
 El hook de `main` y su variable sensible sólo de Production están configurados.
 
 Cuotas medidas: DB 27036819 bytes; Storage 9733979 bytes, 27 objetos.
-Vercel Hobby activo. Supabase mantiene Pro (25 USD/mes) y Custom Domain
-(10 USD/mes): pasar a Free sigue **In progress**. La oferta oficial Free está
+Vercel Hobby activo. En el preflight Supabase mantenía Pro (25 USD/mes) y Custom
+Domain (10 USD/mes): el cambio a Free estaba **In progress**. La oferta oficial Free está
 habilitada, advierte un reinicio breve y retirada de complementos. La copia pública
 ya publicada protege el catálogo durante ese cambio. El callback estándar de
 Google llega a su pantalla de acceso, sin `redirect_uri_mismatch`; esto no
@@ -128,3 +129,36 @@ importar o crear centros. El anónimo ve cero borradores y no ejecuta RPCs priva
 Se comprobaron la revocación de escrituras históricas y las tres políticas
 restrictivas de Storage. Esto no sustituye un inicio de sesión interactivo ni
 el ciclo manual del botón desde una sesión de administradora.
+
+## Resultado de la continuación del 3 de octubre
+
+Infraestructura **Done**: CLI oficial actualizó la instalación existente a Free,
+sin desinstalar recursos. La API confirma `billingPlan` y `vendorBillingPlan`
+`free`, 0 USD/mes y sin complementos. Vercel Hobby activo. `auth.nensgo.com` dejó
+de servir el complemento, mientras `nensgo.com` conserva el servicio.
+Antes del cambio se publicó `1431ff5` READY con una copia generada desde la URL
+estándar, que también aparece en los assets públicos sin el origen anterior.
+Los conteos históricos siguen intactos tras el downgrade; DB 27135123 bytes,
+Storage 9733979 bytes y 27 objetos, dentro de Free.
+
+Respaldo real **Done para el mecanismo**: una solicitud directa al hook de
+`main`, 201, produjo `dpl_9RJ1bdceRJR1qXSwHinWtPe77KuC` READY y una generación
+nueva publicada `36278b5f-dc2c-4a4a-879f-11299e68e3a9`, fecha UTC
+`2026-10-03T08:54:21.552Z`, con seis actividades, ocho contactos y seis imágenes.
+Producción supera el check HTTP. El navegador propio comprobó ES/CA/EN,
+categorías, detalle, nombre temporal y selector móvil de contactos con Supabase
+bloqueado sólo en la prueba: seis imágenes locales cargadas, ancho 390, sin
+excepciones JS, sesión Supabase ni recogida de estadísticas.
+
+Estado general **Partial**: altas Auth pendientes a cargo del usuario y sesiones
+interactivas de ambas cuentas/botón pendientes de evidencia real. El callback
+Google estándar está comprobado, pero no se simula un login completado.
+La [guía operativa](./MAINTENANCE_RUNBOOK.md) deja el interruptor exacto y el flujo
+mensual **importar → revisar → publicar/retirar → crear respaldo**.
+
+Costes previos no anulados: última factura pagada 13/09/2026, 42,58 USD; no se
+confirmó aún factura de cierre. Egress actual no accesible y métricas de Vercel
+requieren un plan adicional que no se activó; se conserva este límite de evidencia.
+No se añadieron cambios de runtime ni nuevas funcionalidades durante el release.
+El seguimiento documental se confirma y envía a `main`; el cierre verifica su
+despliegue exacto y Git limpio/sin divergencia.

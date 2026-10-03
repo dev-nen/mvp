@@ -1,6 +1,19 @@
 # NensGo: transition to free maintenance (October 2026)
 
-## Branch context and current state
+## Current release status (October 3)
+
+The user subsequently authorized merge, commit, push and production completion.
+`main` now contains the explicit merge `733140b`; the deployment and cutover
+follow-up are recorded in [the release plan](./MAINTENANCE_RELEASE_2026-10-02.md).
+Live SQL and both existing administrators are provisioned, real RLS permissions
+are verified, the main Deploy Hook produced a confirmed public snapshot, and
+Vercel Hobby / Supabase Free are confirmed. No historical records were deleted.
+Overall **Partial**: the user will disable new signups; interactive sign-in for
+both administrators and the button's full session-to-deployment flow remain
+unverified. The original implementation scope below is historical; its initial
+production/SQL/billing exclusions were superseded by that explicit authorization.
+
+## Original branch context and implementation state (October 2)
 
 - Size: L (public routing, authentication boundaries, data and editorial flow).
 - Source of truth: `feat/publisher-request-flow-phase4`; no comparison with `main`.
